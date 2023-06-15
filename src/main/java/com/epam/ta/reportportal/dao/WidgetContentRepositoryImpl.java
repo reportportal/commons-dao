@@ -856,8 +856,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
             .build())
         .select(ACTIVITY.ID,
             ACTIVITY.ACTION,
-            ACTIVITY.ENTITY,
-            ACTIVITY.CREATION_DATE,
+            ACTIVITY.OBJECT_TYPE,
+            ACTIVITY.CREATED_AT,
             ACTIVITY.DETAILS,
             ACTIVITY.PROJECT_ID,
             ACTIVITY.OBJECT_ID,
@@ -868,7 +868,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
         .join(ACTIVITIES)
         .on(fieldName(ACTIVITIES, ID).cast(Long.class).eq(ACTIVITY.ID))
         .join(USERS)
-        .on(ACTIVITY.USER_ID.eq(USERS.ID))
+        .on(ACTIVITY.SUBJECT_ID.eq(USERS.ID))
         .join(PROJECT)
         .on(ACTIVITY.PROJECT_ID.eq(PROJECT.ID))
         .orderBy(WidgetSortUtils.sortingTransformer(filter.getTarget()).apply(sort, ACTIVITIES))

@@ -41,7 +41,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class ActivityRepositoryCustomImpl implements ActivityRepositoryCustom {
 
-  private DSLContext dsl;
+  private final DSLContext dsl;
 
   @Autowired
   public ActivityRepositoryCustomImpl(DSLContext dsl) {
@@ -52,7 +52,7 @@ public class ActivityRepositoryCustomImpl implements ActivityRepositoryCustom {
   public void deleteModifiedLaterAgo(Long projectId, Duration period) {
     LocalDateTime bound = LocalDateTime.now().minus(period);
     dsl.delete(ACTIVITY).where(ACTIVITY.PROJECT_ID.eq(projectId))
-        .and(ACTIVITY.CREATION_DATE.lt(Timestamp.valueOf(bound))).execute();
+        .and(ACTIVITY.CREATED_AT.lt(Timestamp.valueOf(bound))).execute();
   }
 
   @Override

@@ -52,6 +52,10 @@ import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.activity.Activity;
 import com.epam.ta.reportportal.entity.activity.ActivityDetails;
+import com.epam.ta.reportportal.entity.activity.EventAction;
+import com.epam.ta.reportportal.entity.activity.EventObject;
+import com.epam.ta.reportportal.entity.activity.EventPriority;
+import com.epam.ta.reportportal.entity.activity.EventSubject;
 import com.epam.ta.reportportal.entity.attachment.Attachment;
 import com.epam.ta.reportportal.entity.attribute.Attribute;
 import com.epam.ta.reportportal.entity.bts.Ticket;
@@ -123,7 +127,7 @@ import org.jooq.Result;
  */
 public class RecordMappers {
 
-  private static ObjectMapper objectMapper;
+  private static final ObjectMapper objectMapper;
 
   static {
     objectMapper = new ObjectMapper();
@@ -404,13 +408,13 @@ public class RecordMappers {
   public static final RecordMapper<? super Record, Activity> ACTIVITY_MAPPER = r -> {
     Activity activity = new Activity();
     activity.setId(r.get(ACTIVITY.ID));
-    activity.setUserId(r.get(ACTIVITY.USER_ID));
-    activity.setProjectId(r.get(ACTIVITY.PROJECT_ID));
-    activity.setAction(r.get(ACTIVITY.ACTION));
-    activity.setUsername(ofNullable(r.get(USERS.LOGIN)).orElse(r.get(ACTIVITY.USERNAME)));
-    activity.setActivityEntityType(r.get(ACTIVITY.ENTITY, String.class));
-    activity.setCreatedAt(r.get(ACTIVITY.CREATION_DATE, LocalDateTime.class));
+    activity.setCreatedAt(r.get(ACTIVITY.CREATED_AT, LocalDateTime.class));
+    activity.setAction(EventAction.valueOf(r.get(ACTIVITY.ACTION)));
+    activity.setPriority(EventPriority.valueOf(r.get(ACTIVITY.PRIORITY)));
     activity.setObjectId(r.get(ACTIVITY.OBJECT_ID));
+    activity.setObjectName(r.get(ACTIVITY.OBJECT_NAME));
+    activity.setObjectType(EventObject.valueOf(r.get(ACTIVITY.OBJECT_TYPE)));
+    activity.setProjectId(r.get(ACTIVITY.PROJECT_ID));
     String detailsJson = r.get(ACTIVITY.DETAILS, String.class);
     ofNullable(detailsJson).ifPresent(s -> {
       try {
@@ -420,6 +424,9 @@ public class RecordMappers {
         throw new ReportPortalException(ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR);
       }
     });
+    activity.setSubjectId(r.get(ACTIVITY.SUBJECT_ID));
+    activity.setSubjectName(ofNullable(r.get(USERS.LOGIN)).orElse(r.get(ACTIVITY.SUBJECT_NAME)));
+    activity.setSubjectType(EventSubject.valueOf(r.get(ACTIVITY.SUBJECT_TYPE)));
     return activity;
   };
 

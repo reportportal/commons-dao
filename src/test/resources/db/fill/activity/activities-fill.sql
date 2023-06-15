@@ -1,6 +1,7 @@
 -- Inserts into activities table 7 records
-INSERT INTO activity(id, user_id, project_id, entity, action, details, creation_date, object_id)
-VALUES (1, 1, 1, 'dashboard', 'dashboard_update', '{
+insert into activity(id, action, created_at, details, object_id, object_name, object_type, priority,
+ project_id, subject_id, subject_name, subject_type)
+values (1, 'UPDATE', now() - interval '12 day', '{
   "type": "com.epam.ta.reportportal.entity.activity.ActivityDetails",
   "history": [
     {
@@ -13,28 +14,25 @@ VALUES (1, 1, 1, 'dashboard', 'dashboard_update', '{
       "newValue": "After Desc",
       "oldValue": "Before Desc"
     }
-  ],
-  "objectName": "name"
-}', now() - INTERVAL '12 day', 1),
+  ]
+}', 1, 'name', 'DASHBOARD', 'LOW', 1, 1, 'superadmin', 'USER'),
 
-       (2, 1, 1, 'widget', 'widget_create', '{
+(2, 'CREATE', now() - INTERVAL '20 day', '{
   "type": "com.epam.ta.reportportal.entity.activity.ActivityDetails",
-  "history": null,
-  "objectName": "widget test"
-}', now() - interval '20 day', 2),
+  "history": null
+}', 2, 'widget test', 'WIDGET', 'LOW', 1, 1,'superadmin', 'USER'),
 
-       (3, 1, 1, 'filter', 'filter_create', '{
+(3, 'CREATE', now() - INTERVAL '3 day', '{
   "type": "com.epam.ta.reportportal.entity.activity.ActivityDetails",
-  "history": null,
-  "objectName": "filter test"
-}', now() - interval '3 day', 3),
-       (4, 2, 2, 'filter', 'filter_create', '{
-  "type": "com.epam.ta.reportportal.entity.activity.ActivityDetails",
-  "history": [],
-  "objectName": "filter new test"
-}', now() - interval '2 day', 4),
+  "history": null
+}', 3, 'filter test', 'FILTER', 'LOW', 1, 1, 'superadmin', 'USER'),
 
-       (5, 2, 2, 'filter', 'filter_update', '{
+(4, 'CREATE', now() - INTERVAL '2 day', '{
+  "type": "com.epam.ta.reportportal.entity.activity.ActivityDetails",
+  "history": []
+}', 4, 'filter new test', 'FILTER', 'LOW', 2, 2, 'user', 'USER'),
+
+(5, 'UPDATE', now() - interval '1 day' - interval '4 hour', '{
   "type": "com.epam.ta.reportportal.entity.activity.ActivityDetails",
   "history": [
     {
@@ -47,20 +45,17 @@ VALUES (1, 1, 1, 'dashboard', 'dashboard_update', '{
       "newValue": "new",
       "oldValue": "old"
     }
-  ],
-  "objectName": "filter new test"
-}', now() - interval '1 day' - interval '4 hour', 4),
+  ]
+}', 4, 'filter new test', 'FILTER', 'LOW', 2, 2, 'user', 'USER'),
 
-       (6, 2, 2, 'launch', 'start_launch', '{
+(6, 'START', now() - interval '2 day', '{
   "type": "com.epam.ta.reportportal.entity.activity.ActivityDetails",
-  "history": [],
-  "objectName": "launch test"
-}', now() - interval '2 day', 5),
+  "history": []
+}', 5, 'launch test', 'LAUNCH', 'LOW', 2, 2, 'user', 'USER'),
 
-       (7, 2, 2, 'launch', 'finish_launch', '{
+(7, 'FINISH', now() - interval '1 day', '{
   "type": "com.epam.ta.reportportal.entity.activity.ActivityDetails",
-  "history": [],
-  "objectName": "launch test"
-}', now() - interval '1 day', 5);
+  "history": []
+}', 5, 'launch test', 'LAUNCH', 'LOW', 2, 2, 'user', 'USER');
 
 alter sequence activity_id_seq restart with 8;

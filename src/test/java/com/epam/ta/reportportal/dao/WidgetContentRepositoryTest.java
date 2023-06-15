@@ -16,7 +16,8 @@
 package com.epam.ta.reportportal.dao;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_ACTION;
-import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_CREATION_DATE;
+import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_CREATED_AT;
+import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_OBJECT_TYPE;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_DESCRIPTION;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_END_TIME;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAST_MODIFIED;
@@ -340,7 +341,7 @@ class WidgetContentRepositoryTest extends BaseTest {
       long total = stats.values().stream().mapToInt(Integer::intValue).sum();
 
       stats.keySet().forEach(key -> assertEquals((long) stats.get(key),
-          (long) Integer.parseInt(resStatistics.get(key))));
+          Integer.parseInt(resStatistics.get(key))));
 
       assertEquals(String.valueOf(total), resStatistics.get(TOTAL));
     });
@@ -494,12 +495,13 @@ class WidgetContentRepositoryTest extends BaseTest {
   void activityStatistics() {
     Filter filter = buildDefaultActivityFilter(1L);
     Sort sort = Sort.by(
-        Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, CRITERIA_CREATION_DATE)));
-    List<String> contentFields = buildActivityContentFields();
+        Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, CRITERIA_CREATED_AT)));
 
     filter.withCondition(new FilterCondition(Condition.EQUALS, false, "superadmin", CRITERIA_USER))
-        .withCondition(new FilterCondition(Condition.IN, false, String.join(",", contentFields),
-            CRITERIA_ACTION));
+        .withCondition(new FilterCondition(Condition.IN, false, String.join(",", "CREATE"),
+            CRITERIA_ACTION))
+        .withCondition(new FilterCondition(Condition.IN, false, String.join(",", "LAUNCH", "ITEM"),
+            CRITERIA_OBJECT_TYPE));
 
     List<ActivityResource> activityContentList = widgetContentRepository.activityStatistics(filter,
         sort, 4);
@@ -874,11 +876,12 @@ class WidgetContentRepositoryTest extends BaseTest {
         .map(ch -> new Sort.Order(Sort.Direction.ASC, ch.getFilterCriteria()))
         .collect(Collectors.toList());
     Sort sort = Sort.by(orders);
-    List<String> contentFields = buildActivityContentFields();
 
     filter.withCondition(new FilterCondition(Condition.EQUALS, false, "superadmin", CRITERIA_USER))
-        .withCondition(new FilterCondition(Condition.IN, false, String.join(",", contentFields),
-            CRITERIA_ACTION));
+        .withCondition(new FilterCondition(Condition.IN, false, String.join(",", "CREATE"),
+            CRITERIA_ACTION))
+        .withCondition(new FilterCondition(Condition.IN, false, String.join(",", "LAUNCH", "ITEM"),
+            CRITERIA_OBJECT_TYPE));
 
     List<ActivityResource> activityContentList = widgetContentRepository.activityStatistics(filter,
         sort, 4);
@@ -1142,10 +1145,6 @@ class WidgetContentRepositoryTest extends BaseTest {
         "statistics$defects$to_investigate$total"
 
     );
-  }
-
-  private List<String> buildActivityContentFields() {
-    return Lists.newArrayList("createLaunch", "createItem");
   }
 
   private Map<Long, Map<String, Integer>> buildTotalDefectsMap() {

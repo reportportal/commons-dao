@@ -25,9 +25,11 @@ public final class ActivityCriteriaConstant {
 
   public static final String CRITERIA_ACTION = "action";
   public static final String CRITERIA_LOGIN = "login";
+  public static final String CRITERIA_SUBJECT_TYPE = "subjectType";
   public static final String CRITERIA_OBJECT_ID = "objectId";
-  public static final String CRITERIA_ENTITY = "entity";
-  public static final String CRITERIA_CREATION_DATE = "creationDate";
+  public static final String CRITERIA_OBJECT_TYPE = "objectType";
+  public static final String CRITERIA_PRIORITY = "priority";
+  public static final String CRITERIA_CREATED_AT = "createdAt";
   public static final String CRITERIA_OBJECT_NAME = "objectName";
 
   private ActivityCriteriaConstant() {

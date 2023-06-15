@@ -18,11 +18,11 @@ package com.epam.ta.reportportal.entity.activity;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Objects;
-import java.util.Optional;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -33,7 +33,7 @@ import org.hibernate.annotations.TypeDef;
 /**
  * Activity table entity
  *
- * @author Andrei Varabyeu
+ * @author Ryhor Kukharenka
  */
 @Entity
 @Table(name = "activity", schema = "public")
@@ -45,30 +45,43 @@ public class Activity implements Serializable {
   @Column(name = "id", unique = true, nullable = false, precision = 64)
   private Long id;
 
-  @Column(name = "user_id", precision = 32)
-  private Long userId;
+  @Column(name = "created_at")
+  private LocalDateTime createdAt;
 
-  @Column(name = "username")
-  private String username;
+  @Column(name = "action", nullable = false)
+  @Enumerated(EnumType.STRING)
+  private EventAction action;
+
+  @Column(name = "priority", nullable = false)
+  @Enumerated(EnumType.STRING)
+  private EventPriority priority;
+
+  @Column(name = "object_id")
+  private Long objectId;
+
+  @Column(name = "object_name")
+  private String objectName;
+
+  @Enumerated(EnumType.STRING)
+  @Column(name = "object_type", nullable = false)
+  private EventObject objectType;
 
   @Column(name = "project_id", nullable = false)
   private Long projectId;
-
-  @Column(name = "entity", unique = true, nullable = false)
-  private String activityEntityType;
-
-  @Column(name = "action", nullable = false)
-  private String action;
 
   @Column(name = "details")
   @Type(type = "activityDetails")
   private ActivityDetails details;
 
-  @Column(name = "creation_date")
-  private LocalDateTime createdAt;
+  @Column(name = "subject_id", precision = 32)
+  private Long subjectId;
 
-  @Column(name = "object_id")
-  private Long objectId;
+  @Column(name = "subject_name")
+  private String subjectName;
+
+  @Enumerated(EnumType.STRING)
+  @Column(name = "subject_type", nullable = false)
+  private EventSubject subjectType;
 
   public Long getId() {
     return id;
@@ -76,54 +89,6 @@ public class Activity implements Serializable {
 
   public void setId(Long id) {
     this.id = id;
-  }
-
-  public Long getUserId() {
-    return userId;
-  }
-
-  public void setUserId(Long userId) {
-    this.userId = userId;
-  }
-
-  public String getUsername() {
-    return username;
-  }
-
-  public void setUsername(String username) {
-    this.username = username;
-  }
-
-  public Long getProjectId() {
-    return projectId;
-  }
-
-  public void setProjectId(Long projectId) {
-    this.projectId = projectId;
-  }
-
-  public String getActivityEntityType() {
-    return activityEntityType;
-  }
-
-  public void setActivityEntityType(String activityEntityType) {
-    this.activityEntityType = activityEntityType;
-  }
-
-  public String getAction() {
-    return action;
-  }
-
-  public void setAction(String action) {
-    this.action = action;
-  }
-
-  public ActivityDetails getDetails() {
-    return details;
-  }
-
-  public void setDetails(ActivityDetails details) {
-    this.details = details;
   }
 
   public LocalDateTime getCreatedAt() {
@@ -134,12 +99,84 @@ public class Activity implements Serializable {
     this.createdAt = createdAt;
   }
 
+  public EventAction getAction() {
+    return action;
+  }
+
+  public void setAction(EventAction action) {
+    this.action = action;
+  }
+
+  public EventPriority getPriority() {
+    return priority;
+  }
+
+  public void setPriority(EventPriority priority) {
+    this.priority = priority;
+  }
+
   public Long getObjectId() {
     return objectId;
   }
 
   public void setObjectId(Long objectId) {
     this.objectId = objectId;
+  }
+
+  public String getObjectName() {
+    return objectName;
+  }
+
+  public void setObjectName(String objectName) {
+    this.objectName = objectName;
+  }
+
+  public EventObject getObjectType() {
+    return objectType;
+  }
+
+  public void setObjectType(EventObject objectType) {
+    this.objectType = objectType;
+  }
+
+  public Long getProjectId() {
+    return projectId;
+  }
+
+  public void setProjectId(Long projectId) {
+    this.projectId = projectId;
+  }
+
+  public ActivityDetails getDetails() {
+    return details;
+  }
+
+  public void setDetails(ActivityDetails details) {
+    this.details = details;
+  }
+
+  public Long getSubjectId() {
+    return subjectId;
+  }
+
+  public void setSubjectId(Long subjectId) {
+    this.subjectId = subjectId;
+  }
+
+  public String getSubjectName() {
+    return subjectName;
+  }
+
+  public void setSubjectName(String subjectName) {
+    this.subjectName = subjectName;
+  }
+
+  public EventSubject getSubjectType() {
+    return subjectType;
+  }
+
+  public void setSubjectType(EventSubject subjectType) {
+    this.subjectType = subjectType;
   }
 
   @Override
@@ -151,54 +188,12 @@ public class Activity implements Serializable {
       return false;
     }
     Activity activity = (Activity) o;
-    return Objects.equals(id, activity.id) && Objects.equals(userId, activity.userId)
-        && Objects.equals(username, activity.username)
-        && Objects.equals(projectId, activity.projectId) && Objects.equals(activityEntityType,
-        activity.activityEntityType)
-        && Objects.equals(action, activity.action) && Objects.equals(details, activity.details)
-        && Objects.equals(
-        createdAt,
-        activity.createdAt
-    ) && Objects.equals(objectId, activity.objectId);
+    return Objects.equals(id, activity.id);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, userId, username, projectId, activityEntityType, action, details,
-        createdAt, objectId);
+    return Objects.hash(id);
   }
 
-  public enum ActivityEntityType {
-    LAUNCH("launch"),
-    ITEM("item"),
-    DASHBOARD("dashboard"),
-    DEFECT_TYPE("defectType"),
-    EMAIL_CONFIG("emailConfig"),
-    FILTER("filter"),
-    IMPORT("import"),
-    INTEGRATION("integration"),
-    ITEM_ISSUE("itemIssue"),
-    PROJECT("project"),
-    SHARING("sharing"),
-    TICKET("ticket"),
-    USER("user"),
-    WIDGET("widget"),
-    PATTERN("pattern");
-
-    private String value;
-
-    ActivityEntityType(String value) {
-      this.value = value;
-    }
-
-    public static Optional<ActivityEntityType> fromString(String string) {
-      return Optional.ofNullable(string)
-          .flatMap(str -> Arrays.stream(values()).filter(it -> it.value.equalsIgnoreCase(str))
-              .findAny());
-    }
-
-    public String getValue() {
-      return value;
-    }
-  }
 }

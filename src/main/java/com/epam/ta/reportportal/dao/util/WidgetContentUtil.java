@@ -617,9 +617,9 @@ public class WidgetContentUtil {
     activityResource.setProjectId(r.get(ACTIVITY.PROJECT_ID));
     activityResource.setProjectName(r.get(PROJECT.NAME));
     activityResource.setActionType(r.get(ACTIVITY.ACTION));
-    activityResource.setObjectType(r.get(ACTIVITY.ENTITY));
+    activityResource.setObjectType(r.get(ACTIVITY.OBJECT_TYPE));
     activityResource.setLastModified(
-        TO_DATE.apply(r.get(ACTIVITY.CREATION_DATE, LocalDateTime.class)));
+        TO_DATE.apply(r.get(ACTIVITY.CREATED_AT, LocalDateTime.class)));
     activityResource.setLoggedObjectId(r.get(ACTIVITY.OBJECT_ID));
     String detailsJson = r.get(ACTIVITY.DETAILS, String.class);
     ofNullable(detailsJson).ifPresent(s -> {

@@ -116,9 +116,7 @@ import com.epam.ta.reportportal.jooq.tables.records.JUserPreferenceRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JUsersRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JWidgetFilterRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JWidgetRecord;
-
 import javax.annotation.processing.Generated;
-
 import org.jooq.ForeignKey;
 import org.jooq.Identity;
 import org.jooq.UniqueKey;
@@ -264,7 +262,6 @@ public class Keys {
     // FOREIGN KEY definitions
     // -------------------------------------------------------------------------
 
-    public static final ForeignKey<JActivityRecord, JUsersRecord> ACTIVITY__ACTIVITY_USER_ID_FKEY = ForeignKeys0.ACTIVITY__ACTIVITY_USER_ID_FKEY;
     public static final ForeignKey<JActivityRecord, JProjectRecord> ACTIVITY__ACTIVITY_PROJECT_ID_FKEY = ForeignKeys0.ACTIVITY__ACTIVITY_PROJECT_ID_FKEY;
     public static final ForeignKey<JApiKeysRecord, JUsersRecord> API_KEYS__API_KEYS_USER_ID_FKEY = ForeignKeys0.API_KEYS__API_KEYS_USER_ID_FKEY;
     public static final ForeignKey<JContentFieldRecord, JWidgetRecord> CONTENT_FIELD__CONTENT_FIELD_ID_FKEY = ForeignKeys0.CONTENT_FIELD__CONTENT_FIELD_ID_FKEY;
@@ -315,7 +312,6 @@ public class Keys {
     public static final ForeignKey<JTestItemRecord, JTestItemRecord> TEST_ITEM__TEST_ITEM_RETRY_OF_FKEY = ForeignKeys0.TEST_ITEM__TEST_ITEM_RETRY_OF_FKEY;
     public static final ForeignKey<JTestItemRecord, JLaunchRecord> TEST_ITEM__TEST_ITEM_LAUNCH_ID_FKEY = ForeignKeys0.TEST_ITEM__TEST_ITEM_LAUNCH_ID_FKEY;
     public static final ForeignKey<JTestItemResultsRecord, JTestItemRecord> TEST_ITEM_RESULTS__TEST_ITEM_RESULTS_RESULT_ID_FKEY = ForeignKeys0.TEST_ITEM_RESULTS__TEST_ITEM_RESULTS_RESULT_ID_FKEY;
-    public static final ForeignKey<JUserCreationBidRecord, JProjectRecord> USER_CREATION_BID__USER_CREATION_BID_DEFAULT_PROJECT_ID_FKEY = ForeignKeys0.USER_CREATION_BID__USER_CREATION_BID_DEFAULT_PROJECT_ID_FKEY;
     public static final ForeignKey<JUserPreferenceRecord, JProjectRecord> USER_PREFERENCE__USER_PREFERENCE_PROJECT_ID_FKEY = ForeignKeys0.USER_PREFERENCE__USER_PREFERENCE_PROJECT_ID_FKEY;
     public static final ForeignKey<JUserPreferenceRecord, JUsersRecord> USER_PREFERENCE__USER_PREFERENCE_USER_ID_FKEY = ForeignKeys0.USER_PREFERENCE__USER_PREFERENCE_USER_ID_FKEY;
     public static final ForeignKey<JUserPreferenceRecord, JFilterRecord> USER_PREFERENCE__USER_PREFERENCE_FILTER_ID_FKEY = ForeignKeys0.USER_PREFERENCE__USER_PREFERENCE_FILTER_ID_FKEY;
@@ -445,7 +441,6 @@ public class Keys {
     }
 
     private static class ForeignKeys0 {
-        public static final ForeignKey<JActivityRecord, JUsersRecord> ACTIVITY__ACTIVITY_USER_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.USERS_PK, JActivity.ACTIVITY, "activity__activity_user_id_fkey", JActivity.ACTIVITY.USER_ID);
         public static final ForeignKey<JActivityRecord, JProjectRecord> ACTIVITY__ACTIVITY_PROJECT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JActivity.ACTIVITY, "activity__activity_project_id_fkey", JActivity.ACTIVITY.PROJECT_ID);
         public static final ForeignKey<JApiKeysRecord, JUsersRecord> API_KEYS__API_KEYS_USER_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.USERS_PK, JApiKeys.API_KEYS, "api_keys__api_keys_user_id_fkey", JApiKeys.API_KEYS.USER_ID);
         public static final ForeignKey<JContentFieldRecord, JWidgetRecord> CONTENT_FIELD__CONTENT_FIELD_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.WIDGET_PKEY, JContentField.CONTENT_FIELD, "content_field__content_field_id_fkey", JContentField.CONTENT_FIELD.ID);
@@ -496,7 +491,6 @@ public class Keys {
         public static final ForeignKey<JTestItemRecord, JTestItemRecord> TEST_ITEM__TEST_ITEM_RETRY_OF_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.TEST_ITEM_PK, JTestItem.TEST_ITEM, "test_item__test_item_retry_of_fkey", JTestItem.TEST_ITEM.RETRY_OF);
         public static final ForeignKey<JTestItemRecord, JLaunchRecord> TEST_ITEM__TEST_ITEM_LAUNCH_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.LAUNCH_PK, JTestItem.TEST_ITEM, "test_item__test_item_launch_id_fkey", JTestItem.TEST_ITEM.LAUNCH_ID);
         public static final ForeignKey<JTestItemResultsRecord, JTestItemRecord> TEST_ITEM_RESULTS__TEST_ITEM_RESULTS_RESULT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.TEST_ITEM_PK, JTestItemResults.TEST_ITEM_RESULTS, "test_item_results__test_item_results_result_id_fkey", JTestItemResults.TEST_ITEM_RESULTS.RESULT_ID);
-        public static final ForeignKey<JUserCreationBidRecord, JProjectRecord> USER_CREATION_BID__USER_CREATION_BID_DEFAULT_PROJECT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JUserCreationBid.USER_CREATION_BID, "user_creation_bid__user_creation_bid_default_project_id_fkey", JUserCreationBid.USER_CREATION_BID.DEFAULT_PROJECT_ID);
         public static final ForeignKey<JUserPreferenceRecord, JProjectRecord> USER_PREFERENCE__USER_PREFERENCE_PROJECT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JUserPreference.USER_PREFERENCE, "user_preference__user_preference_project_id_fkey", JUserPreference.USER_PREFERENCE.PROJECT_ID);
         public static final ForeignKey<JUserPreferenceRecord, JUsersRecord> USER_PREFERENCE__USER_PREFERENCE_USER_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.USERS_PK, JUserPreference.USER_PREFERENCE, "user_preference__user_preference_user_id_fkey", JUserPreference.USER_PREFERENCE.USER_ID);
         public static final ForeignKey<JUserPreferenceRecord, JFilterRecord> USER_PREFERENCE__USER_PREFERENCE_FILTER_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.FILTER_PKEY, JUserPreference.USER_PREFERENCE, "user_preference__user_preference_filter_id_fkey", JUserPreference.USER_PREFERENCE.FILTER_ID);

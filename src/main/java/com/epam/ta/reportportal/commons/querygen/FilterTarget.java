@@ -18,11 +18,13 @@ package com.epam.ta.reportportal.commons.querygen;
 
 import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.STATISTICS_KEY;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_ACTION;
-import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_CREATION_DATE;
-import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_ENTITY;
+import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_CREATED_AT;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_LOGIN;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_OBJECT_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_OBJECT_NAME;
+import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_OBJECT_TYPE;
+import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_PRIORITY;
+import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_SUBJECT_TYPE;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_DESCRIPTION;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_END_TIME;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_ID;
@@ -33,6 +35,7 @@ import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteria
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PROJECT;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PROJECT_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_START_TIME;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_SUBJECT_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_USER_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.IntegrationCriteriaConstant.CRITERIA_INTEGRATION_TYPE;
 import static com.epam.ta.reportportal.commons.querygen.constant.IssueCriteriaConstant.CRITERIA_ISSUE_AUTO_ANALYZED;
@@ -137,6 +140,7 @@ import com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConsta
 import com.epam.ta.reportportal.commons.querygen.query.JoinEntity;
 import com.epam.ta.reportportal.commons.querygen.query.QuerySupplier;
 import com.epam.ta.reportportal.entity.activity.Activity;
+import com.epam.ta.reportportal.entity.activity.EventSubject;
 import com.epam.ta.reportportal.entity.dashboard.Dashboard;
 import com.epam.ta.reportportal.entity.enums.LogLevel;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
@@ -1077,36 +1081,48 @@ public enum FilterTarget {
   ACTIVITY_TARGET(Activity.class, Arrays.asList(
 
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ID, ACTIVITY.ID, Long.class).get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ID, ACTIVITY.PROJECT_ID, Long.class)
-          .get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_NAME, PROJECT.NAME, Long.class)
-          .withAggregateCriteria(DSL.max(PROJECT.NAME).toString())
-          .get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_USER_ID, ACTIVITY.USER_ID, Long.class).get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_ENTITY, ACTIVITY.ENTITY, String.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ACTION, ACTIVITY.ACTION, String.class).get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_LOGIN, ACTIVITY.USERNAME, String.class).get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_CREATION_DATE, ACTIVITY.CREATION_DATE,
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_CREATED_AT, ACTIVITY.CREATED_AT,
           Timestamp.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_OBJECT_ID, ACTIVITY.OBJECT_ID, Long.class)
           .get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_OBJECT_NAME, ACTIVITY.OBJECT_NAME,
+              String.class)
+          .get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_OBJECT_TYPE, ACTIVITY.OBJECT_TYPE,
+              String.class)
+          .get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_PRIORITY, ACTIVITY.PRIORITY, String.class)
+          .get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ID, ACTIVITY.PROJECT_ID, Long.class)
+          .get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_SUBJECT_ID, ACTIVITY.SUBJECT_ID, Long.class)
+          .get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_LOGIN, ACTIVITY.SUBJECT_NAME, String.class)
+          .get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_SUBJECT_TYPE, ACTIVITY.SUBJECT_TYPE,
+          String.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_NAME, PROJECT.NAME, Long.class)
+          .withAggregateCriteria(DSL.max(PROJECT.NAME).toString())
+          .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_USER, USERS.LOGIN, String.class)
           .withAggregateCriteria(DSL.max(USERS.LOGIN).toString())
-          .get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_OBJECT_NAME,
-          ACTIVITY.DETAILS + " ->> 'objectName'", String.class).get()
+          .get()
   )) {
     @Override
     protected Collection<? extends SelectField> selectFields() {
       return Lists.newArrayList(ACTIVITY.ID,
-          ACTIVITY.PROJECT_ID,
-          ACTIVITY.USERNAME,
-          ACTIVITY.USER_ID,
-          ACTIVITY.ENTITY,
           ACTIVITY.ACTION,
-          ACTIVITY.CREATION_DATE,
+          ACTIVITY.CREATED_AT,
           ACTIVITY.DETAILS,
           ACTIVITY.OBJECT_ID,
+          ACTIVITY.OBJECT_NAME,
+          ACTIVITY.OBJECT_TYPE,
+          ACTIVITY.PRIORITY,
+          ACTIVITY.PROJECT_ID,
+          ACTIVITY.SUBJECT_ID,
+          ACTIVITY.SUBJECT_NAME,
+          ACTIVITY.SUBJECT_TYPE,
           USERS.LOGIN,
           PROJECT.NAME
       );
@@ -1119,7 +1135,8 @@ public enum FilterTarget {
 
     @Override
     protected void joinTables(QuerySupplier query) {
-      query.addJoin(USERS, JoinType.LEFT_OUTER_JOIN, ACTIVITY.USER_ID.eq(USERS.ID));
+      query.addJoin(USERS, JoinType.LEFT_OUTER_JOIN, ACTIVITY.SUBJECT_ID.eq(USERS.ID))
+          .addCondition(ACTIVITY.SUBJECT_TYPE.eq(EventSubject.USER.toString()));
       query.addJoin(PROJECT, JoinType.JOIN, ACTIVITY.PROJECT_ID.eq(PROJECT.ID));
     }
 
@@ -1322,8 +1339,8 @@ public enum FilterTarget {
   public static final String ATTRIBUTE_ALIAS = "attribute";
   public static final String FILTERED_ID = "id";
 
-  private Class<?> clazz;
-  private List<CriteriaHolder> criteriaHolders;
+  private final Class<?> clazz;
+  private final List<CriteriaHolder> criteriaHolders;
 
   FilterTarget(Class<?> clazz, List<CriteriaHolder> criteriaHolders) {
     this.clazz = clazz;
