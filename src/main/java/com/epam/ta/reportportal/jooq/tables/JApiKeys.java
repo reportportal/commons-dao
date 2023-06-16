@@ -9,6 +9,7 @@ import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.records.JApiKeysRecord;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
@@ -21,7 +22,7 @@ import org.jooq.Identity;
 import org.jooq.Index;
 import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row5;
+import org.jooq.Row6;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -43,7 +44,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JApiKeys extends TableImpl<JApiKeysRecord> {
 
-    private static final long serialVersionUID = 1459363165;
+    private static final long serialVersionUID = -1062577780;
 
     /**
      * The reference instance of <code>public.api_keys</code>
@@ -82,6 +83,11 @@ public class JApiKeys extends TableImpl<JApiKeysRecord> {
      * The column <code>public.api_keys.user_id</code>.
      */
     public final TableField<JApiKeysRecord, Long> USER_ID = createField(DSL.name("user_id"), org.jooq.impl.SQLDataType.BIGINT, this, "");
+
+    /**
+     * The column <code>public.api_keys.last_used_at</code>.
+     */
+    public final TableField<JApiKeysRecord, Date> LAST_USED_AT = createField(DSL.name("last_used_at"), org.jooq.impl.SQLDataType.DATE, this, "");
 
     /**
      * Create a <code>public.api_keys</code> table reference
@@ -177,11 +183,11 @@ public class JApiKeys extends TableImpl<JApiKeysRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row5 type methods
+    // Row6 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row5<Long, String, String, Timestamp, Long> fieldsRow() {
-        return (Row5) super.fieldsRow();
+    public Row6<Long, String, String, Timestamp, Long, Date> fieldsRow() {
+        return (Row6) super.fieldsRow();
     }
 }
