@@ -24,6 +24,7 @@ import org.jooq.impl.DefaultConfiguration;
 import org.jooq.impl.DefaultDSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -60,6 +61,7 @@ import java.util.Properties;
 @EnableJpaRepositories(basePackages = {
 		"com.epam.ta.reportportal.dao" }, repositoryBaseClass = ReportPortalRepositoryImpl.class, repositoryFactoryBeanClass = DatabaseConfiguration.RpRepoFactoryBean.class)
 @EnableTransactionManagement
+@EnableCaching
 public class DatabaseConfiguration {
 
 	@Autowired
