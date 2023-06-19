@@ -29,7 +29,6 @@ public final class GeneralCriteriaConstant {
   public static final String CRITERIA_OWNER = "owner";
   public static final String CRITERIA_PROJECT_ID = "projectId";
   public static final String CRITERIA_USER_ID = "userId";
-  public static final String CRITERIA_SUBJECT_ID = "subjectId";
   public static final String CRITERIA_LAST_MODIFIED = "lastModified";
   public static final String CRITERIA_DESCRIPTION = "description";
   public static final String CRITERIA_PROJECT = "project";

@@ -16,28 +16,44 @@
 
 package com.epam.ta.reportportal.entity.activity;
 
+import java.util.Arrays;
+import java.util.Optional;
+
 public enum EventAction {
-  CREATE,
-  UPDATE,
-  DELETE,
-  BULK_CREATE,
-  BULK_UPDATE,
-  BULK_DELETE,
-  ANALYZE,
-  START,
-  FINISH,
-  POST,
-  LINK_ISSUE,
-  LINK_ISSUE_AA,
-  UNLINK_ISSUE,
-  ASSIGN_PROJECT,
-  UNASSIGN_PROJECT,
-  MATCH,
-  ASSIGN_ROLE,
-  UNASSIGN_ROLE,
-  GENERATE_INDEX,
-  DELETE_INDEX,
-  UPDATE_ANALYZER,
-  UPDATE_PROJECT
+  CREATE("create"),
+  UPDATE("update"),
+  DELETE("delete"),
+  BULK_CREATE("bulkCreate"),
+  BULK_UPDATE("bulkUpdate"),
+  BULK_DELETE("bulkDelete"),
+  ANALYZE("analyze"),
+  START("start"),
+  FINISH("finish"),
+  POST("post"),
+  LINK("link"),
+  UNLINK("unlink"),
+  ASSIGN_PROJECT("assignProject"),
+  UNASSIGN_PROJECT("unassignProject"),
+  GENERATE("generate"),
+  MATCH("match"),
+  ASSIGN_ROLE("assignRole"),
+  UNASSIGN_ROLE("unassignRole");
+
+  private final String value;
+
+  EventAction(String value) {
+    this.value = value;
+  }
+
+  public String getValue() {
+    return value;
+  }
+
+  public static Optional<EventAction> fromString(String string) {
+    return Optional.ofNullable(string)
+        .flatMap(str -> Arrays.stream(values())
+            .filter(it -> it.value.equalsIgnoreCase(str))
+            .findAny());
+  }
 
 }

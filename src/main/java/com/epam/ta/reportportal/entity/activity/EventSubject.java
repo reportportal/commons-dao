@@ -17,8 +17,19 @@
 package com.epam.ta.reportportal.entity.activity;
 
 public enum EventSubject {
-  USER,
-  APPLICATION,
-  RULE,
-  CUSTOM
+  USER("user"),
+  APPLICATION("application"),
+  RULE("rule"),
+  CUSTOM("custom");
+
+  private final String value;
+
+  EventSubject(String value) {
+    this.value = value;
+  }
+
+  public String getValue() {
+    return value;
+  }
+
 }

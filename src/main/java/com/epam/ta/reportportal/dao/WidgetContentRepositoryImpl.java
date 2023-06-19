@@ -855,7 +855,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
         .as(QueryBuilder.newBuilder(filter, collectJoinFields(filter, sort)).with(sort).with(limit)
             .build())
         .select(ACTIVITY.ID,
-            ACTIVITY.ACTION,
+            ACTIVITY.EVENT_NAME,
             ACTIVITY.OBJECT_TYPE,
             ACTIVITY.CREATED_AT,
             ACTIVITY.DETAILS,

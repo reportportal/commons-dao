@@ -38,61 +38,61 @@ public class JApiKeysRecord extends UpdatableRecordImpl<JApiKeysRecord> implemen
     set(0, value);
   }
 
-    /**
-     * Getter for <code>public.api_keys.id</code>.
-     */
-    public Long getId() {
-        return (Long) get(0);
-    }
+  /**
+   * Getter for <code>public.api_keys.id</code>.
+   */
+  public Long getId() {
+    return (Long) get(0);
+  }
 
-    /**
-     * Setter for <code>public.api_keys.name</code>.
-     */
-    public void setName(String value) {
-        set(1, value);
-    }
+  /**
+   * Setter for <code>public.api_keys.name</code>.
+   */
+  public void setName(String value) {
+    set(1, value);
+  }
 
-    /**
-     * Getter for <code>public.api_keys.name</code>.
-     */
-    public String getName() {
-        return (String) get(1);
-    }
+  /**
+   * Getter for <code>public.api_keys.name</code>.
+   */
+  public String getName() {
+    return (String) get(1);
+  }
 
-    /**
-     * Setter for <code>public.api_keys.hash</code>.
-     */
-    public void setHash(String value) {
-        set(2, value);
-    }
+  /**
+   * Setter for <code>public.api_keys.hash</code>.
+   */
+  public void setHash(String value) {
+    set(2, value);
+  }
 
-    /**
-     * Getter for <code>public.api_keys.hash</code>.
-     */
-    public String getHash() {
-        return (String) get(2);
-    }
+  /**
+   * Getter for <code>public.api_keys.hash</code>.
+   */
+  public String getHash() {
+    return (String) get(2);
+  }
 
-    /**
-     * Setter for <code>public.api_keys.created_at</code>.
-     */
-    public void setCreatedAt(Timestamp value) {
-        set(3, value);
-    }
+  /**
+   * Setter for <code>public.api_keys.created_at</code>.
+   */
+  public void setCreatedAt(Timestamp value) {
+    set(3, value);
+  }
 
-    /**
-     * Getter for <code>public.api_keys.created_at</code>.
-     */
-    public Timestamp getCreatedAt() {
-        return (Timestamp) get(3);
-    }
+  /**
+   * Getter for <code>public.api_keys.created_at</code>.
+   */
+  public Timestamp getCreatedAt() {
+    return (Timestamp) get(3);
+  }
 
-    /**
-     * Setter for <code>public.api_keys.user_id</code>.
-     */
-    public void setUserId(Long value) {
-      set(4, value);
-    }
+  /**
+   * Setter for <code>public.api_keys.user_id</code>.
+   */
+  public void setUserId(Long value) {
+    set(4, value);
+  }
 
   /**
    * Getter for <code>public.api_keys.user_id</code>.
@@ -140,23 +140,23 @@ public class JApiKeysRecord extends UpdatableRecordImpl<JApiKeysRecord> implemen
 
   @Override
   public Field<Long> field1() {
-        return JApiKeys.API_KEYS.ID;
-    }
+    return JApiKeys.API_KEYS.ID;
+  }
 
-    @Override
-    public Field<String> field2() {
-        return JApiKeys.API_KEYS.NAME;
-    }
+  @Override
+  public Field<String> field2() {
+    return JApiKeys.API_KEYS.NAME;
+  }
 
-    @Override
-    public Field<String> field3() {
-        return JApiKeys.API_KEYS.HASH;
-    }
+  @Override
+  public Field<String> field3() {
+    return JApiKeys.API_KEYS.HASH;
+  }
 
-    @Override
-    public Field<Timestamp> field4() {
-      return JApiKeys.API_KEYS.CREATED_AT;
-    }
+  @Override
+  public Field<Timestamp> field4() {
+    return JApiKeys.API_KEYS.CREATED_AT;
+  }
 
   @Override
   public Field<Long> field5() {
@@ -180,13 +180,13 @@ public class JApiKeysRecord extends UpdatableRecordImpl<JApiKeysRecord> implemen
 
   @Override
   public String component3() {
-        return getHash();
-    }
+    return getHash();
+  }
 
-    @Override
-    public Timestamp component4() {
-      return getCreatedAt();
-    }
+  @Override
+  public Timestamp component4() {
+    return getCreatedAt();
+  }
 
   @Override
   public Long component5() {
@@ -210,13 +210,13 @@ public class JApiKeysRecord extends UpdatableRecordImpl<JApiKeysRecord> implemen
 
   @Override
   public String value3() {
-        return getHash();
-    }
+    return getHash();
+  }
 
-    @Override
-    public Timestamp value4() {
-      return getCreatedAt();
-    }
+  @Override
+  public Timestamp value4() {
+    return getCreatedAt();
+  }
 
   @Override
   public Long value5() {
@@ -238,19 +238,19 @@ public class JApiKeysRecord extends UpdatableRecordImpl<JApiKeysRecord> implemen
   public JApiKeysRecord value2(String value) {
     setName(value);
     return this;
-    }
+  }
 
-    @Override
-    public JApiKeysRecord value3(String value) {
-        setHash(value);
-        return this;
-    }
+  @Override
+  public JApiKeysRecord value3(String value) {
+    setHash(value);
+    return this;
+  }
 
-    @Override
-    public JApiKeysRecord value4(Timestamp value) {
-        setCreatedAt(value);
-        return this;
-    }
+  @Override
+  public JApiKeysRecord value4(Timestamp value) {
+    setCreatedAt(value);
+    return this;
+  }
 
   @Override
   public JApiKeysRecord value5(Long value) {
@@ -278,14 +278,14 @@ public class JApiKeysRecord extends UpdatableRecordImpl<JApiKeysRecord> implemen
 
   // -------------------------------------------------------------------------
   // Constructors
-    // -------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
 
-    /**
-     * Create a detached JApiKeysRecord
-     */
-    public JApiKeysRecord() {
-        super(JApiKeys.API_KEYS);
-    }
+  /**
+   * Create a detached JApiKeysRecord
+   */
+  public JApiKeysRecord() {
+    super(JApiKeys.API_KEYS);
+  }
 
   /**
    * Create a detached, initialised JApiKeysRecord

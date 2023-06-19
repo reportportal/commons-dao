@@ -10,8 +10,8 @@ import javax.annotation.processing.Generated;
 import org.jooq.Field;
 import org.jooq.JSONB;
 import org.jooq.Record1;
-import org.jooq.Record12;
-import org.jooq.Row12;
+import org.jooq.Record13;
+import org.jooq.Row13;
 import org.jooq.impl.UpdatableRecordImpl;
 
 
@@ -27,9 +27,9 @@ import org.jooq.impl.UpdatableRecordImpl;
 )
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public class JActivityRecord extends UpdatableRecordImpl<JActivityRecord> implements
-    Record12<Long, Timestamp, String, String, Long, String, String, Long, JSONB, Long, String, String> {
+    Record13<Long, Timestamp, String, String, String, Long, String, String, Long, JSONB, Long, String, String> {
 
-  private static final long serialVersionUID = -778756158;
+  private static final long serialVersionUID = 1950403337;
 
   /**
    * Setter for <code>public.activity.id</code>.
@@ -38,19 +38,19 @@ public class JActivityRecord extends UpdatableRecordImpl<JActivityRecord> implem
     set(0, value);
   }
 
-    /**
-     * Getter for <code>public.activity.id</code>.
-     */
-    public Long getId() {
-        return (Long) get(0);
-    }
+  /**
+   * Getter for <code>public.activity.id</code>.
+   */
+  public Long getId() {
+    return (Long) get(0);
+  }
 
-    /**
-     * Setter for <code>public.activity.created_at</code>.
-     */
-    public void setCreatedAt(Timestamp value) {
-      set(1, value);
-    }
+  /**
+   * Setter for <code>public.activity.created_at</code>.
+   */
+  public void setCreatedAt(Timestamp value) {
+    set(1, value);
+  }
 
   /**
    * Getter for <code>public.activity.created_at</code>.
@@ -74,211 +74,230 @@ public class JActivityRecord extends UpdatableRecordImpl<JActivityRecord> implem
   }
 
   /**
+   * Setter for <code>public.activity.event_name</code>.
+   */
+  public void setEventName(String value) {
+    set(3, value);
+  }
+
+  /**
+   * Getter for <code>public.activity.event_name</code>.
+   */
+  public String getEventName() {
+    return (String) get(3);
+  }
+
+  /**
    * Setter for <code>public.activity.priority</code>.
    */
   public void setPriority(String value) {
-    set(3, value);
+    set(4, value);
   }
 
   /**
    * Getter for <code>public.activity.priority</code>.
    */
   public String getPriority() {
-    return (String) get(3);
+    return (String) get(4);
   }
 
   /**
    * Setter for <code>public.activity.object_id</code>.
    */
   public void setObjectId(Long value) {
-    set(4, value);
+    set(5, value);
   }
 
   /**
    * Getter for <code>public.activity.object_id</code>.
    */
   public Long getObjectId() {
-    return (Long) get(4);
+    return (Long) get(5);
   }
 
   /**
    * Setter for <code>public.activity.object_name</code>.
    */
   public void setObjectName(String value) {
-    set(5, value);
+    set(6, value);
   }
 
   /**
    * Getter for <code>public.activity.object_name</code>.
    */
   public String getObjectName() {
-    return (String) get(5);
+    return (String) get(6);
   }
 
   /**
    * Setter for <code>public.activity.object_type</code>.
    */
   public void setObjectType(String value) {
-    set(6, value);
+    set(7, value);
   }
 
   /**
    * Getter for <code>public.activity.object_type</code>.
    */
   public String getObjectType() {
-    return (String) get(6);
+    return (String) get(7);
   }
 
   /**
    * Setter for <code>public.activity.project_id</code>.
    */
   public void setProjectId(Long value) {
-    set(7, value);
+    set(8, value);
   }
 
   /**
    * Getter for <code>public.activity.project_id</code>.
    */
-    public Long getProjectId() {
-        return (Long) get(7);
-    }
+  public Long getProjectId() {
+    return (Long) get(8);
+  }
 
-    /**
-     * Setter for <code>public.activity.details</code>.
-     */
-    public void setDetails(JSONB value) {
-      set(8, value);
-    }
+  /**
+   * Setter for <code>public.activity.details</code>.
+   */
+  public void setDetails(JSONB value) {
+    set(9, value);
+  }
 
   /**
    * Getter for <code>public.activity.details</code>.
    */
   public JSONB getDetails() {
-    return (JSONB) get(8);
+    return (JSONB) get(9);
   }
 
   /**
    * Setter for <code>public.activity.subject_id</code>.
    */
   public void setSubjectId(Long value) {
-    set(9, value);
+    set(10, value);
   }
 
   /**
    * Getter for <code>public.activity.subject_id</code>.
    */
   public Long getSubjectId() {
-    return (Long) get(9);
+    return (Long) get(10);
   }
 
   /**
    * Setter for <code>public.activity.subject_name</code>.
    */
   public void setSubjectName(String value) {
-    set(10, value);
+    set(11, value);
   }
 
   /**
    * Getter for <code>public.activity.subject_name</code>.
    */
   public String getSubjectName() {
-    return (String) get(10);
+    return (String) get(11);
   }
 
   /**
    * Setter for <code>public.activity.subject_type</code>.
    */
   public void setSubjectType(String value) {
-    set(11, value);
+    set(12, value);
   }
 
   /**
    * Getter for <code>public.activity.subject_type</code>.
    */
   public String getSubjectType() {
-    return (String) get(11);
+    return (String) get(12);
   }
 
   // -------------------------------------------------------------------------
-    // Primary key information
-    // -------------------------------------------------------------------------
-
-    @Override
-    public Record1<Long> key() {
-        return (Record1) super.key();
-    }
-
-    // -------------------------------------------------------------------------
-  // Record12 type implementation
+  // Primary key information
   // -------------------------------------------------------------------------
 
   @Override
-  public Row12<Long, Timestamp, String, String, Long, String, String, Long, JSONB, Long, String, String> fieldsRow() {
-    return (Row12) super.fieldsRow();
+  public Record1<Long> key() {
+    return (Record1) super.key();
+  }
+
+  // -------------------------------------------------------------------------
+  // Record13 type implementation
+  // -------------------------------------------------------------------------
+
+  @Override
+  public Row13<Long, Timestamp, String, String, String, Long, String, String, Long, JSONB, Long, String, String> fieldsRow() {
+    return (Row13) super.fieldsRow();
   }
 
   @Override
-  public Row12<Long, Timestamp, String, String, Long, String, String, Long, JSONB, Long, String, String> valuesRow() {
-    return (Row12) super.valuesRow();
+  public Row13<Long, Timestamp, String, String, String, Long, String, String, Long, JSONB, Long, String, String> valuesRow() {
+    return (Row13) super.valuesRow();
   }
 
   @Override
   public Field<Long> field1() {
     return JActivity.ACTIVITY.ID;
-    }
+  }
 
-    @Override
-    public Field<Timestamp> field2() {
-        return JActivity.ACTIVITY.CREATED_AT;
-    }
+  @Override
+  public Field<Timestamp> field2() {
+    return JActivity.ACTIVITY.CREATED_AT;
+  }
 
   @Override
   public Field<String> field3() {
     return JActivity.ACTIVITY.ACTION;
-    }
-
-    @Override
-    public Field<String> field4() {
-      return JActivity.ACTIVITY.PRIORITY;
-    }
+  }
 
   @Override
-  public Field<Long> field5() {
+  public Field<String> field4() {
+    return JActivity.ACTIVITY.EVENT_NAME;
+  }
+
+  @Override
+  public Field<String> field5() {
+    return JActivity.ACTIVITY.PRIORITY;
+  }
+
+  @Override
+  public Field<Long> field6() {
     return JActivity.ACTIVITY.OBJECT_ID;
   }
 
   @Override
-  public Field<String> field6() {
+  public Field<String> field7() {
     return JActivity.ACTIVITY.OBJECT_NAME;
   }
 
   @Override
-  public Field<String> field7() {
+  public Field<String> field8() {
     return JActivity.ACTIVITY.OBJECT_TYPE;
   }
 
   @Override
-  public Field<Long> field8() {
+  public Field<Long> field9() {
     return JActivity.ACTIVITY.PROJECT_ID;
   }
 
   @Override
-  public Field<JSONB> field9() {
+  public Field<JSONB> field10() {
     return JActivity.ACTIVITY.DETAILS;
   }
 
   @Override
-  public Field<Long> field10() {
+  public Field<Long> field11() {
     return JActivity.ACTIVITY.SUBJECT_ID;
   }
 
   @Override
-  public Field<String> field11() {
+  public Field<String> field12() {
     return JActivity.ACTIVITY.SUBJECT_NAME;
   }
 
   @Override
-  public Field<String> field12() {
+  public Field<String> field13() {
     return JActivity.ACTIVITY.SUBJECT_TYPE;
   }
 
@@ -295,50 +314,55 @@ public class JActivityRecord extends UpdatableRecordImpl<JActivityRecord> implem
   @Override
   public String component3() {
     return getAction();
-    }
-
-    @Override
-    public String component4() {
-      return getPriority();
-    }
+  }
 
   @Override
-  public Long component5() {
+  public String component4() {
+    return getEventName();
+  }
+
+  @Override
+  public String component5() {
+    return getPriority();
+  }
+
+  @Override
+  public Long component6() {
     return getObjectId();
   }
 
   @Override
-  public String component6() {
+  public String component7() {
     return getObjectName();
   }
 
   @Override
-  public String component7() {
+  public String component8() {
     return getObjectType();
   }
 
   @Override
-  public Long component8() {
+  public Long component9() {
     return getProjectId();
   }
 
   @Override
-  public JSONB component9() {
+  public JSONB component10() {
     return getDetails();
   }
 
   @Override
-  public Long component10() {
+  public Long component11() {
     return getSubjectId();
   }
 
   @Override
-  public String component11() {
+  public String component12() {
     return getSubjectName();
   }
 
   @Override
-  public String component12() {
+  public String component13() {
     return getSubjectType();
   }
 
@@ -355,50 +379,55 @@ public class JActivityRecord extends UpdatableRecordImpl<JActivityRecord> implem
   @Override
   public String value3() {
     return getAction();
-    }
-
-    @Override
-    public String value4() {
-      return getPriority();
-    }
+  }
 
   @Override
-  public Long value5() {
+  public String value4() {
+    return getEventName();
+  }
+
+  @Override
+  public String value5() {
+    return getPriority();
+  }
+
+  @Override
+  public Long value6() {
     return getObjectId();
   }
 
   @Override
-  public String value6() {
+  public String value7() {
     return getObjectName();
   }
 
   @Override
-  public String value7() {
+  public String value8() {
     return getObjectType();
   }
 
   @Override
-  public Long value8() {
+  public Long value9() {
     return getProjectId();
   }
 
   @Override
-  public JSONB value9() {
+  public JSONB value10() {
     return getDetails();
   }
 
   @Override
-  public Long value10() {
+  public Long value11() {
     return getSubjectId();
   }
 
   @Override
-  public String value11() {
+  public String value12() {
     return getSubjectName();
   }
 
   @Override
-  public String value12() {
+  public String value13() {
     return getSubjectType();
   }
 
@@ -416,68 +445,74 @@ public class JActivityRecord extends UpdatableRecordImpl<JActivityRecord> implem
 
   @Override
   public JActivityRecord value3(String value) {
-        setAction(value);
-        return this;
-    }
-
-    @Override
-    public JActivityRecord value4(String value) {
-      setPriority(value);
-      return this;
-    }
+    setAction(value);
+    return this;
+  }
 
   @Override
-  public JActivityRecord value5(Long value) {
+  public JActivityRecord value4(String value) {
+    setEventName(value);
+    return this;
+  }
+
+  @Override
+  public JActivityRecord value5(String value) {
+    setPriority(value);
+    return this;
+  }
+
+  @Override
+  public JActivityRecord value6(Long value) {
     setObjectId(value);
     return this;
   }
 
   @Override
-  public JActivityRecord value6(String value) {
+  public JActivityRecord value7(String value) {
     setObjectName(value);
     return this;
   }
 
   @Override
-  public JActivityRecord value7(String value) {
+  public JActivityRecord value8(String value) {
     setObjectType(value);
     return this;
   }
 
   @Override
-  public JActivityRecord value8(Long value) {
+  public JActivityRecord value9(Long value) {
     setProjectId(value);
     return this;
   }
 
   @Override
-  public JActivityRecord value9(JSONB value) {
+  public JActivityRecord value10(JSONB value) {
     setDetails(value);
     return this;
   }
 
   @Override
-  public JActivityRecord value10(Long value) {
+  public JActivityRecord value11(Long value) {
     setSubjectId(value);
     return this;
   }
 
   @Override
-  public JActivityRecord value11(String value) {
+  public JActivityRecord value12(String value) {
     setSubjectName(value);
     return this;
   }
 
   @Override
-  public JActivityRecord value12(String value) {
+  public JActivityRecord value13(String value) {
     setSubjectType(value);
     return this;
   }
 
   @Override
   public JActivityRecord values(Long value1, Timestamp value2, String value3, String value4,
-      Long value5, String value6, String value7, Long value8, JSONB value9, Long value10,
-      String value11, String value12) {
+      String value5, Long value6, String value7, String value8, Long value9, JSONB value10,
+      Long value11, String value12, String value13) {
     value1(value1);
     value2(value2);
     value3(value3);
@@ -490,39 +525,41 @@ public class JActivityRecord extends UpdatableRecordImpl<JActivityRecord> implem
     value10(value10);
     value11(value11);
     value12(value12);
+    value13(value13);
     return this;
   }
 
   // -------------------------------------------------------------------------
-    // Constructors
-    // -------------------------------------------------------------------------
+  // Constructors
+  // -------------------------------------------------------------------------
 
-    /**
-     * Create a detached JActivityRecord
-     */
-    public JActivityRecord() {
-        super(JActivity.ACTIVITY);
-    }
+  /**
+   * Create a detached JActivityRecord
+   */
+  public JActivityRecord() {
+    super(JActivity.ACTIVITY);
+  }
 
   /**
    * Create a detached, initialised JActivityRecord
    */
-  public JActivityRecord(Long id, Timestamp createdAt, String action, String priority,
-      Long objectId, String objectName, String objectType, Long projectId, JSONB details,
-      Long subjectId, String subjectName, String subjectType) {
+  public JActivityRecord(Long id, Timestamp createdAt, String action, String eventName,
+      String priority, Long objectId, String objectName, String objectType, Long projectId,
+      JSONB details, Long subjectId, String subjectName, String subjectType) {
     super(JActivity.ACTIVITY);
 
     set(0, id);
     set(1, createdAt);
     set(2, action);
-    set(3, priority);
-    set(4, objectId);
-    set(5, objectName);
-    set(6, objectType);
-    set(7, projectId);
-    set(8, details);
-    set(9, subjectId);
-    set(10, subjectName);
-    set(11, subjectType);
+    set(3, eventName);
+    set(4, priority);
+    set(5, objectId);
+    set(6, objectName);
+    set(7, objectType);
+    set(8, projectId);
+    set(9, details);
+    set(10, subjectId);
+    set(11, subjectName);
+    set(12, subjectType);
   }
 }

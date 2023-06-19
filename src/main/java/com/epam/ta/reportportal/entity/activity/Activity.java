@@ -45,12 +45,15 @@ public class Activity implements Serializable {
   @Column(name = "id", unique = true, nullable = false, precision = 64)
   private Long id;
 
-  @Column(name = "created_at")
+  @Column(name = "created_at", nullable = false)
   private LocalDateTime createdAt;
 
   @Column(name = "action", nullable = false)
   @Enumerated(EnumType.STRING)
   private EventAction action;
+
+  @Column(name = "event_name", nullable = false)
+  private String eventName;
 
   @Column(name = "priority", nullable = false)
   @Enumerated(EnumType.STRING)
@@ -59,14 +62,14 @@ public class Activity implements Serializable {
   @Column(name = "object_id")
   private Long objectId;
 
-  @Column(name = "object_name")
+  @Column(name = "object_name", nullable = false)
   private String objectName;
 
   @Enumerated(EnumType.STRING)
   @Column(name = "object_type", nullable = false)
   private EventObject objectType;
 
-  @Column(name = "project_id", nullable = false)
+  @Column(name = "project_id")
   private Long projectId;
 
   @Column(name = "details")
@@ -76,7 +79,7 @@ public class Activity implements Serializable {
   @Column(name = "subject_id", precision = 32)
   private Long subjectId;
 
-  @Column(name = "subject_name")
+  @Column(name = "subject_name", nullable = false)
   private String subjectName;
 
   @Enumerated(EnumType.STRING)
@@ -105,6 +108,14 @@ public class Activity implements Serializable {
 
   public void setAction(EventAction action) {
     this.action = action;
+  }
+
+  public String getEventName() {
+    return eventName;
+  }
+
+  public void setEventName(String eventName) {
+    this.eventName = eventName;
   }
 
   public EventPriority getPriority() {

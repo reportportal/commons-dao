@@ -18,20 +18,30 @@ package com.epam.ta.reportportal.entity.activity;
 
 public enum EventObject {
 
-  LAUNCH,
-  ITEM,
-  DASHBOARD,
-  DEFECT_TYPE,
-  EMAIL_CONFIG,
-  FILTER,
-  IMPORT,
-  INTEGRATION,
-  ITEM_ISSUE,
-  PROJECT,
-  SHARING,
-  TICKET,
-  USER,
-  WIDGET,
-  PATTERN
+  LAUNCH("launch"),
+  ITEM("item"),
+  DASHBOARD("dashboard"),
+  DEFECT_TYPE("defectType"),
+  EMAIL_CONFIG("emailConfig"),
+  FILTER("filter"),
+  IMPORT("import"),
+  INTEGRATION("integration"),
+  ITEM_ISSUE("itemIssue"),
+  PROJECT("project"),
+  SHARING("sharing"),
+  TICKET("ticket"),
+  USER("user"),
+  WIDGET("widget"),
+  PATTERN("pattern");
+
+  private final String value;
+
+  EventObject(String value) {
+    this.value = value;
+  }
+
+  public String getValue() {
+    return value;
+  }
 
 }

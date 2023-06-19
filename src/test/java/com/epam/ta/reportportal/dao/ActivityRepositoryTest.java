@@ -270,6 +270,7 @@ class ActivityRepositoryTest extends BaseTest {
   private Activity generateActivity() {
     Activity activity = new Activity();
     activity.setAction(EventAction.CREATE);
+    activity.setEventName("createDefect");
     activity.setCreatedAt(LocalDateTime.now());
     activity.setDetails(new ActivityDetails());
     activity.setObjectId(11L);

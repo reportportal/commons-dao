@@ -410,6 +410,7 @@ public class RecordMappers {
     activity.setId(r.get(ACTIVITY.ID));
     activity.setCreatedAt(r.get(ACTIVITY.CREATED_AT, LocalDateTime.class));
     activity.setAction(EventAction.valueOf(r.get(ACTIVITY.ACTION)));
+    activity.setEventName(r.get(ACTIVITY.EVENT_NAME));
     activity.setPriority(EventPriority.valueOf(r.get(ACTIVITY.PRIORITY)));
     activity.setObjectId(r.get(ACTIVITY.OBJECT_ID));
     activity.setObjectName(r.get(ACTIVITY.OBJECT_NAME));

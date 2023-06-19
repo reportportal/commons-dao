@@ -18,10 +18,20 @@ package com.epam.ta.reportportal.entity.activity;
 
 public enum EventPriority {
 
-  CRITICAL,
-  HIGH,
-  MEDIUM,
-  LOW,
-  INFO
+  CRITICAL("critical"),
+  HIGH("high"),
+  MEDIUM("medium"),
+  LOW("low"),
+  INFO("info");
+
+  private final String value;
+
+  EventPriority(String value) {
+    this.value = value;
+  }
+
+  public String getValue() {
+    return value;
+  }
 
 }
