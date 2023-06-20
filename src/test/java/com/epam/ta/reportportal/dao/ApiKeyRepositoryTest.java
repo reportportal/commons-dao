@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.dao;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.epam.ta.reportportal.BaseTest;
@@ -24,6 +25,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Andrei Piankouski
@@ -34,6 +36,7 @@ public class ApiKeyRepositoryTest extends BaseTest {
   private ApiKeyRepository apiKeyRepository;
 
   @Test
+  @Transactional
   void shouldInsertAndSetId() {
     final ApiKey apiKey = new ApiKey();
     apiKey.setName("ApiKey");
@@ -47,4 +50,22 @@ public class ApiKeyRepositoryTest extends BaseTest {
     assertNotNull(saved.getId());
   }
 
+  @Test
+  @Transactional
+  void shouldUpdateLastUsedAt() {
+    final ApiKey apiKey = new ApiKey();
+    apiKey.setName("ApiKey");
+    String hash = "8743b52063cd84097a65d1633f5c74f5";
+    apiKey.setHash(hash);
+    apiKey.setCreatedAt(LocalDateTime.now());
+    apiKey.setUserId(1L);
+
+    LocalDate today = LocalDate.now();
+
+    ApiKey savedApiKey = apiKeyRepository.save(apiKey);
+
+    ApiKey updatedApiKey = apiKeyRepository.updateLastUsedAt(savedApiKey.getId(), hash, today);
+
+    assertEquals(updatedApiKey.getLastUsedAt(), today);
+  }
 }
