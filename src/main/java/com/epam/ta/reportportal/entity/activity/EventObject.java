@@ -32,8 +32,8 @@ public enum EventObject {
   TICKET("ticket"),
   USER("user"),
   WIDGET("widget"),
-  PATTERN("pattern");
-
+  PATTERN("pattern"),
+  INDEX("index");
   private final String value;
 
   EventObject(String value) {
