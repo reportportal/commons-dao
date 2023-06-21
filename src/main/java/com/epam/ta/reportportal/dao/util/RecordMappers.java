@@ -396,6 +396,7 @@ public class RecordMappers {
 		final ProjectRole projectRole = r.into(PROJECT_USER.PROJECT_ROLE).into(ProjectRole.class);
 		return new ReportPortalUser.ProjectDetails(projectId, projectName, projectRole);
 	};
+
 	public static final RecordMapper<? super Record, Activity> ACTIVITY_MAPPER = r -> {
 		Activity activity = new Activity();
 		activity.setId(r.get(ACTIVITY.ID));
