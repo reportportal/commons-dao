@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.entity.user.ApiKey;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,7 @@ public class ApiKeyRepositoryTest extends BaseTest {
     apiKey.setHash("8743b52063cd84097a65d1633f5c74f5");
     apiKey.setCreatedAt(LocalDateTime.now());
     apiKey.setUserId(1L);
+    apiKey.setLastUsedAt(LocalDate.now());
 
     ApiKey saved = apiKeyRepository.save(apiKey);
 

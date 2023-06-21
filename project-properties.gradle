@@ -69,7 +69,8 @@ project.ext {
             (migrationsUrl + '/migrations/61_remove_acl.up.sql')                       : 'V061__remove_acl.sql',
             (migrationsUrl + '/migrations/62_remove_dashboard_cascade_drop.up.sql')    : 'V062__remove_dashboard_cascade_drop.sql',
             (migrationsUrl + '/migrations/67_api_keys.up.sql')                         : 'V067__api_keys.sql',
-            (migrationsUrl + '/migrations/68_replace_activity_table.up.sql')           : 'V068__replace_activity_table.sql',
+            (migrationsUrl + '/migrations/68_api_key_last_used_at.up.sql')             : 'V068__api_key_last_used_at.up.sql',
+            (migrationsUrl + '/migrations/69_replace_activity_table.up.sql')           : 'V069__replace_activity_table.sql',
 
     ]
     excludeTests = [
