@@ -128,8 +128,7 @@ import org.jooq.Result;
  */
 public class RecordMappers {
 
-	public static final RecordMapper<? super Record, OwnedEntity> OWNED_ENTITY_RECORD_MAPPER = r -> r.into(
-			OwnedEntity.class);
+	private static final ObjectMapper objectMapper;
 
 	static {
 		objectMapper = new ObjectMapper();
@@ -397,7 +396,6 @@ public class RecordMappers {
 		final ProjectRole projectRole = r.into(PROJECT_USER.PROJECT_ROLE).into(ProjectRole.class);
 		return new ReportPortalUser.ProjectDetails(projectId, projectName, projectRole);
 	};
-	private static final ObjectMapper objectMapper;
 	public static final RecordMapper<? super Record, Activity> ACTIVITY_MAPPER = r -> {
 		Activity activity = new Activity();
 		activity.setId(r.get(ACTIVITY.ID));
@@ -423,6 +421,10 @@ public class RecordMappers {
 		activity.setSubjectType(EventSubject.valueOf(r.get(ACTIVITY.SUBJECT_TYPE)));
 		return activity;
 	};
+
+	public static final RecordMapper<? super Record, OwnedEntity> OWNED_ENTITY_RECORD_MAPPER = r -> r.into(
+			OwnedEntity.class);
+
 	private static final BiConsumer<Widget, ? super Record> WIDGET_USER_FILTER_MAPPER = (widget, res) -> ofNullable(
 			res.get(FILTER.ID)).ifPresent(
 			id -> {
