@@ -317,6 +317,6 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 			@Param("launchId") Long launchId, @Param("parentId") Long parentId);
 
 	@Query(value = "SELECT t.name FROM test_item t WHERE t.item_id = :itemId", nativeQuery = true)
-	Optional<String> findItemNameByItemId(String itemId);
+	Optional<String> findItemNameByItemId(Long itemId);
 
 }
