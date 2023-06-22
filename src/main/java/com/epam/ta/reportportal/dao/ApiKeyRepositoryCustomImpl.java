@@ -7,7 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.transaction.annotation.Transactional;
 
-public class ApiKeyRepositoryCustomImpl implements ApiKeyRepositoryCustom{
+/**
+ * ApiKey repository custom method's implementation.
+ *
+ * @author Ivan_Kustau
+ */
+public class ApiKeyRepositoryCustomImpl implements ApiKeyRepositoryCustom {
 
   @Autowired
   private EntityManager entityManager;

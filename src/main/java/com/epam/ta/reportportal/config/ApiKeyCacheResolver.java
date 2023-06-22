@@ -2,6 +2,8 @@ package com.epam.ta.reportportal.config;
 
 import com.epam.ta.reportportal.dao.ApiKeyRepository;
 import com.epam.ta.reportportal.entity.user.ApiKey;
+import java.util.ArrayList;
+import java.util.Collection;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.interceptor.CacheOperationInvocationContext;
@@ -9,9 +11,11 @@ import org.springframework.cache.interceptor.CacheResolver;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
+/**
+ * Component for resolving {@link ApiKey} cache by {@link ApiKey#id} field.
+ *
+ * @author Ivan_Kustau
+ */
 @Component("apiKeyCacheResolver")
 public class ApiKeyCacheResolver implements CacheResolver {
 
