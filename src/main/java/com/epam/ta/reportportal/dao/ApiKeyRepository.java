@@ -17,19 +17,20 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.user.ApiKey;
-import java.time.LocalDate;
 import java.util.List;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Repository;
 
 /**
  * ApiKey Repository
  *
  * @author Andrei Piankouski
  */
-public interface ApiKeyRepository extends ReportPortalRepository<ApiKey, Long> {
+@Repository
+public interface ApiKeyRepository
+    extends ReportPortalRepository<ApiKey, Long>, ApiKeyRepositoryCustom {
 
   /**
    * @param hash hash of api key
@@ -51,13 +52,7 @@ public interface ApiKeyRepository extends ReportPortalRepository<ApiKey, Long> {
    */
   List<ApiKey> findByUserId(Long userId);
 
-  /**
-   * Update lastUsedAt for apiKey
-   *
-   * @param id         id of the ApiKey to update
-   * @param lastUsedAt {@link LocalDate}
-   */
-  @Modifying
-  @Query("UPDATE ApiKey ak SET ak.lastUsedAt = :lastUsedAt WHERE ak.id = :id")
-  void updateLastUsedAt(@Param("id") Long id, @Param("lastUsedAt") LocalDate lastUsedAt);
+  @CacheEvict(value = "apiKeyCache", cacheResolver = "apiKeyCacheResolver")
+  @Override
+  void deleteById(@NonNull Long id);
 }
