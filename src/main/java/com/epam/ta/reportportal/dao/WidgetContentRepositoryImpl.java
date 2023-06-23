@@ -784,15 +784,16 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
         .as(QueryBuilder.newBuilder(filter, collectJoinFields(filter, sort)).with(sort).with(limit)
             .build())
 				.select(ACTIVITY.ID,
-            ACTIVITY.EVENT_NAME,
-            ACTIVITY.OBJECT_TYPE,
-            ACTIVITY.CREATED_AT,
-            ACTIVITY.DETAILS,
-            ACTIVITY.PROJECT_ID,
-            ACTIVITY.OBJECT_ID,
-            USERS.LOGIN,
-            PROJECT.NAME
-        )
+						ACTIVITY.EVENT_NAME,
+						ACTIVITY.OBJECT_TYPE,
+						ACTIVITY.CREATED_AT,
+						ACTIVITY.DETAILS,
+						ACTIVITY.PROJECT_ID,
+						ACTIVITY.OBJECT_ID,
+						ACTIVITY.OBJECT_NAME,
+						USERS.LOGIN,
+						PROJECT.NAME
+				)
         .from(ACTIVITY)
         .join(ACTIVITIES)
         .on(fieldName(ACTIVITIES, ID).cast(Long.class).eq(ACTIVITY.ID))
