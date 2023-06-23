@@ -248,6 +248,7 @@ public class WidgetContentUtil {
 		activityResource.setProjectName(r.get(PROJECT.NAME));
 		activityResource.setActionType(r.get(ACTIVITY.EVENT_NAME));
 		activityResource.setObjectType(r.get(ACTIVITY.OBJECT_TYPE));
+		activityResource.setObjectName(r.get(ACTIVITY.OBJECT_NAME));
 		activityResource.setLastModified(
 				TO_DATE.apply(r.get(ACTIVITY.CREATED_AT, LocalDateTime.class)));
 		activityResource.setLoggedObjectId(r.get(ACTIVITY.OBJECT_ID));
