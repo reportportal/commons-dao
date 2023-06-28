@@ -8,12 +8,9 @@ import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.records.JOwnedEntityRecord;
-
 import java.util.Arrays;
 import java.util.List;
-
 import javax.annotation.processing.Generated;
-
 import org.jooq.Field;
 import org.jooq.ForeignKey;
 import org.jooq.Identity;
@@ -42,41 +39,43 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JOwnedEntity extends TableImpl<JOwnedEntityRecord> {
 
-    private static final long serialVersionUID = 360970636;
+    private static final long serialVersionUID = 1859921375;
 
     /**
      * The reference instance of <code>public.owned_entity</code>
      */
     public static final JOwnedEntity OWNED_ENTITY = new JOwnedEntity();
+  /**
+   * The column <code>public.owned_entity.id</code>.
+   */
+  public final TableField<JOwnedEntityRecord, Long> ID = createField(DSL.name("id"),
+      org.jooq.impl.SQLDataType.BIGINT.nullable(false).defaultValue(
+          org.jooq.impl.DSL.field("nextval('shareable_entity_id_seq'::regclass)",
+              org.jooq.impl.SQLDataType.BIGINT)), this, "");
+  /**
+   * The column <code>public.owned_entity.owner</code>.
+   */
+  public final TableField<JOwnedEntityRecord, String> OWNER = createField(DSL.name("owner"),
+      org.jooq.impl.SQLDataType.VARCHAR, this, "");
+  /**
+   * The column <code>public.owned_entity.project_id</code>.
+   */
+  public final TableField<JOwnedEntityRecord, Long> PROJECT_ID = createField(DSL.name("project_id"),
+      org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "");
+
+  /**
+   * Create a <code>public.owned_entity</code> table reference
+   */
+  public JOwnedEntity() {
+        this(DSL.name("owned_entity"), null);
+    }
 
     /**
      * The class holding records for this type
      */
     @Override
     public Class<JOwnedEntityRecord> getRecordType() {
-        return JOwnedEntityRecord.class;
-    }
-
-    /**
-     * The column <code>public.owned_entity.id</code>.
-     */
-    public final TableField<JOwnedEntityRecord, Long> ID = createField(DSL.name("id"), org.jooq.impl.SQLDataType.BIGINT.nullable(false).defaultValue(org.jooq.impl.DSL.field("nextval('shareable_entity_id_seq'::regclass)", org.jooq.impl.SQLDataType.BIGINT)), this, "");
-
-    /**
-     * The column <code>public.owned_entity.owner</code>.
-     */
-    public final TableField<JOwnedEntityRecord, String> OWNER = createField(DSL.name("owner"), org.jooq.impl.SQLDataType.VARCHAR.nullable(false), this, "");
-
-    /**
-     * The column <code>public.owned_entity.project_id</code>.
-     */
-    public final TableField<JOwnedEntityRecord, Long> PROJECT_ID = createField(DSL.name("project_id"), org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "");
-
-    /**
-     * Create a <code>public.owned_entity</code> table reference
-     */
-    public JOwnedEntity() {
-        this(DSL.name("owned_entity"), null);
+      return JOwnedEntityRecord.class;
     }
 
     /**
@@ -132,14 +131,11 @@ public class JOwnedEntity extends TableImpl<JOwnedEntityRecord> {
 
     @Override
     public List<ForeignKey<JOwnedEntityRecord, ?>> getReferences() {
-        return Arrays.<ForeignKey<JOwnedEntityRecord, ?>>asList(Keys.OWNED_ENTITY__SHAREABLE_ENTITY_OWNER_FKEY, Keys.OWNED_ENTITY__SHAREABLE_ENTITY_PROJECT_ID_FKEY);
+        return Arrays.<ForeignKey<JOwnedEntityRecord, ?>>asList(
+            Keys.OWNED_ENTITY__SHAREABLE_ENTITY_PROJECT_ID_FKEY);
     }
 
-    public JUsers users() {
-        return new JUsers(this, Keys.OWNED_ENTITY__SHAREABLE_ENTITY_OWNER_FKEY);
-    }
-
-    public JProject project() {
+  public JProject project() {
         return new JProject(this, Keys.OWNED_ENTITY__SHAREABLE_ENTITY_PROJECT_ID_FKEY);
     }
 

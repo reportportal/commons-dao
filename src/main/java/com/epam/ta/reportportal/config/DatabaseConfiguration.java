@@ -17,6 +17,12 @@
 package com.epam.ta.reportportal.config;
 
 import com.epam.ta.reportportal.dao.ReportPortalRepositoryImpl;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.Properties;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.sql.DataSource;
 import org.flywaydb.core.Flyway;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DataSourceConnectionProvider;
@@ -45,13 +51,6 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.util.Assert;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.sql.DataSource;
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.Properties;
 
 /**
  * @author Pavel Bortnik

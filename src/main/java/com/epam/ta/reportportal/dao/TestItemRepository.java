@@ -20,14 +20,13 @@ import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.TestItemResults;
 import com.epam.ta.reportportal.entity.launch.Launch;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 /**
  * @author Pavel Bortnik
@@ -309,9 +308,15 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 	 * @param parentId     {@link TestItem#getParentId()}
 	 * @return {@link Optional} of {@link TestItem#getItemId()} if exists otherwise {@link Optional#empty()}
 	 */
-	@Query(value = "SELECT t.item_id FROM test_item t WHERE t.test_case_hash = :testCaseHash AND t.launch_id = :launchId "
-			+ " AND t.parent_id = :parentId AND t.has_stats AND t.retry_of IS NULL"
-			+ " ORDER BY t.start_time DESC, t.item_id DESC LIMIT 1 FOR UPDATE", nativeQuery = true)
-	Optional<Long> findLatestIdByTestCaseHashAndLaunchIdAndParentId(@Param("testCaseHash") Integer testCaseHash,
+	@Query(value =
+			"SELECT t.item_id FROM test_item t WHERE t.test_case_hash = :testCaseHash AND t.launch_id = :launchId "
+					+ " AND t.parent_id = :parentId AND t.has_stats AND t.retry_of IS NULL"
+					+ " ORDER BY t.start_time DESC, t.item_id DESC LIMIT 1 FOR UPDATE", nativeQuery = true)
+	Optional<Long> findLatestIdByTestCaseHashAndLaunchIdAndParentId(
+			@Param("testCaseHash") Integer testCaseHash,
 			@Param("launchId") Long launchId, @Param("parentId") Long parentId);
+
+	@Query(value = "SELECT t.name FROM test_item t WHERE t.item_id = :itemId", nativeQuery = true)
+	Optional<String> findItemNameByItemId(Long itemId);
+
 }
