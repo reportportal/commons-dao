@@ -18,33 +18,41 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.user.ApiKey;
 import java.util.List;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Repository;
 
 /**
  * ApiKey Repository
  *
  * @author Andrei Piankouski
  */
-public interface ApiKeyRepository extends ReportPortalRepository<ApiKey, Long> {
+@Repository
+public interface ApiKeyRepository
+    extends ReportPortalRepository<ApiKey, Long>, ApiKeyRepositoryCustom {
 
   /**
-   *
    * @param hash hash of api key
    * @return {@link ApiKey}
    */
+  @Cacheable(value = "apiKeyCache", key = "#hash")
   ApiKey findByHash(String hash);
 
   /**
-   *
-   * @param name name of user Api key
+   * @param name   name of user Api key
    * @param userId {@link com.epam.ta.reportportal.entity.user.User#id}
    * @return if exists 'true' else 'false'
    */
   boolean existsByNameAndUserId(String name, Long userId);
 
   /**
-   *
    * @param userId {@link com.epam.ta.reportportal.entity.user.User#id}
    * @return list of user api keys
    */
   List<ApiKey> findByUserId(Long userId);
+
+  @CacheEvict(value = "apiKeyCache", cacheResolver = "apiKeyCacheResolver")
+  @Override
+  void deleteById(@NonNull Long id);
 }

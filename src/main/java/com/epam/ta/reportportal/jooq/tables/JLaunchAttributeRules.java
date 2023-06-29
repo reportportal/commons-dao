@@ -8,12 +8,9 @@ import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.records.JLaunchAttributeRulesRecord;
-
 import java.util.Arrays;
 import java.util.List;
-
 import javax.annotation.processing.Generated;
-
 import org.jooq.Field;
 import org.jooq.ForeignKey;
 import org.jooq.Identity;
@@ -42,7 +39,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JLaunchAttributeRules extends TableImpl<JLaunchAttributeRulesRecord> {
 
-    private static final long serialVersionUID = 1128795973;
+    private static final long serialVersionUID = 1014824139;
 
     /**
      * The reference instance of <code>public.launch_attribute_rules</code>
@@ -57,29 +54,35 @@ public class JLaunchAttributeRules extends TableImpl<JLaunchAttributeRulesRecord
         return JLaunchAttributeRulesRecord.class;
     }
 
-    /**
-     * The column <code>public.launch_attribute_rules.id</code>.
-     */
-    public final TableField<JLaunchAttributeRulesRecord, Long> ID = createField(DSL.name("id"), org.jooq.impl.SQLDataType.BIGINT.nullable(false).defaultValue(org.jooq.impl.DSL.field("nextval('launch_attribute_rules_id_seq'::regclass)", org.jooq.impl.SQLDataType.BIGINT)), this, "");
+  /**
+   * The column <code>public.launch_attribute_rules.id</code>.
+   */
+  public final TableField<JLaunchAttributeRulesRecord, Long> ID = createField(DSL.name("id"),
+      org.jooq.impl.SQLDataType.BIGINT.nullable(false).defaultValue(
+          org.jooq.impl.DSL.field("nextval('launch_attribute_rules_id_seq'::regclass)",
+              org.jooq.impl.SQLDataType.BIGINT)), this, "");
 
-    /**
-     * The column <code>public.launch_attribute_rules.sender_case_id</code>.
-     */
-    public final TableField<JLaunchAttributeRulesRecord, Long> SENDER_CASE_ID = createField(DSL.name("sender_case_id"), org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "");
+  /**
+   * The column <code>public.launch_attribute_rules.sender_case_id</code>.
+   */
+  public final TableField<JLaunchAttributeRulesRecord, Long> SENDER_CASE_ID = createField(
+      DSL.name("sender_case_id"), org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "");
 
-    /**
-     * The column <code>public.launch_attribute_rules.key</code>.
-     */
-    public final TableField<JLaunchAttributeRulesRecord, String> KEY = createField(DSL.name("key"), org.jooq.impl.SQLDataType.VARCHAR(256), this, "");
+  /**
+   * The column <code>public.launch_attribute_rules.key</code>.
+   */
+  public final TableField<JLaunchAttributeRulesRecord, String> KEY = createField(DSL.name("key"),
+      org.jooq.impl.SQLDataType.VARCHAR(512), this, "");
 
-    /**
-     * The column <code>public.launch_attribute_rules.value</code>.
-     */
-    public final TableField<JLaunchAttributeRulesRecord, String> VALUE = createField(DSL.name("value"), org.jooq.impl.SQLDataType.VARCHAR(256).nullable(false), this, "");
+  /**
+   * The column <code>public.launch_attribute_rules.value</code>.
+   */
+  public final TableField<JLaunchAttributeRulesRecord, String> VALUE = createField(
+      DSL.name("value"), org.jooq.impl.SQLDataType.VARCHAR(512).nullable(false), this, "");
 
-    /**
-     * Create a <code>public.launch_attribute_rules</code> table reference
-     */
+  /**
+   * Create a <code>public.launch_attribute_rules</code> table reference
+   */
     public JLaunchAttributeRules() {
         this(DSL.name("launch_attribute_rules"), null);
     }
