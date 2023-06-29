@@ -207,4 +207,16 @@ public class Activity implements Serializable {
     return Objects.hash(id);
   }
 
+  @Override
+  public String toString() {
+    return "Activity{" + "id=" + id + ", createdAt="
+        + createdAt + ", action=" + action + ", eventName='"
+        + eventName + '\'' + ", priority=" + priority + ", objectId="
+        + objectId + ", objectName='" + objectName + '\''
+        + ", objectType=" + objectType + ", projectId=" + projectId
+        + ", details=" + details + ", subjectId=" + subjectId
+        + ", subjectName='" + subjectName + '\'' + ", subjectType="
+        + subjectType + '}';
+  }
+
 }

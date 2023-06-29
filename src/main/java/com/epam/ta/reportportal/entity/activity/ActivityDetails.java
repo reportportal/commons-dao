@@ -51,4 +51,10 @@ public class ActivityDetails extends JsonbUserType implements Serializable {
   public void addHistoryField(HistoryField historyField) {
     history.add(historyField);
   }
+
+  @Override
+  public String toString() {
+    return "ActivityDetails{" + "history=" + history + '}';
+  }
+
 }
