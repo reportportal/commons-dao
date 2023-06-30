@@ -5,6 +5,7 @@ package com.epam.ta.reportportal.jooq;
 
 
 import com.epam.ta.reportportal.jooq.tables.JActivity;
+import com.epam.ta.reportportal.jooq.tables.JApiKeys;
 import com.epam.ta.reportportal.jooq.tables.JAttachment;
 import com.epam.ta.reportportal.jooq.tables.JAttachmentDeletion;
 import com.epam.ta.reportportal.jooq.tables.JAttribute;
@@ -88,7 +89,7 @@ import org.jooq.impl.SchemaImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JPublic extends SchemaImpl {
 
-    private static final long serialVersionUID = -1224964026;
+    private static final long serialVersionUID = -962528853;
 
     /**
      * The reference instance of <code>public</code>
@@ -99,6 +100,11 @@ public class JPublic extends SchemaImpl {
      * The table <code>public.activity</code>.
      */
     public final JActivity ACTIVITY = com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
+
+    /**
+     * The table <code>public.api_keys</code>.
+     */
+    public final JApiKeys API_KEYS = com.epam.ta.reportportal.jooq.tables.JApiKeys.API_KEYS;
 
     /**
      * The table <code>public.attachment</code>.
@@ -409,6 +415,7 @@ public class JPublic extends SchemaImpl {
     private final List<Sequence<?>> getSequences0() {
         return Arrays.<Sequence<?>>asList(
             Sequences.ACTIVITY_ID_SEQ,
+            Sequences.API_KEYS_ID_SEQ,
             Sequences.ATTACHMENT_ID_SEQ,
             Sequences.ATTRIBUTE_ID_SEQ,
             Sequences.CLUSTERS_ID_SEQ,
@@ -454,6 +461,7 @@ public class JPublic extends SchemaImpl {
     private final List<Table<?>> getTables0() {
         return Arrays.<Table<?>>asList(
             JActivity.ACTIVITY,
+            JApiKeys.API_KEYS,
             JAttachment.ATTACHMENT,
             JAttachmentDeletion.ATTACHMENT_DELETION,
             JAttribute.ATTRIBUTE,

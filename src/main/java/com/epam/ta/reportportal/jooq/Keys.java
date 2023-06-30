@@ -5,6 +5,7 @@ package com.epam.ta.reportportal.jooq;
 
 
 import com.epam.ta.reportportal.jooq.tables.JActivity;
+import com.epam.ta.reportportal.jooq.tables.JApiKeys;
 import com.epam.ta.reportportal.jooq.tables.JAttachment;
 import com.epam.ta.reportportal.jooq.tables.JAttachmentDeletion;
 import com.epam.ta.reportportal.jooq.tables.JAttribute;
@@ -58,6 +59,7 @@ import com.epam.ta.reportportal.jooq.tables.JUsers;
 import com.epam.ta.reportportal.jooq.tables.JWidget;
 import com.epam.ta.reportportal.jooq.tables.JWidgetFilter;
 import com.epam.ta.reportportal.jooq.tables.records.JActivityRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JApiKeysRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JAttachmentDeletionRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JAttachmentRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JAttributeRecord;
@@ -138,6 +140,7 @@ public class Keys {
     // -------------------------------------------------------------------------
 
     public static final Identity<JActivityRecord, Long> IDENTITY_ACTIVITY = Identities0.IDENTITY_ACTIVITY;
+    public static final Identity<JApiKeysRecord, Long> IDENTITY_API_KEYS = Identities0.IDENTITY_API_KEYS;
     public static final Identity<JAttachmentRecord, Long> IDENTITY_ATTACHMENT = Identities0.IDENTITY_ATTACHMENT;
     public static final Identity<JAttributeRecord, Long> IDENTITY_ATTRIBUTE = Identities0.IDENTITY_ATTRIBUTE;
     public static final Identity<JClustersRecord, Long> IDENTITY_CLUSTERS = Identities0.IDENTITY_CLUSTERS;
@@ -175,6 +178,8 @@ public class Keys {
     // -------------------------------------------------------------------------
 
     public static final UniqueKey<JActivityRecord> ACTIVITY_PK = UniqueKeys0.ACTIVITY_PK;
+    public static final UniqueKey<JApiKeysRecord> API_KEYS_PKEY = UniqueKeys0.API_KEYS_PKEY;
+    public static final UniqueKey<JApiKeysRecord> USERS_API_KEYS_UNIQUE = UniqueKeys0.USERS_API_KEYS_UNIQUE;
     public static final UniqueKey<JAttachmentRecord> ATTACHMENT_PK = UniqueKeys0.ATTACHMENT_PK;
     public static final UniqueKey<JAttachmentDeletionRecord> ATTACHMENT_DELETION_PKEY = UniqueKeys0.ATTACHMENT_DELETION_PKEY;
     public static final UniqueKey<JAttributeRecord> ATTRIBUTE_PK = UniqueKeys0.ATTRIBUTE_PK;
@@ -253,6 +258,7 @@ public class Keys {
 
     public static final ForeignKey<JActivityRecord, JUsersRecord> ACTIVITY__ACTIVITY_USER_ID_FKEY = ForeignKeys0.ACTIVITY__ACTIVITY_USER_ID_FKEY;
     public static final ForeignKey<JActivityRecord, JProjectRecord> ACTIVITY__ACTIVITY_PROJECT_ID_FKEY = ForeignKeys0.ACTIVITY__ACTIVITY_PROJECT_ID_FKEY;
+    public static final ForeignKey<JApiKeysRecord, JUsersRecord> API_KEYS__API_KEYS_USER_ID_FKEY = ForeignKeys0.API_KEYS__API_KEYS_USER_ID_FKEY;
     public static final ForeignKey<JContentFieldRecord, JWidgetRecord> CONTENT_FIELD__CONTENT_FIELD_ID_FKEY = ForeignKeys0.CONTENT_FIELD__CONTENT_FIELD_ID_FKEY;
     public static final ForeignKey<JDashboardRecord, JOwnedEntityRecord> DASHBOARD__DASHBOARD_ID_FK = ForeignKeys0.DASHBOARD__DASHBOARD_ID_FK;
     public static final ForeignKey<JDashboardWidgetRecord, JDashboardRecord> DASHBOARD_WIDGET__DASHBOARD_WIDGET_DASHBOARD_ID_FKEY = ForeignKeys0.DASHBOARD_WIDGET__DASHBOARD_WIDGET_DASHBOARD_ID_FKEY;
@@ -315,6 +321,7 @@ public class Keys {
 
     private static class Identities0 {
         public static Identity<JActivityRecord, Long> IDENTITY_ACTIVITY = Internal.createIdentity(JActivity.ACTIVITY, JActivity.ACTIVITY.ID);
+        public static Identity<JApiKeysRecord, Long> IDENTITY_API_KEYS = Internal.createIdentity(JApiKeys.API_KEYS, JApiKeys.API_KEYS.ID);
         public static Identity<JAttachmentRecord, Long> IDENTITY_ATTACHMENT = Internal.createIdentity(JAttachment.ATTACHMENT, JAttachment.ATTACHMENT.ID);
         public static Identity<JAttributeRecord, Long> IDENTITY_ATTRIBUTE = Internal.createIdentity(JAttribute.ATTRIBUTE, JAttribute.ATTRIBUTE.ID);
         public static Identity<JClustersRecord, Long> IDENTITY_CLUSTERS = Internal.createIdentity(JClusters.CLUSTERS, JClusters.CLUSTERS.ID);
@@ -350,6 +357,8 @@ public class Keys {
 
     private static class UniqueKeys0 {
         public static final UniqueKey<JActivityRecord> ACTIVITY_PK = Internal.createUniqueKey(JActivity.ACTIVITY, "activity_pk", JActivity.ACTIVITY.ID);
+        public static final UniqueKey<JApiKeysRecord> API_KEYS_PKEY = Internal.createUniqueKey(JApiKeys.API_KEYS, "api_keys_pkey", JApiKeys.API_KEYS.ID);
+        public static final UniqueKey<JApiKeysRecord> USERS_API_KEYS_UNIQUE = Internal.createUniqueKey(JApiKeys.API_KEYS, "users_api_keys_unique", JApiKeys.API_KEYS.NAME, JApiKeys.API_KEYS.USER_ID);
         public static final UniqueKey<JAttachmentRecord> ATTACHMENT_PK = Internal.createUniqueKey(JAttachment.ATTACHMENT, "attachment_pk", JAttachment.ATTACHMENT.ID);
         public static final UniqueKey<JAttachmentDeletionRecord> ATTACHMENT_DELETION_PKEY = Internal.createUniqueKey(JAttachmentDeletion.ATTACHMENT_DELETION, "attachment_deletion_pkey", JAttachmentDeletion.ATTACHMENT_DELETION.ID);
         public static final UniqueKey<JAttributeRecord> ATTRIBUTE_PK = Internal.createUniqueKey(JAttribute.ATTRIBUTE, "attribute_pk", JAttribute.ATTRIBUTE.ID);
@@ -426,6 +435,7 @@ public class Keys {
     private static class ForeignKeys0 {
         public static final ForeignKey<JActivityRecord, JUsersRecord> ACTIVITY__ACTIVITY_USER_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.USERS_PK, JActivity.ACTIVITY, "activity__activity_user_id_fkey", JActivity.ACTIVITY.USER_ID);
         public static final ForeignKey<JActivityRecord, JProjectRecord> ACTIVITY__ACTIVITY_PROJECT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JActivity.ACTIVITY, "activity__activity_project_id_fkey", JActivity.ACTIVITY.PROJECT_ID);
+        public static final ForeignKey<JApiKeysRecord, JUsersRecord> API_KEYS__API_KEYS_USER_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.USERS_PK, JApiKeys.API_KEYS, "api_keys__api_keys_user_id_fkey", JApiKeys.API_KEYS.USER_ID);
         public static final ForeignKey<JContentFieldRecord, JWidgetRecord> CONTENT_FIELD__CONTENT_FIELD_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.WIDGET_PKEY, JContentField.CONTENT_FIELD, "content_field__content_field_id_fkey", JContentField.CONTENT_FIELD.ID);
         public static final ForeignKey<JDashboardRecord, JOwnedEntityRecord> DASHBOARD__DASHBOARD_ID_FK = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.SHAREABLE_PK, JDashboard.DASHBOARD, "dashboard__dashboard_id_fk", JDashboard.DASHBOARD.ID);
         public static final ForeignKey<JDashboardWidgetRecord, JDashboardRecord> DASHBOARD_WIDGET__DASHBOARD_WIDGET_DASHBOARD_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.DASHBOARD_PKEY, JDashboardWidget.DASHBOARD_WIDGET, "dashboard_widget__dashboard_widget_dashboard_id_fkey", JDashboardWidget.DASHBOARD_WIDGET.DASHBOARD_ID);

@@ -29,6 +29,11 @@ public class Sequences {
     public static final Sequence<Long> ACTIVITY_ID_SEQ = new SequenceImpl<Long>("activity_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
 
     /**
+     * The sequence <code>public.api_keys_id_seq</code>
+     */
+    public static final Sequence<Long> API_KEYS_ID_SEQ = new SequenceImpl<Long>("api_keys_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
+
+    /**
      * The sequence <code>public.attachment_id_seq</code>
      */
     public static final Sequence<Long> ATTACHMENT_ID_SEQ = new SequenceImpl<Long>("attachment_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
