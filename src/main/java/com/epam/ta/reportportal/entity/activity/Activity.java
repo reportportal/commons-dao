@@ -209,14 +209,12 @@ public class Activity implements Serializable {
 
   @Override
   public String toString() {
-    return "Activity{" + "id=" + id + ", createdAt="
-        + createdAt + ", action=" + action + ", eventName='"
-        + eventName + '\'' + ", priority=" + priority + ", objectId="
-        + objectId + ", objectName='" + objectName + '\''
-        + ", objectType=" + objectType + ", projectId=" + projectId
-        + ", details=" + details + ", subjectId=" + subjectId
-        + ", subjectName='" + subjectName + '\'' + ", subjectType="
-        + subjectType + '}';
+    return "Activity{" + "createdAt=" + createdAt
+        + ", action=" + action + ", eventName='" + eventName + '\''
+        + ", priority=" + priority + ", objectId=" + objectId
+        + ", objectName='" + objectName + '\'' + ", objectType="
+        + objectType + ", projectId=" + projectId + ", details="
+        + details + ", subjectId=" + subjectId + ", subjectName='"
+        + subjectName + '\'' + ", subjectType=" + subjectType + '}';
   }
-
 }
