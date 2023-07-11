@@ -27,6 +27,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
@@ -71,6 +72,9 @@ public class Activity implements Serializable {
 
   @Column(name = "project_id")
   private Long projectId;
+
+  @Transient
+  private String projectName;
 
   @Column(name = "details")
   @Type(type = "activityDetails")
@@ -156,6 +160,14 @@ public class Activity implements Serializable {
 
   public void setProjectId(Long projectId) {
     this.projectId = projectId;
+  }
+
+  public String getProjectName() {
+    return projectName;
+  }
+
+  public void setProjectName(String projectName) {
+    this.projectName = projectName;
   }
 
   public ActivityDetails getDetails() {
