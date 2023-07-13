@@ -791,6 +791,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						ACTIVITY.PROJECT_ID,
 						ACTIVITY.OBJECT_ID,
 						ACTIVITY.OBJECT_NAME,
+						ACTIVITY.SUBJECT_NAME,
 						USERS.LOGIN,
 						PROJECT.NAME
 				)
