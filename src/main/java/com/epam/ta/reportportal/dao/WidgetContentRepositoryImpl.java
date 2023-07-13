@@ -797,7 +797,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
         .from(ACTIVITY)
         .join(ACTIVITIES)
         .on(fieldName(ACTIVITIES, ID).cast(Long.class).eq(ACTIVITY.ID))
-        .join(USERS)
+        .leftJoin(USERS)
         .on(ACTIVITY.SUBJECT_ID.eq(USERS.ID))
 				.join(PROJECT)
 				.on(ACTIVITY.PROJECT_ID.eq(PROJECT.ID))
