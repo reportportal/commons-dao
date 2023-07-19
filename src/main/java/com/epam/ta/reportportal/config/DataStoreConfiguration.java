@@ -177,9 +177,10 @@ public class DataStoreConfiguration {
   @ConditionalOnProperty(name = "datastore.type", havingValue = "minio")
   public DataStore minioDataStore(@Autowired BlobStore blobStore,
       @Value("${datastore.bucketPrefix}") String bucketPrefix,
+      @Value("${datastore.bucketPostfix}") String bucketPostfix,
       @Value("${datastore.defaultBucketName}") String defaultBucketName,
       @Value("${datastore.region}") String region, FeatureFlagHandler featureFlagHandler) {
-    return new S3DataStore(blobStore, bucketPrefix, defaultBucketName, region, featureFlagHandler);
+    return new S3DataStore(blobStore, bucketPrefix, bucketPostfix, defaultBucketName, region, featureFlagHandler);
   }
 
   /**
@@ -208,9 +209,11 @@ public class DataStoreConfiguration {
   @ConditionalOnProperty(name = "datastore.type", havingValue = "s3")
   public DataStore s3DataStore(@Autowired BlobStore blobStore,
       @Value("${datastore.bucketPrefix}") String bucketPrefix,
+      @Value("${datastore.bucketPostfix}") String bucketPostfix,
       @Value("${datastore.defaultBucketName}") String defaultBucketName,
       @Value("${datastore.region}") String region, FeatureFlagHandler featureFlagHandler) {
-    return new S3DataStore(blobStore, bucketPrefix, defaultBucketName, region, featureFlagHandler);
+    return new S3DataStore(blobStore, bucketPrefix, bucketPostfix, defaultBucketName, region,
+        featureFlagHandler);
   }
 
   @Bean("attachmentThumbnailator")
