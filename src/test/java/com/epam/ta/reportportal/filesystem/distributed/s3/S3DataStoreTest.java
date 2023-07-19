@@ -99,6 +99,7 @@ class S3DataStoreTest {
 
     s3DataStore.delete(FILE_PATH);
 
-    verify(blobStore, times(1)).removeBlob(DEFAULT_BUCKET_NAME, FILE_PATH);
+    verify(blobStore, times(1))
+        .removeBlob(BUCKET_PREFIX + DEFAULT_BUCKET_NAME + BUCKET_POSTFIX, FILE_PATH);
   }
 }
