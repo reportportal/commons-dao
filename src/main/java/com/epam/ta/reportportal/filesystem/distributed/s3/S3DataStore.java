@@ -135,10 +135,11 @@ public class S3DataStore implements DataStore {
     String bucketName;
     if (nameCount > 1) {
       bucketName = bucketPrefix + retrievePath(targetPath, 0, 1) + bucketPostfix;
+      return new S3File(bucketName, retrievePath(targetPath, 1, nameCount));
     } else {
       bucketName = bucketPrefix + defaultBucketName + bucketPostfix;
+      return new S3File(bucketName, retrievePath(targetPath, 0, 1));
     }
-    return new S3File(bucketName, retrievePath(targetPath, 0, 1));
   }
 
   private Location getLocationFromString(String locationString) {
