@@ -58,7 +58,9 @@ public enum ActivityAction {
   CREATE_PATTERN("createPattern"),
   UPDATE_PATTERN("updatePattern"),
   DELETE_PATTERN("deletePattern"),
-  PATTERN_MATCHED("patternMatched");
+  PATTERN_MATCHED("patternMatched"),
+  ASSIGN_USER("assignUser"),
+  UNASSIGN_USER("unassignUser");
 
   private final String value;
 
