@@ -60,7 +60,8 @@ public enum ActivityAction {
   DELETE_PATTERN("deletePattern"),
   PATTERN_MATCHED("patternMatched"),
   ASSIGN_USER("assignUser"),
-  UNASSIGN_USER("unassignUser");
+  UNASSIGN_USER("unassignUser"),
+  CHANGE_ROLE("changeRole");
 
   private final String value;
 
