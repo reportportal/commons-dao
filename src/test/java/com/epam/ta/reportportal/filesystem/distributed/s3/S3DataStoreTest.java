@@ -39,6 +39,7 @@ class S3DataStoreTest {
 
   private static final String FILE_PATH = "someFile";
   private static final String BUCKET_PREFIX = "prj-";
+  private static final String BUCKET_POSTFIX = "-postfix";
   private static final String DEFAULT_BUCKET_NAME = "rp-bucket";
   private static final String REGION = "us-east-1";
   private static final int ZERO = 0;
@@ -49,7 +50,8 @@ class S3DataStoreTest {
   private final FeatureFlagHandler featureFlagHandler = mock(FeatureFlagHandler.class);
 
   private final S3DataStore s3DataStore =
-      new S3DataStore(blobStore, BUCKET_PREFIX, DEFAULT_BUCKET_NAME, REGION, featureFlagHandler);
+      new S3DataStore(blobStore, BUCKET_PREFIX, BUCKET_POSTFIX, DEFAULT_BUCKET_NAME, REGION,
+          featureFlagHandler);
 
   @Test
   void save() throws Exception {
@@ -72,7 +74,8 @@ class S3DataStoreTest {
 
     s3DataStore.save(FILE_PATH, inputStream);
 
-    verify(blobStore, times(1)).putBlob(DEFAULT_BUCKET_NAME, blobMock);
+    verify(blobStore, times(1))
+        .putBlob(BUCKET_PREFIX + DEFAULT_BUCKET_NAME + BUCKET_POSTFIX, blobMock);
   }
 
   @Test
@@ -84,7 +87,8 @@ class S3DataStoreTest {
     when(mockPayload.openStream()).thenReturn(inputStream);
     when(mockBlob.getPayload()).thenReturn(mockPayload);
 
-    when(blobStore.getBlob(DEFAULT_BUCKET_NAME, FILE_PATH)).thenReturn(mockBlob);
+    when(blobStore.getBlob(BUCKET_PREFIX + DEFAULT_BUCKET_NAME + BUCKET_POSTFIX,
+        FILE_PATH)).thenReturn(mockBlob);
     InputStream loaded = s3DataStore.load(FILE_PATH);
 
     Assertions.assertEquals(inputStream, loaded);
@@ -95,6 +99,7 @@ class S3DataStoreTest {
 
     s3DataStore.delete(FILE_PATH);
 
-    verify(blobStore, times(1)).removeBlob(DEFAULT_BUCKET_NAME, FILE_PATH);
+    verify(blobStore, times(1))
+        .removeBlob(BUCKET_PREFIX + DEFAULT_BUCKET_NAME + BUCKET_POSTFIX, FILE_PATH);
   }
 }
