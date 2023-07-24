@@ -18,12 +18,18 @@ package com.epam.ta.reportportal.entity.user;
 
 import com.epam.ta.reportportal.entity.Modifiable;
 import com.epam.ta.reportportal.entity.project.Project;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
  * @author Ivan Budaev
@@ -33,62 +39,74 @@ import java.util.Date;
 @EntityListeners(AuditingEntityListener.class)
 public class UserCreationBid implements Serializable, Modifiable {
 
-	@Id
-	@Column(name = "uuid")
-	private String uuid;
+  @Id
+  @Column(name = "uuid")
+  private String uuid;
 
-	@LastModifiedDate
-	@Column(name = LAST_MODIFIED)
-	private Date lastModified;
+  @LastModifiedDate
+  @Column(name = LAST_MODIFIED)
+  private Date lastModified;
 
-	@Column(name = "email")
-	private String email;
+  @Column(name = "email")
+  private String email;
 
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "default_project_id")
-	private Project defaultProject;
+  @OneToOne(cascade = CascadeType.ALL)
+  @JoinColumn(name = "default_project_id")
+  private Project defaultProject;
 
-	@Column(name = "role")
-	private String role;
+  @Column(name = "role")
+  private String role;
 
-	public String getUuid() {
-		return uuid;
-	}
+  @OneToOne(cascade = CascadeType.ALL)
+  @JoinColumn(name = "inviting_user_id")
+  private User invitingUser;
 
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
-	}
+  public String getUuid() {
+    return uuid;
+  }
 
-	public String getEmail() {
-		return email;
-	}
+  public void setUuid(String uuid) {
+    this.uuid = uuid;
+  }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+  public String getEmail() {
+    return email;
+  }
 
-	public Project getDefaultProject() {
-		return defaultProject;
-	}
+  public void setEmail(String email) {
+    this.email = email;
+  }
 
-	public void setDefaultProject(Project defaultProject) {
-		this.defaultProject = defaultProject;
-	}
+  public Project getDefaultProject() {
+    return defaultProject;
+  }
 
-	public String getRole() {
-		return role;
-	}
+  public void setDefaultProject(Project defaultProject) {
+    this.defaultProject = defaultProject;
+  }
 
-	public void setRole(String role) {
-		this.role = role;
-	}
+  public String getRole() {
+    return role;
+  }
 
-	@Override
-	public Date getLastModified() {
-		return lastModified;
-	}
+  public void setRole(String role) {
+    this.role = role;
+  }
 
-	public void setLastModified(Date lastModified) {
-		this.lastModified = lastModified;
-	}
+  @Override
+  public Date getLastModified() {
+    return lastModified;
+  }
+
+  public void setLastModified(Date lastModified) {
+    this.lastModified = lastModified;
+  }
+
+  public User getInvitingUser() {
+    return invitingUser;
+  }
+
+  public void setInvitingUser(User invitingUser) {
+    this.invitingUser = invitingUser;
+  }
 }
