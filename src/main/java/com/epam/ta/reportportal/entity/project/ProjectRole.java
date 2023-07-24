@@ -24,34 +24,42 @@ import java.util.Optional;
  */
 public enum ProjectRole implements Comparable<ProjectRole> {
 
-	OPERATOR(0),
-	CUSTOMER(1),
-	MEMBER(2),
-	PROJECT_MANAGER(3);
+  OPERATOR(0, "Operator"),
+  CUSTOMER(1, "Customer"),
+  MEMBER(2, "Member"),
+  PROJECT_MANAGER(3, "Project manager");
 
-	private int roleLevel;
+  private int roleLevel;
+  private String value;
 
-	ProjectRole(int level) {
-		this.roleLevel = level;
-	}
+  ProjectRole(int level, String value) {
+    this.roleLevel = level;
+    this.value = value;
+  }
 
-	public boolean higherThan(ProjectRole other) {
-		return this.roleLevel > other.roleLevel;
-	}
+  public boolean higherThan(ProjectRole other) {
+    return this.roleLevel > other.roleLevel;
+  }
 
-	public boolean lowerThan(ProjectRole other) {
-		return this.roleLevel < other.roleLevel;
-	}
+  public boolean lowerThan(ProjectRole other) {
+    return this.roleLevel < other.roleLevel;
+  }
 
-	public boolean sameOrHigherThan(ProjectRole other) {
-		return this.roleLevel >= other.roleLevel;
-	}
+  public boolean sameOrHigherThan(ProjectRole other) {
+    return this.roleLevel >= other.roleLevel;
+  }
 
-	public boolean sameOrLowerThan(ProjectRole other) {
-		return this.roleLevel <= other.roleLevel;
-	}
+  public boolean sameOrLowerThan(ProjectRole other) {
+    return this.roleLevel <= other.roleLevel;
+  }
 
-	public static Optional<ProjectRole> forName(final String name) {
-		return Arrays.stream(ProjectRole.values()).filter(role -> role.name().equalsIgnoreCase(name)).findAny();
-	}
+  public static Optional<ProjectRole> forName(final String name) {
+    return Arrays.stream(ProjectRole.values()).filter(role -> role.name().equalsIgnoreCase(name))
+        .findAny();
+  }
+
+  public String getValue() {
+    return value;
+  }
+
 }
