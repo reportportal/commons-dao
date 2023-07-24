@@ -29,12 +29,12 @@ public enum ProjectRole implements Comparable<ProjectRole> {
   MEMBER(2, "Member"),
   PROJECT_MANAGER(3, "Project manager");
 
-  private int roleLevel;
-  private String value;
+  private final int roleLevel;
+  private final String roleName;
 
-  ProjectRole(int level, String value) {
+  ProjectRole(int level, String roleName) {
     this.roleLevel = level;
-    this.value = value;
+    this.roleName = roleName;
   }
 
   public boolean higherThan(ProjectRole other) {
@@ -58,8 +58,8 @@ public enum ProjectRole implements Comparable<ProjectRole> {
         .findAny();
   }
 
-  public String getValue() {
-    return value;
+  public String getRoleName() {
+    return roleName;
   }
 
 }
