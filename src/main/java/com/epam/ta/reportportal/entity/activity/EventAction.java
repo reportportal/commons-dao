@@ -37,7 +37,8 @@ public enum EventAction {
   GENERATE("generate"),
   MATCH("match"),
   ASSIGN_ROLE("assignRole"),
-  UNASSIGN_ROLE("unassignRole");
+  UNASSIGN_ROLE("unassignRole"),
+  CHANGE_ROLE("changeRole");
 
   private final String value;
 
