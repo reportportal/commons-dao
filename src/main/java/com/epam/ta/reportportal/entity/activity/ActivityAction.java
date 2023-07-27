@@ -58,7 +58,10 @@ public enum ActivityAction {
   CREATE_PATTERN("createPattern"),
   UPDATE_PATTERN("updatePattern"),
   DELETE_PATTERN("deletePattern"),
-  PATTERN_MATCHED("patternMatched");
+  PATTERN_MATCHED("patternMatched"),
+  CREATE_PLUGIN("createPlugin"),
+  DELETE_PLUGIN("deletePlugin"),
+  UPDATE_PLUGIN("updatePlugin");
 
   private final String value;
 
