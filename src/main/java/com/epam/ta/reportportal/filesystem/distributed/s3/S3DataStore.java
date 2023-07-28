@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.jclouds.blobstore.BlobStore;
@@ -36,6 +37,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Implimitation of basic operations with blob storages.
+ *
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
 public class S3DataStore implements DataStore {
@@ -45,6 +48,7 @@ public class S3DataStore implements DataStore {
 
   private final BlobStore blobStore;
   private final String bucketPrefix;
+  private final String bucketPostfix;
   private final String defaultBucketName;
   private final Location location;
 
@@ -55,14 +59,16 @@ public class S3DataStore implements DataStore {
    *
    * @param blobStore          {@link BlobStore}
    * @param bucketPrefix       Prefix for bucket name
+   * @param bucketPostfix      Postfix for bucket name
    * @param defaultBucketName  Name of default bucket to use
    * @param region             Region to use
    * @param featureFlagHandler {@link FeatureFlagHandler}
    */
-  public S3DataStore(BlobStore blobStore, String bucketPrefix, String defaultBucketName,
-      String region, FeatureFlagHandler featureFlagHandler) {
+  public S3DataStore(BlobStore blobStore, String bucketPrefix, String bucketPostfix,
+      String defaultBucketName, String region, FeatureFlagHandler featureFlagHandler) {
     this.blobStore = blobStore;
     this.bucketPrefix = bucketPrefix;
+    this.bucketPostfix = Objects.requireNonNullElse(bucketPostfix, "");
     this.defaultBucketName = defaultBucketName;
     this.location = getLocationFromString(region);
     this.featureFlagHandler = featureFlagHandler;
@@ -126,14 +132,14 @@ public class S3DataStore implements DataStore {
     }
     Path targetPath = Paths.get(filePath);
     int nameCount = targetPath.getNameCount();
+    String bucketName;
     if (nameCount > 1) {
-      return new S3File(bucketPrefix + retrievePath(targetPath, 0, 1),
-          retrievePath(targetPath, 1, nameCount)
-      );
+      bucketName = bucketPrefix + retrievePath(targetPath, 0, 1) + bucketPostfix;
+      return new S3File(bucketName, retrievePath(targetPath, 1, nameCount));
     } else {
-      return new S3File(defaultBucketName, retrievePath(targetPath, 0, 1));
+      bucketName = bucketPrefix + defaultBucketName + bucketPostfix;
+      return new S3File(bucketName, retrievePath(targetPath, 0, 1));
     }
-
   }
 
   private Location getLocationFromString(String locationString) {

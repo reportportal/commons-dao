@@ -32,12 +32,12 @@ public enum EventAction {
   POST("post"),
   LINK("link"),
   UNLINK("unlink"),
-  ASSIGN_PROJECT("assignProject"),
-  UNASSIGN_PROJECT("unassignProject"),
+  ASSIGN("assign"),
+  UNASSIGN("unassign"),
   GENERATE("generate"),
   MATCH("match"),
-  ASSIGN_ROLE("assignRole"),
-  UNASSIGN_ROLE("unassignRole");
+  CHANGE_ROLE("changeRole"),
+  UPDATE_USER_ROLE("updateUserRole");
 
   private final String value;
 

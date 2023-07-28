@@ -408,6 +408,7 @@ public class RecordMappers {
 		activity.setObjectName(r.get(ACTIVITY.OBJECT_NAME));
 		activity.setObjectType(EventObject.valueOf(r.get(ACTIVITY.OBJECT_TYPE)));
 		activity.setProjectId(r.get(ACTIVITY.PROJECT_ID));
+		activity.setProjectName(r.get(PROJECT.NAME));
 		String detailsJson = r.get(ACTIVITY.DETAILS, String.class);
 		ofNullable(detailsJson).ifPresent(s -> {
 			try {

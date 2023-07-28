@@ -18,6 +18,7 @@ package com.epam.ta.reportportal.commons.querygen;
 
 import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.STATISTICS_KEY;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_ACTION;
+import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_ACTIVITY_PROJECT_NAME;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_CREATED_AT;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_EVENT_NAME;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_OBJECT_ID;
@@ -937,7 +938,8 @@ public enum FilterTarget {
 					.get(),
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_SUBJECT_TYPE, ACTIVITY.SUBJECT_TYPE,
 					String.class).get(),
-			new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_NAME, PROJECT.NAME, Long.class)
+			new CriteriaHolderBuilder().newBuilder(CRITERIA_ACTIVITY_PROJECT_NAME, PROJECT.NAME,
+							String.class)
 					.withAggregateCriteria(DSL.max(PROJECT.NAME).toString())
 					.get(),
 			new CriteriaHolderBuilder().newBuilder(CRITERIA_USER, USERS.LOGIN, String.class)
@@ -973,8 +975,7 @@ public enum FilterTarget {
 
 		@Override
 		protected void joinTables(QuerySupplier query) {
-			query.addJoin(USERS, JoinType.LEFT_OUTER_JOIN, ACTIVITY.SUBJECT_ID.eq(USERS.ID))
-					.addCondition(ACTIVITY.SUBJECT_TYPE.eq(EventSubject.USER.toString()));
+			query.addJoin(USERS, JoinType.LEFT_OUTER_JOIN, ACTIVITY.SUBJECT_ID.eq(USERS.ID));
 			query.addJoin(PROJECT, JoinType.JOIN, ACTIVITY.PROJECT_ID.eq(PROJECT.ID));
 		}
 

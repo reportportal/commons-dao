@@ -59,6 +59,9 @@ public enum ActivityAction {
   UPDATE_PATTERN("updatePattern"),
   DELETE_PATTERN("deletePattern"),
   PATTERN_MATCHED("patternMatched"),
+  ASSIGN_USER("assignUser"),
+  UNASSIGN_USER("unassignUser"),
+  CHANGE_ROLE("changeRole");
   CREATE_PLUGIN("createPlugin"),
   DELETE_PLUGIN("deletePlugin"),
   UPDATE_PLUGIN("updatePlugin");
