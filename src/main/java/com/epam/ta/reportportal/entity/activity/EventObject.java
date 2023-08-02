@@ -33,7 +33,8 @@ public enum EventObject {
   USER("user"),
   WIDGET("widget"),
   PATTERN("pattern"),
-  INDEX("index");
+  INDEX("index"),
+  PLUGIN("plugin");
   private final String value;
 
   EventObject(String value) {
