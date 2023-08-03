@@ -64,7 +64,10 @@ public enum ActivityAction {
   CHANGE_ROLE("changeRole"),
   CREATE_PLUGIN("createPlugin"),
   DELETE_PLUGIN("deletePlugin"),
-  UPDATE_PLUGIN("updatePlugin");
+  UPDATE_PLUGIN("updatePlugin"),
+  CREATE_PROJECT("createProject"),
+  DELETE_PROJECT("deleteProject"),
+  BULK_DELETE_PROJECT("bulkDeleteProject");
 
   private final String value;
 
