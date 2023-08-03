@@ -85,6 +85,14 @@ public class AttachmentMetaInfo {
 		return creationDate;
 	}
 
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
 	public static class AttachmentMetaInfoBuilder {
 		private Long projectId;
 

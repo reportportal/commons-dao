@@ -148,6 +148,7 @@ public class AttachmentBinaryDataServiceImpl implements AttachmentBinaryDataServ
     try {
       Attachment attachment = new Attachment();
       attachment.setFileId(binaryDataMetaInfo.getFileId());
+      attachment.setFileName(attachmentMetaInfo.getFileName());
       attachment.setThumbnailId(binaryDataMetaInfo.getThumbnailFileId());
       attachment.setContentType(binaryDataMetaInfo.getContentType());
       attachment.setFileSize(binaryDataMetaInfo.getFileSize());
