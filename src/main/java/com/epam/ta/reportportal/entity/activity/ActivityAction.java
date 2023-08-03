@@ -61,6 +61,8 @@ public enum ActivityAction {
   PATTERN_MATCHED("patternMatched"),
   ASSIGN_USER("assignUser"),
   UNASSIGN_USER("unassignUser"),
+  DELETE_USER("deleteUser"),
+  BULK_DELETE_USERS("bulkDeleteUsers"),
   CHANGE_ROLE("changeRole"),
   CREATE_PLUGIN("createPlugin"),
   DELETE_PLUGIN("deletePlugin"),
