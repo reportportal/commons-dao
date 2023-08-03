@@ -32,6 +32,9 @@ public class Attachment implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column(name = "file_name")
+	private String fileName;
+
 	@Column(name = "file_id")
 	private String fileId;
 
@@ -131,6 +134,14 @@ public class Attachment implements Serializable {
 		this.itemId = itemId;
 	}
 
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
@@ -142,11 +153,11 @@ public class Attachment implements Serializable {
 		Attachment that = (Attachment) o;
 		return Objects.equals(fileId, that.fileId) && Objects.equals(thumbnailId, that.thumbnailId) && Objects.equals(contentType,
 				that.contentType
-		) && Objects.equals(fileSize, that.fileSize) && Objects.equals(creationDate, that.creationDate);
+		) && Objects.equals(fileSize, that.fileSize) && Objects.equals(creationDate, that.creationDate) && Objects.equals(fileName, that.fileName);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(fileId, thumbnailId, contentType, fileSize, creationDate);
+		return Objects.hash(fileId, thumbnailId, contentType, fileSize, creationDate, fileName);
 	}
 }

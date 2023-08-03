@@ -37,9 +37,12 @@ public class AttachmentMetaInfo {
 
 	private String logUuid;
 
+	private String fileName;
+
 	private LocalDateTime creationDate;
 
-	public AttachmentMetaInfo(Long projectId, Long launchId, Long itemId, Long logId, String launchUuid, String logUuid, LocalDateTime creationDate) {
+	public AttachmentMetaInfo(Long projectId, Long launchId, Long itemId, Long logId, String launchUuid, String logUuid,
+							  LocalDateTime creationDate, String fileName) {
 		this.projectId = projectId;
 		this.launchId = launchId;
 		this.itemId = itemId;
@@ -47,6 +50,7 @@ public class AttachmentMetaInfo {
 		this.launchUuid = launchUuid;
 		this.logUuid = logUuid;
 		this.creationDate = creationDate;
+		this.fileName = fileName;
 	}
 
 	public static AttachmentMetaInfoBuilder builder() {
@@ -96,6 +100,8 @@ public class AttachmentMetaInfo {
 
 		private LocalDateTime creationDate;
 
+		private String fileName;
+
 		private AttachmentMetaInfoBuilder() {
 		}
 
@@ -135,8 +141,13 @@ public class AttachmentMetaInfo {
 			return this;
 		}
 
+		public AttachmentMetaInfoBuilder withFileName(String fileName) {
+			this.fileName = fileName;
+			return this;
+		}
+
 		public AttachmentMetaInfo build() {
-			return new AttachmentMetaInfo(this.projectId, this.launchId, this.itemId, this.logId, this.launchUuid, this.logUuid, this.creationDate);
+			return new AttachmentMetaInfo(this.projectId, this.launchId, this.itemId, this.logId, this.launchUuid, this.logUuid, this.creationDate, this.fileName);
 		}
 	}
 }
