@@ -90,6 +90,16 @@ public class Activity implements Serializable {
   @Column(name = "subject_type", nullable = false)
   private EventSubject subjectType;
 
+  /**
+   * A boolean to decide whether to save the event.
+   */
+  @Transient
+  private boolean isSavedEvent;
+
+  public Activity() {
+    this.isSavedEvent = true;
+  }
+
   public Long getId() {
     return id;
   }
@@ -200,6 +210,14 @@ public class Activity implements Serializable {
 
   public void setSubjectType(EventSubject subjectType) {
     this.subjectType = subjectType;
+  }
+
+  public boolean isSavedEvent() {
+    return isSavedEvent;
+  }
+
+  public void setSavedEvent(boolean savedEvent) {
+    isSavedEvent = savedEvent;
   }
 
   @Override
