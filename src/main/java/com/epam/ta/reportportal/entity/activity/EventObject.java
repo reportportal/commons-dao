@@ -19,7 +19,6 @@ package com.epam.ta.reportportal.entity.activity;
 public enum EventObject {
 
   LAUNCH("launch"),
-  ITEM("item"),
   DASHBOARD("dashboard"),
   DEFECT_TYPE("defectType"),
   EMAIL_CONFIG("emailConfig"),
@@ -29,7 +28,6 @@ public enum EventObject {
   ITEM_ISSUE("itemIssue"),
   PROJECT("project"),
   SHARING("sharing"),
-  TICKET("ticket"),
   USER("user"),
   WIDGET("widget"),
   PATTERN("pattern"),
