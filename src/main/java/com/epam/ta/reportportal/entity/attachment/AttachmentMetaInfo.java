@@ -17,7 +17,6 @@
 package com.epam.ta.reportportal.entity.attachment;
 
 import com.google.common.base.Preconditions;
-
 import java.time.LocalDateTime;
 
 /**
@@ -25,137 +24,140 @@ import java.time.LocalDateTime;
  */
 public class AttachmentMetaInfo {
 
-	private Long projectId;
+  private Long projectId;
 
-	private Long launchId;
+  private Long launchId;
 
-	private Long itemId;
+  private Long itemId;
 
-	private Long logId;
+  private Long logId;
 
-	private String launchUuid;
+  private String launchUuid;
 
-	private String logUuid;
+  private String logUuid;
 
-	private String fileName;
+  private String fileName;
 
-	private LocalDateTime creationDate;
+  private LocalDateTime creationDate;
 
-	public AttachmentMetaInfo(Long projectId, Long launchId, Long itemId, Long logId, String launchUuid, String logUuid,
-							  LocalDateTime creationDate, String fileName) {
-		this.projectId = projectId;
-		this.launchId = launchId;
-		this.itemId = itemId;
-		this.logId = logId;
-		this.launchUuid = launchUuid;
-		this.logUuid = logUuid;
-		this.creationDate = creationDate;
-		this.fileName = fileName;
-	}
+  public AttachmentMetaInfo(Long projectId, Long launchId, Long itemId, Long logId,
+      String launchUuid, String logUuid,
+      LocalDateTime creationDate, String fileName) {
+    this.projectId = projectId;
+    this.launchId = launchId;
+    this.itemId = itemId;
+    this.logId = logId;
+    this.launchUuid = launchUuid;
+    this.logUuid = logUuid;
+    this.creationDate = creationDate;
+    this.fileName = fileName;
+  }
 
-	public static AttachmentMetaInfoBuilder builder() {
-		return new AttachmentMetaInfoBuilder();
-	}
+  public static AttachmentMetaInfoBuilder builder() {
+    return new AttachmentMetaInfoBuilder();
+  }
 
-	public Long getProjectId() {
-		return projectId;
-	}
+  public Long getProjectId() {
+    return projectId;
+  }
 
-	public Long getLaunchId() {
-		return launchId;
-	}
+  public Long getLaunchId() {
+    return launchId;
+  }
 
-	public Long getItemId() {
-		return itemId;
-	}
+  public Long getItemId() {
+    return itemId;
+  }
 
-	public Long getLogId() {
-		return logId;
-	}
+  public Long getLogId() {
+    return logId;
+  }
 
-	public String getLaunchUuid() {
-		return launchUuid;
-	}
+  public String getLaunchUuid() {
+    return launchUuid;
+  }
 
-	public String getLogUuid() {
-		return logUuid;
-	}
+  public String getLogUuid() {
+    return logUuid;
+  }
 
-	public LocalDateTime getCreationDate() {
-		return creationDate;
-	}
+  public LocalDateTime getCreationDate() {
+    return creationDate;
+  }
 
-	public String getFileName() {
-		return fileName;
-	}
+  public String getFileName() {
+    return fileName;
+  }
 
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
-	}
+  public void setFileName(String fileName) {
+    this.fileName = fileName;
+  }
 
-	public static class AttachmentMetaInfoBuilder {
-		private Long projectId;
+  public static class AttachmentMetaInfoBuilder {
 
-		private Long launchId;
+    private Long projectId;
 
-		private Long itemId;
+    private Long launchId;
 
-		private Long logId;
+    private Long itemId;
 
-		private String launchUuid;
+    private Long logId;
 
-		private String logUuid;
+    private String launchUuid;
 
-		private LocalDateTime creationDate;
+    private String logUuid;
 
-		private String fileName;
+    private LocalDateTime creationDate;
 
-		private AttachmentMetaInfoBuilder() {
-		}
+    private String fileName;
 
-		public AttachmentMetaInfoBuilder withProjectId(Long projectId) {
-			Preconditions.checkNotNull(projectId);
-			this.projectId = projectId;
-			return this;
-		}
+    private AttachmentMetaInfoBuilder() {
+    }
 
-		public AttachmentMetaInfoBuilder withLaunchId(Long launchId) {
-			this.launchId = launchId;
-			return this;
-		}
+    public AttachmentMetaInfoBuilder withProjectId(Long projectId) {
+      Preconditions.checkNotNull(projectId);
+      this.projectId = projectId;
+      return this;
+    }
 
-		public AttachmentMetaInfoBuilder withItemId(Long itemId) {
-			this.itemId = itemId;
-			return this;
-		}
+    public AttachmentMetaInfoBuilder withLaunchId(Long launchId) {
+      this.launchId = launchId;
+      return this;
+    }
 
-		public AttachmentMetaInfoBuilder withLogId(Long logId) {
-			this.logId = logId;
-			return this;
-		}
+    public AttachmentMetaInfoBuilder withItemId(Long itemId) {
+      this.itemId = itemId;
+      return this;
+    }
 
-		public AttachmentMetaInfoBuilder withLaunchUuid(String launchUuid) {
-			this.launchUuid = launchUuid;
-			return this;
-		}
+    public AttachmentMetaInfoBuilder withLogId(Long logId) {
+      this.logId = logId;
+      return this;
+    }
 
-		public AttachmentMetaInfoBuilder withLogUuid(String logUuid) {
-			this.logUuid = logUuid;
-			return this;
-		}
+    public AttachmentMetaInfoBuilder withLaunchUuid(String launchUuid) {
+      this.launchUuid = launchUuid;
+      return this;
+    }
 
-		public AttachmentMetaInfoBuilder withCreationDate(LocalDateTime creationDate) {
-			this.creationDate = creationDate;
-			return this;
-		}
+    public AttachmentMetaInfoBuilder withLogUuid(String logUuid) {
+      this.logUuid = logUuid;
+      return this;
+    }
 
-		public AttachmentMetaInfoBuilder withFileName(String fileName) {
-			this.fileName = fileName;
-			return this;
-		}
+    public AttachmentMetaInfoBuilder withCreationDate(LocalDateTime creationDate) {
+      this.creationDate = creationDate;
+      return this;
+    }
 
-		public AttachmentMetaInfo build() {
-			return new AttachmentMetaInfo(this.projectId, this.launchId, this.itemId, this.logId, this.launchUuid, this.logUuid, this.creationDate, this.fileName);
-		}
-	}
+    public AttachmentMetaInfoBuilder withFileName(String fileName) {
+      this.fileName = fileName;
+      return this;
+    }
+
+    public AttachmentMetaInfo build() {
+      return new AttachmentMetaInfo(this.projectId, this.launchId, this.itemId, this.logId,
+          this.launchUuid, this.logUuid, this.creationDate, this.fileName);
+    }
+  }
 }

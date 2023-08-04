@@ -16,10 +16,15 @@
 
 package com.epam.ta.reportportal.entity.attachment;
 
-import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
@@ -28,136 +33,138 @@ import java.util.Objects;
 @Table(name = "attachment")
 public class Attachment implements Serializable {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-	@Column(name = "file_name")
-	private String fileName;
+  @Column(name = "file_name")
+  private String fileName;
 
-	@Column(name = "file_id")
-	private String fileId;
+  @Column(name = "file_id")
+  private String fileId;
 
-	@Column(name = "thumbnail_id")
-	private String thumbnailId;
+  @Column(name = "thumbnail_id")
+  private String thumbnailId;
 
-	@Column(name = "content_type")
-	private String contentType;
+  @Column(name = "content_type")
+  private String contentType;
 
-	@Column(name = "file_size")
-	private long fileSize;
+  @Column(name = "file_size")
+  private long fileSize;
 
-	@Column(name = "creation_date")
-	private LocalDateTime creationDate;
+  @Column(name = "creation_date")
+  private LocalDateTime creationDate;
 
-	@Column(name = "project_id")
-	private Long projectId;
+  @Column(name = "project_id")
+  private Long projectId;
 
-	@Column(name = "launch_id")
-	private Long launchId;
+  @Column(name = "launch_id")
+  private Long launchId;
 
-	@Column(name = "item_id")
-	private Long itemId;
+  @Column(name = "item_id")
+  private Long itemId;
 
-	public Attachment() {
-	}
+  public Attachment() {
+  }
 
-	public Long getId() {
-		return id;
-	}
+  public Long getId() {
+    return id;
+  }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-	public String getFileId() {
-		return fileId;
-	}
+  public String getFileId() {
+    return fileId;
+  }
 
-	public void setFileId(String fileId) {
-		this.fileId = fileId;
-	}
+  public void setFileId(String fileId) {
+    this.fileId = fileId;
+  }
 
-	public String getThumbnailId() {
-		return thumbnailId;
-	}
+  public String getThumbnailId() {
+    return thumbnailId;
+  }
 
-	public void setThumbnailId(String thumbnailId) {
-		this.thumbnailId = thumbnailId;
-	}
+  public void setThumbnailId(String thumbnailId) {
+    this.thumbnailId = thumbnailId;
+  }
 
-	public String getContentType() {
-		return contentType;
-	}
+  public String getContentType() {
+    return contentType;
+  }
 
-	public void setContentType(String contentType) {
-		this.contentType = contentType;
-	}
+  public void setContentType(String contentType) {
+    this.contentType = contentType;
+  }
 
-	public long getFileSize() {
-		return fileSize;
-	}
+  public long getFileSize() {
+    return fileSize;
+  }
 
-	public void setFileSize(long fileSize) {
-		this.fileSize = fileSize;
-	}
+  public void setFileSize(long fileSize) {
+    this.fileSize = fileSize;
+  }
 
-	public LocalDateTime getCreationDate() {
-		return creationDate;
-	}
+  public LocalDateTime getCreationDate() {
+    return creationDate;
+  }
 
-	public void setCreationDate(LocalDateTime creationDate) {
-		this.creationDate = creationDate;
-	}
+  public void setCreationDate(LocalDateTime creationDate) {
+    this.creationDate = creationDate;
+  }
 
-	public Long getProjectId() {
-		return projectId;
-	}
+  public Long getProjectId() {
+    return projectId;
+  }
 
-	public void setProjectId(Long projectId) {
-		this.projectId = projectId;
-	}
+  public void setProjectId(Long projectId) {
+    this.projectId = projectId;
+  }
 
-	public Long getLaunchId() {
-		return launchId;
-	}
+  public Long getLaunchId() {
+    return launchId;
+  }
 
-	public void setLaunchId(Long launchId) {
-		this.launchId = launchId;
-	}
+  public void setLaunchId(Long launchId) {
+    this.launchId = launchId;
+  }
 
-	public Long getItemId() {
-		return itemId;
-	}
+  public Long getItemId() {
+    return itemId;
+  }
 
-	public void setItemId(Long itemId) {
-		this.itemId = itemId;
-	}
+  public void setItemId(Long itemId) {
+    this.itemId = itemId;
+  }
 
-	public String getFileName() {
-		return fileName;
-	}
+  public String getFileName() {
+    return fileName;
+  }
 
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
-	}
+  public void setFileName(String fileName) {
+    this.fileName = fileName;
+  }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-		Attachment that = (Attachment) o;
-		return Objects.equals(fileId, that.fileId) && Objects.equals(thumbnailId, that.thumbnailId) && Objects.equals(contentType,
-				that.contentType
-		) && Objects.equals(fileSize, that.fileSize) && Objects.equals(creationDate, that.creationDate) && Objects.equals(fileName, that.fileName);
-	}
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    Attachment that = (Attachment) o;
+    return Objects.equals(fileId, that.fileId) && Objects.equals(thumbnailId, that.thumbnailId)
+        && Objects.equals(contentType,
+        that.contentType
+    ) && Objects.equals(fileSize, that.fileSize) && Objects.equals(creationDate, that.creationDate)
+        && Objects.equals(fileName, that.fileName);
+  }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(fileId, thumbnailId, contentType, fileSize, creationDate, fileName);
-	}
+  @Override
+  public int hashCode() {
+    return Objects.hash(fileId, thumbnailId, contentType, fileSize, creationDate, fileName);
+  }
 }
