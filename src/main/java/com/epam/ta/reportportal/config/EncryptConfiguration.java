@@ -57,12 +57,7 @@ public class EncryptConfiguration implements InitializingBean {
   @Value("${rp.integration.salt.file:secret-integration-salt}")
   private String integrationSaltFile;
 
-  @Value("${rp.integration.salt.migration:migration}")
-  private String migrationFile;
-
   private String secretFilePath;
-  private String migrationFilePath;
-
   private final DataStore dataStore;
 
   private final FeatureFlagHandler featureFlagHandler;
@@ -102,10 +97,8 @@ public class EncryptConfiguration implements InitializingBean {
   public void afterPropertiesSet() throws Exception {
     if (featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)) {
       secretFilePath = Paths.get(INTEGRATION_SECRETS_PATH, integrationSaltFile).toString();
-      migrationFilePath = Paths.get(INTEGRATION_SECRETS_PATH, migrationFile).toString();
     } else {
       secretFilePath = integrationSaltPath + File.separator + integrationSaltFile;
-      migrationFilePath = integrationSaltPath + File.separator + migrationFile;
     }
     loadOrGenerateIntegrationSalt(dataStore);
   }
@@ -117,10 +110,8 @@ public class EncryptConfiguration implements InitializingBean {
       byte[] bytes = new byte[20];
       new SecureRandom().nextBytes(bytes);
       try (InputStream secret = new ByteArrayInputStream(
-          Base64.getUrlEncoder().withoutPadding().encode(bytes));
-          InputStream empty = new ByteArrayInputStream(new byte[1])) {
+          Base64.getUrlEncoder().withoutPadding().encode(bytes))) {
         dataStore.save(secretFilePath, secret);
-        dataStore.save(migrationFilePath, empty);
       } catch (IOException ioEx) {
         LOGGER.error("Unable to generate secret file", ioEx);
       }
