@@ -31,6 +31,8 @@ import java.io.InputStream;
  */
 public class BinaryData {
 
+	private String fileName;
+
 	/**
 	 * MIME Type of Binary Data
 	 */
@@ -44,9 +46,16 @@ public class BinaryData {
 	/**
 	 * Content length
 	 */
-	private Long length;
+	private final Long length;
 
 	public BinaryData(String contentType, Long length, InputStream inputStream) {
+		this.contentType = contentType;
+		this.inputStream = inputStream;
+		this.length = length;
+	}
+
+	public BinaryData(String fileName, String contentType, Long length, InputStream inputStream) {
+		this.fileName = fileName;
 		this.contentType = contentType;
 		this.length = length;
 		this.inputStream = inputStream;
@@ -61,6 +70,10 @@ public class BinaryData {
 		} catch (IOException e) {
 			throw new ReportPortalException(ErrorType.INCORRECT_REQUEST, "Unable to create binary data from multipart file");
 		}
+	}
+
+	public String getFileName() {
+		return fileName;
 	}
 
 	public String getContentType() {
