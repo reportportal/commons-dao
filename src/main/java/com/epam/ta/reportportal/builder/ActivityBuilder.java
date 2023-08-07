@@ -30,6 +30,7 @@ import java.util.function.Supplier;
 
 public class ActivityBuilder implements Supplier<Activity> {
 
+  public static final int MAX_OBJECT_NAME_LENGTH = 128;
   private final Activity activity;
   private ActivityDetails details;
 
@@ -69,6 +70,9 @@ public class ActivityBuilder implements Supplier<Activity> {
   }
 
   public ActivityBuilder addObjectName(String name) {
+    if (name != null && name.length() > MAX_OBJECT_NAME_LENGTH){
+      name = name.substring(0, MAX_OBJECT_NAME_LENGTH - 3) + "...";
+    }
     activity.setObjectName(name);
     return this;
   }
