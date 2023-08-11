@@ -75,7 +75,7 @@ class S3DataStoreTest {
     s3DataStore.save(FILE_PATH, inputStream);
 
     verify(blobStore, times(1))
-        .putBlob(BUCKET_PREFIX + DEFAULT_BUCKET_NAME + BUCKET_POSTFIX, blobMock);
+        .putBlob(DEFAULT_BUCKET_NAME, blobMock);
   }
 
   @Test
@@ -87,7 +87,7 @@ class S3DataStoreTest {
     when(mockPayload.openStream()).thenReturn(inputStream);
     when(mockBlob.getPayload()).thenReturn(mockPayload);
 
-    when(blobStore.getBlob(BUCKET_PREFIX + DEFAULT_BUCKET_NAME + BUCKET_POSTFIX,
+    when(blobStore.getBlob(DEFAULT_BUCKET_NAME,
         FILE_PATH)).thenReturn(mockBlob);
     InputStream loaded = s3DataStore.load(FILE_PATH);
 
@@ -100,6 +100,6 @@ class S3DataStoreTest {
     s3DataStore.delete(FILE_PATH);
 
     verify(blobStore, times(1))
-        .removeBlob(BUCKET_PREFIX + DEFAULT_BUCKET_NAME + BUCKET_POSTFIX, FILE_PATH);
+        .removeBlob(DEFAULT_BUCKET_NAME, FILE_PATH);
   }
 }

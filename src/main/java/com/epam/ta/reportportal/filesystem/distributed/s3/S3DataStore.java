@@ -137,7 +137,7 @@ public class S3DataStore implements DataStore {
       bucketName = bucketPrefix + retrievePath(targetPath, 0, 1) + bucketPostfix;
       return new S3File(bucketName, retrievePath(targetPath, 1, nameCount));
     } else {
-      bucketName = bucketPrefix + defaultBucketName + bucketPostfix;
+      bucketName = defaultBucketName;
       return new S3File(bucketName, retrievePath(targetPath, 0, 1));
     }
   }
