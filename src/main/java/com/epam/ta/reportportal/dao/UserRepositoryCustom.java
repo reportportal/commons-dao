@@ -56,7 +56,5 @@ public interface UserRepositoryCustom extends FilterableRepository<User> {
 
   Optional<ReportPortalUser> findReportPortalUser(String login);
 
-	Optional<ReportPortalUser> findReportPortalUser(String login);
-
-	Optional<ReportPortalUser> findReportPortalUser(Long userId);
+  Optional<ReportPortalUser> findReportPortalUser(Long userId);
 }
