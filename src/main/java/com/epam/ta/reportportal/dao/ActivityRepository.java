@@ -17,6 +17,8 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.activity.Activity;
+import java.util.List;
+import org.springframework.data.jpa.repository.Query;
 
 /**
  * Repository for {@link Activity} entity
@@ -24,5 +26,8 @@ import com.epam.ta.reportportal.entity.activity.Activity;
  * @author Andrei Varabyeu
  */
 public interface ActivityRepository extends ReportPortalRepository<Activity, Long>, ActivityRepositoryCustom {
+
+  @Query("SELECT DISTINCT a.subject_name FROM Activity a WHERE a.projectId = :projectId AND LOWER(a.subject_name) LIKE LOWER('%:value%')")
+  List<String> findSubjectNamesByProjectIdAndSubjectNameContaining(Long projectId, String value);
 
 }
