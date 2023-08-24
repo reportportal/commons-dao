@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.entity.user;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -49,6 +50,9 @@ public class ApiKey {
 
   @Column(name = "user_id")
   private Long userId;
+
+  @Column(name = "last_used_at")
+  private LocalDate lastUsedAt;
 
   public ApiKey() {
   }
@@ -91,5 +95,13 @@ public class ApiKey {
 
   public void setUserId(Long userId) {
     this.userId = userId;
+  }
+
+  public LocalDate getLastUsedAt() {
+    return lastUsedAt;
+  }
+
+  public void setLastUsedAt(LocalDate lastUsedAt) {
+    this.lastUsedAt = lastUsedAt;
   }
 }

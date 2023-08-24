@@ -23,20 +23,20 @@ package com.epam.ta.reportportal.commons.querygen.constant;
  */
 public final class GeneralCriteriaConstant {
 
-	private GeneralCriteriaConstant() {
-		//static only
-	}
+  public static final String CRITERIA_ID = "id";
+  public static final String CRITERIA_NAME = "name";
+  public static final String CRITERIA_SHARED = "shared";
+  public static final String CRITERIA_OWNER = "owner";
+  public static final String CRITERIA_PROJECT_ID = "projectId";
+  public static final String CRITERIA_USER_ID = "userId";
+  public static final String CRITERIA_LAST_MODIFIED = "lastModified";
+  public static final String CRITERIA_DESCRIPTION = "description";
+  public static final String CRITERIA_PROJECT = "project";
+  public static final String CRITERIA_LAUNCH_ID = "launchId";
+  public static final String CRITERIA_START_TIME = "startTime";
+  public static final String CRITERIA_END_TIME = "endTime";
 
-	public static final String CRITERIA_ID = "id";
-	public static final String CRITERIA_NAME = "name";
-	public static final String CRITERIA_SHARED = "shared";
-	public static final String CRITERIA_OWNER = "owner";
-	public static final String CRITERIA_PROJECT_ID = "projectId";
-	public static final String CRITERIA_USER_ID = "userId";
-	public static final String CRITERIA_LAST_MODIFIED = "lastModified";
-	public static final String CRITERIA_DESCRIPTION = "description";
-	public static final String CRITERIA_PROJECT = "project";
-	public static final String CRITERIA_LAUNCH_ID = "launchId";
-	public static final String CRITERIA_START_TIME = "startTime";
-	public static final String CRITERIA_END_TIME = "endTime";
+  private GeneralCriteriaConstant() {
+    //static only
+  }
 }
