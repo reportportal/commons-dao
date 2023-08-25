@@ -1074,10 +1074,9 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
     JTestItem nested = TEST_ITEM.as(NESTED);
 
     CommonTableExpression<?> logsCte = DSL.name("logsCTE")
-        .as(QueryBuilder
-            .newBuilder(logFilter, QueryUtils.collectJoinFields(logFilter)).build());
+        .as(QueryBuilder.newBuilder(logFilter, QueryUtils.collectJoinFields(logFilter)).build());
 
-    return dsl.select(TEST_ITEM.ITEM_ID,
+    return dsl.with(logsCte).select(TEST_ITEM.ITEM_ID,
             TEST_ITEM.NAME,
             TEST_ITEM.UUID,
             TEST_ITEM.START_TIME,
@@ -1086,8 +1085,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
             TEST_ITEM_RESULTS.END_TIME,
             TEST_ITEM_RESULTS.DURATION,
             DSL.field(hasContentQuery(nested, logsCte, excludePassedLogs)).as(HAS_CONTENT),
-            DSL.field(dsl.with(logsCte)
-                    .selectCount()
+            DSL.field(dsl.selectCount()
                     .from(LOG)
                     .join(nested)
                     .on(LOG.ITEM_ID.eq(nested.ITEM_ID))
@@ -1095,9 +1093,9 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
                     .on(LOG.ID.eq(logsCte.field(ID).cast(Long.class)))
                     .join(ATTACHMENT)
                     .on(LOG.ATTACHMENT_ID.eq(ATTACHMENT.ID))
-                    .where(nested.HAS_STATS.isFalse()
-                        .and(DSL.sql(fieldName(NESTED, TEST_ITEM.PATH.getName()) + " <@ cast(? AS LTREE)",
-                            TEST_ITEM.PATH))))
+                    .where(nested.HAS_STATS.isFalse().and(DSL.sql(
+                        fieldName(NESTED, TEST_ITEM.PATH.getName()) + " <@ cast(? AS LTREE)",
+                        TEST_ITEM.PATH))))
                 .as(ATTACHMENTS_COUNT)
         )
         .from(TEST_ITEM)
@@ -1135,8 +1133,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
   private Condition hasContentQuery(JTestItem nested, CommonTableExpression logsCte,
       boolean excludePassedLogs) {
     if (excludePassedLogs) {
-      return DSL.exists(dsl.with(logsCte)
-              .select()
+      return DSL.exists(dsl.select()
               .from(LOG)
               .join(logsCte)
               .on(LOG.ID.eq(logsCte.field(ID).cast(Long.class)))
@@ -1146,8 +1143,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
           .and(TEST_ITEM_RESULTS.STATUS.notIn(JStatusEnum.PASSED, JStatusEnum.INFO,
               JStatusEnum.WARN));
     } else {
-      return DSL.exists(dsl.with(logsCte)
-              .select()
+      return DSL.exists(dsl.select()
               .from(LOG)
               .join(logsCte)
               .on(LOG.ID.eq(logsCte.field(ID).cast(Long.class)))
