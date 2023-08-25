@@ -26,7 +26,6 @@ import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteri
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_UNIQUE_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.RETRY_PARENT;
 import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.ITEM;
-import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.LOGS;
 import static com.epam.ta.reportportal.dao.constant.TestItemRepositoryConstants.ATTACHMENTS_COUNT;
 import static com.epam.ta.reportportal.dao.constant.TestItemRepositoryConstants.HAS_CONTENT;
 import static com.epam.ta.reportportal.dao.constant.TestItemRepositoryConstants.NESTED;
@@ -107,6 +106,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.util.Strings;
+import org.jooq.CommonTableExpression;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.DatePart;
@@ -1072,8 +1072,10 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
   public List<NestedStep> findAllNestedStepsByIds(Collection<Long> ids, Queryable logFilter,
       boolean excludePassedLogs) {
     JTestItem nested = TEST_ITEM.as(NESTED);
-    SelectQuery<? extends Record> logsSelectQuery = QueryBuilder.newBuilder(logFilter,
-        QueryUtils.collectJoinFields(logFilter)).build();
+
+    CommonTableExpression<?> logsCte = DSL.name("logsCTE")
+        .as(QueryBuilder
+            .newBuilder(logFilter, QueryUtils.collectJoinFields(logFilter)).build());
 
     return dsl.select(TEST_ITEM.ITEM_ID,
             TEST_ITEM.NAME,
@@ -1083,15 +1085,14 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
             TEST_ITEM_RESULTS.STATUS,
             TEST_ITEM_RESULTS.END_TIME,
             TEST_ITEM_RESULTS.DURATION,
-            DSL.field(hasContentQuery(nested, logsSelectQuery, excludePassedLogs)).as(HAS_CONTENT),
-            DSL.field(dsl.with(LOGS)
-                    .as(logsSelectQuery)
+            DSL.field(hasContentQuery(nested, logsCte, excludePassedLogs)).as(HAS_CONTENT),
+            DSL.field(dsl.with(logsCte)
                     .selectCount()
                     .from(LOG)
                     .join(nested)
                     .on(LOG.ITEM_ID.eq(nested.ITEM_ID))
-                    .join(LOGS)
-                    .on(LOG.ID.eq(fieldName(LOGS, ID).cast(Long.class)))
+                    .join(logsCte)
+                    .on(LOG.ID.eq(logsCte.field(ID).cast(Long.class)))
                     .join(ATTACHMENT)
                     .on(LOG.ATTACHMENT_ID.eq(ATTACHMENT.ID))
                     .where(nested.HAS_STATS.isFalse()
@@ -1131,27 +1132,25 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
   }
 
-  private Condition hasContentQuery(JTestItem nested, SelectQuery<? extends Record> logsSelectQuery,
+  private Condition hasContentQuery(JTestItem nested, CommonTableExpression logsCte,
       boolean excludePassedLogs) {
     if (excludePassedLogs) {
-      return DSL.exists(dsl.with(LOGS)
-              .as(logsSelectQuery)
+      return DSL.exists(dsl.with(logsCte)
               .select()
               .from(LOG)
-              .join(LOGS)
-              .on(LOG.ID.eq(fieldName(LOGS, ID).cast(Long.class)))
+              .join(logsCte)
+              .on(LOG.ID.eq(logsCte.field(ID).cast(Long.class)))
               .join(TEST_ITEM_RESULTS)
               .on(LOG.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
               .where(LOG.ITEM_ID.eq(TEST_ITEM.ITEM_ID)))
           .and(TEST_ITEM_RESULTS.STATUS.notIn(JStatusEnum.PASSED, JStatusEnum.INFO,
               JStatusEnum.WARN));
     } else {
-      return DSL.exists(dsl.with(LOGS)
-              .as(logsSelectQuery)
+      return DSL.exists(dsl.with(logsCte)
               .select()
               .from(LOG)
-              .join(LOGS)
-              .on(LOG.ID.eq(fieldName(LOGS, ID).cast(Long.class)))
+              .join(logsCte)
+              .on(LOG.ID.eq(logsCte.field(ID).cast(Long.class)))
               .where(LOG.ITEM_ID.eq(TEST_ITEM.ITEM_ID)))
           .orExists(dsl.select().from(nested)
               .where(nested.PARENT_ID.eq(TEST_ITEM.ITEM_ID).and(nested.HAS_STATS.isFalse())));
