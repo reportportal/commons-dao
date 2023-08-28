@@ -17,10 +17,70 @@
 
 package com.epam.ta.reportportal.dao.util;
 
+import static com.epam.ta.reportportal.commons.EntityUtils.TO_DATE;
+import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.STATISTICS_KEY;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_END_TIME;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAST_MODIFIED;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.AGGREGATED_VALUES;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ATTRIBUTE_KEY;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ATTRIBUTE_VALUE;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ATTR_ID;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ATTR_TABLE;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.CRITERIA;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.DELTA;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.EXECUTIONS_PASSED;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.EXECUTIONS_TOTAL;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.FILTER_NAME;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.FLAKY_COUNT;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ID;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.INVESTIGATED;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ITEM_ATTRIBUTES;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ITEM_NAME;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.KEY;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.LAUNCHES;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.LAUNCHES_TABLE;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.NOT_PASSED_STATISTICS_KEY;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.PASSING_RATE;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.PERCENTAGE;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.SF_NAME;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.START_TIME_HISTORY;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.STATISTICS_COUNTER;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.STATISTICS_TABLE;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.STATUSES;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.STATUS_HISTORY;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.SUM;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.TOTAL;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.TO_INVESTIGATE;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.UNIQUE_ID;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.VALUE;
+import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
+import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
+import static com.epam.ta.reportportal.jooq.tables.JItemAttribute.ITEM_ATTRIBUTE;
+import static com.epam.ta.reportportal.jooq.tables.JLaunch.LAUNCH;
+import static com.epam.ta.reportportal.jooq.tables.JPatternTemplate.PATTERN_TEMPLATE;
+import static com.epam.ta.reportportal.jooq.tables.JProject.PROJECT;
+import static com.epam.ta.reportportal.jooq.tables.JStatisticsField.STATISTICS_FIELD;
+import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
+import static com.epam.ta.reportportal.jooq.tables.JTicket.TICKET;
+import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
+import static java.util.Optional.ofNullable;
+
 import com.epam.ta.reportportal.commons.querygen.CriteriaHolder;
 import com.epam.ta.reportportal.commons.querygen.FilterTarget;
 import com.epam.ta.reportportal.entity.activity.ActivityDetails;
-import com.epam.ta.reportportal.entity.widget.content.*;
+import com.epam.ta.reportportal.entity.widget.content.ChartStatisticsContent;
+import com.epam.ta.reportportal.entity.widget.content.CriteriaHistoryItem;
+import com.epam.ta.reportportal.entity.widget.content.CumulativeTrendChartContent;
+import com.epam.ta.reportportal.entity.widget.content.CumulativeTrendChartEntry;
+import com.epam.ta.reportportal.entity.widget.content.FlakyCasesTableContent;
+import com.epam.ta.reportportal.entity.widget.content.LaunchesTableContent;
+import com.epam.ta.reportportal.entity.widget.content.NotPassedCasesContent;
+import com.epam.ta.reportportal.entity.widget.content.OverallStatisticsContent;
+import com.epam.ta.reportportal.entity.widget.content.PatternTemplateLaunchStatistics;
+import com.epam.ta.reportportal.entity.widget.content.PatternTemplateStatistics;
+import com.epam.ta.reportportal.entity.widget.content.ProductStatusStatisticsContent;
+import com.epam.ta.reportportal.entity.widget.content.TopPatternTemplatesContent;
+import com.epam.ta.reportportal.entity.widget.content.UniqueBugContent;
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.ComponentHealthCheckContent;
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableStatisticsContent;
 import com.epam.ta.reportportal.exception.ReportPortalException;
@@ -34,6 +94,27 @@ import com.google.common.base.CaseFormat;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.Field;
@@ -42,35 +123,6 @@ import org.jooq.RecordMapper;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static com.epam.ta.reportportal.commons.EntityUtils.TO_DATE;
-import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.STATISTICS_KEY;
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_END_TIME;
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAST_MODIFIED;
-import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
-import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
-import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
-import static com.epam.ta.reportportal.jooq.tables.JItemAttribute.ITEM_ATTRIBUTE;
-import static com.epam.ta.reportportal.jooq.tables.JLaunch.LAUNCH;
-import static com.epam.ta.reportportal.jooq.tables.JPatternTemplate.PATTERN_TEMPLATE;
-import static com.epam.ta.reportportal.jooq.tables.JProject.PROJECT;
-import static com.epam.ta.reportportal.jooq.tables.JStatisticsField.STATISTICS_FIELD;
-import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
-import static com.epam.ta.reportportal.jooq.tables.JTicket.TICKET;
-import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
-import static java.util.Optional.ofNullable;
-
 /**
  * Util class for widget content repository.
  *
@@ -78,7 +130,7 @@ import static java.util.Optional.ofNullable;
  */
 public class WidgetContentUtil {
 
-	private static ObjectMapper objectMapper;
+	private static final ObjectMapper objectMapper;
 
 	static {
 		objectMapper = new ObjectMapper();
@@ -191,12 +243,16 @@ public class WidgetContentUtil {
 
 		ActivityResource activityResource = new ActivityResource();
 		activityResource.setId(r.get(ACTIVITY.ID));
-		activityResource.setUser(r.get(USERS.LOGIN));
+		activityResource.setUser(r.get(USERS.LOGIN) != null
+				? r.get(USERS.LOGIN)
+				: r.get(ACTIVITY.SUBJECT_NAME));
 		activityResource.setProjectId(r.get(ACTIVITY.PROJECT_ID));
 		activityResource.setProjectName(r.get(PROJECT.NAME));
-		activityResource.setActionType(r.get(ACTIVITY.ACTION));
-		activityResource.setObjectType(r.get(ACTIVITY.ENTITY));
-		activityResource.setLastModified(TO_DATE.apply(r.get(ACTIVITY.CREATION_DATE, LocalDateTime.class)));
+		activityResource.setActionType(r.get(ACTIVITY.EVENT_NAME));
+		activityResource.setObjectType(r.get(ACTIVITY.OBJECT_TYPE));
+		activityResource.setObjectName(r.get(ACTIVITY.OBJECT_NAME));
+		activityResource.setLastModified(
+				TO_DATE.apply(r.get(ACTIVITY.CREATED_AT, LocalDateTime.class)));
 		activityResource.setLoggedObjectId(r.get(ACTIVITY.OBJECT_ID));
 		String detailsJson = r.get(ACTIVITY.DETAILS, String.class);
 		ofNullable(detailsJson).ifPresent(s -> {

@@ -16,14 +16,39 @@
 
 package com.epam.ta.reportportal.dao;
 
+import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_CREATED_AT;
+import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_OBJECT_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_OBJECT_NAME;
+import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_OBJECT_TYPE;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PROJECT_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.entity.activity.Activity;
 import com.epam.ta.reportportal.entity.activity.ActivityDetails;
+import com.epam.ta.reportportal.entity.activity.EventAction;
+import com.epam.ta.reportportal.entity.activity.EventObject;
+import com.epam.ta.reportportal.entity.activity.EventPriority;
+import com.epam.ta.reportportal.entity.activity.EventSubject;
 import com.epam.ta.reportportal.entity.activity.HistoryField;
 import com.google.common.collect.Comparators;
+import java.sql.Timestamp;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 import org.apache.commons.compress.utils.Lists;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,18 +56,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.jdbc.Sql;
-
-import java.sql.Timestamp;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.util.*;
-
-import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.*;
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_ID;
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PROJECT_ID;
-import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @Sql("/db/fill/activity/activities-fill.sql")
 class ActivityRepositoryTest extends BaseTest {
@@ -66,7 +79,7 @@ class ActivityRepositoryTest extends BaseTest {
 	void findAllTest() {
 		final List<Activity> activities = repository.findAll();
 
-		assertTrue(!activities.isEmpty());
+		assertFalse(activities.isEmpty());
 		assertEquals(ACTIVITIES_COUNT, activities.size());
 	}
 
@@ -88,7 +101,7 @@ class ActivityRepositoryTest extends BaseTest {
 		Activity activity = repository.findById(1L).get();
 		final LocalDateTime now = LocalDateTime.now();
 		final ActivityDetails details = generateDetails();
-		final String action = "test";
+		final EventAction action = EventAction.CREATE;
 
 		activity.setCreatedAt(now);
 		activity.setAction(action);
@@ -132,14 +145,15 @@ class ActivityRepositoryTest extends BaseTest {
 
 		repository.deleteModifiedLaterAgo(1L, period);
 		List<Activity> all = repository.findAll();
-		all.stream().filter(a -> a.getProjectId().equals(1L)).forEach(a -> assertTrue(a.getCreatedAt().isAfter(bound)));
+		all.stream().filter(a -> a.getProjectId().equals(1L))
+				.forEach(a -> assertTrue(a.getCreatedAt().isAfter(bound)));
 	}
 
 	@SuppressWarnings("OptionalGetWithoutIsPresent")
 	@Test
 	void findByFilterWithSortingAndLimit() {
 		List<Activity> activities = repository.findByFilterWithSortingAndLimit(defaultFilter(),
-				Sort.by(Sort.Direction.DESC, CRITERIA_CREATION_DATE),
+				Sort.by(Sort.Direction.DESC, CRITERIA_CREATED_AT),
 				2
 		);
 
@@ -176,7 +190,7 @@ class ActivityRepositoryTest extends BaseTest {
 				CRITERIA_PROJECT_ID
 		));
 		assertNotNull(activities);
-		assertTrue(!activities.isEmpty());
+		assertFalse(activities.isEmpty());
 		activities.forEach(it -> assertEquals(1L, (long) it.getProjectId()));
 	}
 
@@ -185,12 +199,13 @@ class ActivityRepositoryTest extends BaseTest {
 		final List<Activity> activities = repository.findByFilter(new Filter(Activity.class,
 				Condition.EQUALS,
 				false,
-				"launch",
-				CRITERIA_ENTITY
+				"LAUNCH",
+				CRITERIA_OBJECT_TYPE
 		));
 		assertNotNull(activities);
-		assertTrue(!activities.isEmpty());
-		activities.forEach(it -> assertEquals(Activity.ActivityEntityType.LAUNCH.getValue(), it.getActivityEntityType()));
+		assertFalse(activities.isEmpty());
+		activities.forEach(it -> assertEquals(EventObject.LAUNCH,
+				it.getObjectType()));
 	}
 
 	@Test
@@ -201,11 +216,12 @@ class ActivityRepositoryTest extends BaseTest {
 				Condition.BETWEEN,
 				false,
 				Timestamp.valueOf(from).getTime() + "," + Timestamp.valueOf(to).getTime(),
-				CRITERIA_CREATION_DATE
+				CRITERIA_CREATED_AT
 		));
 		assertNotNull(activities);
-		assertTrue(!activities.isEmpty());
-		activities.forEach(it -> assertTrue(it.getCreatedAt().isBefore(to) && it.getCreatedAt().isAfter(from)));
+		assertFalse(activities.isEmpty());
+		activities.forEach(
+				it -> assertTrue(it.getCreatedAt().isBefore(to) && it.getCreatedAt().isAfter(from)));
 	}
 
 	@Test
@@ -217,8 +233,8 @@ class ActivityRepositoryTest extends BaseTest {
 				CRITERIA_USER
 		));
 		assertNotNull(activities);
-		assertTrue(!activities.isEmpty());
-		activities.forEach(it -> assertEquals(1L, (long) it.getUserId()));
+		assertFalse(activities.isEmpty());
+		activities.forEach(it -> assertEquals(1L, (long) it.getSubjectId()));
 	}
 
 	@Test
@@ -230,7 +246,7 @@ class ActivityRepositoryTest extends BaseTest {
 				CRITERIA_OBJECT_ID
 		));
 		assertNotNull(activities);
-		assertTrue(!activities.isEmpty());
+		assertFalse(activities.isEmpty());
 		activities.forEach(it -> assertEquals(4L, (long) it.getObjectId()));
 	}
 
@@ -247,26 +263,31 @@ class ActivityRepositoryTest extends BaseTest {
 						.build())
 				.build());
 
-		assertTrue(!activities.isEmpty());
-		activities.forEach(it -> assertTrue(it.getDetails().getObjectName().contains(term)));
+		assertFalse(activities.isEmpty());
+		activities.forEach(it -> assertTrue(it.getObjectName().contains(term)));
 	}
 
 	private Activity generateActivity() {
 		Activity activity = new Activity();
-		activity.setActivityEntityType(Activity.ActivityEntityType.DEFECT_TYPE.getValue());
-		activity.setAction("create_defect");
-		activity.setObjectId(11L);
+		activity.setAction(EventAction.CREATE);
+		activity.setEventName("createDefect");
 		activity.setCreatedAt(LocalDateTime.now());
+		activity.setDetails(new ActivityDetails());
+		activity.setObjectId(11L);
+		activity.setObjectName("test defect name");
+		activity.setObjectType(EventObject.DEFECT_TYPE);
+		activity.setPriority(EventPriority.MEDIUM);
 		activity.setProjectId(1L);
-		activity.setUserId(1L);
-		activity.setDetails(new ActivityDetails("test defect name"));
+		activity.setSubjectId(1L);
+		activity.setSubjectName("subject_name1");
+		activity.setSubjectType(EventSubject.USER);
 		return activity;
 	}
 
 	private ActivityDetails generateDetails() {
 		ActivityDetails details = new ActivityDetails();
-		details.setObjectName("test");
-		details.setHistory((Arrays.asList(HistoryField.of("test field", "old", "new"), HistoryField.of("test field 2", "old", "new"))));
+		details.setHistory((Arrays.asList(HistoryField.of("test field", "old", "new"),
+				HistoryField.of("test field 2", "old", "new"))));
 		return details;
 	}
 
@@ -275,7 +296,8 @@ class ActivityRepositoryTest extends BaseTest {
 		PageRequest pageRequest = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, CRITERIA_USER));
 		Page<Activity> activitiesPage = repository.findByFilter(defaultFilter(), pageRequest);
 
-		assertTrue(Comparators.isInOrder(activitiesPage.getContent(), Comparator.comparing(Activity::getUsername).reversed()));
+		assertTrue(Comparators.isInOrder(activitiesPage.getContent(),
+				Comparator.comparing(Activity::getSubjectName).reversed()));
 	}
 
 	private Filter filterById(long id) {
