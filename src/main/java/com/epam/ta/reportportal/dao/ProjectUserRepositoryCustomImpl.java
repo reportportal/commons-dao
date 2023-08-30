@@ -36,7 +36,7 @@ public class ProjectUserRepositoryCustomImpl implements ProjectUserRepositoryCus
 
 	@Override
 	public Optional<ReportPortalUser.ProjectDetails> findAdminDetailsProjectName(String projectName) {
-		return dsl.select(PROJECT_USER.PROJECT_ID,
+		return dsl.select(PROJECT.ID,
 						DSL.val("PROJECT_MANAGER").as(PROJECT_USER.PROJECT_ROLE),
 						PROJECT.NAME)
 				.from(PROJECT)
