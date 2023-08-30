@@ -29,9 +29,6 @@ public interface ProjectRepository extends ReportPortalRepository<Project, Long>
 
 	boolean existsByName(String name);
 
-	@Query(value = "SELECT id, name FROM project WHERE name = :name")
-	Optional<Project> findProjectDetail(String name);
-
 	@Query(value = "SELECT p.* FROM project p JOIN project_user pu on p.id = pu.project_id JOIN users u on pu.user_id = u.id WHERE u.login = :login", nativeQuery = true)
 	List<Project> findUserProjects(@Param("login") String login);
 
