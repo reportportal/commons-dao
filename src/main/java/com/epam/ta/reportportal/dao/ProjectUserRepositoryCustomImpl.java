@@ -2,6 +2,7 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.ReportPortalUser;
 import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -31,4 +32,14 @@ public class ProjectUserRepositoryCustomImpl implements ProjectUserRepositoryCus
 				.and(PROJECT.NAME.eq(projectName))
 				.fetchOptional(PROJECT_DETAILS_MAPPER);
 	}
+
+  @Override
+  public Optional<ReportPortalUser.ProjectDetails> findAdminDetailsProjectName(String projectName) {
+    return dsl.select(PROJECT.ID.as(PROJECT_USER.PROJECT_ID),
+            DSL.val("PROJECT_MANAGER").as(PROJECT_USER.PROJECT_ROLE),
+            PROJECT.NAME)
+        .from(PROJECT)
+        .where(PROJECT.NAME.eq(projectName))
+        .fetchOptional(PROJECT_DETAILS_MAPPER);
+  }
 }
