@@ -38,6 +38,7 @@ public class ApiKeyCacheResolver implements CacheResolver {
     if (apiKey != null && context.getOperation().getCacheNames().contains("apiKeyCache")) {
       Cache cache = cacheManager.getCache("apiKeyCache");
       if (cache != null) {
+        cache.evict(apiKey.getHash());
         caches.add(cache);
       }
     }
