@@ -4,6 +4,7 @@ import com.epam.ta.reportportal.dao.ApiKeyRepository;
 import com.epam.ta.reportportal.entity.user.ApiKey;
 import java.util.ArrayList;
 import java.util.Collection;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.interceptor.CacheOperationInvocationContext;
@@ -23,7 +24,8 @@ public class ApiKeyCacheResolver implements CacheResolver {
 
   private final CacheManager cacheManager;
 
-  public ApiKeyCacheResolver(ApiKeyRepository apiKeyRepository, CacheManager cacheManager) {
+  public ApiKeyCacheResolver(ApiKeyRepository apiKeyRepository,
+      @Qualifier("caffeineCacheManager") CacheManager cacheManager) {
     this.apiKeyRepository = apiKeyRepository;
     this.cacheManager = cacheManager;
   }
