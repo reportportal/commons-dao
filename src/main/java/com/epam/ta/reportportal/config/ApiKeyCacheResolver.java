@@ -33,17 +33,23 @@ public class ApiKeyCacheResolver implements CacheResolver {
   @Override
   @NonNull
   public Collection<? extends Cache> resolveCaches(CacheOperationInvocationContext<?> context) {
-    Long apiKeyId = (Long) context.getArgs()[0];
-    ApiKey apiKey = apiKeyRepository.findById(apiKeyId).orElse(null);
-
+    Cache cache = cacheManager.getCache("apiKeyCache");
     Collection<Cache> caches = new ArrayList<>();
-    if (apiKey != null && context.getOperation().getCacheNames().contains("apiKeyCache")) {
-      Cache cache = cacheManager.getCache("apiKeyCache");
-      if (cache != null) {
-        cache.evict(apiKey.getHash());
-        caches.add(cache);
+
+    if (cache != null) {
+      caches.add(cache);
+
+      Object arg = context.getArgs()[0];
+
+      if (context.getMethod().getName().equals("deleteById") && arg instanceof Long) {
+        Long apiKeyId = (Long) arg;
+        ApiKey apiKey = apiKeyRepository.findById(apiKeyId).orElse(null);
+        if (apiKey != null) {
+          cache.evict(apiKey.getHash());
+        }
       }
     }
+
     return caches;
   }
 }
