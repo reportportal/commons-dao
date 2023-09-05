@@ -18,6 +18,6 @@ public class CacheConfiguration {
   }
 
   private Caffeine<Object, Object> cacheProperties() {
-    return Caffeine.newBuilder().expireAfterWrite(1, TimeUnit.MINUTES);
+    return Caffeine.newBuilder().expireAfterWrite(30, TimeUnit.SECONDS);
   }
 }
