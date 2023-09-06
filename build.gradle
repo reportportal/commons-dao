@@ -97,6 +97,9 @@ dependencies {
     compile 'org.apache.jclouds.api:s3:2.5.0'
     compile 'org.apache.jclouds.provider:aws-s3:2.5.0'
 
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
+    implementation 'com.github.ben-manes.caffeine:caffeine'
+
     testCompile 'org.springframework.boot:spring-boot-starter-test'
     testCompile 'org.flywaydb.flyway-test-extensions:flyway-spring-test:6.1.0'
     
