@@ -34,6 +34,8 @@ public interface AttachmentRepository extends ReportPortalRepository<Attachment,
 
   List<Attachment> findAllByLaunchIdIn(Collection<Long> launchIds);
 
+  void deleteAllByProjectId(Long projectId);
+
   @Modifying
   @Query(value = "UPDATE attachment SET launch_id = :newLaunchId WHERE project_id = :projectId AND launch_id = :currentLaunchId", nativeQuery = true)
   void updateLaunchIdByProjectIdAndLaunchId(@Param("projectId") Long projectId,

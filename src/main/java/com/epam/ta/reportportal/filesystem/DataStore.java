@@ -17,6 +17,7 @@
 package com.epam.ta.reportportal.filesystem;
 
 import java.io.InputStream;
+import java.util.List;
 
 /**
  * @author Dzianis_Shybeka
@@ -28,4 +29,8 @@ public interface DataStore {
   InputStream load(String filePath);
 
   void delete(String filePath);
+
+  void deleteAll(List<String> filePaths, String bucketName);
+
+  void deleteContainer(String bucketName);
 }
