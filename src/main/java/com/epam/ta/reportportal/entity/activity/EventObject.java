@@ -33,7 +33,7 @@ public enum EventObject {
   PATTERN("pattern"),
   INDEX("index"),
   PLUGIN("plugin"),
-  INVITATION_LINK("invitationLink");
+  INVITATION_LINK("Invitation link");
   private final String value;
 
   EventObject(String value) {
