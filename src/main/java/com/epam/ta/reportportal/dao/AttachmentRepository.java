@@ -32,6 +32,8 @@ public interface AttachmentRepository
 
   Optional<Attachment> findByFileId(String fileId);
 
+  List<Attachment> findAllByProjectId(Long projectId);
+
   List<Attachment> findAllByLaunchIdIn(Collection<Long> launchIds);
 
   void deleteAllByProjectId(Long projectId);
