@@ -17,6 +17,7 @@
 package com.epam.ta.reportportal.binary;
 
 import java.io.InputStream;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -24,11 +25,15 @@ import java.util.Optional;
  */
 public interface DataStoreService {
 
-	String save(String fileName, InputStream data);
+  String save(String fileName, InputStream data);
 
-	String saveThumbnail(String fileName, InputStream data);
+  String saveThumbnail(String fileName, InputStream data);
 
-	void delete(String fileId);
+  void delete(String fileId);
 
-	Optional<InputStream> load(String fileId);
+  void deleteAll(List<String> fileIds, String bucketName);
+
+  void deleteContainer(String containerName);
+
+  Optional<InputStream> load(String fileId);
 }

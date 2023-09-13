@@ -17,25 +17,29 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.attachment.Attachment;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
-public interface AttachmentRepository extends ReportPortalRepository<Attachment, Long>, AttachmentRepositoryCustom {
+public interface AttachmentRepository
+    extends ReportPortalRepository<Attachment, Long>, AttachmentRepositoryCustom {
 
-	Optional<Attachment> findByFileId(String fileId);
+  Optional<Attachment> findByFileId(String fileId);
 
-	List<Attachment> findAllByLaunchIdIn(Collection<Long> launchIds);
+  List<Attachment> findAllByProjectId(Long projectId);
 
-	@Modifying
-	@Query(value = "UPDATE attachment SET launch_id = :newLaunchId WHERE project_id = :projectId AND launch_id = :currentLaunchId", nativeQuery = true)
-	void updateLaunchIdByProjectIdAndLaunchId(@Param("projectId") Long projectId, @Param("currentLaunchId") Long currentLaunchId,
-			@Param("newLaunchId") Long newLaunchId);
+  List<Attachment> findAllByLaunchIdIn(Collection<Long> launchIds);
+
+  void deleteAllByProjectId(Long projectId);
+
+  @Modifying
+  @Query(value = "UPDATE attachment SET launch_id = :newLaunchId WHERE project_id = :projectId AND launch_id = :currentLaunchId", nativeQuery = true)
+  void updateLaunchIdByProjectIdAndLaunchId(@Param("projectId") Long projectId,
+      @Param("currentLaunchId") Long currentLaunchId, @Param("newLaunchId") Long newLaunchId);
 }

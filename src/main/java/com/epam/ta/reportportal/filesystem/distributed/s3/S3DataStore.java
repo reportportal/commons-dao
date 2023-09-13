@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -123,6 +124,24 @@ public class S3DataStore implements DataStore {
     } catch (Exception e) {
       LOGGER.error("Unable to delete file '{}'", filePath, e);
       throw new ReportPortalException(ErrorType.INCORRECT_REQUEST, "Unable to delete file");
+    }
+  }
+
+  @Override
+  public void deleteAll(List<String> filePaths, String bucketName) {
+    if (!featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)) {
+      blobStore.removeBlobs(bucketPrefix + bucketName + bucketPostfix, filePaths);
+    } else {
+      blobStore.removeBlobs(defaultBucketName, filePaths);
+    }
+  }
+
+  @Override
+  public void deleteContainer(String bucketName) {
+    if (!featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)) {
+      blobStore.deleteContainer(bucketPrefix + bucketName + bucketPostfix);
+    } else {
+      blobStore.deleteContainer(bucketName);
     }
   }
 
