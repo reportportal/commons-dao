@@ -16,7 +16,6 @@
 
 package com.epam.ta.reportportal.dao.util;
 
-import static com.epam.ta.reportportal.commons.querygen.FilterTarget.ATTRIBUTE_ALIAS;
 import static com.epam.ta.reportportal.dao.LogRepositoryCustomImpl.ROOT_ITEM_ID;
 import static com.epam.ta.reportportal.dao.constant.TestItemRepositoryConstants.ATTACHMENTS_COUNT;
 import static com.epam.ta.reportportal.dao.constant.TestItemRepositoryConstants.HAS_CONTENT;
@@ -31,6 +30,7 @@ import static com.epam.ta.reportportal.jooq.Tables.INTEGRATION;
 import static com.epam.ta.reportportal.jooq.Tables.INTEGRATION_TYPE;
 import static com.epam.ta.reportportal.jooq.Tables.ISSUE;
 import static com.epam.ta.reportportal.jooq.Tables.ISSUE_TYPE;
+import static com.epam.ta.reportportal.jooq.Tables.ITEM_ATTRIBUTE;
 import static com.epam.ta.reportportal.jooq.Tables.LAUNCH;
 import static com.epam.ta.reportportal.jooq.Tables.LOG;
 import static com.epam.ta.reportportal.jooq.Tables.PATTERN_TEMPLATE;
@@ -50,8 +50,13 @@ import static java.util.Optional.ofNullable;
 import com.epam.ta.reportportal.commons.ReportPortalUser;
 import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.Metadata;
+import com.epam.ta.reportportal.entity.OwnedEntity;
 import com.epam.ta.reportportal.entity.activity.Activity;
 import com.epam.ta.reportportal.entity.activity.ActivityDetails;
+import com.epam.ta.reportportal.entity.activity.EventAction;
+import com.epam.ta.reportportal.entity.activity.EventObject;
+import com.epam.ta.reportportal.entity.activity.EventPriority;
+import com.epam.ta.reportportal.entity.activity.EventSubject;
 import com.epam.ta.reportportal.entity.attachment.Attachment;
 import com.epam.ta.reportportal.entity.attribute.Attribute;
 import com.epam.ta.reportportal.entity.bts.Ticket;
@@ -110,7 +115,6 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import org.apache.logging.log4j.util.Strings;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
@@ -123,7 +127,7 @@ import org.jooq.Result;
  */
 public class RecordMappers {
 
-  private static ObjectMapper objectMapper;
+	private static final ObjectMapper objectMapper;
 
   static {
     objectMapper = new ObjectMapper();
@@ -401,37 +405,45 @@ public class RecordMappers {
     return new ReportPortalUser.ProjectDetails(projectId, projectName, projectRole);
   };
 
-  public static final RecordMapper<? super Record, Activity> ACTIVITY_MAPPER = r -> {
-    Activity activity = new Activity();
-    activity.setId(r.get(ACTIVITY.ID));
-    activity.setUserId(r.get(ACTIVITY.USER_ID));
-    activity.setProjectId(r.get(ACTIVITY.PROJECT_ID));
-    activity.setAction(r.get(ACTIVITY.ACTION));
-    activity.setUsername(ofNullable(r.get(USERS.LOGIN)).orElse(r.get(ACTIVITY.USERNAME)));
-    activity.setActivityEntityType(r.get(ACTIVITY.ENTITY, String.class));
-    activity.setCreatedAt(r.get(ACTIVITY.CREATION_DATE, LocalDateTime.class));
-    activity.setObjectId(r.get(ACTIVITY.OBJECT_ID));
-    String detailsJson = r.get(ACTIVITY.DETAILS, String.class);
-    ofNullable(detailsJson).ifPresent(s -> {
-      try {
-        ActivityDetails details = objectMapper.readValue(s, ActivityDetails.class);
-        activity.setDetails(details);
-      } catch (IOException e) {
-        throw new ReportPortalException(ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR);
-      }
-    });
-    return activity;
-  };
+	public static final RecordMapper<? super Record, Activity> ACTIVITY_MAPPER = r -> {
+		Activity activity = new Activity();
+		activity.setId(r.get(ACTIVITY.ID));
+		activity.setCreatedAt(r.get(ACTIVITY.CREATED_AT, LocalDateTime.class));
+		activity.setAction(EventAction.valueOf(r.get(ACTIVITY.ACTION)));
+		activity.setEventName(r.get(ACTIVITY.EVENT_NAME));
+		activity.setPriority(EventPriority.valueOf(r.get(ACTIVITY.PRIORITY)));
+		activity.setObjectId(r.get(ACTIVITY.OBJECT_ID));
+		activity.setObjectName(r.get(ACTIVITY.OBJECT_NAME));
+		activity.setObjectType(EventObject.valueOf(r.get(ACTIVITY.OBJECT_TYPE)));
+		activity.setProjectId(r.get(ACTIVITY.PROJECT_ID));
+		activity.setProjectName(r.get(PROJECT.NAME));
+		String detailsJson = r.get(ACTIVITY.DETAILS, String.class);
+		ofNullable(detailsJson).ifPresent(s -> {
+			try {
+				ActivityDetails details = objectMapper.readValue(s, ActivityDetails.class);
+				activity.setDetails(details);
+			} catch (IOException e) {
+				throw new ReportPortalException(ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR);
+			}
+		});
+		activity.setSubjectId(r.get(ACTIVITY.SUBJECT_ID));
+		activity.setSubjectName(ofNullable(r.get(USERS.LOGIN)).orElse(r.get(ACTIVITY.SUBJECT_NAME)));
+		activity.setSubjectType(EventSubject.valueOf(r.get(ACTIVITY.SUBJECT_TYPE)));
+		return activity;
+	};
 
-  private static final BiConsumer<Widget, ? super Record> WIDGET_USER_FILTER_MAPPER = (widget, res) -> ofNullable(
-      res.get(FILTER.ID)).ifPresent(
-      id -> {
-        Set<UserFilter> filters = ofNullable(widget.getFilters()).orElseGet(Sets::newLinkedHashSet);
-        UserFilter filter = new UserFilter();
-        filter.setId(id);
-        filters.add(filter);
-        widget.setFilters(filters);
-      });
+	public static final RecordMapper<? super Record, OwnedEntity> OWNED_ENTITY_RECORD_MAPPER = r -> r.into(
+			OwnedEntity.class);
+
+	private static final BiConsumer<Widget, ? super Record> WIDGET_USER_FILTER_MAPPER = (widget, res) -> ofNullable(
+			res.get(FILTER.ID)).ifPresent(
+			id -> {
+				Set<UserFilter> filters = ofNullable(widget.getFilters()).orElseGet(Sets::newLinkedHashSet);
+				UserFilter filter = new UserFilter();
+				filter.setId(id);
+				filters.add(filter);
+				widget.setFilters(filters);
+			});
 
   private static final BiConsumer<Widget, ? super Record> WIDGET_OPTIONS_MAPPER = (widget, res) -> {
     ofNullable(res.get(WIDGET.WIDGET_OPTIONS, String.class)).ifPresent(wo -> {

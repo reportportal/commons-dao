@@ -24,20 +24,17 @@ import java.util.Optional;
  */
 public enum ProjectRole implements Comparable<ProjectRole> {
 
-  OPERATOR(0),
-  CUSTOMER(1),
-  MEMBER(2),
-  PROJECT_MANAGER(3);
+  OPERATOR(0, "Operator"),
+  CUSTOMER(1, "Customer"),
+  MEMBER(2, "Member"),
+  PROJECT_MANAGER(3, "Project manager");
 
-  private int roleLevel;
+  private final int roleLevel;
+  private final String roleName;
 
-  ProjectRole(int level) {
+  ProjectRole(int level, String roleName) {
     this.roleLevel = level;
-  }
-
-  public static Optional<ProjectRole> forName(final String name) {
-    return Arrays.stream(ProjectRole.values()).filter(role -> role.name().equalsIgnoreCase(name))
-        .findAny();
+    this.roleName = roleName;
   }
 
   public boolean higherThan(ProjectRole other) {
@@ -55,4 +52,14 @@ public enum ProjectRole implements Comparable<ProjectRole> {
   public boolean sameOrLowerThan(ProjectRole other) {
     return this.roleLevel <= other.roleLevel;
   }
+
+  public static Optional<ProjectRole> forName(final String name) {
+    return Arrays.stream(ProjectRole.values()).filter(role -> role.name().equalsIgnoreCase(name))
+        .findAny();
+  }
+
+  public String getRoleName() {
+    return roleName;
+  }
+
 }

@@ -16,8 +16,6 @@
 
 package com.epam.ta.reportportal.dao;
 
-import static com.epam.ta.reportportal.dao.util.ResultFetchers.DASHBOARD_FETCHER;
-
 import com.epam.ta.reportportal.commons.querygen.ConvertibleCondition;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
@@ -51,9 +49,9 @@ public class DashboardRepositoryCustomImpl implements DashboardRepositoryCustom 
 		this.dsl = dsl;
 	}
 
-  @Override
-  public List<Dashboard> findByFilter(Queryable filter) {
-    return DASHBOARD_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(
+	@Override
+	public List<Dashboard> findByFilter(Queryable filter) {
+		return DASHBOARD_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(
 				filter,
 				filter.getFilterConditions()
 						.stream()
@@ -62,10 +60,10 @@ public class DashboardRepositoryCustomImpl implements DashboardRepositoryCustom 
 						.map(FilterCondition::getSearchCriteria)
 						.collect(Collectors.toSet())
 		).wrap().build()));
-  }
+	}
 
-  @Override
-  public Page<Dashboard> findByFilter(Queryable filter, Pageable pageable) {
+	@Override
+	public Page<Dashboard> findByFilter(Queryable filter, Pageable pageable) {
 		Set<String> fields = filter.getFilterConditions()
 				.stream()
 				.map(ConvertibleCondition::getAllConditions)
@@ -79,5 +77,5 @@ public class DashboardRepositoryCustomImpl implements DashboardRepositoryCustom 
 				.wrap()
 				.withWrapperSort(pageable.getSort())
 				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter, fields).build()));
-  }
+	}
 }

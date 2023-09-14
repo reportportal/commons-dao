@@ -17,16 +17,8 @@
 package com.epam.ta.reportportal.entity;
 
 import com.epam.ta.reportportal.entity.project.Project;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+
+import javax.persistence.*;
 
 /**
  * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
@@ -36,37 +28,37 @@ import javax.persistence.Table;
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class OwnedEntity {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-  private String owner;
+	private String owner;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "project_id")
 	private Project project;
 
-  public Long getId() {
-    return id;
-  }
+	public Long getId() {
+		return id;
+	}
 
-  public void setId(Long id) {
-    this.id = id;
-  }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-  public String getOwner() {
+	public String getOwner() {
 		return owner;
 	}
 
-  public void setOwner(String owner) {
-    this.owner = owner;
-  }
+	public void setOwner(String owner) {
+		this.owner = owner;
+	}
 
-  public Project getProject() {
-    return project;
-  }
+	public Project getProject() {
+		return project;
+	}
 
-  public void setProject(Project project) {
-    this.project = project;
-  }
+	public void setProject(Project project) {
+		this.project = project;
+	}
 }

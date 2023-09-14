@@ -67,7 +67,6 @@ import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConst
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.PERCENTAGE;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.PERCENTAGE_MULTIPLIER;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.SF_NAME;
-import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.SKIPPED;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.START_TIME;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.START_TIME_HISTORY;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.STATISTICS_COUNTER;
@@ -851,29 +850,31 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
   @Override
   public List<ActivityResource> activityStatistics(Filter filter, Sort sort, int limit) {
 
-    return dsl.with(ACTIVITIES)
+		return dsl.with(ACTIVITIES)
         .as(QueryBuilder.newBuilder(filter, collectJoinFields(filter, sort)).with(sort).with(limit)
             .build())
-        .select(ACTIVITY.ID,
-            ACTIVITY.ACTION,
-            ACTIVITY.ENTITY,
-            ACTIVITY.CREATION_DATE,
-            ACTIVITY.DETAILS,
-            ACTIVITY.PROJECT_ID,
-            ACTIVITY.OBJECT_ID,
-            USERS.LOGIN,
-            PROJECT.NAME
-        )
+				.select(ACTIVITY.ID,
+						ACTIVITY.EVENT_NAME,
+						ACTIVITY.OBJECT_TYPE,
+						ACTIVITY.CREATED_AT,
+						ACTIVITY.DETAILS,
+						ACTIVITY.PROJECT_ID,
+						ACTIVITY.OBJECT_ID,
+						ACTIVITY.OBJECT_NAME,
+						ACTIVITY.SUBJECT_NAME,
+						USERS.LOGIN,
+						PROJECT.NAME
+				)
         .from(ACTIVITY)
         .join(ACTIVITIES)
         .on(fieldName(ACTIVITIES, ID).cast(Long.class).eq(ACTIVITY.ID))
-        .join(USERS)
-        .on(ACTIVITY.USER_ID.eq(USERS.ID))
-        .join(PROJECT)
-        .on(ACTIVITY.PROJECT_ID.eq(PROJECT.ID))
-        .orderBy(WidgetSortUtils.sortingTransformer(filter.getTarget()).apply(sort, ACTIVITIES))
-        .fetch()
-        .map(ACTIVITY_MAPPER);
+        .leftJoin(USERS)
+        .on(ACTIVITY.SUBJECT_ID.eq(USERS.ID))
+				.join(PROJECT)
+				.on(ACTIVITY.PROJECT_ID.eq(PROJECT.ID))
+				.orderBy(WidgetSortUtils.sortingTransformer(filter.getTarget()).apply(sort, ACTIVITIES))
+				.fetch()
+				.map(ACTIVITY_MAPPER);
 
   }
 

@@ -21,7 +21,7 @@ import org.jooq.Identity;
 import org.jooq.Index;
 import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row6;
+import org.jooq.Row5;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -43,7 +43,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JSenderCase extends TableImpl<JSenderCaseRecord> {
 
-    private static final long serialVersionUID = -592069423;
+    private static final long serialVersionUID = -15193371;
 
     /**
      * The reference instance of <code>public.sender_case</code>
@@ -82,11 +82,6 @@ public class JSenderCase extends TableImpl<JSenderCaseRecord> {
      * The column <code>public.sender_case.attributes_operator</code>.
      */
     public final TableField<JSenderCaseRecord, JLogicalOperatorEnum> ATTRIBUTES_OPERATOR = createField(DSL.name("attributes_operator"), org.jooq.impl.SQLDataType.VARCHAR.nullable(false).defaultValue(org.jooq.impl.DSL.field("'AND'::logical_operator_enum", org.jooq.impl.SQLDataType.VARCHAR)).asEnumDataType(com.epam.ta.reportportal.jooq.enums.JLogicalOperatorEnum.class), this, "");
-
-    /**
-     * The column <code>public.sender_case.rule_name</code>.
-     */
-    public final TableField<JSenderCaseRecord, String> RULE_NAME = createField(DSL.name("rule_name"), org.jooq.impl.SQLDataType.VARCHAR(55).nullable(false), this, "");
 
     /**
      * Create a <code>public.sender_case</code> table reference
@@ -128,7 +123,7 @@ public class JSenderCase extends TableImpl<JSenderCaseRecord> {
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.SENDER_CASE_PK, Indexes.SENDER_CASE_PROJECT_IDX, Indexes.UNIQUE_RULE_NAME_PER_PROJECT);
+        return Arrays.<Index>asList(Indexes.SENDER_CASE_PK, Indexes.SENDER_CASE_PROJECT_IDX);
     }
 
     @Override
@@ -182,11 +177,11 @@ public class JSenderCase extends TableImpl<JSenderCaseRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row6 type methods
+    // Row5 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row6<Long, String, Long, Boolean, JLogicalOperatorEnum, String> fieldsRow() {
-        return (Row6) super.fieldsRow();
+    public Row5<Long, String, Long, Boolean, JLogicalOperatorEnum> fieldsRow() {
+        return (Row5) super.fieldsRow();
     }
 }

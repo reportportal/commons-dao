@@ -35,8 +35,6 @@ import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
 import com.epam.ta.reportportal.jooq.tables.JOnboarding;
-import com.epam.ta.reportportal.jooq.tables.JOrganization;
-import com.epam.ta.reportportal.jooq.tables.JOrganizationAttribute;
 import com.epam.ta.reportportal.jooq.tables.JOwnedEntity;
 import com.epam.ta.reportportal.jooq.tables.JParameter;
 import com.epam.ta.reportportal.jooq.tables.JPatternTemplate;
@@ -237,16 +235,6 @@ public class Tables {
      * The table <code>public.onboarding</code>.
      */
     public static final JOnboarding ONBOARDING = JOnboarding.ONBOARDING;
-
-    /**
-     * The table <code>public.organization</code>.
-     */
-    public static final JOrganization ORGANIZATION = JOrganization.ORGANIZATION;
-
-    /**
-     * The table <code>public.organization_attribute</code>.
-     */
-    public static final JOrganizationAttribute ORGANIZATION_ATTRIBUTE = JOrganizationAttribute.ORGANIZATION_ATTRIBUTE;
 
     /**
      * The table <code>public.owned_entity</code>.

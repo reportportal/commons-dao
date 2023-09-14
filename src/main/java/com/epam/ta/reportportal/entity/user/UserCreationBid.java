@@ -16,17 +16,18 @@
 
 package com.epam.ta.reportportal.entity.user;
 
-import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.Modifiable;
+import com.epam.ta.reportportal.entity.project.Project;
 import java.io.Serializable;
 import java.util.Date;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -35,7 +36,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
  */
 @Entity
 @Table(name = "user_creation_bid")
-@TypeDef(name = "json", typeClass = Metadata.class)
 @EntityListeners(AuditingEntityListener.class)
 public class UserCreationBid implements Serializable, Modifiable {
 
@@ -50,15 +50,16 @@ public class UserCreationBid implements Serializable, Modifiable {
   @Column(name = "email")
   private String email;
 
-  @Column(name = "project_name")
-  private String projectName;
+  @OneToOne(cascade = CascadeType.ALL)
+  @JoinColumn(name = "default_project_id")
+  private Project defaultProject;
 
   @Column(name = "role")
   private String role;
 
-  @Type(type = "json")
-  @Column(name = "metadata")
-  private Metadata metadata;
+  @OneToOne(cascade = CascadeType.ALL)
+  @JoinColumn(name = "inviting_user_id")
+  private User invitingUser;
 
   public String getUuid() {
     return uuid;
@@ -76,12 +77,12 @@ public class UserCreationBid implements Serializable, Modifiable {
     this.email = email;
   }
 
-  public String getProjectName() {
-    return projectName;
+  public Project getDefaultProject() {
+    return defaultProject;
   }
 
-  public void setProjectName(String projectName) {
-    this.projectName = projectName;
+  public void setDefaultProject(Project defaultProject) {
+    this.defaultProject = defaultProject;
   }
 
   public String getRole() {
@@ -101,11 +102,11 @@ public class UserCreationBid implements Serializable, Modifiable {
     this.lastModified = lastModified;
   }
 
-  public Metadata getMetadata() {
-    return metadata;
+  public User getInvitingUser() {
+    return invitingUser;
   }
 
-  public void setMetadata(Metadata metadata) {
-    this.metadata = metadata;
+  public void setInvitingUser(User invitingUser) {
+    this.invitingUser = invitingUser;
   }
 }

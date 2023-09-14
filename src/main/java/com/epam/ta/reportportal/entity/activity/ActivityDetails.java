@@ -27,18 +27,12 @@ import java.util.List;
 public class ActivityDetails extends JsonbUserType implements Serializable {
 
   private List<HistoryField> history = Lists.newArrayList();
-  private String objectName;
 
   public ActivityDetails() {
   }
 
-  public ActivityDetails(String objectName) {
-    this.objectName = objectName;
-  }
-
-  public ActivityDetails(List<HistoryField> history, String objectName) {
+  public ActivityDetails(List<HistoryField> history) {
     this.history = history;
-    this.objectName = objectName;
   }
 
   @Override
@@ -54,15 +48,13 @@ public class ActivityDetails extends JsonbUserType implements Serializable {
     this.history = history;
   }
 
-  public String getObjectName() {
-    return objectName;
-  }
-
-  public void setObjectName(String objectName) {
-    this.objectName = objectName;
-  }
-
   public void addHistoryField(HistoryField historyField) {
     history.add(historyField);
   }
+
+  @Override
+  public String toString() {
+    return "ActivityDetails{" + "history=" + history + '}';
+  }
+
 }

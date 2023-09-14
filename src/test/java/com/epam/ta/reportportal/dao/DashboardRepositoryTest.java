@@ -96,10 +96,10 @@ class DashboardRepositoryTest extends BaseTest {
     assertFalse(repository.existsByNameAndOwnerAndProjectId("not exist name", "default", 2L));
   }
 
-  @Test
-  void shouldFindBySpecifiedNameAndProjectId() {
-    assertTrue(repository.existsByNameAndProjectId("test admin dashboard", 1L));
-  }
+	@Test
+	void shouldFindBySpecifiedNameAndProjectId() {
+		assertTrue(repository.existsByNameAndProjectId("test admin dashboard", 1L));
+	}
 
   private Filter buildDefaultFilter() {
     return Filter.builder()

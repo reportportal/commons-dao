@@ -56,18 +56,7 @@ class CommonDataStoreServiceTest extends BaseTest {
   @Value("${datastore.path:/data/store}")
   private String storageRootPath;
 
-  public static CommonsMultipartFile getMultipartFile(String path) throws IOException {
-    File file = new ClassPathResource(path).getFile();
-    FileItem fileItem = new DiskFileItem("mainFile",
-        Files.probeContentType(file.toPath()),
-        false,
-        file.getName(),
-        (int) file.length(),
-        file.getParentFile()
-    );
-    IOUtils.copy(new FileInputStream(file), fileItem.getOutputStream());
-    return new CommonsMultipartFile(fileItem);
-  }@Test
+  @Test
   void saveTest() throws IOException {
     CommonsMultipartFile multipartFile = getMultipartFile("meh.jpg");
     String fileId =
@@ -113,5 +102,15 @@ class CommonDataStoreServiceTest extends BaseTest {
     dataStoreService.delete(fileId);
 
     assertFalse(Files.exists(Paths.get(dataEncoder.decode(fileId))));
+  }
+
+  public static CommonsMultipartFile getMultipartFile(String path) throws IOException {
+    File file = new ClassPathResource(path).getFile();
+    FileItem fileItem =
+        new DiskFileItem("mainFile", Files.probeContentType(file.toPath()), false, file.getName(),
+            (int) file.length(), file.getParentFile()
+        );
+    IOUtils.copy(new FileInputStream(file), fileItem.getOutputStream());
+    return new CommonsMultipartFile(fileItem);
   }
 }

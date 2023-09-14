@@ -55,7 +55,9 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserBinaryDataServiceImpl implements UserBinaryDataService {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(UserBinaryDataServiceImpl.class);
-  private static final String DEFAULT_USER_PHOTO = "image/defaultAvatar.png";
+  private FeatureFlagHandler featureFlagHandler;
+
+  privatestatic final String DEFAULT_USER_PHOTO = "image/defaultAvatar.png";
   private DataStoreService dataStoreService;
 
   private FeatureFlagHandler featureFlagHandler;

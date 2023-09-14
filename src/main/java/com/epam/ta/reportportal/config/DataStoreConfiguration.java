@@ -54,8 +54,10 @@ public class DataStoreConfiguration {
    * Amazon has a general work flow they publish that allows clients to always find the correct URL
    * endpoint for a given bucket: 1) ask s3.amazonaws.com for the bucket location 2) use the url
    * returned to make the container specific request (get/put, etc) Jclouds cache the results from
-   * the first getBucketLocation call and use that region-specific URL, as needed. In this custom
-   * implementation of {@link AWSS3HttpApiModule} we are providing location from environment
+   * the first getBucketLocation call and use that region-specific
+   * URL, as needed. In this custom
+   * implementation of {@link AWSS3HttpApiModule} we are providing location
+   * from environment
    * variable, so that we don't need to make getBucketLocation call
    */
   @ConfiguresHttpApi
@@ -175,9 +177,10 @@ public class DataStoreConfiguration {
   @ConditionalOnProperty(name = "datastore.type", havingValue = "minio")
   public DataStore minioDataStore(@Autowired BlobStore blobStore,
       @Value("${datastore.bucketPrefix}") String bucketPrefix,
+      @Value("${datastore.bucketPostfix}") String bucketPostfix,
       @Value("${datastore.defaultBucketName}") String defaultBucketName,
       @Value("${datastore.region}") String region, FeatureFlagHandler featureFlagHandler) {
-    return new S3DataStore(blobStore, bucketPrefix, defaultBucketName, region, featureFlagHandler);
+    return new S3DataStore(blobStore, bucketPrefix, bucketPostfix, defaultBucketName, region, featureFlagHandler);
   }
 
   /**
@@ -206,9 +209,11 @@ public class DataStoreConfiguration {
   @ConditionalOnProperty(name = "datastore.type", havingValue = "s3")
   public DataStore s3DataStore(@Autowired BlobStore blobStore,
       @Value("${datastore.bucketPrefix}") String bucketPrefix,
+      @Value("${datastore.bucketPostfix}") String bucketPostfix,
       @Value("${datastore.defaultBucketName}") String defaultBucketName,
       @Value("${datastore.region}") String region, FeatureFlagHandler featureFlagHandler) {
-    return new S3DataStore(blobStore, bucketPrefix, defaultBucketName, region, featureFlagHandler);
+    return new S3DataStore(blobStore, bucketPrefix, bucketPostfix, defaultBucketName, region,
+        featureFlagHandler);
   }
 
   @Bean("attachmentThumbnailator")

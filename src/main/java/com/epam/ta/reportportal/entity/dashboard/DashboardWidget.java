@@ -68,7 +68,7 @@ public class DashboardWidget implements Serializable {
   @Column(name = "widget_position_y")
   private int positionY;
 
-  public DashboardWidgetId getId() {
+	public DashboardWidgetId getId() {
 		return id;
 	}
 
@@ -156,7 +156,7 @@ public class DashboardWidget implements Serializable {
     this.positionY = positionY;
   }
 
-  @Override
+	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
 			return true;

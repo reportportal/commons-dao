@@ -16,6 +16,10 @@
 
 package com.epam.ta.reportportal.dao;
 
+import com.epam.ta.reportportal.commons.querygen.ConvertibleCondition;
+import com.epam.ta.reportportal.commons.querygen.FilterCondition;
+import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
+import com.epam.ta.reportportal.commons.querygen.Queryable;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.USER_FILTER_FETCHER;
 
 import com.epam.ta.reportportal.commons.querygen.ConvertibleCondition;

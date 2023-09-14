@@ -5,6 +5,7 @@ import java.util.Optional;
 
 public interface ProjectUserRepositoryCustom {
 
-  Optional<ReportPortalUser.ProjectDetails> findDetailsByUserIdAndProjectName(Long userId,
-      String projectName);
+	Optional<ReportPortalUser.ProjectDetails> findDetailsByUserIdAndProjectName(Long userId, String projectName);
+
+	Optional<ReportPortalUser.ProjectDetails> findAdminDetailsProjectName(String projectName);
 }
