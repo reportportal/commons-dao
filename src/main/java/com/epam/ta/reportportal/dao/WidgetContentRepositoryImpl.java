@@ -67,6 +67,7 @@ import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConst
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.PERCENTAGE;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.PERCENTAGE_MULTIPLIER;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.SF_NAME;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.SKIPPED;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.START_TIME;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.START_TIME_HISTORY;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.STATISTICS_COUNTER;

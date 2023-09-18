@@ -55,12 +55,11 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserBinaryDataServiceImpl implements UserBinaryDataService {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(UserBinaryDataServiceImpl.class);
-  private FeatureFlagHandler featureFlagHandler;
+  private static final String DEFAULT_USER_PHOTO = "image/defaultAvatar.png";
 
-  privatestatic final String DEFAULT_USER_PHOTO = "image/defaultAvatar.png";
-  private DataStoreService dataStoreService;
+  private final DataStoreService dataStoreService;
 
-  private FeatureFlagHandler featureFlagHandler;
+  private final FeatureFlagHandler featureFlagHandler;
 
   @Autowired
   public UserBinaryDataServiceImpl(

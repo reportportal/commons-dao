@@ -119,9 +119,9 @@ public interface LaunchRepository extends ReportPortalRepository<Launch, Long>,
 
   /**
    * @param launchId {@link Launch#getId()}
-   * @param status   {@link TestItemResults#getStatus()}
+   * @param statuses   {@link TestItemResults#getStatus()}
    * @return `true` if {@link TestItem#getLaunchId()} equal to provided `launchId`,
-   * {@link TestItem#getParent()} equal to `NULL` and {@link TestItemResults#getStatus()} is not
+   * {@link TestItem#getParentId()} equal to `NULL` and {@link TestItemResults#getStatus()} is not
    * equal to provided `status`, otherwise return `false`
    */
   @Query(value =

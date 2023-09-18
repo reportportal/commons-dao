@@ -124,16 +124,6 @@ public class Sequences {
     public static final Sequence<Short> ONBOARDING_ID_SEQ = new SequenceImpl<Short>("onboarding_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.SMALLINT.nullable(false));
 
     /**
-     * The sequence <code>public.organization_attribute_id_seq</code>
-     */
-    public static final Sequence<Long> ORGANIZATION_ATTRIBUTE_ID_SEQ = new SequenceImpl<Long>("organization_attribute_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
-
-    /**
-     * The sequence <code>public.organization_id_seq</code>
-     */
-    public static final Sequence<Long> ORGANIZATION_ID_SEQ = new SequenceImpl<Long>("organization_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
-
-    /**
      * The sequence <code>public.pattern_template_id_seq</code>
      */
     public static final Sequence<Long> PATTERN_TEMPLATE_ID_SEQ = new SequenceImpl<Long>("pattern_template_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));

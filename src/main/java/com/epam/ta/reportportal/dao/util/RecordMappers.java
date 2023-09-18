@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.dao.util;
 
+import static com.epam.ta.reportportal.commons.querygen.FilterTarget.ATTRIBUTE_ALIAS;
 import static com.epam.ta.reportportal.dao.LogRepositoryCustomImpl.ROOT_ITEM_ID;
 import static com.epam.ta.reportportal.dao.constant.TestItemRepositoryConstants.ATTACHMENTS_COUNT;
 import static com.epam.ta.reportportal.dao.constant.TestItemRepositoryConstants.HAS_CONTENT;
@@ -30,7 +31,6 @@ import static com.epam.ta.reportportal.jooq.Tables.INTEGRATION;
 import static com.epam.ta.reportportal.jooq.Tables.INTEGRATION_TYPE;
 import static com.epam.ta.reportportal.jooq.Tables.ISSUE;
 import static com.epam.ta.reportportal.jooq.Tables.ISSUE_TYPE;
-import static com.epam.ta.reportportal.jooq.Tables.ITEM_ATTRIBUTE;
 import static com.epam.ta.reportportal.jooq.Tables.LAUNCH;
 import static com.epam.ta.reportportal.jooq.Tables.LOG;
 import static com.epam.ta.reportportal.jooq.Tables.PATTERN_TEMPLATE;
@@ -115,6 +115,7 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import org.apache.logging.log4j.util.Strings;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.RecordMapper;

@@ -17,7 +17,6 @@
 package com.epam.ta.reportportal.dao;
 
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_ID;
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_NAME;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -33,12 +32,6 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
-
-import java.util.List;
-import java.util.Optional;
-
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_ID;
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
@@ -90,16 +83,9 @@ class DashboardRepositoryTest extends BaseTest {
   }
 
   @Test
-  void existsByNameAndOwnerAndProjectId() {
-    assertTrue(
-        repository.existsByNameAndOwnerAndProjectId("test admin dashboard", "superadmin", 1L));
-    assertFalse(repository.existsByNameAndOwnerAndProjectId("not exist name", "default", 2L));
+  void shouldFindBySpecifiedNameAndProjectId() {
+    assertTrue(repository.existsByNameAndProjectId("test admin dashboard", 1L));
   }
-
-	@Test
-	void shouldFindBySpecifiedNameAndProjectId() {
-		assertTrue(repository.existsByNameAndProjectId("test admin dashboard", 1L));
-	}
 
   private Filter buildDefaultFilter() {
     return Filter.builder()

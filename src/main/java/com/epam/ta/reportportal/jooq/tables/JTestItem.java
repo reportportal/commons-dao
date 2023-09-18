@@ -44,7 +44,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JTestItem extends TableImpl<JTestItemRecord> {
 
-    private static final long serialVersionUID = 1848873064;
+    private static final long serialVersionUID = 476122531;
 
     /**
      * The reference instance of <code>public.test_item</code>
@@ -189,7 +189,7 @@ public class JTestItem extends TableImpl<JTestItemRecord> {
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.ITEM_TEST_CASE_ID_LAUNCH_ID_IDX, Indexes.PATH_GIST_IDX, Indexes.PATH_IDX, Indexes.TEST_CASE_HASH_LAUNCH_ID_IDX, Indexes.TEST_ITEM_PK, Indexes.TEST_ITEM_UNIQUE_ID_LAUNCH_ID_IDX, Indexes.TEST_ITEM_UUID_KEY, Indexes.TI_LAUNCH_IDX, Indexes.TI_PARENT_IDX, Indexes.TI_RETRY_OF_IDX);
+        return Arrays.<Index>asList(Indexes.ITEM_TEST_CASE_ID_LAUNCH_ID_IDX, Indexes.PATH_GIST_IDX, Indexes.TEST_CASE_HASH_LAUNCH_ID_IDX, Indexes.TEST_ITEM_PK, Indexes.TEST_ITEM_UNIQUE_ID_LAUNCH_ID_IDX, Indexes.TEST_ITEM_UUID_KEY, Indexes.TI_LAUNCH_IDX, Indexes.TI_PARENT_IDX, Indexes.TI_RETRY_OF_IDX);
     }
 
     @Override
