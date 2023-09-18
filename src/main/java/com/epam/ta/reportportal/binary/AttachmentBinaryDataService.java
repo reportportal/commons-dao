@@ -38,4 +38,6 @@ public interface AttachmentBinaryDataService {
   BinaryData load(Long fileId, ReportPortalUser.ProjectDetails projectDetails);
 
   void delete(String fileId);
+
+  void deleteAllByProjectId(Long projectId);
 }
