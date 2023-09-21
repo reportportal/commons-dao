@@ -86,7 +86,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.assertj.core.util.Lists;
 import org.jooq.DSLContext;
@@ -441,29 +440,29 @@ class WidgetContentRepositoryTest extends BaseTest {
 
   }
 
-	@Test
-	void launchesTableStatisticsIgnoreSystemAttributes() {
-		Filter filter = buildDefaultFilter(1L);
-		Sort sort = Sort.by(Lists.newArrayList(new Sort.Order(Sort.Direction.ASC, CRITERIA_START_TIME)));
-		List<String> contentFields = buildLaunchesTableContentFields();
+  @Test
+  void launchesTableStatisticsIgnoreSystemAttributes() {
+    Filter filter = buildDefaultFilter(1L);
+    Sort sort = Sort.by(List.of(new Sort.Order(Sort.Direction.ASC, CRITERIA_START_TIME)));
+    List<String> contentFields = buildLaunchesTableContentFields();
 
-		List<LaunchesTableContent> launchStatisticsContents = widgetContentRepository.launchesTableStatistics(filter,
-				contentFields,
-				sort,
-				3
-		);
-		assertNotNull(launchStatisticsContents);
-		assertEquals(3, launchStatisticsContents.size());
+    List<LaunchesTableContent> launchStatisticsContents = widgetContentRepository.launchesTableStatistics(
+        filter,
+        contentFields,
+        sort,
+        3
+    );
+    assertNotNull(launchStatisticsContents);
+    assertEquals(3, launchStatisticsContents.size());
 
-		launchStatisticsContents.forEach(content -> {
-			assertTrue(CollectionUtils.isNotEmpty(content.getAttributes()));
-
-			boolean isSystemAttributePresent = content.getAttributes().stream()
-					.anyMatch(itemAttributeResource -> itemAttributeResource.getValue().equals("true_system_attr"));
-			assertFalse(isSystemAttributePresent);
-		});
-
-	}
+    launchStatisticsContents.forEach(content -> {
+      assertTrue(CollectionUtils.isNotEmpty(content.getAttributes()));
+      boolean isSystemAttributePresent = content.getAttributes()
+          .stream()
+          .anyMatch(attribute -> attribute.getValue().equals("true_system_attr"));
+      assertFalse(isSystemAttributePresent);
+    });
+  }
 
   @Test
   void activityStatistics() {
