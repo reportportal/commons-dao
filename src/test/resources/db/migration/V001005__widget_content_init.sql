@@ -1,8 +1,7 @@
 create or replace function widget_content_init()
     RETURNS VOID as
 $$
-DECLARE
-    launch1         BIGINT;
+    DECLARE launch1 BIGINT;
     DECLARE launch2 BIGINT;
     DECLARE launch3 BIGINT;
     DECLARE launch4 BIGINT;
@@ -98,6 +97,7 @@ BEGIN
     INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES ('build', '1.3.2', null, launch2, false);
     INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES ('build', '1.9.1', null, launch3, false);
     INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES ('build', '3', null, launch4, false);
+    INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES ('build', 'true_system_attr', null, launch1, true);
 
 
     INSERT INTO public.ticket (id, ticket_id, submitter, submit_date, bts_url, bts_project, url)
