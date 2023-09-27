@@ -25,4 +25,5 @@ import java.util.List;
 public interface PatternTemplateRepositoryCustom {
 
   int saveInBatch(List<PatternTemplateTestItemPojo> patternTemplateTestItemPojos);
+  List<Long> findMatchedItemIdsIn(Long patternId, List<Long> itemId);
 }
