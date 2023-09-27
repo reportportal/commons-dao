@@ -27,6 +27,7 @@ public final class ItemAttributeConstant {
   public static final String CRITERIA_ITEM_ATTRIBUTE_VALUE = "attributeValue";
   public static final String CRITERIA_ITEM_ATTRIBUTE_SYSTEM = "attributeSystem";
   public static final String CRITERIA_COMPOSITE_ATTRIBUTE = "compositeAttribute";
+  public static final String CRITERIA_COMPOSITE_SYSTEM_ATTRIBUTE = "compositeSystemAttribute";
   public static final String CRITERIA_LEVEL_ATTRIBUTE = "levelAttribute";
   public static final String KEY_VALUE_SEPARATOR = ":";
   public static final JItemAttribute LAUNCH_ATTRIBUTE = JItemAttribute.ITEM_ATTRIBUTE.as(
