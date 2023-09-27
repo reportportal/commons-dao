@@ -56,7 +56,7 @@ public class IntegrationType implements Serializable {
 
   @Enumerated(EnumType.STRING)
   @Type(type = "pqsql_enum")
-  @Column(name = "auth_flow", nullable = false)
+  @Column(name = "auth_flow")
   private IntegrationAuthFlowEnum authFlow;
 
   @CreatedDate

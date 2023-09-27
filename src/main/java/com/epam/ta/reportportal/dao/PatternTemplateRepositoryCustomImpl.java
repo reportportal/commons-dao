@@ -45,6 +45,14 @@ public class PatternTemplateRepositoryCustomImpl implements PatternTemplateRepos
     patternTemplateTestItems.forEach(
         pojo -> columns.values(pojo.getPatternTemplateId(), pojo.getTestItemId()));
 
-    return columns.execute();
+    return columns.onConflictDoNothing().execute();
+  }
+
+  @Override
+  public List<Long> findMatchedItemIdsIn(Long patternId, List<Long> itemId) {
+    return dslContext.select(PATTERN_TEMPLATE_TEST_ITEM.ITEM_ID)
+        .from(PATTERN_TEMPLATE_TEST_ITEM).where(PATTERN_TEMPLATE_TEST_ITEM.PATTERN_ID.eq(patternId))
+        .and(PATTERN_TEMPLATE_TEST_ITEM.ITEM_ID.in(itemId))
+        .fetchInto(Long.class);
   }
 }

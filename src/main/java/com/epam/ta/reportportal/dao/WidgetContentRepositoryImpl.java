@@ -1345,7 +1345,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
         .join(USERS)
         .on(LAUNCH.USER_ID.eq(USERS.ID));
     if (isAttributePresent) {
-      select = select.leftJoin(ITEM_ATTRIBUTE).on(LAUNCH.ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID));
+      select = select.leftJoin(ITEM_ATTRIBUTE).on(LAUNCH.ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID))
+          .and(ITEM_ATTRIBUTE.SYSTEM.isFalse());
     }
 
     return select.orderBy(
