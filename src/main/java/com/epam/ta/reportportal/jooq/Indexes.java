@@ -30,7 +30,6 @@ import com.epam.ta.reportportal.jooq.tables.JLaunchAttributeRules;
 import com.epam.ta.reportportal.jooq.tables.JLaunchNames;
 import com.epam.ta.reportportal.jooq.tables.JLaunchNumber;
 import com.epam.ta.reportportal.jooq.tables.JLog;
-import com.epam.ta.reportportal.jooq.tables.JOauthAccessToken;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
@@ -150,9 +149,6 @@ public class Indexes {
     public static final Index LOG_PROJECT_ID_LOG_TIME_IDX = Indexes0.LOG_PROJECT_ID_LOG_TIME_IDX;
     public static final Index LOG_PROJECT_IDX = Indexes0.LOG_PROJECT_IDX;
     public static final Index LOG_TI_IDX = Indexes0.LOG_TI_IDX;
-    public static final Index OAUTH_ACCESS_TOKEN_PKEY = Indexes0.OAUTH_ACCESS_TOKEN_PKEY;
-    public static final Index OAUTH_AT_USER_IDX = Indexes0.OAUTH_AT_USER_IDX;
-    public static final Index USERS_ACCESS_TOKEN_UNIQUE = Indexes0.USERS_ACCESS_TOKEN_UNIQUE;
     public static final Index OAUTH_REGISTRATION_CLIENT_ID_KEY = Indexes0.OAUTH_REGISTRATION_CLIENT_ID_KEY;
     public static final Index OAUTH_REGISTRATION_PKEY = Indexes0.OAUTH_REGISTRATION_PKEY;
     public static final Index OAUTH_REGISTRATION_RESTRICTION_PK = Indexes0.OAUTH_REGISTRATION_RESTRICTION_PK;
@@ -285,9 +281,6 @@ public class Indexes {
         public static Index LOG_PROJECT_ID_LOG_TIME_IDX = Internal.createIndex("log_project_id_log_time_idx", JLog.LOG, new OrderField[] { JLog.LOG.PROJECT_ID, JLog.LOG.LOG_TIME }, false);
         public static Index LOG_PROJECT_IDX = Internal.createIndex("log_project_idx", JLog.LOG, new OrderField[] { JLog.LOG.PROJECT_ID }, false);
         public static Index LOG_TI_IDX = Internal.createIndex("log_ti_idx", JLog.LOG, new OrderField[] { JLog.LOG.ITEM_ID }, false);
-        public static Index OAUTH_ACCESS_TOKEN_PKEY = Internal.createIndex("oauth_access_token_pkey", JOauthAccessToken.OAUTH_ACCESS_TOKEN, new OrderField[] { JOauthAccessToken.OAUTH_ACCESS_TOKEN.ID }, true);
-        public static Index OAUTH_AT_USER_IDX = Internal.createIndex("oauth_at_user_idx", JOauthAccessToken.OAUTH_ACCESS_TOKEN, new OrderField[] { JOauthAccessToken.OAUTH_ACCESS_TOKEN.USER_ID }, false);
-        public static Index USERS_ACCESS_TOKEN_UNIQUE = Internal.createIndex("users_access_token_unique", JOauthAccessToken.OAUTH_ACCESS_TOKEN, new OrderField[] { JOauthAccessToken.OAUTH_ACCESS_TOKEN.TOKEN_ID, JOauthAccessToken.OAUTH_ACCESS_TOKEN.USER_ID }, true);
         public static Index OAUTH_REGISTRATION_CLIENT_ID_KEY = Internal.createIndex("oauth_registration_client_id_key", JOauthRegistration.OAUTH_REGISTRATION, new OrderField[] { JOauthRegistration.OAUTH_REGISTRATION.CLIENT_ID }, true);
         public static Index OAUTH_REGISTRATION_PKEY = Internal.createIndex("oauth_registration_pkey", JOauthRegistration.OAUTH_REGISTRATION, new OrderField[] { JOauthRegistration.OAUTH_REGISTRATION.ID }, true);
         public static Index OAUTH_REGISTRATION_RESTRICTION_PK = Internal.createIndex("oauth_registration_restriction_pk", JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION, new OrderField[] { JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION.ID }, true);
