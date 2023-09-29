@@ -30,7 +30,6 @@ import com.epam.ta.reportportal.jooq.tables.JLaunchAttributeRules;
 import com.epam.ta.reportportal.jooq.tables.JLaunchNames;
 import com.epam.ta.reportportal.jooq.tables.JLaunchNumber;
 import com.epam.ta.reportportal.jooq.tables.JLog;
-import com.epam.ta.reportportal.jooq.tables.JOauthAccessToken;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
@@ -84,7 +83,6 @@ import com.epam.ta.reportportal.jooq.tables.records.JLaunchNamesRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JLaunchNumberRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JLaunchRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JLogRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JOauthAccessTokenRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JOauthRegistrationRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JOauthRegistrationRestrictionRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JOauthRegistrationScopeRecord;
@@ -155,7 +153,6 @@ public class Keys {
     public static final Identity<JLaunchAttributeRulesRecord, Long> IDENTITY_LAUNCH_ATTRIBUTE_RULES = Identities0.IDENTITY_LAUNCH_ATTRIBUTE_RULES;
     public static final Identity<JLaunchNumberRecord, Long> IDENTITY_LAUNCH_NUMBER = Identities0.IDENTITY_LAUNCH_NUMBER;
     public static final Identity<JLogRecord, Long> IDENTITY_LOG = Identities0.IDENTITY_LOG;
-    public static final Identity<JOauthAccessTokenRecord, Long> IDENTITY_OAUTH_ACCESS_TOKEN = Identities0.IDENTITY_OAUTH_ACCESS_TOKEN;
     public static final Identity<JOauthRegistrationRestrictionRecord, Integer> IDENTITY_OAUTH_REGISTRATION_RESTRICTION = Identities0.IDENTITY_OAUTH_REGISTRATION_RESTRICTION;
     public static final Identity<JOauthRegistrationScopeRecord, Integer> IDENTITY_OAUTH_REGISTRATION_SCOPE = Identities0.IDENTITY_OAUTH_REGISTRATION_SCOPE;
     public static final Identity<JOnboardingRecord, Short> IDENTITY_ONBOARDING = Identities0.IDENTITY_ONBOARDING;
@@ -209,8 +206,6 @@ public class Keys {
     public static final UniqueKey<JLaunchNumberRecord> LAUNCH_NUMBER_PK = UniqueKeys0.LAUNCH_NUMBER_PK;
     public static final UniqueKey<JLaunchNumberRecord> UNQ_PROJECT_NAME = UniqueKeys0.UNQ_PROJECT_NAME;
     public static final UniqueKey<JLogRecord> LOG_PK = UniqueKeys0.LOG_PK;
-    public static final UniqueKey<JOauthAccessTokenRecord> OAUTH_ACCESS_TOKEN_PKEY = UniqueKeys0.OAUTH_ACCESS_TOKEN_PKEY;
-    public static final UniqueKey<JOauthAccessTokenRecord> USERS_ACCESS_TOKEN_UNIQUE = UniqueKeys0.USERS_ACCESS_TOKEN_UNIQUE;
     public static final UniqueKey<JOauthRegistrationRecord> OAUTH_REGISTRATION_PKEY = UniqueKeys0.OAUTH_REGISTRATION_PKEY;
     public static final UniqueKey<JOauthRegistrationRecord> OAUTH_REGISTRATION_CLIENT_ID_KEY = UniqueKeys0.OAUTH_REGISTRATION_CLIENT_ID_KEY;
     public static final UniqueKey<JOauthRegistrationRestrictionRecord> OAUTH_REGISTRATION_RESTRICTION_PK = UniqueKeys0.OAUTH_REGISTRATION_RESTRICTION_PK;
@@ -284,7 +279,6 @@ public class Keys {
     public static final ForeignKey<JLogRecord, JTestItemRecord> LOG__LOG_ITEM_ID_FKEY = ForeignKeys0.LOG__LOG_ITEM_ID_FKEY;
     public static final ForeignKey<JLogRecord, JLaunchRecord> LOG__LOG_LAUNCH_ID_FKEY = ForeignKeys0.LOG__LOG_LAUNCH_ID_FKEY;
     public static final ForeignKey<JLogRecord, JAttachmentRecord> LOG__LOG_ATTACHMENT_ID_FKEY = ForeignKeys0.LOG__LOG_ATTACHMENT_ID_FKEY;
-    public static final ForeignKey<JOauthAccessTokenRecord, JUsersRecord> OAUTH_ACCESS_TOKEN__OAUTH_ACCESS_TOKEN_USER_ID_FKEY = ForeignKeys0.OAUTH_ACCESS_TOKEN__OAUTH_ACCESS_TOKEN_USER_ID_FKEY;
     public static final ForeignKey<JOauthRegistrationRestrictionRecord, JOauthRegistrationRecord> OAUTH_REGISTRATION_RESTRICTION__OAUTH_REGISTRATION_RESTRICTION_OAUTH_REGISTRATION_FK_FKEY = ForeignKeys0.OAUTH_REGISTRATION_RESTRICTION__OAUTH_REGISTRATION_RESTRICTION_OAUTH_REGISTRATION_FK_FKEY;
     public static final ForeignKey<JOauthRegistrationScopeRecord, JOauthRegistrationRecord> OAUTH_REGISTRATION_SCOPE__OAUTH_REGISTRATION_SCOPE_OAUTH_REGISTRATION_FK_FKEY = ForeignKeys0.OAUTH_REGISTRATION_SCOPE__OAUTH_REGISTRATION_SCOPE_OAUTH_REGISTRATION_FK_FKEY;
     public static final ForeignKey<JOwnedEntityRecord, JProjectRecord> OWNED_ENTITY__SHAREABLE_ENTITY_PROJECT_ID_FKEY = ForeignKeys0.OWNED_ENTITY__SHAREABLE_ENTITY_PROJECT_ID_FKEY;
@@ -334,7 +328,6 @@ public class Keys {
         public static Identity<JLaunchAttributeRulesRecord, Long> IDENTITY_LAUNCH_ATTRIBUTE_RULES = Internal.createIdentity(JLaunchAttributeRules.LAUNCH_ATTRIBUTE_RULES, JLaunchAttributeRules.LAUNCH_ATTRIBUTE_RULES.ID);
         public static Identity<JLaunchNumberRecord, Long> IDENTITY_LAUNCH_NUMBER = Internal.createIdentity(JLaunchNumber.LAUNCH_NUMBER, JLaunchNumber.LAUNCH_NUMBER.ID);
         public static Identity<JLogRecord, Long> IDENTITY_LOG = Internal.createIdentity(JLog.LOG, JLog.LOG.ID);
-        public static Identity<JOauthAccessTokenRecord, Long> IDENTITY_OAUTH_ACCESS_TOKEN = Internal.createIdentity(JOauthAccessToken.OAUTH_ACCESS_TOKEN, JOauthAccessToken.OAUTH_ACCESS_TOKEN.ID);
         public static Identity<JOauthRegistrationRestrictionRecord, Integer> IDENTITY_OAUTH_REGISTRATION_RESTRICTION = Internal.createIdentity(JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION, JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION.ID);
         public static Identity<JOauthRegistrationScopeRecord, Integer> IDENTITY_OAUTH_REGISTRATION_SCOPE = Internal.createIdentity(JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE, JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.ID);
         public static Identity<JOnboardingRecord, Short> IDENTITY_ONBOARDING = Internal.createIdentity(JOnboarding.ONBOARDING, JOnboarding.ONBOARDING.ID);
@@ -386,8 +379,6 @@ public class Keys {
         public static final UniqueKey<JLaunchNumberRecord> LAUNCH_NUMBER_PK = Internal.createUniqueKey(JLaunchNumber.LAUNCH_NUMBER, "launch_number_pk", JLaunchNumber.LAUNCH_NUMBER.ID);
         public static final UniqueKey<JLaunchNumberRecord> UNQ_PROJECT_NAME = Internal.createUniqueKey(JLaunchNumber.LAUNCH_NUMBER, "unq_project_name", JLaunchNumber.LAUNCH_NUMBER.PROJECT_ID, JLaunchNumber.LAUNCH_NUMBER.LAUNCH_NAME);
         public static final UniqueKey<JLogRecord> LOG_PK = Internal.createUniqueKey(JLog.LOG, "log_pk", JLog.LOG.ID);
-        public static final UniqueKey<JOauthAccessTokenRecord> OAUTH_ACCESS_TOKEN_PKEY = Internal.createUniqueKey(JOauthAccessToken.OAUTH_ACCESS_TOKEN, "oauth_access_token_pkey", JOauthAccessToken.OAUTH_ACCESS_TOKEN.ID);
-        public static final UniqueKey<JOauthAccessTokenRecord> USERS_ACCESS_TOKEN_UNIQUE = Internal.createUniqueKey(JOauthAccessToken.OAUTH_ACCESS_TOKEN, "users_access_token_unique", JOauthAccessToken.OAUTH_ACCESS_TOKEN.TOKEN_ID, JOauthAccessToken.OAUTH_ACCESS_TOKEN.USER_ID);
         public static final UniqueKey<JOauthRegistrationRecord> OAUTH_REGISTRATION_PKEY = Internal.createUniqueKey(JOauthRegistration.OAUTH_REGISTRATION, "oauth_registration_pkey", JOauthRegistration.OAUTH_REGISTRATION.ID);
         public static final UniqueKey<JOauthRegistrationRecord> OAUTH_REGISTRATION_CLIENT_ID_KEY = Internal.createUniqueKey(JOauthRegistration.OAUTH_REGISTRATION, "oauth_registration_client_id_key", JOauthRegistration.OAUTH_REGISTRATION.CLIENT_ID);
         public static final UniqueKey<JOauthRegistrationRestrictionRecord> OAUTH_REGISTRATION_RESTRICTION_PK = Internal.createUniqueKey(JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION, "oauth_registration_restriction_pk", JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION.ID);
@@ -459,7 +450,6 @@ public class Keys {
         public static final ForeignKey<JLogRecord, JTestItemRecord> LOG__LOG_ITEM_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.TEST_ITEM_PK, JLog.LOG, "log__log_item_id_fkey", JLog.LOG.ITEM_ID);
         public static final ForeignKey<JLogRecord, JLaunchRecord> LOG__LOG_LAUNCH_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.LAUNCH_PK, JLog.LOG, "log__log_launch_id_fkey", JLog.LOG.LAUNCH_ID);
         public static final ForeignKey<JLogRecord, JAttachmentRecord> LOG__LOG_ATTACHMENT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.ATTACHMENT_PK, JLog.LOG, "log__log_attachment_id_fkey", JLog.LOG.ATTACHMENT_ID);
-        public static final ForeignKey<JOauthAccessTokenRecord, JUsersRecord> OAUTH_ACCESS_TOKEN__OAUTH_ACCESS_TOKEN_USER_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.USERS_PK, JOauthAccessToken.OAUTH_ACCESS_TOKEN, "oauth_access_token__oauth_access_token_user_id_fkey", JOauthAccessToken.OAUTH_ACCESS_TOKEN.USER_ID);
         public static final ForeignKey<JOauthRegistrationRestrictionRecord, JOauthRegistrationRecord> OAUTH_REGISTRATION_RESTRICTION__OAUTH_REGISTRATION_RESTRICTION_OAUTH_REGISTRATION_FK_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.OAUTH_REGISTRATION_PKEY, JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION, "oauth_registration_restriction__oauth_registration_restriction_oauth_registration_fk_fkey", JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION.OAUTH_REGISTRATION_FK);
         public static final ForeignKey<JOauthRegistrationScopeRecord, JOauthRegistrationRecord> OAUTH_REGISTRATION_SCOPE__OAUTH_REGISTRATION_SCOPE_OAUTH_REGISTRATION_FK_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.OAUTH_REGISTRATION_PKEY, JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE, "oauth_registration_scope__oauth_registration_scope_oauth_registration_fk_fkey", JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.OAUTH_REGISTRATION_FK);
         public static final ForeignKey<JOwnedEntityRecord, JProjectRecord> OWNED_ENTITY__SHAREABLE_ENTITY_PROJECT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JOwnedEntity.OWNED_ENTITY, "owned_entity__shareable_entity_project_id_fkey", JOwnedEntity.OWNED_ENTITY.PROJECT_ID);
