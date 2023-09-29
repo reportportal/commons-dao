@@ -22,6 +22,7 @@ import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteria
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_START_TIME;
 import static com.epam.ta.reportportal.commons.querygen.constant.IssueCriteriaConstant.CRITERIA_ISSUE_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_COMPOSITE_ATTRIBUTE;
+import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_COMPOSITE_SYSTEM_ATTRIBUTE;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.CRITERIA_LAUNCH_MODE;
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_LOG_MESSAGE;
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_TEST_ITEM_ID;
@@ -1307,6 +1308,20 @@ class TestItemRepositoryTest extends BaseTest {
             .withCondition(Condition.HAS)
             .withSearchCriteria(CRITERIA_COMPOSITE_ATTRIBUTE)
             .withValue("suite:value1")
+            .build())
+        .build());
+
+    assertFalse(items.isEmpty());
+  }
+
+  @Test
+  void compositeSystemAttributeHas() {
+    List<TestItem> items = testItemRepository.findByFilter(Filter.builder()
+        .withTarget(TestItem.class)
+        .withCondition(FilterCondition.builder()
+            .withCondition(Condition.HAS)
+            .withSearchCriteria(CRITERIA_COMPOSITE_SYSTEM_ATTRIBUTE)
+            .withValue("systemTestKey:systemTestValue")
             .build())
         .build());
 

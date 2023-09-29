@@ -121,6 +121,9 @@ BEGIN
                         INSERT INTO item_attribute (key, value, item_id, launch_id, system)
                         VALUES ('step', 'value' || cur_step_id, cur_step_id, NULL, TRUE);
 
+                        INSERT INTO item_attribute (key, value, item_id, launch_id, system)
+                        VALUES ('systemTestKey', 'systemTestValue', cur_step_id, NULL, TRUE);
+
                     ELSE
                         INSERT INTO item_attribute (key, value, item_id, launch_id, system)
                         VALUES ('step', 'value' || cur_step_id, cur_step_id, NULL, FALSE);

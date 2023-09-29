@@ -46,6 +46,7 @@ import static com.epam.ta.reportportal.commons.querygen.constant.IssueCriteriaCo
 import static com.epam.ta.reportportal.commons.querygen.constant.IssueCriteriaConstant.CRITERIA_ISSUE_IGNORE_ANALYZER;
 import static com.epam.ta.reportportal.commons.querygen.constant.IssueCriteriaConstant.CRITERIA_ISSUE_LOCATOR;
 import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_COMPOSITE_ATTRIBUTE;
+import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_COMPOSITE_SYSTEM_ATTRIBUTE;
 import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_KEY;
 import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_ITEM_ATTRIBUTE_VALUE;
 import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.CRITERIA_LEVEL_ATTRIBUTE;
@@ -798,6 +799,35 @@ public enum FilterTarget {
                   .filterWhere(ITEM_ATTRIBUTE.SYSTEM.eq(false))
           ).toString()).get(),
 
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_COMPOSITE_SYSTEM_ATTRIBUTE,
+              ITEM_ATTRIBUTE.KEY,
+              String[].class, Lists.newArrayList(
+                  JoinEntity.of(ITEM_ATTRIBUTE, JoinType.LEFT_OUTER_JOIN,
+                      TEST_ITEM.ITEM_ID.eq(ITEM_ATTRIBUTE.ITEM_ID)),
+                  JoinEntity.of(LAUNCH_ATTRIBUTE, JoinType.LEFT_OUTER_JOIN,
+                      LAUNCH.ID.eq(LAUNCH_ATTRIBUTE.LAUNCH_ID))
+              )).withAggregateCriteria(DSL.field(
+              "{0}::varchar[] || {1}::varchar[] || {2}::varchar[] || {3}::varchar[] || {4}::varchar[] || {5}::varchar[]",
+              DSL.arrayAggDistinct(DSL.concat(LAUNCH_ATTRIBUTE.KEY, ":"))
+                  .filterWhere(LAUNCH_ATTRIBUTE.SYSTEM.eq(true)),
+              DSL.arrayAggDistinct(DSL.concat(LAUNCH_ATTRIBUTE.VALUE))
+                  .filterWhere(LAUNCH_ATTRIBUTE.SYSTEM.eq(true)),
+              DSL.arrayAgg(DSL.concat(DSL.coalesce(LAUNCH_ATTRIBUTE.KEY, ""),
+                      DSL.val(KEY_VALUE_SEPARATOR),
+                      LAUNCH_ATTRIBUTE.VALUE
+                  ))
+                  .filterWhere(LAUNCH_ATTRIBUTE.SYSTEM.eq(true)),
+              DSL.arrayAggDistinct(DSL.concat(ITEM_ATTRIBUTE.KEY, ":"))
+                  .filterWhere(ITEM_ATTRIBUTE.SYSTEM.eq(true)),
+              DSL.arrayAggDistinct(DSL.concat(ITEM_ATTRIBUTE.VALUE))
+                  .filterWhere(ITEM_ATTRIBUTE.SYSTEM.eq(true)),
+              DSL.arrayAgg(DSL.concat(DSL.coalesce(ITEM_ATTRIBUTE.KEY, ""),
+                      DSL.val(KEY_VALUE_SEPARATOR),
+                      ITEM_ATTRIBUTE.VALUE
+                  ))
+                  .filterWhere(ITEM_ATTRIBUTE.SYSTEM.eq(true))
+          ).toString()).get(),
+
           new CriteriaHolderBuilder().newBuilder(CRITERIA_PATTERN_TEMPLATE_NAME,
               PATTERN_TEMPLATE.NAME,
               List.class,
@@ -1082,69 +1112,69 @@ public enum FilterTarget {
 
   ACTIVITY_TARGET(Activity.class, Arrays.asList(
 
-			new CriteriaHolderBuilder().newBuilder(CRITERIA_ID, ACTIVITY.ID, Long.class).get(),
-			new CriteriaHolderBuilder().newBuilder(CRITERIA_ACTION, ACTIVITY.ACTION, String.class).get(),
-			new CriteriaHolderBuilder().newBuilder(CRITERIA_CREATED_AT, ACTIVITY.CREATED_AT,
-					Timestamp.class).get(),
-			new CriteriaHolderBuilder().newBuilder(CRITERIA_OBJECT_ID, ACTIVITY.OBJECT_ID, Long.class)
-					.get(),
-			new CriteriaHolderBuilder().newBuilder(CRITERIA_OBJECT_NAME, ACTIVITY.OBJECT_NAME,
-							String.class)
-					.get(),
-			new CriteriaHolderBuilder().newBuilder(CRITERIA_OBJECT_TYPE, ACTIVITY.OBJECT_TYPE,
-							String.class)
-					.get(),
-			new CriteriaHolderBuilder().newBuilder(CRITERIA_PRIORITY, ACTIVITY.PRIORITY, String.class)
-					.get(),
-			new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ID, ACTIVITY.PROJECT_ID, Long.class)
-					.get(),
-			new CriteriaHolderBuilder().newBuilder(CRITERIA_SUBJECT_ID, ACTIVITY.SUBJECT_ID, Long.class)
-					.get(),
-			new CriteriaHolderBuilder().newBuilder(CRITERIA_SUBJECT_NAME, ACTIVITY.SUBJECT_NAME,
-							String.class)
-					.get(),
-			new CriteriaHolderBuilder().newBuilder(CRITERIA_SUBJECT_TYPE, ACTIVITY.SUBJECT_TYPE,
-					String.class).get(),
-			new CriteriaHolderBuilder().newBuilder(CRITERIA_ACTIVITY_PROJECT_NAME, PROJECT.NAME,
-							String.class)
-					.withAggregateCriteria(DSL.max(PROJECT.NAME).toString())
-					.get(),
-			new CriteriaHolderBuilder().newBuilder(CRITERIA_USER, USERS.LOGIN, String.class)
-					.withAggregateCriteria(DSL.max(USERS.LOGIN).toString())
-					.get(),
-			new CriteriaHolderBuilder().newBuilder(CRITERIA_EVENT_NAME, ACTIVITY.EVENT_NAME, String.class)
-					.get()
-	)) {
-		@Override
-		protected Collection<? extends SelectField> selectFields() {
-			return Lists.newArrayList(ACTIVITY.ID,
-					ACTIVITY.ACTION,
-					ACTIVITY.EVENT_NAME,
-					ACTIVITY.CREATED_AT,
-					ACTIVITY.DETAILS,
-					ACTIVITY.OBJECT_ID,
-					ACTIVITY.OBJECT_NAME,
-					ACTIVITY.OBJECT_TYPE,
-					ACTIVITY.PRIORITY,
-					ACTIVITY.PROJECT_ID,
-					ACTIVITY.SUBJECT_ID,
-					ACTIVITY.SUBJECT_NAME,
-					ACTIVITY.SUBJECT_TYPE,
-					USERS.LOGIN,
-					PROJECT.NAME
-			);
-		}
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_ID, ACTIVITY.ID, Long.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_ACTION, ACTIVITY.ACTION, String.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_CREATED_AT, ACTIVITY.CREATED_AT,
+          Timestamp.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_OBJECT_ID, ACTIVITY.OBJECT_ID, Long.class)
+          .get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_OBJECT_NAME, ACTIVITY.OBJECT_NAME,
+              String.class)
+          .get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_OBJECT_TYPE, ACTIVITY.OBJECT_TYPE,
+              String.class)
+          .get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_PRIORITY, ACTIVITY.PRIORITY, String.class)
+          .get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ID, ACTIVITY.PROJECT_ID, Long.class)
+          .get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_SUBJECT_ID, ACTIVITY.SUBJECT_ID, Long.class)
+          .get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_SUBJECT_NAME, ACTIVITY.SUBJECT_NAME,
+              String.class)
+          .get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_SUBJECT_TYPE, ACTIVITY.SUBJECT_TYPE,
+          String.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_ACTIVITY_PROJECT_NAME, PROJECT.NAME,
+              String.class)
+          .withAggregateCriteria(DSL.max(PROJECT.NAME).toString())
+          .get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_USER, USERS.LOGIN, String.class)
+          .withAggregateCriteria(DSL.max(USERS.LOGIN).toString())
+          .get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_EVENT_NAME, ACTIVITY.EVENT_NAME, String.class)
+          .get()
+  )) {
+    @Override
+    protected Collection<? extends SelectField> selectFields() {
+      return Lists.newArrayList(ACTIVITY.ID,
+          ACTIVITY.ACTION,
+          ACTIVITY.EVENT_NAME,
+          ACTIVITY.CREATED_AT,
+          ACTIVITY.DETAILS,
+          ACTIVITY.OBJECT_ID,
+          ACTIVITY.OBJECT_NAME,
+          ACTIVITY.OBJECT_TYPE,
+          ACTIVITY.PRIORITY,
+          ACTIVITY.PROJECT_ID,
+          ACTIVITY.SUBJECT_ID,
+          ACTIVITY.SUBJECT_NAME,
+          ACTIVITY.SUBJECT_TYPE,
+          USERS.LOGIN,
+          PROJECT.NAME
+      );
+    }
 
     @Override
     protected void addFrom(SelectQuery<? extends Record> query) {
       query.addFrom(ACTIVITY);
     }
 
-		@Override
-		protected void joinTables(QuerySupplier query) {
-			query.addJoin(USERS, JoinType.LEFT_OUTER_JOIN, ACTIVITY.SUBJECT_ID.eq(USERS.ID));
-			query.addJoin(PROJECT, JoinType.JOIN, ACTIVITY.PROJECT_ID.eq(PROJECT.ID));
-		}
+    @Override
+    protected void joinTables(QuerySupplier query) {
+      query.addJoin(USERS, JoinType.LEFT_OUTER_JOIN, ACTIVITY.SUBJECT_ID.eq(USERS.ID));
+      query.addJoin(PROJECT, JoinType.JOIN, ACTIVITY.PROJECT_ID.eq(PROJECT.ID));
+    }
 
     @Override
     protected Field<Long> idField() {
@@ -1199,47 +1229,49 @@ public enum FilterTarget {
 
   DASHBOARD_TARGET(Dashboard.class, Arrays.asList(
 
-			new CriteriaHolderBuilder().newBuilder(CRITERIA_ID, DASHBOARD.ID, Long.class).get(),
-			new CriteriaHolderBuilder().newBuilder(CRITERIA_NAME, DASHBOARD.NAME, String.class).get(),
-			new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ID, OWNED_ENTITY.PROJECT_ID, Long.class)
-					.withAggregateCriteria(DSL.max(OWNED_ENTITY.PROJECT_ID).toString())
-					.get(),
-			new CriteriaHolderBuilder().newBuilder(CRITERIA_OWNER, OWNED_ENTITY.OWNER, String.class)
-					.withAggregateCriteria(DSL.max(OWNED_ENTITY.OWNER).toString())
-					.get()
-	)) {
-		@Override
-		protected Collection<? extends SelectField> selectFields() {
-			return Lists.newArrayList(DASHBOARD.ID,
-					DASHBOARD.NAME,
-					DASHBOARD.DESCRIPTION,
-					DASHBOARD.CREATION_DATE,
-					DASHBOARD_WIDGET.WIDGET_OWNER,
-					DASHBOARD_WIDGET.IS_CREATED_ON,
-					DASHBOARD_WIDGET.WIDGET_ID,
-					DASHBOARD_WIDGET.WIDGET_NAME,
-					DASHBOARD_WIDGET.WIDGET_TYPE,
-					DASHBOARD_WIDGET.WIDGET_HEIGHT,
-					DASHBOARD_WIDGET.WIDGET_WIDTH,
-					DASHBOARD_WIDGET.WIDGET_POSITION_X,
-					DASHBOARD_WIDGET.WIDGET_POSITION_Y,
-					WIDGET.WIDGET_OPTIONS,
-					OWNED_ENTITY.PROJECT_ID,
-					OWNED_ENTITY.OWNER
-			);
-		}
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_ID, DASHBOARD.ID, Long.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_NAME, DASHBOARD.NAME, String.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ID, OWNED_ENTITY.PROJECT_ID,
+              Long.class)
+          .withAggregateCriteria(DSL.max(OWNED_ENTITY.PROJECT_ID).toString())
+          .get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_OWNER, OWNED_ENTITY.OWNER, String.class)
+          .withAggregateCriteria(DSL.max(OWNED_ENTITY.OWNER).toString())
+          .get()
+  )) {
+    @Override
+    protected Collection<? extends SelectField> selectFields() {
+      return Lists.newArrayList(DASHBOARD.ID,
+          DASHBOARD.NAME,
+          DASHBOARD.DESCRIPTION,
+          DASHBOARD.CREATION_DATE,
+          DASHBOARD_WIDGET.WIDGET_OWNER,
+          DASHBOARD_WIDGET.IS_CREATED_ON,
+          DASHBOARD_WIDGET.WIDGET_ID,
+          DASHBOARD_WIDGET.WIDGET_NAME,
+          DASHBOARD_WIDGET.WIDGET_TYPE,
+          DASHBOARD_WIDGET.WIDGET_HEIGHT,
+          DASHBOARD_WIDGET.WIDGET_WIDTH,
+          DASHBOARD_WIDGET.WIDGET_POSITION_X,
+          DASHBOARD_WIDGET.WIDGET_POSITION_Y,
+          WIDGET.WIDGET_OPTIONS,
+          OWNED_ENTITY.PROJECT_ID,
+          OWNED_ENTITY.OWNER
+      );
+    }
 
     @Override
     protected void addFrom(SelectQuery<? extends Record> query) {
       query.addFrom(DASHBOARD);
     }
 
-		@Override
-		protected void joinTables(QuerySupplier query) {
-			query.addJoin(DASHBOARD_WIDGET, JoinType.LEFT_OUTER_JOIN, DASHBOARD.ID.eq(DASHBOARD_WIDGET.DASHBOARD_ID));
-			query.addJoin(WIDGET, JoinType.LEFT_OUTER_JOIN, DASHBOARD_WIDGET.WIDGET_ID.eq(WIDGET.ID));
-			query.addJoin(OWNED_ENTITY, JoinType.JOIN, DASHBOARD.ID.eq(OWNED_ENTITY.ID));
-		}
+    @Override
+    protected void joinTables(QuerySupplier query) {
+      query.addJoin(DASHBOARD_WIDGET, JoinType.LEFT_OUTER_JOIN,
+          DASHBOARD.ID.eq(DASHBOARD_WIDGET.DASHBOARD_ID));
+      query.addJoin(WIDGET, JoinType.LEFT_OUTER_JOIN, DASHBOARD_WIDGET.WIDGET_ID.eq(WIDGET.ID));
+      query.addJoin(OWNED_ENTITY, JoinType.JOIN, DASHBOARD.ID.eq(OWNED_ENTITY.ID));
+    }
 
     @Override
     protected Field<Long> idField() {
@@ -1249,38 +1281,40 @@ public enum FilterTarget {
 
   WIDGET_TARGET(Widget.class, Arrays.asList(
 
-			new CriteriaHolderBuilder().newBuilder(CRITERIA_ID, WIDGET.ID, Long.class).get(),
-			new CriteriaHolderBuilder().newBuilder(CRITERIA_NAME, WIDGET.NAME, String.class)
-					.withAggregateCriteria(DSL.max(WIDGET.NAME).toString())
-					.get(),
-			new CriteriaHolderBuilder().newBuilder(CRITERIA_DESCRIPTION, WIDGET.DESCRIPTION, String.class).get(),
-			new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ID, OWNED_ENTITY.PROJECT_ID, Long.class).get(),
-			new CriteriaHolderBuilder().newBuilder(CRITERIA_OWNER, OWNED_ENTITY.OWNER, String.class)
-					.withAggregateCriteria(DSL.max(OWNED_ENTITY.OWNER).toString())
-					.get()
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_ID, WIDGET.ID, Long.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_NAME, WIDGET.NAME, String.class)
+          .withAggregateCriteria(DSL.max(WIDGET.NAME).toString())
+          .get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_DESCRIPTION, WIDGET.DESCRIPTION, String.class)
+          .get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ID, OWNED_ENTITY.PROJECT_ID,
+          Long.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_OWNER, OWNED_ENTITY.OWNER, String.class)
+          .withAggregateCriteria(DSL.max(OWNED_ENTITY.OWNER).toString())
+          .get()
 
-	)) {
-		@Override
-		protected Collection<? extends SelectField> selectFields() {
-			return Lists.newArrayList(WIDGET.ID,
-					WIDGET.NAME,
-					WIDGET.WIDGET_TYPE,
-					WIDGET.DESCRIPTION,
-					WIDGET.ITEMS_COUNT,
-					OWNED_ENTITY.PROJECT_ID,
-					OWNED_ENTITY.OWNER
-			);
-		}
+  )) {
+    @Override
+    protected Collection<? extends SelectField> selectFields() {
+      return Lists.newArrayList(WIDGET.ID,
+          WIDGET.NAME,
+          WIDGET.WIDGET_TYPE,
+          WIDGET.DESCRIPTION,
+          WIDGET.ITEMS_COUNT,
+          OWNED_ENTITY.PROJECT_ID,
+          OWNED_ENTITY.OWNER
+      );
+    }
 
     @Override
     protected void addFrom(SelectQuery<? extends Record> query) {
       query.addFrom(WIDGET);
     }
 
-		@Override
-		protected void joinTables(QuerySupplier query) {
-			query.addJoin(OWNED_ENTITY, JoinType.JOIN, WIDGET.ID.eq(OWNED_ENTITY.ID));
-		}
+    @Override
+    protected void joinTables(QuerySupplier query) {
+      query.addJoin(OWNED_ENTITY, JoinType.JOIN, WIDGET.ID.eq(OWNED_ENTITY.ID));
+    }
 
     @Override
     protected Field<Long> idField() {
@@ -1288,47 +1322,50 @@ public enum FilterTarget {
     }
   },
 
-	USER_FILTER_TARGET(UserFilter.class,
-			Arrays.asList(new CriteriaHolderBuilder().newBuilder(CRITERIA_ID, FILTER.ID, Long.class).get(),
-					new CriteriaHolderBuilder().newBuilder(CRITERIA_NAME, FILTER.NAME, String.class).get(),
+  USER_FILTER_TARGET(UserFilter.class,
+      Arrays.asList(
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_ID, FILTER.ID, Long.class).get(),
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_NAME, FILTER.NAME, String.class).get(),
 
-					new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ID, OWNED_ENTITY.PROJECT_ID, Long.class)
-							.withAggregateCriteria(DSL.max(OWNED_ENTITY.PROJECT_ID).toString())
-							.get(),
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ID, OWNED_ENTITY.PROJECT_ID,
+                  Long.class)
+              .withAggregateCriteria(DSL.max(OWNED_ENTITY.PROJECT_ID).toString())
+              .get(),
 
-					new CriteriaHolderBuilder().newBuilder(CRITERIA_OWNER, OWNED_ENTITY.OWNER, String.class)
-							.withAggregateCriteria(DSL.max(OWNED_ENTITY.OWNER).toString())
-							.get()
-			)
-	) {
-		@Override
-		protected Collection<? extends SelectField> selectFields() {
-			return Lists.newArrayList(FILTER.ID,
-					FILTER.NAME,
-					FILTER.TARGET,
-					FILTER.DESCRIPTION,
-					FILTER_CONDITION.SEARCH_CRITERIA,
-					FILTER_CONDITION.CONDITION,
-					FILTER_CONDITION.VALUE,
-					FILTER_CONDITION.NEGATIVE,
-					FILTER_SORT.FIELD,
-					FILTER_SORT.DIRECTION,
-					OWNED_ENTITY.PROJECT_ID,
-					OWNED_ENTITY.OWNER
-			);
-		}
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_OWNER, OWNED_ENTITY.OWNER, String.class)
+              .withAggregateCriteria(DSL.max(OWNED_ENTITY.OWNER).toString())
+              .get()
+      )
+  ) {
+    @Override
+    protected Collection<? extends SelectField> selectFields() {
+      return Lists.newArrayList(FILTER.ID,
+          FILTER.NAME,
+          FILTER.TARGET,
+          FILTER.DESCRIPTION,
+          FILTER_CONDITION.SEARCH_CRITERIA,
+          FILTER_CONDITION.CONDITION,
+          FILTER_CONDITION.VALUE,
+          FILTER_CONDITION.NEGATIVE,
+          FILTER_SORT.FIELD,
+          FILTER_SORT.DIRECTION,
+          OWNED_ENTITY.PROJECT_ID,
+          OWNED_ENTITY.OWNER
+      );
+    }
 
     @Override
     protected void addFrom(SelectQuery<? extends Record> query) {
       query.addFrom(FILTER);
     }
 
-		@Override
-		protected void joinTables(QuerySupplier query) {
-			query.addJoin(OWNED_ENTITY, JoinType.JOIN, FILTER.ID.eq(OWNED_ENTITY.ID));
-			query.addJoin(FILTER_CONDITION, JoinType.LEFT_OUTER_JOIN, FILTER.ID.eq(FILTER_CONDITION.FILTER_ID));
-			query.addJoin(FILTER_SORT, JoinType.LEFT_OUTER_JOIN, FILTER.ID.eq(FILTER_SORT.FILTER_ID));
-		}
+    @Override
+    protected void joinTables(QuerySupplier query) {
+      query.addJoin(OWNED_ENTITY, JoinType.JOIN, FILTER.ID.eq(OWNED_ENTITY.ID));
+      query.addJoin(FILTER_CONDITION, JoinType.LEFT_OUTER_JOIN,
+          FILTER.ID.eq(FILTER_CONDITION.FILTER_ID));
+      query.addJoin(FILTER_SORT, JoinType.LEFT_OUTER_JOIN, FILTER.ID.eq(FILTER_SORT.FILTER_ID));
+    }
 
     @Override
     protected Field<Long> idField() {
@@ -1340,8 +1377,8 @@ public enum FilterTarget {
   public static final String ATTRIBUTE_ALIAS = "attribute";
   public static final String FILTERED_ID = "id";
 
-	private final Class<?> clazz;
-	private final List<CriteriaHolder> criteriaHolders;
+  private final Class<?> clazz;
+  private final List<CriteriaHolder> criteriaHolders;
 
   FilterTarget(Class<?> clazz, List<CriteriaHolder> criteriaHolders) {
     this.clazz = clazz;
