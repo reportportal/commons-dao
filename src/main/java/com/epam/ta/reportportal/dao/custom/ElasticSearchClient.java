@@ -45,10 +45,13 @@ public class ElasticSearchClient {
   private final RestTemplate restTemplate;
 
   public ElasticSearchClient(@Value("${rp.elasticsearch.host}") String host,
-      @Value("${rp.elasticsearch.username}") String username,
-      @Value("${rp.elasticsearch.password}") String password) {
+      @Value("${rp.elasticsearch.username:}") String username,
+      @Value("${rp.elasticsearch.password:}") String password) {
     restTemplate = new RestTemplate();
-    restTemplate.getInterceptors().add(new BasicAuthenticationInterceptor(username, password));
+
+    if (!username.isEmpty() && !password.isEmpty()) {
+      restTemplate.getInterceptors().add(new BasicAuthenticationInterceptor(username, password));
+    }
 
     this.host = host;
   }
@@ -109,8 +112,8 @@ public class ElasticSearchClient {
       restTemplate.delete(host + "/_data_stream/" + indexName);
     } catch (Exception exception) {
       // to avoid checking of exists stream or not
-      LOGGER.error("DELETE stream from ES " + indexName + " Project: " + projectId
-          + " Message: " + exception.getMessage());
+      LOGGER.error("DELETE stream from ES " + indexName + " Project: " + projectId + " Message: "
+          + exception.getMessage());
     }
   }
 
@@ -172,11 +175,14 @@ public class ElasticSearchClient {
     try {
       HttpEntity<String> searchRequest = getStringHttpEntity(searchJson.toString());
 
-      LinkedHashMap<String, Object> result = restTemplate.postForObject(
-          host + "/" + indexName + "/_search", searchRequest, LinkedHashMap.class);
+      LinkedHashMap<String, Object> result =
+          restTemplate.postForObject(host + "/" + indexName + "/_search", searchRequest,
+              LinkedHashMap.class
+          );
 
-      List<LinkedHashMap<String, Object>> hits = (List<LinkedHashMap<String, Object>>) ((LinkedHashMap<String, Object>) result.get(
-          "hits")).get("hits");
+      List<LinkedHashMap<String, Object>> hits =
+          (List<LinkedHashMap<String, Object>>) ((LinkedHashMap<String, Object>) result.get(
+              "hits")).get("hits");
 
       if (org.apache.commons.collections.CollectionUtils.isNotEmpty(hits)) {
         for (LinkedHashMap<String, Object> hit : hits) {
@@ -188,9 +194,8 @@ public class ElasticSearchClient {
       }
 
     } catch (Exception exception) {
-      LOGGER.error("Search error " + indexName
-          + " SearchJson: " + searchJson
-          + " Message: " + exception.getMessage());
+      LOGGER.error("Search error " + indexName + " SearchJson: " + searchJson + " Message: "
+          + exception.getMessage());
     }
 
     return new ArrayList<>(testItemIds);
@@ -208,11 +213,14 @@ public class ElasticSearchClient {
       JSONObject searchJson = getSearchJson(terms, size);
       HttpEntity<String> searchRequest = getStringHttpEntity(searchJson.toString());
 
-      LinkedHashMap<String, Object> result = restTemplate.postForObject(
-          host + "/" + indexName + "/_search", searchRequest, LinkedHashMap.class);
+      LinkedHashMap<String, Object> result =
+          restTemplate.postForObject(host + "/" + indexName + "/_search", searchRequest,
+              LinkedHashMap.class
+          );
 
-      List<LinkedHashMap<String, Object>> hits = (List<LinkedHashMap<String, Object>>) ((LinkedHashMap<String, Object>) result.get(
-          "hits")).get("hits");
+      List<LinkedHashMap<String, Object>> hits =
+          (List<LinkedHashMap<String, Object>>) ((LinkedHashMap<String, Object>) result.get(
+              "hits")).get("hits");
 
       if (org.apache.commons.collections.CollectionUtils.isNotEmpty(hits)) {
         for (LinkedHashMap<String, Object> hit : hits) {
@@ -224,8 +232,8 @@ public class ElasticSearchClient {
       }
 
     } catch (Exception exception) {
-      LOGGER.error("Search error " + indexName + " Terms: " + terms
-          + " Message: " + exception.getMessage());
+      LOGGER.error(
+          "Search error " + indexName + " Terms: " + terms + " Message: " + exception.getMessage());
     }
 
     return logMessageMap;
@@ -242,16 +250,10 @@ public class ElasticSearchClient {
       timestampString += "." + "0".repeat(6);
     }
 
-    return new LogMessage(
-        ((Integer) source.get("id")).longValue(),
-        LocalDateTime.parse(
-            timestampString,
-            DateTimeFormatter.ofPattern(ELASTIC_DATETIME_FORMAT)
-        ),
-        (String) source.get("message"),
-        ((Integer) source.get("itemId")).longValue(),
-        ((Integer) source.get("launchId")).longValue(),
-        projectId
+    return new LogMessage(((Integer) source.get("id")).longValue(),
+        LocalDateTime.parse(timestampString, DateTimeFormatter.ofPattern(ELASTIC_DATETIME_FORMAT)),
+        (String) source.get("message"), ((Integer) source.get("itemId")).longValue(),
+        ((Integer) source.get("launchId")).longValue(), projectId
     );
   }
 
@@ -262,11 +264,13 @@ public class ElasticSearchClient {
       HttpEntity<String> deleteRequest = getStringHttpEntity(deleteByLaunch.toString());
 
       restTemplate.postForObject(host + "/" + indexName + "/_delete_by_query", deleteRequest,
-          JSONObject.class);
+          JSONObject.class
+      );
     } catch (Exception exception) {
       // to avoid checking of exists stream or not
-      LOGGER.error("DELETE logs from stream ES error " + indexName + " Terms: " + terms
-          + " Message: " + exception.getMessage());
+      LOGGER.error(
+          "DELETE logs from stream ES error " + indexName + " Terms: " + terms + " Message: "
+              + exception.getMessage());
     }
   }
 
@@ -294,7 +298,6 @@ public class ElasticSearchClient {
 
     return searchJson;
   }
-
 
   private JSONObject getSearchStringJson(String string, JSONObject filterTerms,
       List<String> sourceFields, Integer size) {
