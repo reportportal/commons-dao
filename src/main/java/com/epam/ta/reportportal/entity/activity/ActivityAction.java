@@ -51,6 +51,7 @@ public enum ActivityAction {
   UNLINK_ISSUE("unlinkIssue"),
   UPDATE_ITEM("updateItem"),
   CREATE_USER("createUser"),
+  REGISTER_USER("registerUser"),
   DELETE_INDEX("deleteIndex"),
   GENERATE_INDEX("generateIndex"),
   START_IMPORT("startImport"),
