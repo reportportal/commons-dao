@@ -30,9 +30,11 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.security.SecureRandom;
 import java.util.Base64;
+import java.util.Optional;
 import org.apache.commons.io.IOUtils;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.jasypt.util.text.BasicTextEncryptor;
+import org.jooq.tools.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -51,6 +53,9 @@ public class EncryptConfiguration implements InitializingBean {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(EncryptConfiguration.class);
 
+  @Value("${rp.encryptor.password}")
+  private String password;
+
   @Value("${rp.integration.salt.path:keystore}")
   private String integrationSaltPath;
 
@@ -58,6 +63,7 @@ public class EncryptConfiguration implements InitializingBean {
   private String integrationSaltFile;
 
   private String secretFilePath;
+
   private final DataStore dataStore;
 
   private final FeatureFlagHandler featureFlagHandler;
@@ -76,7 +82,7 @@ public class EncryptConfiguration implements InitializingBean {
   @Bean(name = "basicEncryptor")
   public BasicTextEncryptor getBasicEncrypt() throws IOException {
     BasicTextEncryptor basic = new BasicTextEncryptor();
-    basic.setPassword(IOUtils.toString(dataStore.load(secretFilePath), StandardCharsets.UTF_8));
+    basic.setPassword(getPassword());
     return basic;
   }
 
@@ -88,22 +94,29 @@ public class EncryptConfiguration implements InitializingBean {
   @Bean(name = "strongEncryptor")
   public StandardPBEStringEncryptor getStrongEncryptor() throws IOException {
     StandardPBEStringEncryptor strong = new StandardPBEStringEncryptor();
-    strong.setPassword(IOUtils.toString(dataStore.load(secretFilePath), StandardCharsets.UTF_8));
+    strong.setPassword(getPassword());
     strong.setAlgorithm("PBEWithMD5AndTripleDES");
     return strong;
   }
 
   @Override
-  public void afterPropertiesSet() throws Exception {
+  public void afterPropertiesSet() {
     if (featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)) {
       secretFilePath = Paths.get(INTEGRATION_SECRETS_PATH, integrationSaltFile).toString();
     } else {
       secretFilePath = integrationSaltPath + File.separator + integrationSaltFile;
     }
-    loadOrGenerateIntegrationSalt(dataStore);
+    if (password == null) {
+      loadOrGenerateEncryptorPassword();
+    }
   }
 
-  private void loadOrGenerateIntegrationSalt(DataStore dataStore) {
+  private String getPassword() throws IOException {
+    return Optional.ofNullable(password)
+        .orElse(IOUtils.toString(dataStore.load(secretFilePath), StandardCharsets.UTF_8));
+  }
+
+  private void loadOrGenerateEncryptorPassword() {
     try {
       dataStore.load(secretFilePath);
     } catch (ReportPortalException ex) {
