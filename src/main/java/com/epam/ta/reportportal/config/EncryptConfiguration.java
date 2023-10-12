@@ -22,6 +22,7 @@ import com.epam.ta.reportportal.entity.enums.FeatureFlag;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.filesystem.DataStore;
 import com.epam.ta.reportportal.util.FeatureFlagHandler;
+import com.epam.ta.reportportal.ws.model.ErrorType;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -53,7 +54,7 @@ public class EncryptConfiguration implements InitializingBean {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(EncryptConfiguration.class);
 
-  @Value("${rp.encryptor.password:}")
+  @Value("${rp.encryptor.password:#{null}}")
   private String password;
 
   @Value("${rp.integration.salt.path:keystore}")
@@ -80,7 +81,7 @@ public class EncryptConfiguration implements InitializingBean {
    * @return {@link BasicTextEncryptor} instance
    */
   @Bean(name = "basicEncryptor")
-  public BasicTextEncryptor getBasicEncrypt() throws IOException {
+  public BasicTextEncryptor getBasicEncrypt() {
     BasicTextEncryptor basic = new BasicTextEncryptor();
     basic.setPassword(getPassword());
     return basic;
@@ -92,7 +93,7 @@ public class EncryptConfiguration implements InitializingBean {
    * @return {@link StandardPBEStringEncryptor} instance
    */
   @Bean(name = "strongEncryptor")
-  public StandardPBEStringEncryptor getStrongEncryptor() throws IOException {
+  public StandardPBEStringEncryptor getStrongEncryptor() {
     StandardPBEStringEncryptor strong = new StandardPBEStringEncryptor();
     strong.setPassword(getPassword());
     strong.setAlgorithm("PBEWithMD5AndTripleDES");
@@ -111,9 +112,16 @@ public class EncryptConfiguration implements InitializingBean {
     }
   }
 
-  private String getPassword() throws IOException {
-    return Optional.ofNullable(password)
-        .orElse(IOUtils.toString(dataStore.load(secretFilePath), StandardCharsets.UTF_8));
+  private String getPassword() {
+    return Optional.ofNullable(password).orElseGet(this::loadFormDataStore);
+  }
+
+  private String loadFormDataStore() {
+    try {
+      return IOUtils.toString(dataStore.load(secretFilePath), StandardCharsets.UTF_8);
+    } catch (IOException e) {
+      throw new ReportPortalException(ErrorType.UNABLE_TO_LOAD_BINARY_DATA, e.getMessage());
+    }
   }
 
   private void loadOrGenerateEncryptorPassword() {
