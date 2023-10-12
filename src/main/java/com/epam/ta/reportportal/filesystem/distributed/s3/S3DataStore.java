@@ -117,6 +117,12 @@ public class S3DataStore implements DataStore {
   }
 
   @Override
+  public boolean exists(String filePath) {
+    S3File s3File = getS3File(filePath);
+    return blobStore.blobExists(s3File.getBucket(), s3File.getFilePath());
+  }
+
+  @Override
   public void delete(String filePath) {
     S3File s3File = getS3File(filePath);
     try {

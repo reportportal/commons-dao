@@ -117,9 +117,7 @@ public class EncryptConfiguration implements InitializingBean {
   }
 
   private void loadOrGenerateEncryptorPassword() {
-    try {
-      dataStore.load(secretFilePath);
-    } catch (ReportPortalException ex) {
+    if (!dataStore.exists(secretFilePath)) {
       byte[] bytes = new byte[20];
       new SecureRandom().nextBytes(bytes);
       try (InputStream secret = new ByteArrayInputStream(

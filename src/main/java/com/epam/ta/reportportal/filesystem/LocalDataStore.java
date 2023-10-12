@@ -82,6 +82,11 @@ public class LocalDataStore implements DataStore {
   }
 
   @Override
+  public boolean exists(String filePath) {
+    return Files.exists(Paths.get(storageRootPath, filePath));
+  }
+
+  @Override
   public void delete(String filePath) {
 
     try {

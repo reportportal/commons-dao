@@ -28,6 +28,8 @@ public interface DataStore {
 
   InputStream load(String filePath);
 
+  boolean exists(String filePath);
+
   void delete(String filePath);
 
   void deleteAll(List<String> filePaths, String bucketName);
