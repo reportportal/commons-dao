@@ -53,7 +53,7 @@ public class EncryptConfiguration implements InitializingBean {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(EncryptConfiguration.class);
 
-  @Value("${rp.encryptor.password}")
+  @Value("${rp.encryptor.password:}")
   private String password;
 
   @Value("${rp.integration.salt.path:keystore}")
