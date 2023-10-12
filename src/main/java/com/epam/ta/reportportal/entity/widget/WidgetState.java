@@ -1,33 +1,34 @@
 package com.epam.ta.reportportal.entity.widget;
 
-import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Optional;
+import javax.annotation.Nullable;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
 public enum WidgetState {
 
-	CREATED("created"),
+  CREATED("created"),
 
-	RENDERING("rendering"),
+  RENDERING("rendering"),
 
-	READY("ready"),
+  READY("ready"),
 
-	FAILED("failed");
+  FAILED("failed");
 
-	WidgetState(String value) {
-		this.value = value;
-	}
+  private final String value;
 
-	private final String value;
+  WidgetState(String value) {
+    this.value = value;
+  }
 
-	public String getValue() {
-		return value;
-	}
+  public static Optional<WidgetState> findByName(@Nullable String name) {
+    return Arrays.stream(WidgetState.values())
+        .filter(state -> state.getValue().equalsIgnoreCase(name)).findAny();
+  }
 
-	public static Optional<WidgetState> findByName(@Nullable String name) {
-		return Arrays.stream(WidgetState.values()).filter(state -> state.getValue().equalsIgnoreCase(name)).findAny();
-	}
+  public String getValue() {
+    return value;
+  }
 }

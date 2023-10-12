@@ -16,9 +16,9 @@
 
 package com.epam.ta.reportportal.entity.item;
 
+import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import java.io.Serializable;
 
 /**
  * @author Pavel Bortnik
@@ -26,52 +26,52 @@ import java.io.Serializable;
 @Embeddable
 public class Parameter implements Serializable {
 
-	@Column(name = "key")
-	private String key;
+  @Column(name = "key")
+  private String key;
 
-	@Column(name = "value")
-	private String value;
+  @Column(name = "value")
+  private String value;
 
-	public Parameter() {
-	}
+  public Parameter() {
+  }
 
-	public String getKey() {
-		return key;
-	}
+  public String getKey() {
+    return key;
+  }
 
-	public void setKey(String key) {
-		this.key = key;
-	}
+  public void setKey(String key) {
+    this.key = key;
+  }
 
-	public String getValue() {
-		return value;
-	}
+  public String getValue() {
+    return value;
+  }
 
-	public void setValue(String value) {
-		this.value = value;
-	}
+  public void setValue(String value) {
+    this.value = value;
+  }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
 
-		Parameter parameter = (Parameter) o;
+    Parameter parameter = (Parameter) o;
 
-		if (key != null ? !key.equals(parameter.key) : parameter.key != null) {
-			return false;
-		}
-		return value != null ? value.equals(parameter.value) : parameter.value == null;
-	}
+    if (key != null ? !key.equals(parameter.key) : parameter.key != null) {
+      return false;
+    }
+    return value != null ? value.equals(parameter.value) : parameter.value == null;
+  }
 
-	@Override
-	public int hashCode() {
-		int result = key != null ? key.hashCode() : 0;
-		result = 31 * result + (value != null ? value.hashCode() : 0);
-		return result;
-	}
+  @Override
+  public int hashCode() {
+    int result = key != null ? key.hashCode() : 0;
+    result = 31 * result + (value != null ? value.hashCode() : 0);
+    return result;
+  }
 }

@@ -16,9 +16,14 @@
 
 package com.epam.ta.reportportal.entity.statistics;
 
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * @author Ivan Budaev
@@ -27,52 +32,52 @@ import java.util.Objects;
 @Table(name = "statistics_field")
 public class StatisticsField implements Serializable {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "sf_id")
-	private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "sf_id")
+  private Long id;
 
-	@Column(name = "name")
-	private String name;
+  @Column(name = "name")
+  private String name;
 
-	public StatisticsField() {
+  public StatisticsField() {
 
-	}
+  }
 
-	public StatisticsField(String name) {
-		this.name = name;
-	}
+  public StatisticsField(String name) {
+    this.name = name;
+  }
 
-	public Long getId() {
-		return id;
-	}
+  public Long getId() {
+    return id;
+  }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-	public String getName() {
-		return name;
-	}
+  public String getName() {
+    return name;
+  }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+  public void setName(String name) {
+    this.name = name;
+  }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-		StatisticsField that = (StatisticsField) o;
-		return Objects.equals(id, that.id) && Objects.equals(name, that.name);
-	}
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    StatisticsField that = (StatisticsField) o;
+    return Objects.equals(id, that.id) && Objects.equals(name, that.name);
+  }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(id, name);
-	}
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, name);
+  }
 }

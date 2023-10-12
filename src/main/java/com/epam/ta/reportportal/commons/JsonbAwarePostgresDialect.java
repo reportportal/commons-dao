@@ -16,9 +16,8 @@
 
 package com.epam.ta.reportportal.commons;
 
-import org.hibernate.dialect.PostgreSQL95Dialect;
-
 import java.sql.Types;
+import org.hibernate.dialect.PostgreSQL95Dialect;
 
 /**
  * Postgres Dialect aware of JSON/JSONB types
@@ -27,8 +26,8 @@ import java.sql.Types;
  */
 public class JsonbAwarePostgresDialect extends PostgreSQL95Dialect {
 
-	public JsonbAwarePostgresDialect() {
-		super();
-		this.registerColumnType(Types.JAVA_OBJECT, "json");
-	}
+  public JsonbAwarePostgresDialect() {
+    super();
+    this.registerColumnType(Types.JAVA_OBJECT, "json");
+  }
 }

@@ -16,39 +16,40 @@
 
 package com.epam.ta.reportportal.dao;
 
-import com.epam.ta.reportportal.BaseTest;
-import com.epam.ta.reportportal.entity.user.RestorePasswordBid;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.Date;
-import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import com.epam.ta.reportportal.BaseTest;
+import com.epam.ta.reportportal.entity.user.RestorePasswordBid;
+import java.util.Date;
+import java.util.Optional;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
  */
 class RestorePasswordBidRepositoryTest extends BaseTest {
 
-	@Autowired
-	private RestorePasswordBidRepository restorePasswordBidRepository;
+  @Autowired
+  private RestorePasswordBidRepository restorePasswordBidRepository;
 
-	@Test
-	void findByEmail() {
-		Optional<RestorePasswordBid> bid = restorePasswordBidRepository.findByEmail("notexisted@email.com");
-		assertFalse(bid.isPresent());
-	}
+  @Test
+  void findByEmail() {
+    Optional<RestorePasswordBid> bid = restorePasswordBidRepository.findByEmail(
+        "notexisted@email.com");
+    assertFalse(bid.isPresent());
+  }
 
-	@Test
-	void findByExistedEmail() {
-		RestorePasswordBid restorePasswordBid = new RestorePasswordBid();
-		restorePasswordBid.setUuid("uuid");
-		restorePasswordBid.setEmail("existed@email.com");
-		restorePasswordBid.setLastModifiedDate(new Date());
-		restorePasswordBidRepository.save(restorePasswordBid);
-		Optional<RestorePasswordBid> bid = restorePasswordBidRepository.findByEmail("existed@email.com");
-		assertTrue(bid.isPresent());
-	}
+  @Test
+  void findByExistedEmail() {
+    RestorePasswordBid restorePasswordBid = new RestorePasswordBid();
+    restorePasswordBid.setUuid("uuid");
+    restorePasswordBid.setEmail("existed@email.com");
+    restorePasswordBid.setLastModifiedDate(new Date());
+    restorePasswordBidRepository.save(restorePasswordBid);
+    Optional<RestorePasswordBid> bid = restorePasswordBidRepository.findByEmail(
+        "existed@email.com");
+    assertTrue(bid.isPresent());
+  }
 }

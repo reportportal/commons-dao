@@ -16,18 +16,17 @@
 
 package com.epam.ta.reportportal.dao;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.entity.pattern.PatternTemplate;
+import java.util.List;
+import java.util.Optional;
+import javax.persistence.PersistenceException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
-
-import javax.persistence.PersistenceException;
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
@@ -35,45 +34,47 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @Sql("/db/fill/pattern/pattern-fill.sql")
 class PatternTemplateRepositoryTest extends BaseTest {
 
-	@Autowired
-	private PatternTemplateRepository patternTemplateRepository;
+  @Autowired
+  private PatternTemplateRepository patternTemplateRepository;
 
-	@Test
-	void findByIdAndProjectId() {
+  @Test
+  void findByIdAndProjectId() {
 
-		Optional<PatternTemplate> patternTemplate = patternTemplateRepository.findByIdAndProjectId(5L, 2L);
+    Optional<PatternTemplate> patternTemplate = patternTemplateRepository.findByIdAndProjectId(5L,
+        2L);
 
-		Assertions.assertTrue(patternTemplate.isPresent());
-	}
+    Assertions.assertTrue(patternTemplate.isPresent());
+  }
 
-	@Test
-	void findAllByProjectIdAndEnabled() {
+  @Test
+  void findAllByProjectIdAndEnabled() {
 
-		List<PatternTemplate> allByProjectIdAndEnabled = patternTemplateRepository.findAllByProjectIdAndEnabled(1L, true);
+    List<PatternTemplate> allByProjectIdAndEnabled = patternTemplateRepository.findAllByProjectIdAndEnabled(
+        1L, true);
 
-		Assertions.assertNotNull(allByProjectIdAndEnabled);
-		Assertions.assertEquals(2, allByProjectIdAndEnabled.size());
-	}
+    Assertions.assertNotNull(allByProjectIdAndEnabled);
+    Assertions.assertEquals(2, allByProjectIdAndEnabled.size());
+  }
 
-	@Test
-	void existsByProjectIdAndNameIgnoreCasePositive() {
+  @Test
+  void existsByProjectIdAndNameIgnoreCasePositive() {
 
-		boolean exists = patternTemplateRepository.existsByProjectIdAndNameIgnoreCase(1L, "nAmE1");
+    boolean exists = patternTemplateRepository.existsByProjectIdAndNameIgnoreCase(1L, "nAmE1");
 
-		Assertions.assertTrue(exists);
-	}
+    Assertions.assertTrue(exists);
+  }
 
-	@Test
-	void existsByProjectIdAndNameIgnoreCaseNagative() {
+  @Test
+  void existsByProjectIdAndNameIgnoreCaseNagative() {
 
-		boolean exists = patternTemplateRepository.existsByProjectIdAndNameIgnoreCase(1L, "name1 ");
+    boolean exists = patternTemplateRepository.existsByProjectIdAndNameIgnoreCase(1L, "name1 ");
 
-		Assertions.assertFalse(exists);
-	}
+    Assertions.assertFalse(exists);
+  }
 
-	@Test
-	void validateWrongRegex() {
+  @Test
+  void validateWrongRegex() {
 
-		assertThrows(PersistenceException.class, () -> patternTemplateRepository.validateRegex("{1,}"));
-	}
+    assertThrows(PersistenceException.class, () -> patternTemplateRepository.validateRegex("{1,}"));
+  }
 }

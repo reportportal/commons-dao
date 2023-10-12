@@ -16,16 +16,15 @@
 
 package com.epam.ta.reportportal.dao;
 
+import static com.epam.ta.reportportal.jooq.tables.JIssue.ISSUE;
+
 import com.epam.ta.reportportal.entity.item.issue.IssueEntityPojo;
 import com.epam.ta.reportportal.jooq.tables.records.JIssueRecord;
+import java.util.List;
 import org.jooq.DSLContext;
 import org.jooq.InsertValuesStep5;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
-
-import static com.epam.ta.reportportal.jooq.tables.JIssue.ISSUE;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
@@ -33,23 +32,25 @@ import static com.epam.ta.reportportal.jooq.tables.JIssue.ISSUE;
 @Repository
 public class IssueEntityRepositoryCustomImpl implements IssueEntityRepositoryCustom {
 
-	@Autowired
-	private DSLContext dslContext;
+  @Autowired
+  private DSLContext dslContext;
 
-	@Override
-	public int saveMultiple(List<IssueEntityPojo> issueEntities) {
+  @Override
+  public int saveMultiple(List<IssueEntityPojo> issueEntities) {
 
-		InsertValuesStep5<JIssueRecord, Long, Long, String, Boolean, Boolean> columns = dslContext.insertInto(ISSUE)
-				.columns(ISSUE.ISSUE_ID, ISSUE.ISSUE_TYPE, ISSUE.ISSUE_DESCRIPTION, ISSUE.AUTO_ANALYZED, ISSUE.IGNORE_ANALYZER);
+    InsertValuesStep5<JIssueRecord, Long, Long, String, Boolean, Boolean> columns = dslContext.insertInto(
+            ISSUE)
+        .columns(ISSUE.ISSUE_ID, ISSUE.ISSUE_TYPE, ISSUE.ISSUE_DESCRIPTION, ISSUE.AUTO_ANALYZED,
+            ISSUE.IGNORE_ANALYZER);
 
-		issueEntities.forEach(issue -> columns.values(issue.getItemId(),
-				issue.getIssueTypeId(),
-				issue.getDescription(),
-				issue.isAutoAnalyzed(),
-				issue.isIgnoreAnalyzer()
-		));
+    issueEntities.forEach(issue -> columns.values(issue.getItemId(),
+        issue.getIssueTypeId(),
+        issue.getDescription(),
+        issue.isAutoAnalyzed(),
+        issue.isIgnoreAnalyzer()
+    ));
 
-		return columns.execute();
+    return columns.execute();
 
-	}
+  }
 }

@@ -16,45 +16,47 @@
 
 package com.epam.ta.reportportal.entity.plugin;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
 class PluginFileExtensionTest {
 
-	private Map<PluginFileExtension, List<String>> allowed;
-	private List<String> disallowed;
+  private Map<PluginFileExtension, List<String>> allowed;
+  private List<String> disallowed;
 
-	@BeforeEach
-	void setUp() throws Exception {
-		allowed = Arrays.stream(PluginFileExtension.values())
-				.collect(Collectors.toMap(it -> it,
-						it -> Arrays.asList(it.getExtension(), it.getExtension().toUpperCase(), it.getExtension().toLowerCase())
-				));
-		disallowed = Arrays.asList("bla", null, "", "noSuchType");
-	}
+  @BeforeEach
+  void setUp() throws Exception {
+    allowed = Arrays.stream(PluginFileExtension.values())
+        .collect(Collectors.toMap(it -> it,
+            it -> Arrays.asList(it.getExtension(), it.getExtension().toUpperCase(),
+                it.getExtension().toLowerCase())
+        ));
+    disallowed = Arrays.asList("bla", null, "", "noSuchType");
+  }
 
-	@Test
-	void findByExtensionPositive() {
-		allowed.forEach((key, value) -> value.forEach(val -> {
-			final Optional<PluginFileExtension> optional = PluginFileExtension.findByExtension(val);
-			assertTrue(optional.isPresent());
-			assertEquals(key, optional.get());
-		}));
-	}
+  @Test
+  void findByExtensionPositive() {
+    allowed.forEach((key, value) -> value.forEach(val -> {
+      final Optional<PluginFileExtension> optional = PluginFileExtension.findByExtension(val);
+      assertTrue(optional.isPresent());
+      assertEquals(key, optional.get());
+    }));
+  }
 
-	@Test
-	void findByExtensionNegative() {
-		disallowed.forEach(it -> assertFalse(PluginFileExtension.findByExtension(it).isPresent()));
-	}
+  @Test
+  void findByExtensionNegative() {
+    disallowed.forEach(it -> assertFalse(PluginFileExtension.findByExtension(it).isPresent()));
+  }
 }

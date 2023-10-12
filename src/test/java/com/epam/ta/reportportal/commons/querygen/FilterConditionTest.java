@@ -1,9 +1,9 @@
 package com.epam.ta.reportportal.commons.querygen;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import com.google.common.collect.Lists;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 /**
@@ -11,20 +11,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 class FilterConditionTest {
 
-	@Test
-	public void testInBuilder() {
-		FilterCondition condition = FilterCondition.builder().in("criteria", Lists.newArrayList(1, 2, 3)).build();
-		assertEquals("criteria", condition.getSearchCriteria());
-		assertEquals(Condition.IN, condition.getCondition());
-		assertEquals("1,2,3", condition.getValue());
-	}
+  @Test
+  public void testInBuilder() {
+    FilterCondition condition = FilterCondition.builder()
+        .in("criteria", Lists.newArrayList(1, 2, 3)).build();
+    assertEquals("criteria", condition.getSearchCriteria());
+    assertEquals(Condition.IN, condition.getCondition());
+    assertEquals("1,2,3", condition.getValue());
+  }
 
-	@Test
-	public void testEqBuilder() {
-		FilterCondition condition = FilterCondition.builder().eq("criteria", "value").build();
-		assertEquals("criteria", condition.getSearchCriteria());
-		assertEquals(Condition.EQUALS, condition.getCondition());
-		assertEquals("value", condition.getValue());
-	}
+  @Test
+  public void testEqBuilder() {
+    FilterCondition condition = FilterCondition.builder().eq("criteria", "value").build();
+    assertEquals("criteria", condition.getSearchCriteria());
+    assertEquals(Condition.EQUALS, condition.getCondition());
+    assertEquals("value", condition.getValue());
+  }
 
 }

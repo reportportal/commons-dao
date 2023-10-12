@@ -132,7 +132,7 @@ public class S3DataStore implements DataStore {
     if (!featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)) {
       blobStore.removeBlobs(bucketPrefix + bucketName + bucketPostfix, filePaths);
     } else {
-      blobStore.removeBlobs(defaultBucketName, filePaths);
+      blobStore.removeBlobs(bucketName, filePaths);
     }
   }
 

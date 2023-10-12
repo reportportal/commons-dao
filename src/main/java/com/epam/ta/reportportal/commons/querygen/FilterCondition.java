@@ -16,21 +16,32 @@
 
 package com.epam.ta.reportportal.commons.querygen;
 
+import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.HAVING_CONDITION;
+
 import com.epam.ta.reportportal.commons.validation.BusinessRule;
 import com.epam.ta.reportportal.commons.validation.Suppliers;
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.collect.Lists;
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.jooq.Operator;
-
-import javax.persistence.*;
-import java.io.Serializable;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.HAVING_CONDITION;
 
 /**
  * Filter condition class for filters specifics
@@ -40,248 +51,253 @@ import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.HAVING_COND
 @TypeDef(name = "pgsql_enum", typeClass = PostgreSQLEnumType.class)
 public class FilterCondition implements ConvertibleCondition, Serializable {
 
-	private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id", unique = true, nullable = false, precision = 64)
-	private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "id", unique = true, nullable = false, precision = 64)
+  private Long id;
 
-	/**
-	 * Filter Condition
-	 */
-	@Enumerated(EnumType.STRING)
-	@Type(type = "pqsql_enum")
-	@Column(name = "condition")
-	private Condition condition;
+  /**
+   * Filter Condition
+   */
+  @Enumerated(EnumType.STRING)
+  @Type(type = "pqsql_enum")
+  @Column(name = "condition")
+  private Condition condition;
 
-	/**
-	 * Value to be filtered
-	 */
-	@Column(name = "value")
-	private String value;
+  /**
+   * Value to be filtered
+   */
+  @Column(name = "value")
+  private String value;
 
-	/**
-	 * API Model Search Criteria
-	 */
-	@Column(name = "search_criteria")
-	private String searchCriteria;
+  /**
+   * API Model Search Criteria
+   */
+  @Column(name = "search_criteria")
+  private String searchCriteria;
 
-	/**
-	 * Whether this is 'NOT' filter
-	 */
-	@Column(name = "negative")
-	private boolean negative;
+  /**
+   * Whether this is 'NOT' filter
+   */
+  @Column(name = "negative")
+  private boolean negative;
 
-	/**
-	 * Whether this is 'AND' or 'OR' filter
-	 */
-	@Transient
-	private Operator operator = Operator.AND;
+  /**
+   * Whether this is 'AND' or 'OR' filter
+   */
+  @Transient
+  private Operator operator = Operator.AND;
 
-	public FilterCondition() {
-	}
+  public FilterCondition() {
+  }
 
-	public FilterCondition(Condition condition, boolean negative, String value, String searchCriteria) {
-		this.condition = condition;
-		this.value = value;
-		this.searchCriteria = searchCriteria;
-		this.negative = negative;
-	}
+  public FilterCondition(Condition condition, boolean negative, String value,
+      String searchCriteria) {
+    this.condition = condition;
+    this.value = value;
+    this.searchCriteria = searchCriteria;
+    this.negative = negative;
+  }
 
-	public FilterCondition(Operator operator, Condition condition, boolean negative, String value, String searchCriteria) {
-		this.condition = condition;
-		this.value = value;
-		this.searchCriteria = searchCriteria;
-		this.negative = negative;
-		this.operator = operator;
-	}
+  public FilterCondition(Operator operator, Condition condition, boolean negative, String value,
+      String searchCriteria) {
+    this.condition = condition;
+    this.value = value;
+    this.searchCriteria = searchCriteria;
+    this.negative = negative;
+    this.operator = operator;
+  }
 
-	public Long getId() {
-		return id;
-	}
+  public static ConditionBuilder builder() {
+    return new ConditionBuilder();
+  }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+  public Long getId() {
+    return id;
+  }
 
-	public Condition getCondition() {
-		return condition;
-	}
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-	public String getSearchCriteria() {
-		return searchCriteria;
-	}
+  public Condition getCondition() {
+    return condition;
+  }
 
-	public String getValue() {
-		return value;
-	}
+  public String getSearchCriteria() {
+    return searchCriteria;
+  }
 
-	public boolean isNegative() {
-		return negative;
-	}
+  public String getValue() {
+    return value;
+  }
 
-	@Override
-	public Operator getOperator() {
-		return operator;
-	}
+  public boolean isNegative() {
+    return negative;
+  }
 
-	@Override
-	public List<FilterCondition> getAllConditions() {
-		return Lists.newArrayList(this);
-	}
+  @Override
+  public Operator getOperator() {
+    return operator;
+  }
 
-	public void setOperator(Operator operator) {
-		this.operator = operator;
-	}
+  public void setOperator(Operator operator) {
+    this.operator = operator;
+  }
 
-	@Override
-	public Map<ConditionType, org.jooq.Condition> toCondition(FilterTarget filterTarget) {
+  @Override
+  public List<FilterCondition> getAllConditions() {
+    return Lists.newArrayList(this);
+  }
 
-		Optional<CriteriaHolder> criteriaHolder = filterTarget.getCriteriaByFilter(searchCriteria);
+  @Override
+  public Map<ConditionType, org.jooq.Condition> toCondition(FilterTarget filterTarget) {
 
-		BusinessRule.expect(criteriaHolder, com.epam.ta.reportportal.commons.Preconditions.IS_PRESENT)
-				.verify(ErrorType.INCORRECT_FILTER_PARAMETERS,
-						Suppliers.formattedSupplier("Filter parameter {} is not defined", searchCriteria)
-				);
+    Optional<CriteriaHolder> criteriaHolder = filterTarget.getCriteriaByFilter(searchCriteria);
 
-		org.jooq.Condition condition = this.condition.toCondition(this, criteriaHolder.get());
+    BusinessRule.expect(criteriaHolder, com.epam.ta.reportportal.commons.Preconditions.IS_PRESENT)
+        .verify(ErrorType.INCORRECT_FILTER_PARAMETERS,
+            Suppliers.formattedSupplier("Filter parameter {} is not defined", searchCriteria)
+        );
 
-		/* Does FilterCondition contains negative=true? */
-		if (negative) {
-			condition = condition.not();
-		}
-		if (HAVING_CONDITION.test(this, filterTarget)) {
-			return Collections.singletonMap(ConditionType.HAVING, condition);
-		} else {
-			return Collections.singletonMap(ConditionType.WHERE, condition);
-		}
-	}
+    org.jooq.Condition condition = this.condition.toCondition(this, criteriaHolder.get());
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((condition == null) ? 0 : condition.hashCode());
-		result = prime * result + (negative ? 1231 : 1237);
-		result = prime * result + ((searchCriteria == null) ? 0 : searchCriteria.hashCode());
-		result = prime * result + ((value == null) ? 0 : value.hashCode());
-		return result;
-	}
+    /* Does FilterCondition contains negative=true? */
+    if (negative) {
+      condition = condition.not();
+    }
+    if (HAVING_CONDITION.test(this, filterTarget)) {
+      return Collections.singletonMap(ConditionType.HAVING, condition);
+    } else {
+      return Collections.singletonMap(ConditionType.WHERE, condition);
+    }
+  }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		FilterCondition other = (FilterCondition) obj;
-		if (condition != other.condition) {
-			return false;
-		}
-		if (negative != other.negative) {
-			return false;
-		}
-		if (searchCriteria == null) {
-			if (other.searchCriteria != null) {
-				return false;
-			}
-		} else if (!searchCriteria.equals(other.searchCriteria)) {
-			return false;
-		}
-		if (value == null) {
-			if (other.value != null) {
-				return false;
-			}
-		} else if (!value.equals(other.value)) {
-			return false;
-		}
-		return true;
-	}
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((condition == null) ? 0 : condition.hashCode());
+    result = prime * result + (negative ? 1231 : 1237);
+    result = prime * result + ((searchCriteria == null) ? 0 : searchCriteria.hashCode());
+    result = prime * result + ((value == null) ? 0 : value.hashCode());
+    return result;
+  }
 
-	@Override
-	public String toString() {
-		final StringBuilder sb = new StringBuilder("FilterCondition {").append("condition = ")
-				.append(condition)
-				.append(", value = ")
-				.append(value)
-				.append(", searchCriteria = ")
-				.append(searchCriteria)
-				.append(", negative = ")
-				.append(negative)
-				.append("}");
-		return sb.toString();
-	}
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    FilterCondition other = (FilterCondition) obj;
+    if (condition != other.condition) {
+      return false;
+    }
+    if (negative != other.negative) {
+      return false;
+    }
+    if (searchCriteria == null) {
+      if (other.searchCriteria != null) {
+        return false;
+      }
+    } else if (!searchCriteria.equals(other.searchCriteria)) {
+      return false;
+    }
+    if (value == null) {
+      if (other.value != null) {
+        return false;
+      }
+    } else if (!value.equals(other.value)) {
+      return false;
+    }
+    return true;
+  }
 
-	public static ConditionBuilder builder() {
-		return new ConditionBuilder();
-	}
+  @Override
+  public String toString() {
+    final StringBuilder sb = new StringBuilder("FilterCondition {").append("condition = ")
+        .append(condition)
+        .append(", value = ")
+        .append(value)
+        .append(", searchCriteria = ")
+        .append(searchCriteria)
+        .append(", negative = ")
+        .append(negative)
+        .append("}");
+    return sb.toString();
+  }
 
-	/**
-	 * Builder for {@link FilterCondition}
-	 */
-	public static class ConditionBuilder {
+  /**
+   * Builder for {@link FilterCondition}
+   */
+  public static class ConditionBuilder {
 
-		private Condition condition;
+    private Condition condition;
 
-		private boolean negative;
+    private boolean negative;
 
-		private String value;
+    private String value;
 
-		private String searchCriteria;
+    private String searchCriteria;
 
-		private Operator operator = Operator.AND;
+    private Operator operator = Operator.AND;
 
-		private ConditionBuilder() {
+    private ConditionBuilder() {
 
-		}
+    }
 
-		public FilterCondition.ConditionBuilder withCondition(Condition condition) {
-			this.condition = condition;
-			return this;
-		}
+    public FilterCondition.ConditionBuilder withCondition(Condition condition) {
+      this.condition = condition;
+      return this;
+    }
 
-		public FilterCondition.ConditionBuilder withNegative(boolean negative) {
-			this.negative = negative;
-			return this;
-		}
+    public FilterCondition.ConditionBuilder withNegative(boolean negative) {
+      this.negative = negative;
+      return this;
+    }
 
-		public FilterCondition.ConditionBuilder withValue(String value) {
-			this.value = value;
-			return this;
-		}
+    public FilterCondition.ConditionBuilder withValue(String value) {
+      this.value = value;
+      return this;
+    }
 
-		public FilterCondition.ConditionBuilder withSearchCriteria(String searchCriteria) {
-			this.searchCriteria = searchCriteria;
-			return this;
-		}
+    public FilterCondition.ConditionBuilder withSearchCriteria(String searchCriteria) {
+      this.searchCriteria = searchCriteria;
+      return this;
+    }
 
-		public FilterCondition.ConditionBuilder withOperator(Operator operator) {
-			this.operator = operator;
-			return this;
-		}
+    public FilterCondition.ConditionBuilder withOperator(Operator operator) {
+      this.operator = operator;
+      return this;
+    }
 
-		public FilterCondition.ConditionBuilder eq(String searchCriteria, String value) {
-			return withCondition(Condition.EQUALS).withSearchCriteria(searchCriteria).withValue(value);
-		}
+    public FilterCondition.ConditionBuilder eq(String searchCriteria, String value) {
+      return withCondition(Condition.EQUALS).withSearchCriteria(searchCriteria).withValue(value);
+    }
 
-		public FilterCondition.ConditionBuilder in(String searchCriteria, List<?> value) {
-			return withSearchCriteria(searchCriteria).withCondition(Condition.IN)
-					.withValue(value.stream().map(Object::toString).collect(Collectors.joining(",")));
-		}
+    public FilterCondition.ConditionBuilder in(String searchCriteria, List<?> value) {
+      return withSearchCriteria(searchCriteria).withCondition(Condition.IN)
+          .withValue(value.stream().map(Object::toString).collect(Collectors.joining(",")));
+    }
 
-		public FilterCondition build() {
-			BusinessRule.expect(condition, Objects::nonNull).verify(ErrorType.BAD_REQUEST_ERROR, "Condition should not be null");
-			BusinessRule.expect(value, Objects::nonNull).verify(ErrorType.BAD_REQUEST_ERROR, "Value should not be null");
-			BusinessRule.expect(searchCriteria, Objects::nonNull).verify(ErrorType.BAD_REQUEST_ERROR, "Search criteria should not be null");
-			BusinessRule.expect(condition, c -> c != Condition.EQUALS || !negative)
-					.verify(ErrorType.BAD_REQUEST_ERROR, "Use 'ne' instead of '!eq");
-			return new FilterCondition(operator, condition, negative, value, searchCriteria);
-		}
-	}
+    public FilterCondition build() {
+      BusinessRule.expect(condition, Objects::nonNull)
+          .verify(ErrorType.BAD_REQUEST_ERROR, "Condition should not be null");
+      BusinessRule.expect(value, Objects::nonNull)
+          .verify(ErrorType.BAD_REQUEST_ERROR, "Value should not be null");
+      BusinessRule.expect(searchCriteria, Objects::nonNull)
+          .verify(ErrorType.BAD_REQUEST_ERROR, "Search criteria should not be null");
+      BusinessRule.expect(condition, c -> c != Condition.EQUALS || !negative)
+          .verify(ErrorType.BAD_REQUEST_ERROR, "Use 'ne' instead of '!eq");
+      return new FilterCondition(operator, condition, negative, value, searchCriteria);
+    }
+  }
 }

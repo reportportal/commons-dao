@@ -17,7 +17,6 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.project.Project;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -26,31 +25,31 @@ import java.util.List;
  */
 public interface TicketRepositoryCustom {
 
-	/**
-	 * Find tickets that contains a term as a part inside for specified launch
-	 *
-	 * @param launchId Launch id
-	 * @param term     A part of ticket id
-	 * @return List of ticket ids
-	 */
-	List<String> findByLaunchIdAndTerm(Long launchId, String term);
+  /**
+   * Find tickets that contains a term as a part inside for specified launch
+   *
+   * @param launchId Launch id
+   * @param term     A part of ticket id
+   * @return List of ticket ids
+   */
+  List<String> findByLaunchIdAndTerm(Long launchId, String term);
 
-	/**
-	 * Find tickets that contains a term as a part inside for specified project
-	 *
-	 * @param projectId {@link Project#getId()}
-	 * @param term      A part of ticket id
-	 * @return List of ticket ids
-	 */
-	List<String> findByProjectIdAndTerm(Long projectId, String term);
+  /**
+   * Find tickets that contains a term as a part inside for specified project
+   *
+   * @param projectId {@link Project#getId()}
+   * @param term      A part of ticket id
+   * @return List of ticket ids
+   */
+  List<String> findByProjectIdAndTerm(Long projectId, String term);
 
-	/**
-	 * Returns number of unique tickets on specified project posted before {@code from} parameter
-	 *
-	 * @param projectId {@link com.epam.ta.reportportal.entity.project.Project#id} Id of project
-	 * @param from      Date threshold
-	 * @return Number of unique tickets
-	 */
-	Integer findUniqueCountByProjectBefore(Long projectId, LocalDateTime from);
+  /**
+   * Returns number of unique tickets on specified project posted before {@code from} parameter
+   *
+   * @param projectId {@link com.epam.ta.reportportal.entity.project.Project#id} Id of project
+   * @param from      Date threshold
+   * @return Number of unique tickets
+   */
+  Integer findUniqueCountByProjectBefore(Long projectId, LocalDateTime from);
 
 }

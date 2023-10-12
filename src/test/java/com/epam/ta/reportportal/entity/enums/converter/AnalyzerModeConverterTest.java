@@ -16,30 +16,31 @@
 
 package com.epam.ta.reportportal.entity.enums.converter;
 
-import com.epam.ta.reportportal.entity.AnalyzeMode;
-import org.junit.jupiter.api.BeforeEach;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.epam.ta.reportportal.entity.AnalyzeMode;
 import java.util.Arrays;
 import java.util.stream.Collectors;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
 public class AnalyzerModeConverterTest extends AttributeConverterTest {
 
-	@BeforeEach
-	void setUp() throws Exception {
-		this.converter = new AnalyzerModeConverter();
-		allowedValues = Arrays.stream(AnalyzeMode.values())
-				.collect(Collectors.toMap(it -> it,
-						it -> Arrays.asList(it.getValue(), it.getValue().toUpperCase(), it.getValue().toLowerCase())
-				));
-	}
+  @BeforeEach
+  void setUp() throws Exception {
+    this.converter = new AnalyzerModeConverter();
+    allowedValues = Arrays.stream(AnalyzeMode.values())
+        .collect(Collectors.toMap(it -> it,
+            it -> Arrays.asList(it.getValue(), it.getValue().toUpperCase(),
+                it.getValue().toLowerCase())
+        ));
+  }
 
-	@Override
-	public void convertToColumnTest() {
-		Arrays.stream(AnalyzeMode.values()).forEach(it -> assertEquals(it.getValue(), converter.convertToDatabaseColumn(it)));
-	}
+  @Override
+  public void convertToColumnTest() {
+    Arrays.stream(AnalyzeMode.values())
+        .forEach(it -> assertEquals(it.getValue(), converter.convertToDatabaseColumn(it)));
+  }
 }

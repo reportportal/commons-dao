@@ -17,7 +17,6 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.ServerSettings;
-
 import java.util.List;
 
 /**
@@ -25,6 +24,6 @@ import java.util.List;
  */
 public interface ServerSettingsRepositoryCustom {
 
-	List<ServerSettings> selectServerSettings();
+  List<ServerSettings> selectServerSettings();
 
 }

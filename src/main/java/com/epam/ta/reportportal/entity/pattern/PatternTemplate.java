@@ -16,9 +16,16 @@
 
 package com.epam.ta.reportportal.entity.pattern;
 
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
@@ -27,93 +34,94 @@ import java.util.Objects;
 @Table(name = "pattern_template")
 public class PatternTemplate implements Serializable {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-	@Column(name = "name")
-	private String name;
+  @Column(name = "name")
+  private String name;
 
-	@Column(name = "value")
-	private String value;
+  @Column(name = "value")
+  private String value;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "type")
-	private PatternTemplateType templateType;
+  @Enumerated(EnumType.STRING)
+  @Column(name = "type")
+  private PatternTemplateType templateType;
 
-	@Column(name = "enabled")
-	private boolean enabled;
+  @Column(name = "enabled")
+  private boolean enabled;
 
-	@Column(name = "project_id")
-	private Long projectId;
+  @Column(name = "project_id")
+  private Long projectId;
 
-	public PatternTemplate() {
-	}
+  public PatternTemplate() {
+  }
 
-	public Long getId() {
-		return id;
-	}
+  public Long getId() {
+    return id;
+  }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-	public String getName() {
-		return name;
-	}
+  public String getName() {
+    return name;
+  }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+  public void setName(String name) {
+    this.name = name;
+  }
 
-	public String getValue() {
-		return value;
-	}
+  public String getValue() {
+    return value;
+  }
 
-	public void setValue(String value) {
-		this.value = value;
-	}
+  public void setValue(String value) {
+    this.value = value;
+  }
 
-	public PatternTemplateType getTemplateType() {
-		return templateType;
-	}
+  public PatternTemplateType getTemplateType() {
+    return templateType;
+  }
 
-	public void setTemplateType(PatternTemplateType templateType) {
-		this.templateType = templateType;
-	}
+  public void setTemplateType(PatternTemplateType templateType) {
+    this.templateType = templateType;
+  }
 
-	public Long getProjectId() {
-		return projectId;
-	}
+  public Long getProjectId() {
+    return projectId;
+  }
 
-	public void setProjectId(Long projectId) {
-		this.projectId = projectId;
-	}
+  public void setProjectId(Long projectId) {
+    this.projectId = projectId;
+  }
 
-	public boolean isEnabled() {
-		return enabled;
-	}
+  public boolean isEnabled() {
+    return enabled;
+  }
 
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
-	}
+  public void setEnabled(boolean enabled) {
+    this.enabled = enabled;
+  }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-		PatternTemplate that = (PatternTemplate) o;
-		return enabled == that.enabled && Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(value,
-				that.value
-		) && templateType == that.templateType && Objects.equals(projectId, that.projectId);
-	}
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    PatternTemplate that = (PatternTemplate) o;
+    return enabled == that.enabled && Objects.equals(id, that.id) && Objects.equals(name, that.name)
+        && Objects.equals(value,
+        that.value
+    ) && templateType == that.templateType && Objects.equals(projectId, that.projectId);
+  }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(id, name, value, templateType, enabled, projectId);
-	}
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, name, value, templateType, enabled, projectId);
+  }
 }

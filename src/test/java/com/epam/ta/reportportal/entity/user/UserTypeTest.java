@@ -16,45 +16,48 @@
 
 package com.epam.ta.reportportal.entity.user;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
 class UserTypeTest {
 
-	private Map<UserType, List<String>> allowed;
-	private List<String> disallowed;
+  private Map<UserType, List<String>> allowed;
+  private List<String> disallowed;
 
-	@BeforeEach
-	void setUp() {
-		allowed = Arrays.stream(UserType.values())
-				.collect(Collectors.toMap(it -> it, it -> Arrays.asList(it.name(), it.name().toUpperCase(), it.name().toLowerCase())));
-		disallowed = Arrays.asList("noSuchUserType", "", " ", null);
-	}
+  @BeforeEach
+  void setUp() {
+    allowed = Arrays.stream(UserType.values())
+        .collect(Collectors.toMap(it -> it,
+            it -> Arrays.asList(it.name(), it.name().toUpperCase(), it.name().toLowerCase())));
+    disallowed = Arrays.asList("noSuchUserType", "", " ", null);
+  }
 
-	@Test
-	void findByName() {
-		allowed.forEach((key, value) -> value.forEach(val -> {
-			final Optional<UserType> optional = UserType.findByName(val);
-			assertTrue(optional.isPresent());
-			assertEquals(key, optional.get());
-		}));
-		disallowed.forEach(it -> assertFalse(UserType.findByName(it).isPresent()));
-	}
+  @Test
+  void findByName() {
+    allowed.forEach((key, value) -> value.forEach(val -> {
+      final Optional<UserType> optional = UserType.findByName(val);
+      assertTrue(optional.isPresent());
+      assertEquals(key, optional.get());
+    }));
+    disallowed.forEach(it -> assertFalse(UserType.findByName(it).isPresent()));
+  }
 
-	@Test
-	void isPresent() {
-		allowed.entrySet().stream().flatMap(it -> it.getValue().stream()).forEach(it -> assertTrue(UserType.isPresent(it)));
-		disallowed.forEach(it -> assertFalse(UserType.isPresent(it)));
-	}
+  @Test
+  void isPresent() {
+    allowed.entrySet().stream().flatMap(it -> it.getValue().stream())
+        .forEach(it -> assertTrue(UserType.isPresent(it)));
+    disallowed.forEach(it -> assertFalse(UserType.isPresent(it)));
+  }
 }

@@ -30,7 +30,6 @@ import com.epam.ta.reportportal.jooq.tables.JLaunchAttributeRules;
 import com.epam.ta.reportportal.jooq.tables.JLaunchNames;
 import com.epam.ta.reportportal.jooq.tables.JLaunchNumber;
 import com.epam.ta.reportportal.jooq.tables.JLog;
-import com.epam.ta.reportportal.jooq.tables.JOauthAccessToken;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
@@ -89,7 +88,7 @@ import org.jooq.impl.SchemaImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JPublic extends SchemaImpl {
 
-    private static final long serialVersionUID = -962528853;
+    private static final long serialVersionUID = -1176761935;
 
     /**
      * The reference instance of <code>public</code>
@@ -225,11 +224,6 @@ public class JPublic extends SchemaImpl {
      * The table <code>public.log</code>.
      */
     public final JLog LOG = com.epam.ta.reportportal.jooq.tables.JLog.LOG;
-
-    /**
-     * The table <code>public.oauth_access_token</code>.
-     */
-    public final JOauthAccessToken OAUTH_ACCESS_TOKEN = com.epam.ta.reportportal.jooq.tables.JOauthAccessToken.OAUTH_ACCESS_TOKEN;
 
     /**
      * The table <code>public.oauth_registration</code>.
@@ -430,7 +424,6 @@ public class JPublic extends SchemaImpl {
             Sequences.LAUNCH_ID_SEQ,
             Sequences.LAUNCH_NUMBER_ID_SEQ,
             Sequences.LOG_ID_SEQ,
-            Sequences.OAUTH_ACCESS_TOKEN_ID_SEQ,
             Sequences.OAUTH_REGISTRATION_RESTRICTION_ID_SEQ,
             Sequences.OAUTH_REGISTRATION_SCOPE_ID_SEQ,
             Sequences.ONBOARDING_ID_SEQ,
@@ -486,7 +479,6 @@ public class JPublic extends SchemaImpl {
             JLaunchNames.LAUNCH_NAMES,
             JLaunchNumber.LAUNCH_NUMBER,
             JLog.LOG,
-            JOauthAccessToken.OAUTH_ACCESS_TOKEN,
             JOauthRegistration.OAUTH_REGISTRATION,
             JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION,
             JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE,

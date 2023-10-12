@@ -63,7 +63,7 @@ dependencies {
     } else {
         compile 'com.github.reportportal:commons:ce2166b5'
         compile 'com.github.reportportal:commons-rules:5.10.0'
-        compile 'com.github.reportportal:commons-model:232e69a5'
+        compile 'com.github.reportportal:commons-model:cd4791d'
     }
 
     //https://nvd.nist.gov/vuln/detail/CVE-2020-10683 (dom4j 2.1.3 version dependency) AND https://nvd.nist.gov/vuln/detail/CVE-2019-14900
@@ -80,6 +80,7 @@ dependencies {
 
     compile 'io.minio:minio:6.0.13'
 
+    implementation group: 'org.json', name: 'json', version: '20220320'
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
     compile 'org.hibernate.validator:hibernate-validator'
 
@@ -99,7 +100,7 @@ dependencies {
 
     testCompile 'org.springframework.boot:spring-boot-starter-test'
     testCompile 'org.flywaydb.flyway-test-extensions:flyway-spring-test:6.1.0'
-    
+
 }
 
 dependencyCheck {

@@ -17,7 +17,6 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.preference.UserPreference;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -28,31 +27,32 @@ import java.util.Optional;
  */
 public interface UserPreferenceRepository extends ReportPortalRepository<UserPreference, Long> {
 
-	/**
-	 * Find user preferences by project and user
-	 *
-	 * @param projectId Project id
-	 * @param userId    User id
-	 * @return List of user preferences
-	 */
-	List<UserPreference> findByProjectIdAndUserId(Long projectId, Long userId);
+  /**
+   * Find user preferences by project and user
+   *
+   * @param projectId Project id
+   * @param userId    User id
+   * @return List of user preferences
+   */
+  List<UserPreference> findByProjectIdAndUserId(Long projectId, Long userId);
 
-	/**
-	 * Find unique user preference
-	 *
-	 * @param projectId Project id
-	 * @param userId    User id
-	 * @param filterId  Filter id
-	 * @return Optional of {@link UserPreference}
-	 */
-	Optional<UserPreference> findByProjectIdAndUserIdAndFilterId(Long projectId, Long userId, Long filterId);
+  /**
+   * Find unique user preference
+   *
+   * @param projectId Project id
+   * @param userId    User id
+   * @param filterId  Filter id
+   * @return Optional of {@link UserPreference}
+   */
+  Optional<UserPreference> findByProjectIdAndUserIdAndFilterId(Long projectId, Long userId,
+      Long filterId);
 
-	/**
-	 * Remove user preferences by project and user
-	 *
-	 * @param projectId Project id
-	 * @param userId    User id
-	 */
-	void removeByProjectIdAndUserId(Long projectId, Long userId);
+  /**
+   * Remove user preferences by project and user
+   *
+   * @param projectId Project id
+   * @param userId    User id
+   */
+  void removeByProjectIdAndUserId(Long projectId, Long userId);
 
 }

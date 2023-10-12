@@ -52,17 +52,17 @@ public class DataStoreConfiguration {
 
   /**
    * Amazon has a general work flow they publish that allows clients to always find the correct URL
-   * endpoint for a given bucket:
-   * 1) ask s3.amazonaws.com for the bucket location
-   * 2) use the url returned to make the container specific request (get/put, etc)
-   * Jclouds cache the results from the first getBucketLocation call and use that region-specific
-   * URL, as needed.
-   * In this custom implementation of {@link AWSS3HttpApiModule} we are providing location
-   * from environment variable, so that
-   * we don't need to make getBucketLocation call
+   * endpoint for a given bucket: 1) ask s3.amazonaws.com for the bucket location 2) use the url
+   * returned to make the container specific request (get/put, etc) Jclouds cache the results from
+   * the first getBucketLocation call and use that region-specific
+   * URL, as needed. In this custom
+   * implementation of {@link AWSS3HttpApiModule} we are providing location
+   * from environment
+   * variable, so that we don't need to make getBucketLocation call
    */
   @ConfiguresHttpApi
   private static class CustomBucketToRegionModule extends AWSS3HttpApiModule {
+
     private final String region;
 
     public CustomBucketToRegionModule(String region) {
@@ -78,7 +78,7 @@ public class DataStoreConfiguration {
         return new CacheLoader<>() {
 
           @Override
-          @SuppressWarnings({ "Guava", "NullableProblems" })
+          @SuppressWarnings({"Guava", "NullableProblems"})
           public Optional<String> load(String bucket) {
             if (CustomBucketToRegionModule.this.region != null) {
               return Optional.of(CustomBucketToRegionModule.this.region);

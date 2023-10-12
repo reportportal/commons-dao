@@ -16,11 +16,10 @@
 
 package com.epam.ta.reportportal.filesystem;
 
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Component;
-
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
 
 /**
  * @author Dzianis_Shybeka
@@ -30,27 +29,29 @@ import java.util.Base64;
 @Component
 public class DataEncoder {
 
-	/**
-	 * Encode provided data.
-	 *
-	 * @param data
-	 * @return
-	 */
-	public String encode(String data) {
+  /**
+   * Encode provided data.
+   *
+   * @param data
+   * @return
+   */
+  public String encode(String data) {
 
-		return StringUtils.isEmpty(data) ?
-				data :
-				Base64.getUrlEncoder().withoutPadding().encodeToString(data.getBytes(StandardCharsets.UTF_8));
-	}
+    return StringUtils.isEmpty(data) ?
+        data :
+        Base64.getUrlEncoder().withoutPadding()
+            .encodeToString(data.getBytes(StandardCharsets.UTF_8));
+  }
 
-	/**
-	 * Decode provided data.
-	 *
-	 * @param data
-	 * @return
-	 */
-	public String decode(String data) {
+  /**
+   * Decode provided data.
+   *
+   * @param data
+   * @return
+   */
+  public String decode(String data) {
 
-		return StringUtils.isEmpty(data) ? data : new String(Base64.getUrlDecoder().decode(data), StandardCharsets.UTF_8);
-	}
+    return StringUtils.isEmpty(data) ? data
+        : new String(Base64.getUrlDecoder().decode(data), StandardCharsets.UTF_8);
+  }
 }

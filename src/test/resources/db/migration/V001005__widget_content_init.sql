@@ -1,5 +1,5 @@
-create or replace function widget_content_init()
-    RETURNS VOID as
+CREATE OR REPLACE FUNCTION widget_content_init()
+    RETURNS VOID AS
 $$
     DECLARE launch1 BIGINT;
     DECLARE launch2 BIGINT;
@@ -130,8 +130,9 @@ BEGIN
     INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES (null, 'test', itemId, null, false);
     INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES (null, 'value', itemId, null, false);
 
-    INSERT INTO test_item (test_case_hash, NAME, uuid, type, start_time, description, last_modified, unique_id, launch_id)
-    VALUES (3, 'Step','uuid3', 'STEP', now(), 'description', now(), 'uniqueId', launch1);
+    INSERT INTO test_item (test_case_hash, NAME, uuid, type, start_time, description, last_modified,
+                           unique_id, launch_id)
+    VALUES (3, 'Step', 'uuid3', 'STEP', now(), 'description', now(), 'uniqueId', launch1);
     itemId = (SELECT (currval(pg_get_serial_sequence('test_item', 'item_id'))));
     INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (itemId, 'FAILED', 0.35 + itemId, now());
     INSERT INTO issue (issue_id, issue_type, issue_description) VALUES (itemId, floor(random() * 5 + 1), 'issue description');

@@ -16,66 +16,81 @@
 
 package com.epam.ta.reportportal.entity.widget.content;
 
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ID;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.NUMBER;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.PASSED;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.SKIPPED;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.TOTAL;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import javax.persistence.Column;
 import java.io.Serializable;
-
-import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
+import javax.persistence.Column;
 
 /**
  * @author Ivan Budayeu
  */
 public class PassingRateStatisticsResult implements Serializable {
 
-	@Column(name = ID)
-	@JsonProperty(value = ID)
-	private Long id;
+  @Column(name = ID)
+  @JsonProperty(value = ID)
+  private Long id;
 
-	@Column(name = NUMBER)
-	@JsonProperty(value = NUMBER)
-	private int number;
+  @Column(name = NUMBER)
+  @JsonProperty(value = NUMBER)
+  private int number;
 
-	@Column(name = PASSED)
-	@JsonProperty(value = PASSED)
-	private int passed;
+  @Column(name = PASSED)
+  @JsonProperty(value = PASSED)
+  private int passed;
 
-	@Column(name = TOTAL)
-	@JsonProperty(value = TOTAL)
-	private int total;
+  @Column(name = TOTAL)
+  @JsonProperty(value = TOTAL)
+  private int total;
 
-	public PassingRateStatisticsResult() {
-	}
+  @Column(name = SKIPPED)
+  @JsonProperty(value = SKIPPED)
+  private int skipped;
 
-	public Long getId() {
-		return id;
-	}
+  public PassingRateStatisticsResult() {
+  }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+  public Long getId() {
+    return id;
+  }
 
-	public int getNumber() {
-		return number;
-	}
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-	public void setNumber(int number) {
-		this.number = number;
-	}
+  public int getNumber() {
+    return number;
+  }
 
-	public int getPassed() {
-		return passed;
-	}
+  public void setNumber(int number) {
+    this.number = number;
+  }
 
-	public void setPassed(int passed) {
-		this.passed = passed;
-	}
+  public int getPassed() {
+    return passed;
+  }
 
-	public int getTotal() {
-		return total;
-	}
+  public void setPassed(int passed) {
+    this.passed = passed;
+  }
 
-	public void setTotal(int total) {
-		this.total = total;
-	}
+  public int getTotal() {
+    return total;
+  }
+
+  public void setTotal(int total) {
+    this.total = total;
+  }
+
+  public int getSkipped() {
+    return skipped;
+  }
+
+  public void setSkipped(int skipped) {
+    this.skipped = skipped;
+  }
 }

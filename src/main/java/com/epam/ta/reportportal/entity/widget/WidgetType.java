@@ -16,70 +16,71 @@
 
 package com.epam.ta.reportportal.entity.widget;
 
-import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Optional;
+import javax.annotation.Nullable;
 
 /**
  * @author Pavel Bortnik
  */
 public enum WidgetType {
 
-	OLD_LINE_CHART("oldLineChart", false, false),
-	INVESTIGATED_TREND("investigatedTrend", false, false),
-	LAUNCH_STATISTICS("launchStatistics", false, true),
-	STATISTIC_TREND("statisticTrend", false, true),
-	CASES_TREND("casesTrend", false, false),
-	NOT_PASSED("notPassed", false, false),
-	OVERALL_STATISTICS("overallStatistics", false, true),
-	UNIQUE_BUG_TABLE("uniqueBugTable", false, false),
-	BUG_TREND("bugTrend", false, false),
-	ACTIVITY("activityStream", false, false),
-	LAUNCHES_COMPARISON_CHART("launchesComparisonChart", false, false),
-	LAUNCHES_DURATION_CHART("launchesDurationChart", false, false),
-	LAUNCHES_TABLE("launchesTable", false, true),
-	TOP_TEST_CASES("topTestCases", false, false),
-	FLAKY_TEST_CASES("flakyTestCases", false, false),
-	PASSING_RATE_SUMMARY("passingRateSummary", false, false),
-	PASSING_RATE_PER_LAUNCH("passingRatePerLaunch", false, false),
-	PRODUCT_STATUS("productStatus", false, true),
-	MOST_TIME_CONSUMING("mostTimeConsuming", false, false),
+  OLD_LINE_CHART("oldLineChart", false, false),
+  INVESTIGATED_TREND("investigatedTrend", false, false),
+  LAUNCH_STATISTICS("launchStatistics", false, true),
+  STATISTIC_TREND("statisticTrend", false, true),
+  CASES_TREND("casesTrend", false, false),
+  NOT_PASSED("notPassed", false, false),
+  OVERALL_STATISTICS("overallStatistics", false, true),
+  UNIQUE_BUG_TABLE("uniqueBugTable", false, false),
+  BUG_TREND("bugTrend", false, false),
+  ACTIVITY("activityStream", false, false),
+  LAUNCHES_COMPARISON_CHART("launchesComparisonChart", false, false),
+  LAUNCHES_DURATION_CHART("launchesDurationChart", false, false),
+  LAUNCHES_TABLE("launchesTable", false, true),
+  TOP_TEST_CASES("topTestCases", false, false),
+  FLAKY_TEST_CASES("flakyTestCases", false, false),
+  PASSING_RATE_SUMMARY("passingRateSummary", false, false),
+  PASSING_RATE_PER_LAUNCH("passingRatePerLaunch", false, false),
+  PRODUCT_STATUS("productStatus", false, true),
+  MOST_TIME_CONSUMING("mostTimeConsuming", false, false),
 
-	CUMULATIVE("cumulative", true, false),
-	TOP_PATTERN_TEMPLATES("topPatternTemplates", true, false),
-	COMPONENT_HEALTH_CHECK("componentHealthCheck", true, false),
-	COMPONENT_HEALTH_CHECK_TABLE("componentHealthCheckTable", true, false);
+  CUMULATIVE("cumulative", true, false),
+  TOP_PATTERN_TEMPLATES("topPatternTemplates", true, false),
+  COMPONENT_HEALTH_CHECK("componentHealthCheck", true, false),
+  COMPONENT_HEALTH_CHECK_TABLE("componentHealthCheckTable", true, false);
 
-	private final String type;
+  private final String type;
 
-	private final boolean supportMultilevelStructure;
+  private final boolean supportMultilevelStructure;
 
-	private final boolean issueTypeUpdateSupported;
+  private final boolean issueTypeUpdateSupported;
 
-	WidgetType(String type, boolean supportMultilevelStructure, boolean issueTypeUpdateSupported) {
-		this.type = type;
-		this.supportMultilevelStructure = supportMultilevelStructure;
-		this.issueTypeUpdateSupported = issueTypeUpdateSupported;
-	}
+  WidgetType(String type, boolean supportMultilevelStructure, boolean issueTypeUpdateSupported) {
+    this.type = type;
+    this.supportMultilevelStructure = supportMultilevelStructure;
+    this.issueTypeUpdateSupported = issueTypeUpdateSupported;
+  }
 
-	public String getType() {
-		return this.type;
-	}
+  public static WidgetType getByName(String type) {
+    return WidgetType.valueOf(type);
+  }
 
-	public boolean isSupportMultilevelStructure() {
-		return supportMultilevelStructure;
-	}
+  public static Optional<WidgetType> findByName(@Nullable String name) {
+    return Arrays.stream(WidgetType.values())
+        .filter(gadgetTypes -> gadgetTypes.getType().equalsIgnoreCase(name)).findAny();
+  }
 
-	public boolean isIssueTypeUpdateSupported() {
-		return issueTypeUpdateSupported;
-	}
+  public String getType() {
+    return this.type;
+  }
 
-	public static WidgetType getByName(String type) {
-		return WidgetType.valueOf(type);
-	}
+  public boolean isSupportMultilevelStructure() {
+    return supportMultilevelStructure;
+  }
 
-	public static Optional<WidgetType> findByName(@Nullable String name) {
-		return Arrays.stream(WidgetType.values()).filter(gadgetTypes -> gadgetTypes.getType().equalsIgnoreCase(name)).findAny();
-	}
+  public boolean isIssueTypeUpdateSupported() {
+    return issueTypeUpdateSupported;
+  }
 
 }

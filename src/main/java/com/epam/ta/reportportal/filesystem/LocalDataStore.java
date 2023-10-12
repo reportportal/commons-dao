@@ -97,7 +97,6 @@ public class LocalDataStore implements DataStore {
 
   @Override
   public void deleteAll(List<String> filePaths, String bucketName) {
-
     for (String filePath : filePaths) {
       delete(filePath);
     }
@@ -106,7 +105,6 @@ public class LocalDataStore implements DataStore {
   @Override
   public void deleteContainer(String bucketName) {
     try {
-
       Files.deleteIfExists(Paths.get(bucketName));
     } catch (IOException e) {
 

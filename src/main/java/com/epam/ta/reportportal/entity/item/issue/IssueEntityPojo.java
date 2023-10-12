@@ -23,60 +23,61 @@ import java.io.Serializable;
  */
 public class IssueEntityPojo implements Serializable {
 
-	private Long itemId;
-	private Long issueTypeId;
-	private String description;
-	private boolean autoAnalyzed;
-	private boolean ignoreAnalyzer;
+  private Long itemId;
+  private Long issueTypeId;
+  private String description;
+  private boolean autoAnalyzed;
+  private boolean ignoreAnalyzer;
 
-	public IssueEntityPojo() {
-	}
+  public IssueEntityPojo() {
+  }
 
-	public IssueEntityPojo(Long itemId, Long issueTypeId, String description, boolean autoAnalyzed, boolean ignoreAnalyzer) {
-		this.itemId = itemId;
-		this.issueTypeId = issueTypeId;
-		this.description = description;
-		this.autoAnalyzed = autoAnalyzed;
-		this.ignoreAnalyzer = ignoreAnalyzer;
-	}
+  public IssueEntityPojo(Long itemId, Long issueTypeId, String description, boolean autoAnalyzed,
+      boolean ignoreAnalyzer) {
+    this.itemId = itemId;
+    this.issueTypeId = issueTypeId;
+    this.description = description;
+    this.autoAnalyzed = autoAnalyzed;
+    this.ignoreAnalyzer = ignoreAnalyzer;
+  }
 
-	public Long getItemId() {
-		return itemId;
-	}
+  public Long getItemId() {
+    return itemId;
+  }
 
-	public void setItemId(Long itemId) {
-		this.itemId = itemId;
-	}
+  public void setItemId(Long itemId) {
+    this.itemId = itemId;
+  }
 
-	public Long getIssueTypeId() {
-		return issueTypeId;
-	}
+  public Long getIssueTypeId() {
+    return issueTypeId;
+  }
 
-	public void setIssueTypeId(Long issueTypeId) {
-		this.issueTypeId = issueTypeId;
-	}
+  public void setIssueTypeId(Long issueTypeId) {
+    this.issueTypeId = issueTypeId;
+  }
 
-	public String getDescription() {
-		return description;
-	}
+  public String getDescription() {
+    return description;
+  }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
-	public boolean isAutoAnalyzed() {
-		return autoAnalyzed;
-	}
+  public boolean isAutoAnalyzed() {
+    return autoAnalyzed;
+  }
 
-	public void setAutoAnalyzed(boolean autoAnalyzed) {
-		this.autoAnalyzed = autoAnalyzed;
-	}
+  public void setAutoAnalyzed(boolean autoAnalyzed) {
+    this.autoAnalyzed = autoAnalyzed;
+  }
 
-	public boolean isIgnoreAnalyzer() {
-		return ignoreAnalyzer;
-	}
+  public boolean isIgnoreAnalyzer() {
+    return ignoreAnalyzer;
+  }
 
-	public void setIgnoreAnalyzer(boolean ignoreAnalyzer) {
-		this.ignoreAnalyzer = ignoreAnalyzer;
-	}
+  public void setIgnoreAnalyzer(boolean ignoreAnalyzer) {
+    this.ignoreAnalyzer = ignoreAnalyzer;
+  }
 }

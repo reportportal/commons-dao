@@ -27,8 +27,8 @@ import org.springframework.data.repository.query.Param;
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
-public interface AttachmentRepository
-    extends ReportPortalRepository<Attachment, Long>, AttachmentRepositoryCustom {
+public interface AttachmentRepository extends ReportPortalRepository<Attachment, Long>,
+    AttachmentRepositoryCustom {
 
   Optional<Attachment> findByFileId(String fileId);
 
@@ -41,5 +41,6 @@ public interface AttachmentRepository
   @Modifying
   @Query(value = "UPDATE attachment SET launch_id = :newLaunchId WHERE project_id = :projectId AND launch_id = :currentLaunchId", nativeQuery = true)
   void updateLaunchIdByProjectIdAndLaunchId(@Param("projectId") Long projectId,
-      @Param("currentLaunchId") Long currentLaunchId, @Param("newLaunchId") Long newLaunchId);
+      @Param("currentLaunchId") Long currentLaunchId,
+      @Param("newLaunchId") Long newLaunchId);
 }

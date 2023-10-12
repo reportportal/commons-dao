@@ -16,9 +16,9 @@
 
 package com.epam.ta.reportportal.entity.dashboard;
 
+import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import java.io.Serializable;
 
 /**
  * @author Pavel Bortnik
@@ -26,57 +26,57 @@ import java.io.Serializable;
 @Embeddable
 public class DashboardWidgetId implements Serializable {
 
-	@Column(name = "dashboard_id")
-	private Long dashboardId;
+  @Column(name = "dashboard_id")
+  private Long dashboardId;
 
-	@Column(name = "widget_id")
-	private Long widgetId;
+  @Column(name = "widget_id")
+  private Long widgetId;
 
-	public DashboardWidgetId() {
-	}
+  public DashboardWidgetId() {
+  }
 
-	public DashboardWidgetId(Long dashboardId, Long widgetId) {
-		this.dashboardId = dashboardId;
-		this.widgetId = widgetId;
-	}
+  public DashboardWidgetId(Long dashboardId, Long widgetId) {
+    this.dashboardId = dashboardId;
+    this.widgetId = widgetId;
+  }
 
-	public Long getDashboardId() {
-		return dashboardId;
-	}
+  public Long getDashboardId() {
+    return dashboardId;
+  }
 
-	public void setDashboardId(Long dashboardId) {
-		this.dashboardId = dashboardId;
-	}
+  public void setDashboardId(Long dashboardId) {
+    this.dashboardId = dashboardId;
+  }
 
-	public Long getWidgetId() {
-		return widgetId;
-	}
+  public Long getWidgetId() {
+    return widgetId;
+  }
 
-	public void setWidgetId(Long widgetId) {
-		this.widgetId = widgetId;
-	}
+  public void setWidgetId(Long widgetId) {
+    this.widgetId = widgetId;
+  }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
 
-		DashboardWidgetId that = (DashboardWidgetId) o;
+    DashboardWidgetId that = (DashboardWidgetId) o;
 
-		if (dashboardId != null ? !dashboardId.equals(that.dashboardId) : that.dashboardId != null) {
-			return false;
-		}
-		return widgetId != null ? widgetId.equals(that.widgetId) : that.widgetId == null;
-	}
+    if (dashboardId != null ? !dashboardId.equals(that.dashboardId) : that.dashboardId != null) {
+      return false;
+    }
+    return widgetId != null ? widgetId.equals(that.widgetId) : that.widgetId == null;
+  }
 
-	@Override
-	public int hashCode() {
-		int result = dashboardId != null ? dashboardId.hashCode() : 0;
-		result = 31 * result + (widgetId != null ? widgetId.hashCode() : 0);
-		return result;
-	}
+  @Override
+  public int hashCode() {
+    int result = dashboardId != null ? dashboardId.hashCode() : 0;
+    result = 31 * result + (widgetId != null ? widgetId.hashCode() : 0);
+    return result;
+  }
 }
