@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.SecureRandom;
 import java.util.Base64;
@@ -35,7 +36,6 @@ import java.util.Optional;
 import org.apache.commons.io.IOUtils;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.jasypt.util.text.BasicTextEncryptor;
-import org.jooq.tools.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -58,10 +58,10 @@ public class EncryptConfiguration implements InitializingBean {
   private String password;
 
   @Value("${rp.integration.salt.path:keystore}")
-  private String integrationSaltPath;
+  private String passwordFilePath;
 
   @Value("${rp.integration.salt.file:secret-integration-salt}")
-  private String integrationSaltFile;
+  private String passwordFile;
 
   private String secretFilePath;
 
@@ -103,9 +103,9 @@ public class EncryptConfiguration implements InitializingBean {
   @Override
   public void afterPropertiesSet() {
     if (featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)) {
-      secretFilePath = Paths.get(INTEGRATION_SECRETS_PATH, integrationSaltFile).toString();
+      secretFilePath = Paths.get(INTEGRATION_SECRETS_PATH, passwordFile).toString();
     } else {
-      secretFilePath = integrationSaltPath + File.separator + integrationSaltFile;
+      secretFilePath = passwordFilePath + File.separator + passwordFile;
     }
     if (password == null) {
       loadOrGenerateEncryptorPassword();
