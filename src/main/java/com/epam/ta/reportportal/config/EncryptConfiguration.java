@@ -28,7 +28,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.SecureRandom;
 import java.util.Base64;
@@ -113,10 +112,10 @@ public class EncryptConfiguration implements InitializingBean {
   }
 
   private String getPassword() {
-    return Optional.ofNullable(password).orElseGet(this::loadFormDataStore);
+    return Optional.ofNullable(password).orElseGet(this::loadFromDataStore);
   }
 
-  private String loadFormDataStore() {
+  private String loadFromDataStore() {
     try {
       return IOUtils.toString(dataStore.load(secretFilePath), StandardCharsets.UTF_8);
     } catch (IOException e) {
