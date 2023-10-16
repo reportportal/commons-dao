@@ -184,7 +184,8 @@ public class AttachmentBinaryDataServiceImpl implements AttachmentBinaryDataServ
           ErrorType.ACCESS_DENIED,
           formattedSupplier("You are not assigned to project '{}'", projectDetails.getProjectName())
       );
-      return new BinaryData(attachment.getFileName(), attachment.getContentType(), (long) data.available(), data);
+      return new BinaryData(
+          attachment.getFileName(), attachment.getContentType(), (long) data.available(), data);
     } catch (IOException e) {
       LOGGER.error("Unable to load binary data", e);
       throw new ReportPortalException(
