@@ -116,8 +116,8 @@ public class EncryptConfiguration implements InitializingBean {
   }
 
   private String loadFromDataStore() {
-    try {
-      return IOUtils.toString(dataStore.load(secretFilePath), StandardCharsets.UTF_8);
+    try (InputStream source = dataStore.load(secretFilePath)) {
+      return IOUtils.toString(source, StandardCharsets.UTF_8);
     } catch (IOException e) {
       throw new ReportPortalException(ErrorType.UNABLE_TO_LOAD_BINARY_DATA, e.getMessage());
     }

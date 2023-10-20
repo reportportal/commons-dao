@@ -106,8 +106,8 @@ public class S3DataStore implements DataStore {
     S3File s3File = getS3File(filePath);
     Blob fileBlob = blobStore.getBlob(s3File.getBucket(), s3File.getFilePath());
     if (fileBlob != null) {
-      try (InputStream inputStream = fileBlob.getPayload().openStream()) {
-        return inputStream;
+      try {
+        return fileBlob.getPayload().openStream();
       } catch (IOException e) {
         throw new ReportPortalException(ErrorType.UNABLE_TO_LOAD_BINARY_DATA, e.getMessage());
       }
