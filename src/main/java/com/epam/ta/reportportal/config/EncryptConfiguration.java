@@ -22,6 +22,7 @@ import com.epam.ta.reportportal.entity.enums.FeatureFlag;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.filesystem.DataStore;
 import com.epam.ta.reportportal.util.FeatureFlagHandler;
+import com.epam.ta.reportportal.ws.model.ErrorType;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -30,6 +31,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.security.SecureRandom;
 import java.util.Base64;
+import java.util.Optional;
 import org.apache.commons.io.IOUtils;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.jasypt.util.text.BasicTextEncryptor;
@@ -51,13 +53,17 @@ public class EncryptConfiguration implements InitializingBean {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(EncryptConfiguration.class);
 
+  @Value("${rp.encryptor.password:#{null}}")
+  private String password;
+
   @Value("${rp.integration.salt.path:keystore}")
-  private String integrationSaltPath;
+  private String passwordFilePath;
 
   @Value("${rp.integration.salt.file:secret-integration-salt}")
-  private String integrationSaltFile;
+  private String passwordFile;
 
   private String secretFilePath;
+
   private final DataStore dataStore;
 
   private final FeatureFlagHandler featureFlagHandler;
@@ -74,9 +80,9 @@ public class EncryptConfiguration implements InitializingBean {
    * @return {@link BasicTextEncryptor} instance
    */
   @Bean(name = "basicEncryptor")
-  public BasicTextEncryptor getBasicEncrypt() throws IOException {
+  public BasicTextEncryptor getBasicEncrypt() {
     BasicTextEncryptor basic = new BasicTextEncryptor();
-    basic.setPassword(IOUtils.toString(dataStore.load(secretFilePath), StandardCharsets.UTF_8));
+    basic.setPassword(getPassword());
     return basic;
   }
 
@@ -86,27 +92,39 @@ public class EncryptConfiguration implements InitializingBean {
    * @return {@link StandardPBEStringEncryptor} instance
    */
   @Bean(name = "strongEncryptor")
-  public StandardPBEStringEncryptor getStrongEncryptor() throws IOException {
+  public StandardPBEStringEncryptor getStrongEncryptor() {
     StandardPBEStringEncryptor strong = new StandardPBEStringEncryptor();
-    strong.setPassword(IOUtils.toString(dataStore.load(secretFilePath), StandardCharsets.UTF_8));
+    strong.setPassword(getPassword());
     strong.setAlgorithm("PBEWithMD5AndTripleDES");
     return strong;
   }
 
   @Override
-  public void afterPropertiesSet() throws Exception {
+  public void afterPropertiesSet() {
     if (featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)) {
-      secretFilePath = Paths.get(INTEGRATION_SECRETS_PATH, integrationSaltFile).toString();
+      secretFilePath = Paths.get(INTEGRATION_SECRETS_PATH, passwordFile).toString();
     } else {
-      secretFilePath = integrationSaltPath + File.separator + integrationSaltFile;
+      secretFilePath = passwordFilePath + File.separator + passwordFile;
     }
-    loadOrGenerateIntegrationSalt(dataStore);
+    if (password == null) {
+      loadOrGenerateEncryptorPassword();
+    }
   }
 
-  private void loadOrGenerateIntegrationSalt(DataStore dataStore) {
+  private String getPassword() {
+    return Optional.ofNullable(password).orElseGet(this::loadFromDataStore);
+  }
+
+  private String loadFromDataStore() {
     try {
-      dataStore.load(secretFilePath);
-    } catch (ReportPortalException ex) {
+      return IOUtils.toString(dataStore.load(secretFilePath), StandardCharsets.UTF_8);
+    } catch (IOException e) {
+      throw new ReportPortalException(ErrorType.UNABLE_TO_LOAD_BINARY_DATA, e.getMessage());
+    }
+  }
+
+  private void loadOrGenerateEncryptorPassword() {
+    if (!dataStore.exists(secretFilePath)) {
       byte[] bytes = new byte[20];
       new SecureRandom().nextBytes(bytes);
       try (InputStream secret = new ByteArrayInputStream(
