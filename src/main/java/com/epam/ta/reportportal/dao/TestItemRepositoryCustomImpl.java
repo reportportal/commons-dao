@@ -45,6 +45,7 @@ import static com.epam.ta.reportportal.jooq.Tables.ATTACHMENT;
 import static com.epam.ta.reportportal.jooq.Tables.ISSUE;
 import static com.epam.ta.reportportal.jooq.Tables.ISSUE_GROUP;
 import static com.epam.ta.reportportal.jooq.Tables.ISSUE_TYPE_PROJECT;
+import static com.epam.ta.reportportal.jooq.Tables.ITEM_ATTRIBUTE;
 import static com.epam.ta.reportportal.jooq.Tables.LAUNCH;
 import static com.epam.ta.reportportal.jooq.Tables.LOG;
 import static com.epam.ta.reportportal.jooq.Tables.PARAMETER;
@@ -729,8 +730,14 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
         .on(ISSUE.ISSUE_TYPE.eq(ISSUE_TYPE.ID))
         .join(ISSUE_GROUP)
         .on(ISSUE_TYPE.ISSUE_GROUP_ID.eq(ISSUE_GROUP.ISSUE_GROUP_ID))
+        .leftOuterJoin(ITEM_ATTRIBUTE)
+        .on(TEST_ITEM.ITEM_ID.eq(ITEM_ATTRIBUTE.ITEM_ID)
+            .and(ITEM_ATTRIBUTE.KEY.eq("immediateAA"))
+            .and(ITEM_ATTRIBUTE.VALUE.eq("true"))
+            .and(ITEM_ATTRIBUTE.SYSTEM.eq(true)))
         .where(TEST_ITEM.LAUNCH_ID.eq(launchId)
             .and(ISSUE_GROUP.ISSUE_GROUP_.eq(JIssueGroupEnum.valueOf(issueGroup.getValue()))))
+            .and(ITEM_ATTRIBUTE.ID.isNull())
         .fetch(TEST_ITEM_RECORD_MAPPER);
   }
 
