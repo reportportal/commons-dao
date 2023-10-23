@@ -256,6 +256,8 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 
   List<TestItem> findAllInIssueGroupByLaunch(Long launchId, TestItemIssueGroup issueGroup);
 
+  List<TestItem> findItemsForAnalyze(Long launchId);
+
   /**
    * Select all {@link TestItem#getItemId()} of {@link TestItem} with attached {@link Issue} and
    * {@link TestItem#getLaunchId()} equal to provided `launchId`

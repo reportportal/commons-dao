@@ -742,6 +742,30 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
   }
 
   @Override
+  public List<TestItem> findItemsForAnalyze(Long launchId) {
+    return dsl.select()
+        .from(TEST_ITEM)
+        .join(TEST_ITEM_RESULTS)
+        .on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+        .join(ISSUE)
+        .on(ISSUE.ISSUE_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+        .join(ISSUE_TYPE)
+        .on(ISSUE.ISSUE_TYPE.eq(ISSUE_TYPE.ID))
+        .join(ISSUE_GROUP)
+        .on(ISSUE_TYPE.ISSUE_GROUP_ID.eq(ISSUE_GROUP.ISSUE_GROUP_ID))
+        .leftOuterJoin(ITEM_ATTRIBUTE)
+        .on(TEST_ITEM.ITEM_ID.eq(ITEM_ATTRIBUTE.ITEM_ID)
+            .and(ITEM_ATTRIBUTE.KEY.eq("immediateAA"))
+            .and(ITEM_ATTRIBUTE.VALUE.eq("true"))
+            .and(ITEM_ATTRIBUTE.SYSTEM.eq(true)))
+        .where(TEST_ITEM.LAUNCH_ID.eq(launchId)
+            .and(ISSUE_GROUP.ISSUE_GROUP_.eq(
+                JIssueGroupEnum.valueOf(TestItemIssueGroup.TO_INVESTIGATE.getValue()))))
+        .and(ITEM_ATTRIBUTE.ID.isNull())
+        .fetch(TEST_ITEM_RECORD_MAPPER);
+  }
+
+  @Override
   public List<Long> selectIdsWithIssueByLaunch(Long launchId) {
     return dsl.select(TEST_ITEM.ITEM_ID)
         .from(TEST_ITEM)
