@@ -45,6 +45,9 @@ class UserDataStoreServiceTest extends BaseTest {
   @Value("${datastore.path:/data/store}")
   private String storageRootPath;
 
+  @Value("${datastore.containerName:container}")
+  private String containerName;
+
   private static Random random = new Random();
 
   @Test
@@ -56,16 +59,20 @@ class UserDataStoreServiceTest extends BaseTest {
     Optional<InputStream> loadedData = userDataStoreService.load(fileId);
 
     assertTrue(loadedData.isPresent());
-    assertTrue(
-        Files.exists(Paths.get(storageRootPath, userDataStoreService.dataEncoder.decode(fileId))));
+    try (InputStream ignored = loadedData.get()) {
+      assertTrue(Files.exists(Paths.get(storageRootPath, containerName,
+          userDataStoreService.dataEncoder.decode(fileId)
+      )));
+    }
 
     userDataStoreService.delete(fileId);
 
     ReportPortalException exception =
         assertThrows(ReportPortalException.class, () -> userDataStoreService.load(fileId));
     assertEquals("Unable to load binary data by id 'Unable to find file'", exception.getMessage());
-    assertFalse(
-        Files.exists(Paths.get(storageRootPath, userDataStoreService.dataEncoder.decode(fileId))));
+    assertFalse(Files.exists(Paths.get(storageRootPath, containerName,
+        userDataStoreService.dataEncoder.decode(fileId)
+    )));
   }
 
   @Test
@@ -78,15 +85,19 @@ class UserDataStoreServiceTest extends BaseTest {
     Optional<InputStream> loadedData = userDataStoreService.load(thumbnailId);
 
     assertTrue(loadedData.isPresent());
-    assertTrue(Files.exists(
-        Paths.get(storageRootPath, userDataStoreService.dataEncoder.decode(thumbnailId))));
+    try (InputStream ignored = loadedData.get()) {
+      assertTrue(Files.exists(Paths.get(storageRootPath, containerName,
+          userDataStoreService.dataEncoder.decode(thumbnailId)
+      )));
+    }
 
     userDataStoreService.delete(thumbnailId);
 
     ReportPortalException exception =
         assertThrows(ReportPortalException.class, () -> userDataStoreService.load(thumbnailId));
     assertEquals("Unable to load binary data by id 'Unable to find file'", exception.getMessage());
-    assertFalse(Files.exists(
-        Paths.get(storageRootPath, userDataStoreService.dataEncoder.decode(thumbnailId))));
+    assertFalse(Files.exists(Paths.get(storageRootPath, containerName,
+        userDataStoreService.dataEncoder.decode(thumbnailId)
+    )));
   }
 }

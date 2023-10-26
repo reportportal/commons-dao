@@ -26,6 +26,9 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Objects;
+import org.apache.commons.io.IOUtils;
+import org.jclouds.blobstore.BlobStore;
+import org.jclouds.blobstore.domain.Blob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,68 +39,57 @@ public class LocalDataStore implements DataStore {
 
   private static final Logger logger = LoggerFactory.getLogger(LocalDataStore.class);
 
-  private final String storageRootPath;
+  private final BlobStore blobStore;
+  private final String containerName;
 
-  public LocalDataStore(String storageRootPath) {
-    this.storageRootPath = storageRootPath;
+  public LocalDataStore(BlobStore blobStore, String containerName) {
+    this.blobStore = blobStore;
+    this.containerName = containerName;
+
+    if (!blobStore.containerExists(containerName)) {
+      blobStore.createContainerInLocation(null, containerName);
+    }
   }
 
   @Override
   public String save(String filePath, InputStream inputStream) {
-
     try {
-
-      Path targetPath = Paths.get(storageRootPath, filePath);
-      Path targetDirectory = targetPath.getParent();
-
-      if (Objects.nonNull(targetDirectory) && !Files.isDirectory(targetDirectory)) {
-        Files.createDirectories(targetDirectory);
-      }
-
-      logger.debug("Saving to: {} ", targetPath.toAbsolutePath());
-
-      Files.copy(inputStream, targetPath, StandardCopyOption.REPLACE_EXISTING);
+      byte[] bytes = IOUtils.toByteArray(inputStream);
+      Blob blob = blobStore.blobBuilder(filePath)
+          .payload(bytes)
+          .contentLength(bytes.length)
+          .build();
+      blobStore.putBlob(containerName, blob);
 
       return filePath;
     } catch (IOException e) {
-
       logger.error("Unable to save log file '{}'", filePath, e);
-
       throw new ReportPortalException(ErrorType.INCORRECT_REQUEST, "Unable to save log file");
     }
   }
 
   @Override
   public InputStream load(String filePath) {
-
-    try {
-
-      return Files.newInputStream(Paths.get(storageRootPath, filePath));
-    } catch (IOException e) {
-
-      logger.error("Unable to find file '{}'", filePath, e);
-
+    Blob blob = blobStore.getBlob(containerName, filePath);
+    if (blob == null) {
+      logger.error("Unable to find file '{}'", filePath);
       throw new ReportPortalException(ErrorType.UNABLE_TO_LOAD_BINARY_DATA, "Unable to find file");
     }
-  }
 
+    try {
+      return blob.getPayload().openStream();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
   @Override
   public boolean exists(String filePath) {
-    return Files.exists(Paths.get(storageRootPath, filePath));
+    return blobStore.blobExists(containerName, filePath);
   }
 
   @Override
   public void delete(String filePath) {
-
-    try {
-
-      Files.deleteIfExists(Paths.get(storageRootPath, filePath));
-    } catch (IOException e) {
-
-      logger.error("Unable to delete file '{}'", filePath, e);
-
-      throw new ReportPortalException(ErrorType.INCORRECT_REQUEST, "Unable to delete file");
-    }
+    blobStore.removeBlob(containerName, filePath);
   }
 
   @Override
@@ -109,13 +101,6 @@ public class LocalDataStore implements DataStore {
 
   @Override
   public void deleteContainer(String bucketName) {
-    try {
-      Files.deleteIfExists(Paths.get(bucketName));
-    } catch (IOException e) {
-
-      logger.error("Unable to delete bucket '{}'", bucketName, e);
-
-      throw new ReportPortalException(ErrorType.INCORRECT_REQUEST, "Unable to delete file");
-    }
+    blobStore.deleteContainer(bucketName);
   }
 }

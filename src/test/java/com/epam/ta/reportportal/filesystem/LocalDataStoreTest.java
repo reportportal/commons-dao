@@ -16,80 +16,83 @@
 
 package com.epam.ta.reportportal.filesystem;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.util.AssertionErrors.assertTrue;
 
-import com.epam.ta.reportportal.entity.attachment.AttachmentMetaInfo;
-import com.epam.ta.reportportal.exception.ReportPortalException;
-import com.google.common.base.Charsets;
-import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.InputStream;
-import java.nio.file.Paths;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
+import org.jclouds.blobstore.BlobStore;
+import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.BlobBuilder;
+import org.jclouds.io.Payload;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 class LocalDataStoreTest {
 
-  private static final String ROOT_PATH = System.getProperty("java.io.tmpdir");
-  private static final String TEST_FILE = "test-file.txt";
+  private static final String CONTAINER_NAME = "container";
+
+  private static final String FILE_PATH = "someFile.txt";
 
   private LocalDataStore localDataStore;
 
-  private FilePathGenerator fileNameGenerator;
+  private BlobStore blobStore;
+
+  private final InputStream inputStream = mock(InputStream.class);
+
+  private static final int ZERO = 0;
 
   @BeforeEach
   void setUp() {
 
-    fileNameGenerator = Mockito.mock(FilePathGenerator.class);
+    blobStore = Mockito.mock(BlobStore.class);
 
-    localDataStore = new LocalDataStore(ROOT_PATH);
+    localDataStore = new LocalDataStore(blobStore, CONTAINER_NAME);
   }
 
   @Test
-  void save_load_delete() throws Exception {
+  void save() throws Exception {
 
-    //  given:
-    AttachmentMetaInfo attachmentMetaInfo = AttachmentMetaInfo.builder()
-        .withProjectId(1L)
-        .withLaunchId(2L)
-        .withItemId(3L)
-        .withLogId(4L)
-        .build();
-    String generatedDirectory = "/test";
-    when(fileNameGenerator.generate(attachmentMetaInfo)).thenReturn(generatedDirectory);
-    FileUtils.deleteDirectory(new File(Paths.get(ROOT_PATH, generatedDirectory).toUri()));
+    BlobBuilder blobBuilderMock = mock(BlobBuilder.class);
+    BlobBuilder.PayloadBlobBuilder payloadBlobBuilderMock =
+        mock(BlobBuilder.PayloadBlobBuilder.class);
+    Blob blobMock = mock(Blob.class);
 
-    //  when: save new file
-    String savedFilePath = localDataStore.save(TEST_FILE,
-        new ByteArrayInputStream("test text".getBytes(Charsets.UTF_8)));
+    when(inputStream.available()).thenReturn(ZERO);
+    when(payloadBlobBuilderMock.contentLength(ZERO)).thenReturn(payloadBlobBuilderMock);
+    when(payloadBlobBuilderMock.build()).thenReturn(blobMock);
+    when(blobBuilderMock.payload(inputStream)).thenReturn(payloadBlobBuilderMock);
 
-    //		and: load it back
-    InputStream loaded = localDataStore.load(savedFilePath);
+    when(blobStore.blobBuilder(FILE_PATH)).thenReturn(blobBuilderMock);
 
-    //		then: saved and loaded files should be the same
-    byte[] bytes = IOUtils.toByteArray(loaded);
-    String result = new String(bytes, Charsets.UTF_8);
-    assertEquals("test text", result, "saved and loaded files should be the same");
+    localDataStore.save(FILE_PATH, inputStream);
 
-    //		when: delete saved file
-    localDataStore.delete(savedFilePath);
+    verify(blobStore, times(1)).putBlob(CONTAINER_NAME, blobMock);
+  }
 
-    //		and: load file again
-    boolean isNotFound = false;
-    try {
+  @Test
+  void load() throws Exception {
 
-      localDataStore.load(savedFilePath);
-    } catch (ReportPortalException e) {
+    Blob mockBlob = mock(Blob.class);
+    Payload mockPayload = mock(Payload.class);
 
-      isNotFound = true;
-    }
+    when(mockPayload.openStream()).thenReturn(inputStream);
+    when(mockBlob.getPayload()).thenReturn(mockPayload);
 
-    //		then: deleted file should not be found
-    assertTrue("deleted file should not be found", isNotFound);
+    when(blobStore.getBlob(CONTAINER_NAME, FILE_PATH)).thenReturn(mockBlob);
+    InputStream loaded = localDataStore.load(FILE_PATH);
+
+    Assertions.assertEquals(inputStream, loaded);
+  }
+
+  @Test
+  void delete() throws Exception {
+
+    localDataStore.delete(FILE_PATH);
+
+    verify(blobStore, times(1)).removeBlob(CONTAINER_NAME, FILE_PATH);
   }
 }

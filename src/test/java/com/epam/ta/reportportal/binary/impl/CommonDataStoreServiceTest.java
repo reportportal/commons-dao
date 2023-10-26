@@ -56,13 +56,16 @@ class CommonDataStoreServiceTest extends BaseTest {
   @Value("${datastore.path:/data/store}")
   private String storageRootPath;
 
+  @Value("${datastore.containerName:container}")
+  private String containerName;
+
   @Test
   void saveTest() throws IOException {
     CommonsMultipartFile multipartFile = getMultipartFile("meh.jpg");
     String fileId =
         dataStoreService.save(multipartFile.getOriginalFilename(), multipartFile.getInputStream());
     assertNotNull(fileId);
-    assertTrue(Files.exists(Paths.get(storageRootPath, dataEncoder.decode(fileId))));
+    assertTrue(Files.exists(Paths.get(storageRootPath, containerName, dataEncoder.decode(fileId))));
     dataStoreService.delete(fileId);
   }
 
@@ -73,7 +76,7 @@ class CommonDataStoreServiceTest extends BaseTest {
         multipartFile.getInputStream()
     );
     assertNotNull(fileId);
-    assertTrue(Files.exists(Paths.get(storageRootPath, dataEncoder.decode(fileId))));
+    assertTrue(Files.exists(Paths.get(storageRootPath, containerName, dataEncoder.decode(fileId))));
     dataStoreService.delete(fileId);
   }
 
