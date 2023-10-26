@@ -45,8 +45,7 @@ class AttachmentDataStoreServiceTest extends BaseTest {
   @Value("${datastore.path:/data/store}")
   private String storageRootPath;
 
-  @Value("${datastore.containerName:container}")
-  private String containerName;
+  private static final String BUCKET_NAME = "bucket";
 
   private static Random random = new Random();
 
@@ -54,15 +53,17 @@ class AttachmentDataStoreServiceTest extends BaseTest {
   void saveLoadAndDeleteTest() throws IOException {
     InputStream inputStream = new ClassPathResource("meh.jpg").getInputStream();
 
-    String fileId = attachmentDataStoreService.save(random.nextLong() + "meh.jpg", inputStream);
+    String fileId =
+        attachmentDataStoreService.save(BUCKET_NAME + "/" + random.nextLong() + "meh.jpg",
+            inputStream
+        );
 
     Optional<InputStream> loadedData = attachmentDataStoreService.load(fileId);
 
     assertTrue(loadedData.isPresent());
     try (InputStream ignored = loadedData.get()) {
-      assertTrue(Files.exists(Paths.get(storageRootPath, containerName,
-          attachmentDataStoreService.dataEncoder.decode(fileId)
-      )));
+      assertTrue(Files.exists(
+          Paths.get(storageRootPath, attachmentDataStoreService.dataEncoder.decode(fileId))));
     }
 
     attachmentDataStoreService.delete(fileId);
@@ -70,24 +71,21 @@ class AttachmentDataStoreServiceTest extends BaseTest {
     ReportPortalException exception =
         assertThrows(ReportPortalException.class, () -> attachmentDataStoreService.load(fileId));
     assertEquals("Unable to load binary data by id 'Unable to find file'", exception.getMessage());
-    assertFalse(Files.exists(Paths.get(storageRootPath, containerName,
-        attachmentDataStoreService.dataEncoder.decode(fileId)
-    )));
+    assertFalse(Files.exists(
+        Paths.get(storageRootPath, attachmentDataStoreService.dataEncoder.decode(fileId))));
   }
 
   @Test
   void saveLoadAndDeleteThumbnailTest() throws IOException {
     try (InputStream inputStream = new ClassPathResource("meh.jpg").getInputStream()) {
-      String thumbnailId =
-          attachmentDataStoreService.saveThumbnail(random.nextLong() + "thumbnail.jpg",
-              inputStream
-          );
+      String thumbnailId = attachmentDataStoreService.saveThumbnail(
+          BUCKET_NAME + "/" + random.nextLong() + "thumbnail.jpg", inputStream);
 
       Optional<InputStream> loadedData = attachmentDataStoreService.load(thumbnailId);
 
       assertTrue(loadedData.isPresent());
       try (InputStream is = loadedData.get()) {
-        assertTrue(Files.exists(Paths.get(storageRootPath, containerName,
+        assertTrue(Files.exists(Paths.get(storageRootPath,
             attachmentDataStoreService.dataEncoder.decode(thumbnailId)
         )));
       }
@@ -99,9 +97,8 @@ class AttachmentDataStoreServiceTest extends BaseTest {
       );
       assertEquals(
           "Unable to load binary data by id 'Unable to find file'", exception.getMessage());
-      assertFalse(Files.exists(Paths.get(storageRootPath, containerName,
-          attachmentDataStoreService.dataEncoder.decode(thumbnailId)
-      )));
+      assertFalse(Files.exists(
+          Paths.get(storageRootPath, attachmentDataStoreService.dataEncoder.decode(thumbnailId))));
     }
   }
 }

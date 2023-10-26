@@ -21,15 +21,10 @@ import com.epam.reportportal.commons.Thumbnailator;
 import com.epam.reportportal.commons.ThumbnailatorImpl;
 import com.epam.reportportal.commons.TikaContentTypeResolver;
 import com.epam.ta.reportportal.filesystem.DataEncoder;
-import com.epam.ta.reportportal.filesystem.DataStore;
-import com.epam.ta.reportportal.filesystem.LocalDataStore;
 import com.epam.ta.reportportal.util.FeatureFlagHandler;
 import java.util.Set;
-import org.jclouds.blobstore.BlobStore;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.quartz.QuartzAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -41,7 +36,7 @@ import org.springframework.context.annotation.PropertySource;
 @EnableConfigurationProperties
 @EnableAutoConfiguration(exclude = QuartzAutoConfiguration.class)
 @ComponentScan(basePackages = "com.epam.ta.reportportal")
-@PropertySource({"classpath:test-application.properties"})
+@PropertySource({ "classpath:test-application.properties" })
 public class TestConfiguration {
 
   @Bean("attachmentThumbnailator")

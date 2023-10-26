@@ -155,8 +155,8 @@ public class DataStoreConfiguration {
   @Bean
   @ConditionalOnProperty(name = "datastore.type", havingValue = "filesystem")
   public DataStore localDataStore(@Autowired BlobStore blobStore,
-      @Value("${datastore.containerName}") String containerName) {
-    return new LocalDataStore(blobStore, containerName);
+      FeatureFlagHandler featureFlagHandler) {
+    return new LocalDataStore(blobStore, featureFlagHandler);
   }
 
   /**
