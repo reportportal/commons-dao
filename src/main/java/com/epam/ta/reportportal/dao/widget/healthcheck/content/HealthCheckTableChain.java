@@ -70,14 +70,14 @@ public class HealthCheckTableChain implements
         result.add(resultEntry);
       });
     } else {
-      columnMapping.forEach((key, attributes) -> {
-        HealthCheckTableContent resultEntry = ofNullable(content.remove(key)).map(
-            statisticsContent -> entryFromStatistics(key,
-                statisticsContent
-            )).orElseGet(HealthCheckTableContent::new);
-        resultEntry.setCustomValues(attributes);
-        result.add(resultEntry);
-      });
+      columnMapping.forEach((key, attributes) ->
+          ofNullable(content.remove(key))
+              .map(statisticsContent -> entryFromStatistics(key, statisticsContent))
+              .ifPresent(resultEntry -> {
+                resultEntry.setCustomValues(attributes);
+                result.add(resultEntry);
+              }));
+
       content.forEach((key, statistics) -> result.add(entryFromStatistics(key, statistics)));
     }
     return result;
