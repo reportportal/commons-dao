@@ -52,6 +52,9 @@ public class LocalDataStore implements DataStore {
 
   @Override
   public String save(String filePath, InputStream inputStream) {
+    if (filePath == null){
+      return "";
+    }
     StoredFile storedFile = getStoredFile(filePath);
     try {
       if (!blobStore.containerExists(storedFile.getBucket())) {
@@ -69,6 +72,9 @@ public class LocalDataStore implements DataStore {
 
   @Override
   public InputStream load(String filePath) {
+    if (filePath == null){
+      throw new ReportPortalException(ErrorType.UNABLE_TO_LOAD_BINARY_DATA, "Unable to find file");
+    }
     StoredFile storedFile = getStoredFile(filePath);
     Blob fileBlob = blobStore.getBlob(storedFile.getBucket(), storedFile.getFilePath());
     if (fileBlob != null) {
@@ -83,6 +89,9 @@ public class LocalDataStore implements DataStore {
 
   @Override
   public boolean exists(String filePath) {
+    if (filePath == null){
+      return false;
+    }
     StoredFile storedFile = getStoredFile(filePath);
     if (blobStore.containerExists(storedFile.getBucket())) {
       return blobStore.blobExists(storedFile.getBucket(), storedFile.getFilePath());
@@ -94,6 +103,9 @@ public class LocalDataStore implements DataStore {
 
   @Override
   public void delete(String filePath) {
+    if (filePath == null){
+      return;
+    }
     StoredFile storedFile = getStoredFile(filePath);
     try {
       blobStore.removeBlob(storedFile.getBucket(), storedFile.getFilePath());
