@@ -351,6 +351,7 @@ public class RecordMappers {
     indexLaunch.setLaunchName(record.get(LAUNCH.NAME));
     indexLaunch.setLaunchStartTime(record.get(LAUNCH.START_TIME).toLocalDateTime());
     indexLaunch.setProjectId(record.get(LAUNCH.PROJECT_ID));
+    indexLaunch.setLaunchNumber(record.get(LAUNCH.NUMBER));
     return indexLaunch;
   };
 
