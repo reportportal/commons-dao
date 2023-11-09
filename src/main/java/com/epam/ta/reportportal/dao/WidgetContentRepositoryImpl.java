@@ -409,6 +409,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
                 .and(TEST_ITEM.HAS_STATS.eq(Boolean.TRUE))
                 .and(TEST_ITEM.HAS_CHILDREN.eq(false))
                 .and(TEST_ITEM.RETRY_OF.isNull())
+                .and(TEST_ITEM_RESULTS.STATUS.notEqual(JStatusEnum.SKIPPED))
                 .groupBy(TEST_ITEM.ITEM_ID, TEST_ITEM_RESULTS.STATUS, TEST_ITEM.UNIQUE_ID,
                     TEST_ITEM.NAME, TEST_ITEM.START_TIME)
                 .orderBy(TEST_ITEM.UNIQUE_ID, TEST_ITEM.START_TIME.desc())
