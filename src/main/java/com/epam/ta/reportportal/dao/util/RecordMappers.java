@@ -115,6 +115,7 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.jooq.Field;
 import org.jooq.Record;
@@ -351,6 +352,8 @@ public class RecordMappers {
     indexLaunch.setLaunchName(record.get(LAUNCH.NAME));
     indexLaunch.setLaunchStartTime(record.get(LAUNCH.START_TIME).toLocalDateTime());
     indexLaunch.setProjectId(record.get(LAUNCH.PROJECT_ID));
+    indexLaunch.setLaunchNumber(
+        (record.get(LAUNCH.NUMBER) != null) ? record.get(LAUNCH.NUMBER).longValue() : null);
     return indexLaunch;
   };
 
