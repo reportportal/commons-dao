@@ -99,6 +99,12 @@ dependencies {
     compile 'org.apache.jclouds.provider:aws-s3:2.5.0'
     implementation 'org.apache.jclouds.api:filesystem:2.5.0'
 
+    // add lombok support
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
+    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+
     testCompile 'org.springframework.boot:spring-boot-starter-test'
     testCompile 'org.flywaydb.flyway-test-extensions:flyway-spring-test:6.1.0'
 
