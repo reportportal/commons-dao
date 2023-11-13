@@ -25,7 +25,7 @@ import java.time.temporal.TemporalAccessor;
 import java.time.temporal.TemporalQueries;
 
 /**
- * Utility class for date and time
+ * Utility class for date and time handling.
  *
  * @author Siarhei Hrabko
  */
@@ -34,7 +34,7 @@ public final class DateTimeUtils {
   private DateTimeUtils() {
   }
 
-  private LocalDateTime parseDateTimeWithOffset(String timestamp) {
+  public static LocalDateTime parseDateTimeWithOffset(String timestamp) {
     DateTimeFormatter formatter = new DateTimeFormatterBuilder()
         .appendOptional(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZ"))
         .appendOptional(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ"))
@@ -53,7 +53,7 @@ public final class DateTimeUtils {
     }
   }
 
-  private boolean isParsedTimeStampHasOffset(TemporalAccessor temporalAccessor) {
+  private static boolean isParsedTimeStampHasOffset(TemporalAccessor temporalAccessor) {
     return temporalAccessor.query(TemporalQueries.offset()) != null;
   }
 

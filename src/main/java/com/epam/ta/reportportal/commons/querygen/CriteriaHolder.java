@@ -30,6 +30,7 @@ import com.epam.ta.reportportal.jooq.enums.JIntegrationGroupEnum;
 import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
+import com.epam.ta.reportportal.util.DateTimeUtils;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -160,8 +161,7 @@ public class CriteriaHolder {
 
       if (FilterRules.dateInMillis().test(oneValue)) {
 
-        castedValue = LocalDateTime.ofInstant(Instant.ofEpochMilli(Long.parseLong(oneValue)),
-            ZoneId.systemDefault());
+        castedValue = DateTimeUtils.parseDateTimeWithOffset(oneValue);
       } else {
 
         try {
