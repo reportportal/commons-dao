@@ -18,6 +18,7 @@ package com.epam.ta.reportportal.util;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
@@ -52,7 +53,7 @@ public final class DateTimeUtils {
     TemporalAccessor temporalAccessor = formatter.parse(timestamp);
     if (isParsedTimeStampHasOffset(temporalAccessor)) {
       return ZonedDateTime.from(temporalAccessor)
-          .withZoneSameInstant(ZoneId.systemDefault())
+          .withZoneSameInstant(ZoneOffset.UTC)
           .toLocalDateTime();
     } else {
       return LocalDateTime.from(temporalAccessor);
