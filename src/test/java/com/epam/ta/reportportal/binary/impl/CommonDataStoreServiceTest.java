@@ -56,11 +56,14 @@ class CommonDataStoreServiceTest extends BaseTest {
   @Value("${datastore.path:/data/store}")
   private String storageRootPath;
 
+  private static final String BUCKET_NAME = "bucket";
+
   @Test
   void saveTest() throws IOException {
     CommonsMultipartFile multipartFile = getMultipartFile("meh.jpg");
-    String fileId =
-        dataStoreService.save(multipartFile.getOriginalFilename(), multipartFile.getInputStream());
+    String fileId = dataStoreService.save(BUCKET_NAME + "/" + multipartFile.getOriginalFilename(),
+        multipartFile.getInputStream()
+    );
     assertNotNull(fileId);
     assertTrue(Files.exists(Paths.get(storageRootPath, dataEncoder.decode(fileId))));
     dataStoreService.delete(fileId);
@@ -69,9 +72,10 @@ class CommonDataStoreServiceTest extends BaseTest {
   @Test
   void saveThumbnailTest() throws IOException {
     CommonsMultipartFile multipartFile = getMultipartFile("meh.jpg");
-    String fileId = dataStoreService.saveThumbnail(multipartFile.getOriginalFilename(),
-        multipartFile.getInputStream()
-    );
+    String fileId =
+        dataStoreService.saveThumbnail(BUCKET_NAME + "/" + multipartFile.getOriginalFilename(),
+            multipartFile.getInputStream()
+        );
     assertNotNull(fileId);
     assertTrue(Files.exists(Paths.get(storageRootPath, dataEncoder.decode(fileId))));
     dataStoreService.delete(fileId);
@@ -80,9 +84,10 @@ class CommonDataStoreServiceTest extends BaseTest {
   @Test
   void saveAndLoadTest() throws IOException {
     CommonsMultipartFile multipartFile = getMultipartFile("meh.jpg");
-    String fileId = dataStoreService.saveThumbnail(multipartFile.getOriginalFilename(),
-        multipartFile.getInputStream()
-    );
+    String fileId =
+        dataStoreService.saveThumbnail(BUCKET_NAME + "/" + multipartFile.getOriginalFilename(),
+            multipartFile.getInputStream()
+        );
 
     Optional<InputStream> content = dataStoreService.load(fileId);
 
@@ -94,10 +99,10 @@ class CommonDataStoreServiceTest extends BaseTest {
   void saveAndDeleteTest() throws IOException {
     CommonsMultipartFile multipartFile = getMultipartFile("meh.jpg");
     Random random = new Random();
-    String fileId =
-        dataStoreService.save(random.nextLong() + "/" + multipartFile.getOriginalFilename(),
-            multipartFile.getInputStream()
-        );
+    String fileId = dataStoreService.save(
+        BUCKET_NAME + "/" + random.nextLong() + "/" + multipartFile.getOriginalFilename(),
+        multipartFile.getInputStream()
+    );
 
     dataStoreService.delete(fileId);
 

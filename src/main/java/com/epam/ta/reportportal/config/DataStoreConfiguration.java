@@ -30,12 +30,14 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.inject.Module;
+import java.util.Properties;
 import java.util.Set;
 import org.jclouds.ContextBuilder;
 import org.jclouds.aws.s3.config.AWSS3HttpApiModule;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.ContainerNotFoundException;
+import org.jclouds.filesystem.reference.FilesystemConstants;
 import org.jclouds.rest.ConfiguresHttpApi;
 import org.jclouds.s3.S3Client;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,7 +80,7 @@ public class DataStoreConfiguration {
         return new CacheLoader<>() {
 
           @Override
-          @SuppressWarnings({"Guava", "NullableProblems"})
+          @SuppressWarnings({ "Guava", "NullableProblems" })
           public Optional<String> load(String bucket) {
             if (CustomBucketToRegionModule.this.region != null) {
               return Optional.of(CustomBucketToRegionModule.this.region);
@@ -137,9 +139,24 @@ public class DataStoreConfiguration {
 
   @Bean
   @ConditionalOnProperty(name = "datastore.type", havingValue = "filesystem")
-  public DataStore localDataStore(
-      @Value("${datastore.path:/data/store}") String storagePath) {
-    return new LocalDataStore(storagePath);
+  public BlobStore filesystemBlobStore(
+      @Value("${datastore.path:/data/store}") String baseDirectory) {
+
+    Properties properties = new Properties();
+    properties.setProperty(FilesystemConstants.PROPERTY_BASEDIR, baseDirectory);
+
+    BlobStoreContext blobStoreContext =
+        ContextBuilder.newBuilder("filesystem").overrides(properties)
+            .buildView(BlobStoreContext.class);
+
+    return blobStoreContext.getBlobStore();
+  }
+
+  @Bean
+  @ConditionalOnProperty(name = "datastore.type", havingValue = "filesystem")
+  public DataStore localDataStore(@Autowired BlobStore blobStore,
+      FeatureFlagHandler featureFlagHandler) {
+    return new LocalDataStore(blobStore, featureFlagHandler);
   }
 
   /**
@@ -180,7 +197,8 @@ public class DataStoreConfiguration {
       @Value("${datastore.bucketPostfix}") String bucketPostfix,
       @Value("${datastore.defaultBucketName}") String defaultBucketName,
       @Value("${datastore.region}") String region, FeatureFlagHandler featureFlagHandler) {
-    return new S3DataStore(blobStore, bucketPrefix, bucketPostfix, defaultBucketName, region, featureFlagHandler);
+    return new S3DataStore(
+        blobStore, bucketPrefix, bucketPostfix, defaultBucketName, region, featureFlagHandler);
   }
 
   /**
@@ -213,7 +231,8 @@ public class DataStoreConfiguration {
       @Value("${datastore.defaultBucketName}") String defaultBucketName,
       @Value("${datastore.region}") String region, FeatureFlagHandler featureFlagHandler) {
     return new S3DataStore(blobStore, bucketPrefix, bucketPostfix, defaultBucketName, region,
-        featureFlagHandler);
+        featureFlagHandler
+    );
   }
 
   @Bean("attachmentThumbnailator")

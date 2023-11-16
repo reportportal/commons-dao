@@ -27,7 +27,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.jclouds.blobstore.BlobStore;
@@ -78,22 +77,26 @@ public class S3DataStore implements DataStore {
 
   @Override
   public String save(String filePath, InputStream inputStream) {
-    S3File s3File = getS3File(filePath);
+    if (filePath == null) {
+      return "";
+    }
+    StoredFile storedFile = getStoredFile(filePath);
     try {
-      if (!blobStore.containerExists(s3File.getBucket())) {
+      if (!blobStore.containerExists(storedFile.getBucket())) {
         CREATE_BUCKET_LOCK.lock();
         try {
-          if (!blobStore.containerExists(s3File.getBucket())) {
-            blobStore.createContainerInLocation(location, s3File.getBucket());
+          if (!blobStore.containerExists(storedFile.getBucket())) {
+            blobStore.createContainerInLocation(location, storedFile.getBucket());
           }
         } finally {
           CREATE_BUCKET_LOCK.unlock();
         }
       }
 
-      Blob objectBlob = blobStore.blobBuilder(s3File.getFilePath()).payload(inputStream)
-          .contentDisposition(s3File.getFilePath()).contentLength(inputStream.available()).build();
-      blobStore.putBlob(s3File.getBucket(), objectBlob);
+      Blob objectBlob = blobStore.blobBuilder(storedFile.getFilePath()).payload(inputStream)
+          .contentDisposition(storedFile.getFilePath()).contentLength(inputStream.available())
+          .build();
+      blobStore.putBlob(storedFile.getBucket(), objectBlob);
       return Paths.get(filePath).toString();
     } catch (IOException e) {
       LOGGER.error("Unable to save file '{}'", filePath, e);
@@ -103,11 +106,15 @@ public class S3DataStore implements DataStore {
 
   @Override
   public InputStream load(String filePath) {
-    S3File s3File = getS3File(filePath);
-    Blob fileBlob = blobStore.getBlob(s3File.getBucket(), s3File.getFilePath());
+    if (filePath == null) {
+      LOGGER.error("Unable to find file");
+      throw new ReportPortalException(ErrorType.UNABLE_TO_LOAD_BINARY_DATA, "Unable to find file");
+    }
+    StoredFile storedFile = getStoredFile(filePath);
+    Blob fileBlob = blobStore.getBlob(storedFile.getBucket(), storedFile.getFilePath());
     if (fileBlob != null) {
-      try (InputStream inputStream = fileBlob.getPayload().openStream()) {
-        return inputStream;
+      try {
+        return fileBlob.getPayload().openStream();
       } catch (IOException e) {
         throw new ReportPortalException(ErrorType.UNABLE_TO_LOAD_BINARY_DATA, e.getMessage());
       }
@@ -118,15 +125,21 @@ public class S3DataStore implements DataStore {
 
   @Override
   public boolean exists(String filePath) {
-    S3File s3File = getS3File(filePath);
-    return blobStore.blobExists(s3File.getBucket(), s3File.getFilePath());
+    if (filePath == null) {
+      return false;
+    }
+    StoredFile storedFile = getStoredFile(filePath);
+    return blobStore.blobExists(storedFile.getBucket(), storedFile.getFilePath());
   }
 
   @Override
   public void delete(String filePath) {
-    S3File s3File = getS3File(filePath);
+    if (filePath == null) {
+      return;
+    }
+    StoredFile storedFile = getStoredFile(filePath);
     try {
-      blobStore.removeBlob(s3File.getBucket(), s3File.getFilePath());
+      blobStore.removeBlob(storedFile.getBucket(), storedFile.getFilePath());
     } catch (Exception e) {
       LOGGER.error("Unable to delete file '{}'", filePath, e);
       throw new ReportPortalException(ErrorType.INCORRECT_REQUEST, "Unable to delete file");
@@ -151,19 +164,19 @@ public class S3DataStore implements DataStore {
     }
   }
 
-  private S3File getS3File(String filePath) {
+  private StoredFile getStoredFile(String filePath) {
     if (featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)) {
-      return new S3File(defaultBucketName, filePath);
+      return new StoredFile(defaultBucketName, filePath);
     }
     Path targetPath = Paths.get(filePath);
     int nameCount = targetPath.getNameCount();
     String bucketName;
     if (nameCount > 1) {
       bucketName = bucketPrefix + retrievePath(targetPath, 0, 1) + bucketPostfix;
-      return new S3File(bucketName, retrievePath(targetPath, 1, nameCount));
+      return new StoredFile(bucketName, retrievePath(targetPath, 1, nameCount));
     } else {
       bucketName = bucketPrefix + defaultBucketName + bucketPostfix;
-      return new S3File(bucketName, retrievePath(targetPath, 0, 1));
+      return new StoredFile(bucketName, retrievePath(targetPath, 0, 1));
     }
   }
 

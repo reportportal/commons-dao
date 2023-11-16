@@ -45,19 +45,24 @@ class UserDataStoreServiceTest extends BaseTest {
   @Value("${datastore.path:/data/store}")
   private String storageRootPath;
 
+  private static final String BUCKET_NAME = "bucket";
+
   private static Random random = new Random();
 
   @Test
   void saveLoadAndDeleteTest() throws IOException {
     InputStream inputStream = new ClassPathResource("meh.jpg").getInputStream();
 
-    String fileId = userDataStoreService.save(random.nextLong() + "meh.jpg", inputStream);
+    String fileId =
+        userDataStoreService.save(BUCKET_NAME + "/" + random.nextLong() + "meh.jpg", inputStream);
 
     Optional<InputStream> loadedData = userDataStoreService.load(fileId);
 
     assertTrue(loadedData.isPresent());
-    assertTrue(
-        Files.exists(Paths.get(storageRootPath, userDataStoreService.dataEncoder.decode(fileId))));
+    try (InputStream ignored = loadedData.get()) {
+      assertTrue(Files.exists(
+          Paths.get(storageRootPath, userDataStoreService.dataEncoder.decode(fileId))));
+    }
 
     userDataStoreService.delete(fileId);
 
@@ -73,13 +78,17 @@ class UserDataStoreServiceTest extends BaseTest {
     InputStream inputStream = new ClassPathResource("meh.jpg").getInputStream();
 
     String thumbnailId =
-        userDataStoreService.saveThumbnail(random.nextLong() + "thmbnail.jpg", inputStream);
+        userDataStoreService.saveThumbnail(BUCKET_NAME + "/" + random.nextLong() + "thmbnail.jpg",
+            inputStream
+        );
 
     Optional<InputStream> loadedData = userDataStoreService.load(thumbnailId);
 
     assertTrue(loadedData.isPresent());
-    assertTrue(Files.exists(
-        Paths.get(storageRootPath, userDataStoreService.dataEncoder.decode(thumbnailId))));
+    try (InputStream ignored = loadedData.get()) {
+      assertTrue(Files.exists(
+          Paths.get(storageRootPath, userDataStoreService.dataEncoder.decode(thumbnailId))));
+    }
 
     userDataStoreService.delete(thumbnailId);
 

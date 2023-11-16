@@ -30,6 +30,7 @@ import com.epam.ta.reportportal.jooq.enums.JIntegrationGroupEnum;
 import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
+import com.epam.ta.reportportal.util.DateTimeUtils;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -165,8 +166,7 @@ public class CriteriaHolder {
       } else {
 
         try {
-          Instant instant = Instant.parse(oneValue);
-          castedValue = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+          castedValue = DateTimeUtils.parseDateTimeWithOffset(oneValue);
         } catch (DateTimeParseException e) {
           throw new ReportPortalException(errorType,
               Suppliers.formattedSupplier("Cannot convert '{}' to valid date", oneValue).get()

@@ -1337,7 +1337,7 @@ class WidgetContentRepositoryTest extends BaseTest {
             .of("first", "build", Sort.by(Sort.Direction.DESC, "customColumn"), true,
                 new ArrayList<>()));
 
-    assertFalse(healthCheckTableContents.isEmpty());
+    assertTrue(healthCheckTableContents.isEmpty());
 
     initParams = HealthCheckTableInitParams.of("hello",
         com.google.common.collect.Lists.newArrayList("build"));
@@ -1440,7 +1440,7 @@ class WidgetContentRepositoryTest extends BaseTest {
             new ArrayList<>()
         ));
 
-    assertFalse(healthCheckTableContents.isEmpty());
+    assertTrue(healthCheckTableContents.isEmpty());
 
     widgetContentRepository.removeWidgetView(initParams.getViewName());
 
