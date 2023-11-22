@@ -450,9 +450,9 @@ class LaunchRepositoryTest extends BaseTest {
   void findPreviousLaunchId() {
     Launch launch = new Launch();
     launch.setName("finished launch");
-    launch.setId(100L);
+    launch.setId(300L);
     launch.setProjectId(2L);
-    launch.setNumber(1L);
+    launch.setNumber(3L);
     Optional<Long> previousLaunchId = launchRepository.findPreviousLaunchId(launch);
 
     assertEquals(200L, previousLaunchId.orElse(0L));
