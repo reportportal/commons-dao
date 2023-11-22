@@ -40,6 +40,7 @@ import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
+import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
@@ -443,6 +444,18 @@ class LaunchRepositoryTest extends BaseTest {
         .build());
 
     assertTrue(launches.isEmpty());
+  }
+
+  @Test
+  void findPreviousLaunchId() {
+    Launch launch = new Launch();
+    launch.setName("finished launch");
+    launch.setId(100L);
+    launch.setProjectId(2L);
+    launch.setNumber(1L);
+    Optional<Long> previousLaunchId = launchRepository.findPreviousLaunchId(launch);
+
+    assertEquals(200L, previousLaunchId.orElse(0L));
   }
 
   private Filter buildDefaultFilter(Long projectId) {
