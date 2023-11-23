@@ -122,4 +122,6 @@ public interface LaunchRepositoryCustom extends FilterableRepository<Launch> {
   Optional<Launch> findPreviousLaunchByProjectIdAndNameAndAttributesForLaunchIdAndModeNot(
       Long projectId, String name, String[] attributes, Long launchId, JLaunchModeEnum mode
   );
+
+  Optional<Long> findPreviousLaunchId(Launch launch);
 }

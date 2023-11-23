@@ -68,6 +68,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.jooq.DSLContext;
 import org.jooq.Field;
+import org.jooq.Record;
+import org.jooq.Record1;
+import org.jooq.SelectSeekStep1;
 import org.jooq.SortField;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -403,5 +406,18 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
         .orderBy(LAUNCH.NUMBER.desc())
         .limit(1)
         .fetchOptionalInto(Launch.class);
+  }
+
+  public Optional<Long> findPreviousLaunchId(Launch launch) {
+    return dsl
+        .select(LAUNCH.ID)
+        .from(LAUNCH)
+        .where(LAUNCH.ID.ne(launch.getId())
+            .and(LAUNCH.NAME.eq(launch.getName()))
+            .and(LAUNCH.NUMBER.lt(launch.getNumber().intValue())
+            .and(LAUNCH.PROJECT_ID.eq(launch.getProjectId()))))
+        .orderBy(LAUNCH.NUMBER.desc())
+        .limit(1)
+        .fetchOptionalInto(Long.class);
   }
 }
