@@ -150,7 +150,8 @@ public class AttachmentRepositoryCustomImpl implements AttachmentRepositoryCusto
             ATTACHMENT.FILE_SIZE,
             ATTACHMENT.ITEM_ID,
             ATTACHMENT.LAUNCH_ID,
-            ATTACHMENT.PROJECT_ID
+            ATTACHMENT.PROJECT_ID,
+            ATTACHMENT.FILE_NAME
         )
         .from(ATTACHMENT)
         .join(LOG)
@@ -173,7 +174,8 @@ public class AttachmentRepositoryCustomImpl implements AttachmentRepositoryCusto
             ATTACHMENT.FILE_SIZE,
             ATTACHMENT.ITEM_ID,
             ATTACHMENT.LAUNCH_ID,
-            ATTACHMENT.PROJECT_ID
+            ATTACHMENT.PROJECT_ID,
+            ATTACHMENT.FILE_NAME
         )
         .from(ATTACHMENT)
         .join(LOG)
@@ -194,7 +196,8 @@ public class AttachmentRepositoryCustomImpl implements AttachmentRepositoryCusto
             ATTACHMENT.FILE_SIZE,
             ATTACHMENT.ITEM_ID,
             ATTACHMENT.LAUNCH_ID,
-            ATTACHMENT.PROJECT_ID
+            ATTACHMENT.PROJECT_ID,
+            ATTACHMENT.FILE_NAME
         )
         .from(ATTACHMENT)
         .join(LOG)
