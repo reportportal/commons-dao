@@ -17,7 +17,6 @@
 
 package com.epam.ta.reportportal.dao.util;
 
-import static com.epam.ta.reportportal.commons.EntityUtils.TO_DATE;
 import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.STATISTICS_KEY;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_END_TIME;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAST_MODIFIED;
@@ -251,8 +250,7 @@ public class WidgetContentUtil {
 		activityResource.setActionType(r.get(ACTIVITY.EVENT_NAME));
 		activityResource.setObjectType(r.get(ACTIVITY.OBJECT_TYPE));
 		activityResource.setObjectName(r.get(ACTIVITY.OBJECT_NAME));
-		activityResource.setLastModified(
-				TO_DATE.apply(r.get(ACTIVITY.CREATED_AT, LocalDateTime.class)));
+		activityResource.setLastModified(r.get(ACTIVITY.CREATED_AT, LocalDateTime.class));
 		activityResource.setLoggedObjectId(r.get(ACTIVITY.OBJECT_ID));
 		String detailsJson = r.get(ACTIVITY.DETAILS, String.class);
 		ofNullable(detailsJson).ifPresent(s -> {
