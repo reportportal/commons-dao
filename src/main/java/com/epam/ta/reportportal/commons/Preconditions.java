@@ -16,7 +16,6 @@
 
 package com.epam.ta.reportportal.commons;
 
-import static com.epam.ta.reportportal.commons.EntityUtils.TO_LOCAL_DATE_TIME;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.CRITERIA_LAUNCH_MODE;
 
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
@@ -26,7 +25,6 @@ import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.epam.ta.reportportal.ws.model.launch.Mode;
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -54,12 +52,9 @@ public class Preconditions {
 
   }
 
-  public static Predicate<Date> sameTimeOrLater(final LocalDateTime than) {
+  public static Predicate<LocalDateTime> sameTimeOrLater(final LocalDateTime than) {
     com.google.common.base.Preconditions.checkNotNull(than, ErrorType.BAD_REQUEST_ERROR);
-    return date -> {
-      LocalDateTime localDateTime = TO_LOCAL_DATE_TIME.apply(date);
-      return localDateTime.isAfter(than) || localDateTime.isEqual(than);
-    };
+    return localDateTime -> localDateTime.isAfter(than) || localDateTime.isEqual(than);
   }
 
   public static Predicate<StatusEnum> statusIn(final StatusEnum... statuses) {

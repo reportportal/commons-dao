@@ -24,7 +24,6 @@ import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.ws.model.launch.Mode;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.Date;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -53,9 +52,9 @@ class PreconditionsTest {
   @Test
   void sameTime() {
 
-    Date date = new Date();
+    var date = LocalDateTime.now();
 
-    LocalDateTime sameTime = LocalDateTime.from(date.toInstant().atZone(ZoneOffset.UTC));
+    LocalDateTime sameTime = LocalDateTime.from(date.atOffset(ZoneOffset.UTC));
 
     Assertions.assertTrue(Preconditions.sameTimeOrLater(sameTime).test(date));
   }
@@ -63,9 +62,9 @@ class PreconditionsTest {
   @Test
   void laterTime() {
 
-    Date date = new Date();
+    var date = LocalDateTime.now();
 
-    LocalDateTime laterTime = LocalDateTime.from(date.toInstant().atZone(ZoneOffset.UTC))
+    LocalDateTime laterTime = LocalDateTime.from(date.atOffset(ZoneOffset.UTC))
         .minusSeconds(1L);
 
     Assertions.assertTrue(Preconditions.sameTimeOrLater(laterTime).test(date));
@@ -74,9 +73,9 @@ class PreconditionsTest {
   @Test
   void beforeTime() {
 
-    Date date = new Date();
+    var date = LocalDateTime.now();
 
-    LocalDateTime beforeTime = LocalDateTime.from(date.toInstant().atZone(ZoneOffset.UTC))
+    LocalDateTime beforeTime = LocalDateTime.from(date.atOffset(ZoneOffset.UTC))
         .plusSeconds(1L);
 
     Assertions.assertFalse(Preconditions.sameTimeOrLater(beforeTime).test(date));
@@ -86,7 +85,7 @@ class PreconditionsTest {
   void validateNullValue() {
 
     assertThrows(NullPointerException.class,
-        () -> Preconditions.sameTimeOrLater(null).test(new Date()));
+        () -> Preconditions.sameTimeOrLater(null).test(LocalDateTime.now()));
   }
 
   private FilterCondition filterConditionWithMode(Mode mode) {
