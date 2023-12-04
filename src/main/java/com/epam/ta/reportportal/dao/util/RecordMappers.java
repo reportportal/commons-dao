@@ -129,7 +129,7 @@ import org.jooq.Result;
  */
 public class RecordMappers {
 
-	private static final ObjectMapper objectMapper;
+  private static final ObjectMapper objectMapper;
 
   static {
     objectMapper = new ObjectMapper();
@@ -220,6 +220,7 @@ public class RecordMappers {
     attachment.setProjectId(r.get(ATTACHMENT.PROJECT_ID));
     attachment.setLaunchId(r.get(ATTACHMENT.LAUNCH_ID));
     attachment.setItemId(r.get(ATTACHMENT.ITEM_ID));
+    attachment.setFileName(r.get(ATTACHMENT.FILE_NAME));
 
     return attachment;
   }).orElse(null);
@@ -323,8 +324,8 @@ public class RecordMappers {
   );
 
   /**
-   * Maps record into {@link PatternTemplate} object (only {@link PatternTemplate#id} and
-   * {@link PatternTemplate#name} fields)
+   * Maps record into {@link PatternTemplate} object (only {@link PatternTemplate#id} and {@link
+   * PatternTemplate#name} fields)
    */
   public static final Function<? super Record, Optional<PatternTemplate>> PATTERN_TEMPLATE_NAME_RECORD_MAPPER = r -> ofNullable(
       r.get(
@@ -409,45 +410,45 @@ public class RecordMappers {
     return new ReportPortalUser.ProjectDetails(projectId, projectName, projectRole);
   };
 
-	public static final RecordMapper<? super Record, Activity> ACTIVITY_MAPPER = r -> {
-		Activity activity = new Activity();
-		activity.setId(r.get(ACTIVITY.ID));
-		activity.setCreatedAt(r.get(ACTIVITY.CREATED_AT, LocalDateTime.class));
-		activity.setAction(EventAction.valueOf(r.get(ACTIVITY.ACTION)));
-		activity.setEventName(r.get(ACTIVITY.EVENT_NAME));
-		activity.setPriority(EventPriority.valueOf(r.get(ACTIVITY.PRIORITY)));
-		activity.setObjectId(r.get(ACTIVITY.OBJECT_ID));
-		activity.setObjectName(r.get(ACTIVITY.OBJECT_NAME));
-		activity.setObjectType(EventObject.valueOf(r.get(ACTIVITY.OBJECT_TYPE)));
-		activity.setProjectId(r.get(ACTIVITY.PROJECT_ID));
-		activity.setProjectName(r.get(PROJECT.NAME));
-		String detailsJson = r.get(ACTIVITY.DETAILS, String.class);
-		ofNullable(detailsJson).ifPresent(s -> {
-			try {
-				ActivityDetails details = objectMapper.readValue(s, ActivityDetails.class);
-				activity.setDetails(details);
-			} catch (IOException e) {
-				throw new ReportPortalException(ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR);
-			}
-		});
-		activity.setSubjectId(r.get(ACTIVITY.SUBJECT_ID));
-		activity.setSubjectName(ofNullable(r.get(USERS.LOGIN)).orElse(r.get(ACTIVITY.SUBJECT_NAME)));
-		activity.setSubjectType(EventSubject.valueOf(r.get(ACTIVITY.SUBJECT_TYPE)));
-		return activity;
-	};
+  public static final RecordMapper<? super Record, Activity> ACTIVITY_MAPPER = r -> {
+    Activity activity = new Activity();
+    activity.setId(r.get(ACTIVITY.ID));
+    activity.setCreatedAt(r.get(ACTIVITY.CREATED_AT, LocalDateTime.class));
+    activity.setAction(EventAction.valueOf(r.get(ACTIVITY.ACTION)));
+    activity.setEventName(r.get(ACTIVITY.EVENT_NAME));
+    activity.setPriority(EventPriority.valueOf(r.get(ACTIVITY.PRIORITY)));
+    activity.setObjectId(r.get(ACTIVITY.OBJECT_ID));
+    activity.setObjectName(r.get(ACTIVITY.OBJECT_NAME));
+    activity.setObjectType(EventObject.valueOf(r.get(ACTIVITY.OBJECT_TYPE)));
+    activity.setProjectId(r.get(ACTIVITY.PROJECT_ID));
+    activity.setProjectName(r.get(PROJECT.NAME));
+    String detailsJson = r.get(ACTIVITY.DETAILS, String.class);
+    ofNullable(detailsJson).ifPresent(s -> {
+      try {
+        ActivityDetails details = objectMapper.readValue(s, ActivityDetails.class);
+        activity.setDetails(details);
+      } catch (IOException e) {
+        throw new ReportPortalException(ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR);
+      }
+    });
+    activity.setSubjectId(r.get(ACTIVITY.SUBJECT_ID));
+    activity.setSubjectName(ofNullable(r.get(USERS.LOGIN)).orElse(r.get(ACTIVITY.SUBJECT_NAME)));
+    activity.setSubjectType(EventSubject.valueOf(r.get(ACTIVITY.SUBJECT_TYPE)));
+    return activity;
+  };
 
-	public static final RecordMapper<? super Record, OwnedEntity> OWNED_ENTITY_RECORD_MAPPER = r -> r.into(
-			OwnedEntity.class);
+  public static final RecordMapper<? super Record, OwnedEntity> OWNED_ENTITY_RECORD_MAPPER = r -> r.into(
+      OwnedEntity.class);
 
-	private static final BiConsumer<Widget, ? super Record> WIDGET_USER_FILTER_MAPPER = (widget, res) -> ofNullable(
-			res.get(FILTER.ID)).ifPresent(
-			id -> {
-				Set<UserFilter> filters = ofNullable(widget.getFilters()).orElseGet(Sets::newLinkedHashSet);
-				UserFilter filter = new UserFilter();
-				filter.setId(id);
-				filters.add(filter);
-				widget.setFilters(filters);
-			});
+  private static final BiConsumer<Widget, ? super Record> WIDGET_USER_FILTER_MAPPER = (widget, res) -> ofNullable(
+      res.get(FILTER.ID)).ifPresent(
+      id -> {
+        Set<UserFilter> filters = ofNullable(widget.getFilters()).orElseGet(Sets::newLinkedHashSet);
+        UserFilter filter = new UserFilter();
+        filter.setId(id);
+        filters.add(filter);
+        widget.setFilters(filters);
+      });
 
   private static final BiConsumer<Widget, ? super Record> WIDGET_OPTIONS_MAPPER = (widget, res) -> {
     ofNullable(res.get(WIDGET.WIDGET_OPTIONS, String.class)).ifPresent(wo -> {

@@ -1080,7 +1080,8 @@ public enum FilterTarget {
           ATTACHMENT.FILE_SIZE,
           ATTACHMENT.PROJECT_ID,
           ATTACHMENT.LAUNCH_ID,
-          ATTACHMENT.ITEM_ID
+          ATTACHMENT.ITEM_ID,
+          ATTACHMENT.FILE_NAME
       );
     }
 
