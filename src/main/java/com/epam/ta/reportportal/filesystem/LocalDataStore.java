@@ -53,7 +53,7 @@ public class LocalDataStore implements DataStore {
     this.blobStore = blobStore;
     this.featureFlagHandler = featureFlagHandler;
     this.bucketPrefix = bucketPrefix;
-    this.bucketPostfix = Objects.requireNonNullElse(bucketPostfix, "");;
+    this.bucketPostfix = Objects.requireNonNullElse(bucketPostfix, "");
     this.defaultBucketName = defaultBucketName;
   }
 

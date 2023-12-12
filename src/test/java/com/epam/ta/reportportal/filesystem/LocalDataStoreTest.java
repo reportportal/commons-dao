@@ -45,8 +45,6 @@ class LocalDataStoreTest {
 
   private static final int ZERO = 0;
 
-  private static final String SINGLE_BUCKET_NAME = "singleBukcet";
-
   private static final String FILE_PATH = "someFile.txt";
 
   private static final String MULTI_BUCKET_NAME = "multiBucket";
