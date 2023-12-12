@@ -146,7 +146,7 @@ public class LocalDataStore implements DataStore {
       bucketName = bucketPrefix + retrievePath(targetPath, 0, 1) + bucketPostfix;
       return new StoredFile(bucketName, retrievePath(targetPath, 1, nameCount));
     } else {
-      bucketName = bucketPrefix + defaultBucketName + bucketPostfix;
+      bucketName = defaultBucketName;
       return new StoredFile(bucketName, retrievePath(targetPath, 0, 1));
     }
   }
