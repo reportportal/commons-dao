@@ -20,8 +20,12 @@ import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
 import com.epam.ta.reportportal.entity.integration.IntegrationType;
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import javax.persistence.LockModeType;
 
 /**
  * Repository for {@link com.epam.ta.reportportal.entity.integration.IntegrationType} entity
@@ -29,6 +33,23 @@ import org.springframework.data.repository.query.Param;
  * @author Yauheni_Martynau
  */
 public interface IntegrationTypeRepository extends ReportPortalRepository<IntegrationType, Long> {
+
+  /**
+   * Find {@link IntegrationType} by id with pessimistic locking to provide synchronization
+   *
+   * @param id {@link IntegrationType#getId()}
+   * @return @return The {@link Optional} of the {@link IntegrationType}
+   */
+  @Query(value = "SELECT * FROM integration_type WHERE id = :id FOR UPDATE", nativeQuery = true)
+  Optional<IntegrationType> findByIdForUpdate(@Param("id") Long id);
+
+  /**
+   * Retrieve all {@link IntegrationType} with pessimistic locking to provide synchronization
+   *
+   * @return The {@link List} of the {@link IntegrationType}
+   */
+  @Lock(LockModeType.PESSIMISTIC_WRITE)
+  List<IntegrationType> findAllByIdOrderById();
 
   /**
    * Retrieve all {@link IntegrationType} by {@link IntegrationType#integrationGroup}
