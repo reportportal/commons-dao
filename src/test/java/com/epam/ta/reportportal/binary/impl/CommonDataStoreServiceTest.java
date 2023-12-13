@@ -56,7 +56,17 @@ class CommonDataStoreServiceTest extends BaseTest {
   @Value("${datastore.path:/data/store}")
   private String storageRootPath;
 
+  @Value("${datastore.bucketPrefix:prj-}")
+  private String bucketPrefix;
+
+  @Value("${datastore.bucketPostfix:}")
+  private String bucketPostfix;
   private static final String BUCKET_NAME = "bucket";
+
+  private String getModifiedPath(String originalPath) {
+    String bucketPath = bucketPrefix + BUCKET_NAME + bucketPostfix;
+    return originalPath.replace(BUCKET_NAME, bucketPath);
+  }
 
   @Test
   void saveTest() throws IOException {
@@ -65,7 +75,8 @@ class CommonDataStoreServiceTest extends BaseTest {
         multipartFile.getInputStream()
     );
     assertNotNull(fileId);
-    assertTrue(Files.exists(Paths.get(storageRootPath, dataEncoder.decode(fileId))));
+    assertTrue(
+        Files.exists(Paths.get(storageRootPath, dataEncoder.decode(getModifiedPath(fileId)))));
     dataStoreService.delete(fileId);
   }
 
@@ -77,7 +88,8 @@ class CommonDataStoreServiceTest extends BaseTest {
             multipartFile.getInputStream()
         );
     assertNotNull(fileId);
-    assertTrue(Files.exists(Paths.get(storageRootPath, dataEncoder.decode(fileId))));
+    assertTrue(
+        Files.exists(Paths.get(storageRootPath, dataEncoder.decode(getModifiedPath(fileId)))));
     dataStoreService.delete(fileId);
   }
 
@@ -106,7 +118,7 @@ class CommonDataStoreServiceTest extends BaseTest {
 
     dataStoreService.delete(fileId);
 
-    assertFalse(Files.exists(Paths.get(dataEncoder.decode(fileId))));
+    assertFalse(Files.exists(Paths.get(dataEncoder.decode(getModifiedPath(fileId)))));
   }
 
   public static CommonsMultipartFile getMultipartFile(String path) throws IOException {
