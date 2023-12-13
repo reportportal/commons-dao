@@ -28,6 +28,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.Random;
@@ -79,11 +80,9 @@ class CommonDataStoreServiceTest extends BaseTest {
         multipartFile.getInputStream()
     );
     assertNotNull(fileId);
-    LOGGER.info("TEST1");
-    LOGGER.info("File ID: {}", fileId);
-    LOGGER.info("Decoded and modified path: {}", dataEncoder.decode(getModifiedPath(fileId)));
-    assertTrue(
-        Files.exists(Paths.get(storageRootPath, dataEncoder.decode(getModifiedPath(fileId)))));
+    String decodedPath = dataEncoder.decode(getModifiedPath(fileId));
+    Path filePath = Paths.get(storageRootPath, decodedPath);
+    assertTrue(filePath.toFile().exists(), "File " + filePath + " does not exist");
     dataStoreService.delete(fileId);
   }
 
@@ -94,12 +93,10 @@ class CommonDataStoreServiceTest extends BaseTest {
         dataStoreService.saveThumbnail(BUCKET_NAME + "/" + multipartFile.getOriginalFilename(),
             multipartFile.getInputStream()
         );
-    LOGGER.info("TEST1");
-    LOGGER.info("File ID: {}", fileId);
-    LOGGER.info("Decoded and modified path: {}", dataEncoder.decode(getModifiedPath(fileId)));
     assertNotNull(fileId);
-    assertTrue(
-        Files.exists(Paths.get(storageRootPath, dataEncoder.decode(getModifiedPath(fileId)))));
+    String decodedPath = dataEncoder.decode(getModifiedPath(fileId));
+    Path filePath = Paths.get(storageRootPath, decodedPath);
+    assertTrue(filePath.toFile().exists(), "File " + filePath + " does not exist");
     dataStoreService.delete(fileId);
   }
 
