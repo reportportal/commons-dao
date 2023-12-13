@@ -75,6 +75,8 @@ class CommonDataStoreServiceTest extends BaseTest {
         multipartFile.getInputStream()
     );
     assertNotNull(fileId);
+    System.out.println("!!!!!TEST1!!!!!");
+    System.out.println(dataEncoder.decode(getModifiedPath(fileId)));
     assertTrue(
         Files.exists(Paths.get(storageRootPath, dataEncoder.decode(getModifiedPath(fileId)))));
     dataStoreService.delete(fileId);
@@ -87,6 +89,8 @@ class CommonDataStoreServiceTest extends BaseTest {
         dataStoreService.saveThumbnail(BUCKET_NAME + "/" + multipartFile.getOriginalFilename(),
             multipartFile.getInputStream()
         );
+    System.out.println("!!!!!TEST2!!!!!");
+    System.out.println(dataEncoder.decode(getModifiedPath(fileId)));
     assertNotNull(fileId);
     assertTrue(
         Files.exists(Paths.get(storageRootPath, dataEncoder.decode(getModifiedPath(fileId)))));
