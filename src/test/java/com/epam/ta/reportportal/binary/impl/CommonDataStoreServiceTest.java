@@ -35,6 +35,8 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,6 +47,8 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
 class CommonDataStoreServiceTest extends BaseTest {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(CommonDataStoreServiceTest.class);
 
   @Autowired
   @Qualifier("userDataStoreService")
@@ -75,8 +79,9 @@ class CommonDataStoreServiceTest extends BaseTest {
         multipartFile.getInputStream()
     );
     assertNotNull(fileId);
-    System.out.println("!!!!!TEST1!!!!!");
-    System.out.println(dataEncoder.decode(getModifiedPath(fileId)));
+    LOGGER.info("TEST1");
+    LOGGER.info("File ID: {}", fileId);
+    LOGGER.info("Decoded and modified path: {}", dataEncoder.decode(getModifiedPath(fileId)));
     assertTrue(
         Files.exists(Paths.get(storageRootPath, dataEncoder.decode(getModifiedPath(fileId)))));
     dataStoreService.delete(fileId);
@@ -89,8 +94,9 @@ class CommonDataStoreServiceTest extends BaseTest {
         dataStoreService.saveThumbnail(BUCKET_NAME + "/" + multipartFile.getOriginalFilename(),
             multipartFile.getInputStream()
         );
-    System.out.println("!!!!!TEST2!!!!!");
-    System.out.println(dataEncoder.decode(getModifiedPath(fileId)));
+    LOGGER.info("TEST1");
+    LOGGER.info("File ID: {}", fileId);
+    LOGGER.info("Decoded and modified path: {}", dataEncoder.decode(getModifiedPath(fileId)));
     assertNotNull(fileId);
     assertTrue(
         Files.exists(Paths.get(storageRootPath, dataEncoder.decode(getModifiedPath(fileId)))));
