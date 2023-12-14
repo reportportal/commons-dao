@@ -76,9 +76,10 @@ class CommonDataStoreServiceTest extends BaseTest {
   @Test
   void saveTest() throws IOException {
     CommonsMultipartFile multipartFile = getMultipartFile("meh.jpg");
-    String fileId = dataStoreService.save(BUCKET_NAME + "/" + multipartFile.getOriginalFilename(),
-        multipartFile.getInputStream()
-    );
+    String fileId =
+        dataStoreService.save(BUCKET_NAME + File.separator + multipartFile.getOriginalFilename(),
+            multipartFile.getInputStream()
+        );
     assertNotNull(fileId);
     String decodedPath = dataEncoder.decode(getModifiedPath(fileId));
     Path filePath = Paths.get(storageRootPath, decodedPath);
@@ -89,10 +90,10 @@ class CommonDataStoreServiceTest extends BaseTest {
   @Test
   void saveThumbnailTest() throws IOException {
     CommonsMultipartFile multipartFile = getMultipartFile("meh.jpg");
-    String fileId =
-        dataStoreService.saveThumbnail(BUCKET_NAME + "/" + multipartFile.getOriginalFilename(),
-            multipartFile.getInputStream()
-        );
+    String fileId = dataStoreService.saveThumbnail(
+        BUCKET_NAME + File.separator + multipartFile.getOriginalFilename(),
+        multipartFile.getInputStream()
+    );
     assertNotNull(fileId);
     String decodedPath = dataEncoder.decode(getModifiedPath(fileId));
     Path filePath = Paths.get(storageRootPath, decodedPath);
