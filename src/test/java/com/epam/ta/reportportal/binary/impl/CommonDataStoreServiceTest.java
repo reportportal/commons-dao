@@ -49,8 +49,6 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
  */
 class CommonDataStoreServiceTest extends BaseTest {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(CommonDataStoreServiceTest.class);
-
   @Autowired
   @Qualifier("userDataStoreService")
   private DataStoreService dataStoreService;
@@ -81,7 +79,7 @@ class CommonDataStoreServiceTest extends BaseTest {
             multipartFile.getInputStream()
         );
     assertNotNull(fileId);
-    String decodedPath = dataEncoder.decode(getModifiedPath(fileId));
+    String decodedPath = getModifiedPath(dataEncoder.decode(fileId));
     Path filePath = Paths.get(storageRootPath, decodedPath);
     assertTrue(filePath.toFile().exists(), "File " + filePath + " does not exist");
     dataStoreService.delete(fileId);
@@ -95,7 +93,7 @@ class CommonDataStoreServiceTest extends BaseTest {
         multipartFile.getInputStream()
     );
     assertNotNull(fileId);
-    String decodedPath = dataEncoder.decode(getModifiedPath(fileId));
+    String decodedPath = getModifiedPath(dataEncoder.decode(fileId));
     Path filePath = Paths.get(storageRootPath, decodedPath);
     assertTrue(filePath.toFile().exists(), "File " + filePath + " does not exist");
     dataStoreService.delete(fileId);
