@@ -45,11 +45,15 @@ class LocalDataStoreTest {
 
   private static final int ZERO = 0;
 
-  private static final String SINGLE_BUCKET_NAME = "store";
-
   private static final String FILE_PATH = "someFile.txt";
 
   private static final String MULTI_BUCKET_NAME = "multiBucket";
+
+  private static final String BUCKET_PREFIX = "prj-";
+
+  private static final String BUCKET_POSTFIX = "-tiest";
+
+  private static final String DEFAULT_BUCKET_NAME = "rp-bucket";
 
   private static final String MULTI_FILE_PATH = MULTI_BUCKET_NAME + "/" + FILE_PATH;
 
@@ -60,7 +64,10 @@ class LocalDataStoreTest {
 
     featureFlagHandler = Mockito.mock(FeatureFlagHandler.class);
 
-    localDataStore = new LocalDataStore(blobStore, featureFlagHandler);
+    localDataStore =
+        new LocalDataStore(blobStore, featureFlagHandler, BUCKET_PREFIX, BUCKET_POSTFIX,
+            DEFAULT_BUCKET_NAME
+        );
   }
 
   @Test
@@ -82,7 +89,7 @@ class LocalDataStoreTest {
 
     localDataStore.save(FILE_PATH, inputStream);
 
-    verify(blobStore, times(1)).putBlob(SINGLE_BUCKET_NAME, blobMock);
+    verify(blobStore, times(1)).putBlob(DEFAULT_BUCKET_NAME, blobMock);
   }
 
   @Test
@@ -95,7 +102,7 @@ class LocalDataStoreTest {
     when(mockBlob.getPayload()).thenReturn(mockPayload);
 
     when(featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)).thenReturn(true);
-    when(blobStore.getBlob(SINGLE_BUCKET_NAME, FILE_PATH)).thenReturn(mockBlob);
+    when(blobStore.getBlob(DEFAULT_BUCKET_NAME, FILE_PATH)).thenReturn(mockBlob);
     InputStream loaded = localDataStore.load(FILE_PATH);
 
     Assertions.assertEquals(inputStream, loaded);
@@ -108,7 +115,7 @@ class LocalDataStoreTest {
 
     localDataStore.delete(FILE_PATH);
 
-    verify(blobStore, times(1)).removeBlob(SINGLE_BUCKET_NAME, FILE_PATH);
+    verify(blobStore, times(1)).removeBlob(DEFAULT_BUCKET_NAME, FILE_PATH);
   }
 
   @Test
@@ -130,7 +137,8 @@ class LocalDataStoreTest {
 
     localDataStore.save(MULTI_FILE_PATH, inputStream);
 
-    verify(blobStore, times(1)).putBlob(MULTI_BUCKET_NAME, blobMock);
+    verify(blobStore, times(1)).putBlob(
+        BUCKET_PREFIX + MULTI_BUCKET_NAME + BUCKET_POSTFIX, blobMock);
   }
 
   @Test
@@ -144,7 +152,9 @@ class LocalDataStoreTest {
     when(mockBlob.getPayload()).thenReturn(mockPayload);
 
     when(featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)).thenReturn(false);
-    when(blobStore.getBlob(MULTI_BUCKET_NAME, FILE_PATH)).thenReturn(mockBlob);
+    when(blobStore.getBlob(BUCKET_PREFIX + MULTI_BUCKET_NAME + BUCKET_POSTFIX,
+        FILE_PATH
+    )).thenReturn(mockBlob);
     InputStream loaded = localDataStore.load(MULTI_FILE_PATH);
 
     Assertions.assertEquals(inputStream, loaded);
@@ -158,6 +168,7 @@ class LocalDataStoreTest {
 
     localDataStore.delete(MULTI_FILE_PATH);
 
-    verify(blobStore, times(1)).removeBlob(MULTI_BUCKET_NAME, FILE_PATH);
+    verify(blobStore, times(1)).removeBlob(
+        BUCKET_PREFIX + MULTI_BUCKET_NAME + BUCKET_POSTFIX, FILE_PATH);
   }
 }

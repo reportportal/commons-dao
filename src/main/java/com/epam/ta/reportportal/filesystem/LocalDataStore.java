@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Objects;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.slf4j.Logger;
@@ -41,13 +42,19 @@ public class LocalDataStore implements DataStore {
 
   private final FeatureFlagHandler featureFlagHandler;
 
-  private static final String SINGLE_BUCKET_NAME = "store";
+  private final String bucketPrefix;
 
-  private static final String PLUGINS = "plugins";
+  private final String bucketPostfix;
 
-  public LocalDataStore(BlobStore blobStore, FeatureFlagHandler featureFlagHandler) {
+  private final String defaultBucketName;
+
+  public LocalDataStore(BlobStore blobStore, FeatureFlagHandler featureFlagHandler,
+      String bucketPrefix, String bucketPostfix, String defaultBucketName) {
     this.blobStore = blobStore;
     this.featureFlagHandler = featureFlagHandler;
+    this.bucketPrefix = bucketPrefix;
+    this.bucketPostfix = Objects.requireNonNullElse(bucketPostfix, "");
+    this.defaultBucketName = defaultBucketName;
   }
 
   @Override
@@ -117,9 +124,9 @@ public class LocalDataStore implements DataStore {
   @Override
   public void deleteAll(List<String> filePaths, String bucketName) {
     if (!featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)) {
-      blobStore.removeBlobs(bucketName, filePaths);
+      blobStore.removeBlobs(bucketPrefix + bucketName + bucketPostfix, filePaths);
     } else {
-      blobStore.removeBlobs(SINGLE_BUCKET_NAME, filePaths);
+      blobStore.removeBlobs(bucketName, filePaths);
     }
   }
 
@@ -129,19 +136,23 @@ public class LocalDataStore implements DataStore {
   }
 
   private StoredFile getStoredFile(String filePath) {
-    Path targetPath = Paths.get(filePath);
     if (featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)) {
-      return new StoredFile(SINGLE_BUCKET_NAME, filePath);
-    } else {
-      int nameCount = targetPath.getNameCount();
-      if (nameCount > 1) {
-        String bucketName = targetPath.getName(0).toString();
-        String newFilePath = targetPath.subpath(1, nameCount).toString();
-        return new StoredFile(bucketName, newFilePath);
-      } else {
-        return new StoredFile(PLUGINS, filePath);
-      }
+      return new StoredFile(defaultBucketName, filePath);
     }
+    Path targetPath = Paths.get(filePath);
+    int nameCount = targetPath.getNameCount();
+    String bucketName;
+    if (nameCount > 1) {
+      bucketName = bucketPrefix + retrievePath(targetPath, 0, 1) + bucketPostfix;
+      return new StoredFile(bucketName, retrievePath(targetPath, 1, nameCount));
+    } else {
+      bucketName = defaultBucketName;
+      return new StoredFile(bucketName, retrievePath(targetPath, 0, 1));
+    }
+  }
+
+  private String retrievePath(Path path, int beginIndex, int endIndex) {
+    return String.valueOf(path.subpath(beginIndex, endIndex));
   }
 }
 
