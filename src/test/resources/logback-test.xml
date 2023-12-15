@@ -8,10 +8,7 @@
     </encoder>
   </appender>
 
-  <!--To be sure that scripts executing only once-->
-  <!--<logger name="org.flywaydb.core" level="ALL" />-->
-
-  <root level="info">
+  <root level="debug">
     <appender-ref ref="STDOUT"/>
   </root>
 </configuration>
