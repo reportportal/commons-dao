@@ -16,41 +16,42 @@
 
 package com.epam.ta.reportportal.entity;
 
+import static com.epam.ta.reportportal.entity.ServerSettingsConstants.ANALYTICS_CONFIG_PREFIX;
+import static com.epam.ta.reportportal.entity.ServerSettingsConstants.SERVER_DETAILS_CONFIG_PREFIX;
+
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
-
-import static com.epam.ta.reportportal.entity.ServerSettingsConstants.ANALYTICS_CONFIG_PREFIX;
-import static com.epam.ta.reportportal.entity.ServerSettingsConstants.SERVER_DETAILS_CONFIG_PREFIX;
 
 /**
  * @author Ivan Budaev
  */
 public enum ServerSettingsEnum {
 
-	ANALYTICS(ANALYTICS_CONFIG_PREFIX + "all"),
-	INSTANCE(SERVER_DETAILS_CONFIG_PREFIX + "instance");
+  ANALYTICS(ANALYTICS_CONFIG_PREFIX + "all"),
+  INSTANCE(SERVER_DETAILS_CONFIG_PREFIX + "instance");
 
-	private String attribute;
+  private String attribute;
 
-	ServerSettingsEnum(String attribute) {
-		this.attribute = attribute;
-	}
+  ServerSettingsEnum(String attribute) {
+    this.attribute = attribute;
+  }
 
-	public String getAttribute() {
-		return attribute;
-	}
+  public static Optional<ServerSettingsEnum> findByAttribute(String attribute) {
+    return Optional.ofNullable(attribute)
+        .flatMap(attr -> Arrays.stream(values()).filter(it -> it.attribute.equalsIgnoreCase(attr))
+            .findAny());
+  }
 
-	public Optional<String> getAttribute(Map<String, Object> params) {
-		return Optional.ofNullable(params.get(this.attribute)).map(o -> (String) o);
-	}
+  public static boolean isPresent(String attribute) {
+    return findByAttribute(attribute).isPresent();
+  }
 
-	public static Optional<ServerSettingsEnum> findByAttribute(String attribute) {
-		return Optional.ofNullable(attribute)
-				.flatMap(attr -> Arrays.stream(values()).filter(it -> it.attribute.equalsIgnoreCase(attr)).findAny());
-	}
+  public String getAttribute() {
+    return attribute;
+  }
 
-	public static boolean isPresent(String attribute) {
-		return findByAttribute(attribute).isPresent();
-	}
+  public Optional<String> getAttribute(Map<String, Object> params) {
+    return Optional.ofNullable(params.get(this.attribute)).map(o -> (String) o);
+  }
 }

@@ -17,7 +17,6 @@
 package com.epam.ta.reportportal.entity;
 
 import com.epam.ta.reportportal.commons.JsonbUserType;
-
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Objects;
@@ -27,42 +26,42 @@ import java.util.Objects;
  */
 public class Metadata extends JsonbUserType implements Serializable {
 
-	@Override
-	public Class<?> returnedClass() {
-		return Metadata.class;
-	}
+  private Map<String, Object> metadata;
 
-	private Map<String, Object> metadata;
+  public Metadata() {
+  }
 
-	public Metadata() {
-	}
+  public Metadata(Map<String, Object> metadata) {
+    this.metadata = metadata;
+  }
 
-	public Metadata(Map<String, Object> metadata) {
-		this.metadata = metadata;
-	}
+  @Override
+  public Class<?> returnedClass() {
+    return Metadata.class;
+  }
 
-	public Map<String, Object> getMetadata() {
-		return metadata;
-	}
+  public Map<String, Object> getMetadata() {
+    return metadata;
+  }
 
-	public void setMetadata(Map<String, Object> metadata) {
-		this.metadata = metadata;
-	}
+  public void setMetadata(Map<String, Object> metadata) {
+    this.metadata = metadata;
+  }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-		Metadata comparing = (Metadata) o;
-		return Objects.equals(metadata, comparing.metadata);
-	}
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    Metadata comparing = (Metadata) o;
+    return Objects.equals(metadata, comparing.metadata);
+  }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(metadata);
-	}
+  @Override
+  public int hashCode() {
+    return Objects.hash(metadata);
+  }
 }

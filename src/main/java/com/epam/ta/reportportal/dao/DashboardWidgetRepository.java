@@ -22,7 +22,8 @@ import com.epam.ta.reportportal.entity.dashboard.DashboardWidgetId;
 /**
  * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
  */
-public interface DashboardWidgetRepository extends ReportPortalRepository<DashboardWidget, DashboardWidgetId> {
+public interface DashboardWidgetRepository extends
+    ReportPortalRepository<DashboardWidget, DashboardWidgetId> {
 
-	int countAllByWidgetId(Long widgetId);
+  int countAllByWidgetId(Long widgetId);
 }

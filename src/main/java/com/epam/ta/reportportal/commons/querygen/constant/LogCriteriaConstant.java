@@ -23,17 +23,17 @@ package com.epam.ta.reportportal.commons.querygen.constant;
  */
 public final class LogCriteriaConstant {
 
-	private LogCriteriaConstant() {
-		//static only
-	}
+  public static final String CRITERIA_TEST_ITEM_ID = "item";
+  public static final String CRITERIA_LOG_LAUNCH_ID = "launch";
+  public static final String CRITERIA_ITEM_LAUNCH_ID = "launchId";
+  public static final String CRITERIA_LOG_MESSAGE = "message";
+  public static final String CRITERIA_LOG_LEVEL = "level";
+  public static final String CRITERIA_LOG_ID = "logId";
+  public static final String CRITERIA_LOG_TIME = "logTime";
+  public static final String CRITERIA_LOG_BINARY_CONTENT = "binaryContent";
+  public static final String CRITERIA_LOG_PROJECT_ID = "projectId";
 
-	public static final String CRITERIA_TEST_ITEM_ID = "item";
-	public static final String CRITERIA_LOG_LAUNCH_ID = "launch";
-	public static final String CRITERIA_ITEM_LAUNCH_ID = "launchId";
-	public static final String CRITERIA_LOG_MESSAGE = "message";
-	public static final String CRITERIA_LOG_LEVEL = "level";
-	public static final String CRITERIA_LOG_ID = "logId";
-	public static final String CRITERIA_LOG_TIME = "logTime";
-	public static final String CRITERIA_LOG_BINARY_CONTENT = "binaryContent";
-	public static final String CRITERIA_LOG_PROJECT_ID = "projectId";
+  private LogCriteriaConstant() {
+    //static only
+  }
 }

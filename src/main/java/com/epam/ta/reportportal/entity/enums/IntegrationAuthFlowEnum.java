@@ -21,17 +21,18 @@ import java.util.Optional;
 
 public enum IntegrationAuthFlowEnum {
 
-	OAUTH,
-	BASIC,
-	TOKEN,
-	FORM,
-	LDAP;
+  OAUTH,
+  BASIC,
+  TOKEN,
+  FORM,
+  LDAP;
 
-	public static Optional<IntegrationAuthFlowEnum> findByName(String name) {
-		return Arrays.stream(IntegrationAuthFlowEnum.values()).filter(i -> i.name().equalsIgnoreCase(name)).findAny();
-	}
+  public static Optional<IntegrationAuthFlowEnum> findByName(String name) {
+    return Arrays.stream(IntegrationAuthFlowEnum.values())
+        .filter(i -> i.name().equalsIgnoreCase(name)).findAny();
+  }
 
-	public static boolean isPresent(String name) {
-		return findByName(name).isPresent();
-	}
+  public static boolean isPresent(String name) {
+    return findByName(name).isPresent();
+  }
 }

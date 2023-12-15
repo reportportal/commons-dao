@@ -16,80 +16,82 @@
 
 package com.epam.ta.reportportal.commons;
 
+import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.CRITERIA_LAUNCH_MODE;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.ws.model.launch.Mode;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
-
-import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.CRITERIA_LAUNCH_MODE;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
 class PreconditionsTest {
 
-	@Test
-	void hasModePositive() {
+  @Test
+  void hasModePositive() {
 
-		Mode mode = Mode.DEFAULT;
+    Mode mode = Mode.DEFAULT;
 
-		Assertions.assertTrue(Preconditions.hasMode(mode).test(filterConditionWithMode(mode)));
-	}
+    Assertions.assertTrue(Preconditions.hasMode(mode).test(filterConditionWithMode(mode)));
+  }
 
-	@Test
-	void hasModeNegative() {
+  @Test
+  void hasModeNegative() {
 
-		Mode mode = Mode.DEFAULT;
-		Mode anotherMode = Mode.DEBUG;
+    Mode mode = Mode.DEFAULT;
+    Mode anotherMode = Mode.DEBUG;
 
-		Assertions.assertFalse(Preconditions.hasMode(mode).test(filterConditionWithMode(anotherMode)));
-	}
+    Assertions.assertFalse(Preconditions.hasMode(mode).test(filterConditionWithMode(anotherMode)));
+  }
 
-	@Test
-	void sameTime() {
+  @Test
+  void sameTime() {
 
-		Date date = new Date();
+    Date date = new Date();
 
-		LocalDateTime sameTime = LocalDateTime.from(date.toInstant().atZone(ZoneOffset.UTC));
+    LocalDateTime sameTime = LocalDateTime.from(date.toInstant().atZone(ZoneOffset.UTC));
 
-		Assertions.assertTrue(Preconditions.sameTimeOrLater(sameTime).test(date));
-	}
+    Assertions.assertTrue(Preconditions.sameTimeOrLater(sameTime).test(date));
+  }
 
-	@Test
-	void laterTime() {
+  @Test
+  void laterTime() {
 
-		Date date = new Date();
+    Date date = new Date();
 
-		LocalDateTime laterTime = LocalDateTime.from(date.toInstant().atZone(ZoneOffset.UTC)).minusSeconds(1L);
+    LocalDateTime laterTime = LocalDateTime.from(date.toInstant().atZone(ZoneOffset.UTC))
+        .minusSeconds(1L);
 
-		Assertions.assertTrue(Preconditions.sameTimeOrLater(laterTime).test(date));
-	}
+    Assertions.assertTrue(Preconditions.sameTimeOrLater(laterTime).test(date));
+  }
 
-	@Test
-	void beforeTime() {
+  @Test
+  void beforeTime() {
 
-		Date date = new Date();
+    Date date = new Date();
 
-		LocalDateTime beforeTime = LocalDateTime.from(date.toInstant().atZone(ZoneOffset.UTC)).plusSeconds(1L);
+    LocalDateTime beforeTime = LocalDateTime.from(date.toInstant().atZone(ZoneOffset.UTC))
+        .plusSeconds(1L);
 
-		Assertions.assertFalse(Preconditions.sameTimeOrLater(beforeTime).test(date));
-	}
+    Assertions.assertFalse(Preconditions.sameTimeOrLater(beforeTime).test(date));
+  }
 
-	@Test
-	void validateNullValue() {
+  @Test
+  void validateNullValue() {
 
-		assertThrows(NullPointerException.class, () -> Preconditions.sameTimeOrLater(null).test(new Date()));
-	}
+    assertThrows(NullPointerException.class,
+        () -> Preconditions.sameTimeOrLater(null).test(new Date()));
+  }
 
-	private FilterCondition filterConditionWithMode(Mode mode) {
+  private FilterCondition filterConditionWithMode(Mode mode) {
 
-		return new FilterCondition(Condition.EQUALS, false, mode.name(), CRITERIA_LAUNCH_MODE);
-	}
+    return new FilterCondition(Condition.EQUALS, false, mode.name(), CRITERIA_LAUNCH_MODE);
+  }
 
 }

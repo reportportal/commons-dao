@@ -16,19 +16,18 @@
 
 package com.epam.ta.reportportal.dao;
 
-import com.epam.ta.reportportal.BaseTest;
-import com.epam.ta.reportportal.entity.attribute.Attribute;
-import com.epam.ta.reportportal.entity.enums.ProjectAttributeEnum;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.jdbc.Sql;
-
-import java.util.Optional;
-import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
+
+import com.epam.ta.reportportal.BaseTest;
+import com.epam.ta.reportportal.entity.attribute.Attribute;
+import com.epam.ta.reportportal.entity.enums.ProjectAttributeEnum;
+import java.util.Optional;
+import java.util.Set;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.jdbc.Sql;
 
 /**
  * @author Ivan Budaev
@@ -36,58 +35,58 @@ import static org.springframework.test.util.AssertionErrors.assertTrue;
 @Sql("/db/fill/attributes/attributes-fill.sql")
 class AttributeRepositoryTest extends BaseTest {
 
-	@Autowired
-	private AttributeRepository attributeRepository;
+  @Autowired
+  private AttributeRepository attributeRepository;
 
-	@Test
-	void shouldFindWhenNameIsPresent() {
+  @Test
+  void shouldFindWhenNameIsPresent() {
 
-		//given
-		String name = "present";
+    //given
+    String name = "present";
 
-		//when
-		Optional<Attribute> attribute = attributeRepository.findByName(name);
+    //when
+    Optional<Attribute> attribute = attributeRepository.findByName(name);
 
-		//then
-		assertTrue("Attribute should exists", attribute.isPresent());
-	}
+    //then
+    assertTrue("Attribute should exists", attribute.isPresent());
+  }
 
-	@Test
-	void shouldNotFindWhenNameIsNotPresent() {
+  @Test
+  void shouldNotFindWhenNameIsNotPresent() {
 
-		//given
-		String name = "not present";
+    //given
+    String name = "not present";
 
-		//when
-		Optional<Attribute> attribute = attributeRepository.findByName(name);
+    //when
+    Optional<Attribute> attribute = attributeRepository.findByName(name);
 
-		//then
-		assertFalse(attribute.isPresent(), "Attribute should not exists");
-	}
+    //then
+    assertFalse(attribute.isPresent(), "Attribute should not exists");
+  }
 
-	@Test
-	void getDefaultProjectAttributesTest() {
-		final Set<Attribute> defaultProjectAttributes = attributeRepository.getDefaultProjectAttributes();
-		defaultProjectAttributes.forEach(it -> assertTrue(
-				"Attribute should exists",
-				ProjectAttributeEnum.findByAttributeName(it.getName()).isPresent()
-		));
-	}
+  @Test
+  void getDefaultProjectAttributesTest() {
+    final Set<Attribute> defaultProjectAttributes = attributeRepository.getDefaultProjectAttributes();
+    defaultProjectAttributes.forEach(it -> assertTrue(
+        "Attribute should exists",
+        ProjectAttributeEnum.findByAttributeName(it.getName()).isPresent()
+    ));
+  }
 
-	@Test
-	void findById() {
-		final Long attrId = 100L;
-		final String attrName = "present";
+  @Test
+  void findById() {
+    final Long attrId = 100L;
+    final String attrName = "present";
 
-		final Optional<Attribute> attrOptional = attributeRepository.findById(attrId);
-		assertTrue("Attribute should exists", attrOptional.isPresent());
-		assertEquals(attrName, attrOptional.get().getName(), "Incorrect attribute name");
-	}
+    final Optional<Attribute> attrOptional = attributeRepository.findById(attrId);
+    assertTrue("Attribute should exists", attrOptional.isPresent());
+    assertEquals(attrName, attrOptional.get().getName(), "Incorrect attribute name");
+  }
 
-	@Test
-	void deleteById() {
-		final Long attrId = 100L;
-		attributeRepository.deleteById(attrId);
-		assertEquals(15, attributeRepository.findAll().size());
-	}
+  @Test
+  void deleteById() {
+    final Long attrId = 100L;
+    attributeRepository.deleteById(attrId);
+    assertEquals(15, attributeRepository.findAll().size());
+  }
 }

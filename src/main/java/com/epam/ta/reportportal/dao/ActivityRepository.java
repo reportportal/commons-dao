@@ -23,6 +23,7 @@ import com.epam.ta.reportportal.entity.activity.Activity;
  *
  * @author Andrei Varabyeu
  */
-public interface ActivityRepository extends ReportPortalRepository<Activity, Long>, ActivityRepositoryCustom {
+public interface ActivityRepository extends ReportPortalRepository<Activity, Long>,
+    ActivityRepositoryCustom {
 
 }

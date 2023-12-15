@@ -30,7 +30,6 @@ import com.epam.ta.reportportal.jooq.tables.JLaunchAttributeRules;
 import com.epam.ta.reportportal.jooq.tables.JLaunchNames;
 import com.epam.ta.reportportal.jooq.tables.JLaunchNumber;
 import com.epam.ta.reportportal.jooq.tables.JLog;
-import com.epam.ta.reportportal.jooq.tables.JOauthAccessToken;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
@@ -210,11 +209,6 @@ public class Tables {
      * The table <code>public.log</code>.
      */
     public static final JLog LOG = JLog.LOG;
-
-    /**
-     * The table <code>public.oauth_access_token</code>.
-     */
-    public static final JOauthAccessToken OAUTH_ACCESS_TOKEN = JOauthAccessToken.OAUTH_ACCESS_TOKEN;
 
     /**
      * The table <code>public.oauth_registration</code>.

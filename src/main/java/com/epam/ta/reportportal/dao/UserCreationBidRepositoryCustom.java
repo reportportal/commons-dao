@@ -21,5 +21,5 @@ package com.epam.ta.reportportal.dao;
  */
 public interface UserCreationBidRepositoryCustom {
 
-	int deleteAllByEmail(String email);
+  int deleteAllByEmail(String email);
 }

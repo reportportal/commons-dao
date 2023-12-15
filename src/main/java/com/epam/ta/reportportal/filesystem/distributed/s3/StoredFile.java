@@ -19,21 +19,21 @@ package com.epam.ta.reportportal.filesystem.distributed.s3;
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
-public class S3File {
+public class StoredFile {
 
-	private final String bucket;
-	private final String filePath;
+  private final String bucket;
+  private final String filePath;
 
-	public S3File(String bucket, String filePath) {
-		this.bucket = bucket;
-		this.filePath = filePath;
-	}
+  public StoredFile(String bucket, String filePath) {
+    this.bucket = bucket;
+    this.filePath = filePath;
+  }
 
-	public String getBucket() {
-		return bucket;
-	}
+  public String getBucket() {
+    return bucket;
+  }
 
-	public String getFilePath() {
-		return filePath;
-	}
+  public String getFilePath() {
+    return filePath;
+  }
 }

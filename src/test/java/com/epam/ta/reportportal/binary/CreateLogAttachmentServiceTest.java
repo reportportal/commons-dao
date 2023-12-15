@@ -16,24 +16,25 @@
 
 package com.epam.ta.reportportal.binary;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.epam.ta.reportportal.dao.LogRepository;
 import com.epam.ta.reportportal.entity.attachment.Attachment;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.exception.ReportPortalException;
+import java.time.LocalDateTime;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.time.LocalDateTime;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
@@ -41,51 +42,52 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class CreateLogAttachmentServiceTest {
 
-	@Mock
-	private LogRepository logRepository;
+  @Mock
+  private LogRepository logRepository;
 
-	@InjectMocks
-	private CreateLogAttachmentService createLogAttachmentService;
+  @InjectMocks
+  private CreateLogAttachmentService createLogAttachmentService;
 
-	@Test
-	void createAttachmentPositive() {
-		Log log = getLogWithoutAttachment();
-		Attachment attachment = getAttachment();
-		when(logRepository.findById(1L)).thenReturn(Optional.of(log));
+  @Test
+  void createAttachmentPositive() {
+    Log log = getLogWithoutAttachment();
+    Attachment attachment = getAttachment();
+    when(logRepository.findById(1L)).thenReturn(Optional.of(log));
 
-		createLogAttachmentService.create(attachment, 1L);
+    createLogAttachmentService.create(attachment, 1L);
 
-		verify(logRepository, times(1)).save(log);
+    verify(logRepository, times(1)).save(log);
 
-		assertEquals(log.getAttachment().getFileId(), attachment.getFileId());
-		assertEquals(log.getAttachment().getThumbnailId(), attachment.getThumbnailId());
-		assertEquals(log.getAttachment().getContentType(), attachment.getContentType());
-	}
+    assertEquals(log.getAttachment().getFileId(), attachment.getFileId());
+    assertEquals(log.getAttachment().getThumbnailId(), attachment.getThumbnailId());
+    assertEquals(log.getAttachment().getContentType(), attachment.getContentType());
+  }
 
-	@Test
-	void createAttachmentOnNotExistLog() {
-		long logId = 1L;
-		when(logRepository.findById(logId)).thenReturn(Optional.empty());
+  @Test
+  void createAttachmentOnNotExistLog() {
+    long logId = 1L;
+    when(logRepository.findById(logId)).thenReturn(Optional.empty());
 
-		assertThrows(ReportPortalException.class, () -> createLogAttachmentService.create(getAttachment(), logId));
-	}
+    assertThrows(ReportPortalException.class,
+        () -> createLogAttachmentService.create(getAttachment(), logId));
+  }
 
-	private Log getLogWithoutAttachment() {
-		Log log = new Log();
-		log.setId(1L);
-		log.setLaunch(new Launch(2L));
-		log.setTestItem(new TestItem(3L));
-		log.setLogLevel(4000);
-		log.setLogMessage("message");
-		log.setLogTime(LocalDateTime.now());
-		return log;
-	}
+  private Log getLogWithoutAttachment() {
+    Log log = new Log();
+    log.setId(1L);
+    log.setLaunch(new Launch(2L));
+    log.setTestItem(new TestItem(3L));
+    log.setLogLevel(4000);
+    log.setLogMessage("message");
+    log.setLogTime(LocalDateTime.now());
+    return log;
+  }
 
-	private Attachment getAttachment() {
-		Attachment attachment = new Attachment();
-		attachment.setFileId("fileId");
-		attachment.setThumbnailId("thumbnailId");
-		attachment.setContentType("contentType");
-		return attachment;
-	}
+  private Attachment getAttachment() {
+    Attachment attachment = new Attachment();
+    attachment.setFileId("fileId");
+    attachment.setThumbnailId("thumbnailId");
+    attachment.setContentType("contentType");
+    return attachment;
+  }
 }

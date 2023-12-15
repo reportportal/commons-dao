@@ -1,26 +1,25 @@
 package com.epam.ta.reportportal.dao;
 
+import static com.epam.ta.reportportal.dao.util.RecordMappers.PROJECT_DETAILS_MAPPER;
+import static com.epam.ta.reportportal.jooq.Tables.PROJECT;
+import static com.epam.ta.reportportal.jooq.Tables.PROJECT_USER;
+
 import com.epam.ta.reportportal.commons.ReportPortalUser;
+import java.util.Optional;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
-
-import static com.epam.ta.reportportal.dao.util.RecordMappers.PROJECT_DETAILS_MAPPER;
-import static com.epam.ta.reportportal.jooq.Tables.PROJECT;
-import static com.epam.ta.reportportal.jooq.Tables.PROJECT_USER;
-
 @Repository
 public class ProjectUserRepositoryCustomImpl implements ProjectUserRepositoryCustom {
 
-	private final DSLContext dsl;
+  private final DSLContext dsl;
 
-	@Autowired
-	public ProjectUserRepositoryCustomImpl(DSLContext dsl) {
-		this.dsl = dsl;
-	}
+  @Autowired
+  public ProjectUserRepositoryCustomImpl(DSLContext dsl) {
+    this.dsl = dsl;
+  }
 
 	@Override
 	public Optional<ReportPortalUser.ProjectDetails> findDetailsByUserIdAndProjectName(Long userId, String projectName) {

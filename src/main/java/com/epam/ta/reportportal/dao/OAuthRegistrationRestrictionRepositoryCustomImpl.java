@@ -22,5 +22,7 @@ import org.springframework.stereotype.Repository;
  * @author Anton Machulski
  */
 @Repository
-public class OAuthRegistrationRestrictionRepositoryCustomImpl implements OAuthRegistrationRestrictionRepositoryCustom {
+public class OAuthRegistrationRestrictionRepositoryCustomImpl implements
+    OAuthRegistrationRestrictionRepositoryCustom {
+
 }

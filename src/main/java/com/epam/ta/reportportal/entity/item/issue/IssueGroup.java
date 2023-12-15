@@ -17,11 +17,17 @@
 package com.epam.ta.reportportal.entity.item.issue;
 
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
-import org.hibernate.annotations.Type;
-
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import org.hibernate.annotations.Type;
 
 /**
  * @author Pavel Bortnik
@@ -30,54 +36,54 @@ import java.util.Objects;
 @Table(name = "issue_group", schema = "public")
 public class IssueGroup implements Serializable {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "issue_group_id")
-	private Integer id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "issue_group_id")
+  private Integer id;
 
-	@Column(name = "issue_group")
-	@Enumerated(EnumType.STRING)
-	@Type(type = "pqsql_enum")
-	private TestItemIssueGroup testItemIssueGroup;
+  @Column(name = "issue_group")
+  @Enumerated(EnumType.STRING)
+  @Type(type = "pqsql_enum")
+  private TestItemIssueGroup testItemIssueGroup;
 
-	public IssueGroup() {
-	}
+  public IssueGroup() {
+  }
 
-	public IssueGroup(TestItemIssueGroup testItemIssueGroup) {
-		this.testItemIssueGroup = testItemIssueGroup;
-	}
+  public IssueGroup(TestItemIssueGroup testItemIssueGroup) {
+    this.testItemIssueGroup = testItemIssueGroup;
+  }
 
-	public Integer getId() {
-		return id;
-	}
+  public Integer getId() {
+    return id;
+  }
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+  public void setId(Integer id) {
+    this.id = id;
+  }
 
-	public TestItemIssueGroup getTestItemIssueGroup() {
-		return testItemIssueGroup;
-	}
+  public TestItemIssueGroup getTestItemIssueGroup() {
+    return testItemIssueGroup;
+  }
 
-	public void setTestItemIssueGroup(TestItemIssueGroup testItemIssueGroup) {
-		this.testItemIssueGroup = testItemIssueGroup;
-	}
+  public void setTestItemIssueGroup(TestItemIssueGroup testItemIssueGroup) {
+    this.testItemIssueGroup = testItemIssueGroup;
+  }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-		IssueGroup that = (IssueGroup) o;
-		return testItemIssueGroup == that.testItemIssueGroup;
-	}
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    IssueGroup that = (IssueGroup) o;
+    return testItemIssueGroup == that.testItemIssueGroup;
+  }
 
-	@Override
-	public int hashCode() {
+  @Override
+  public int hashCode() {
 
-		return Objects.hash(testItemIssueGroup);
-	}
+    return Objects.hash(testItemIssueGroup);
+  }
 }

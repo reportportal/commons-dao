@@ -21,17 +21,17 @@ package com.epam.ta.reportportal.commons.querygen.constant;
  */
 public final class UserCriteriaConstant {
 
-	public static final String CRITERIA_USER = "user";
-	public static final String CRITERIA_ROLE = "role";
-	public static final String CRITERIA_TYPE = "type";
-	public static final String CRITERIA_FULL_NAME = "fullName";
-	public static final String CRITERIA_EMAIL = "email";
-	public static final String CRITERIA_EXPIRED = "expired";
-	public static final String CRITERIA_LAST_LOGIN = "lastLogin";
-	public static final String CRITERIA_SYNCHRONIZATION_DATE = "synchronizationDate";
-	public static final String CRITERIA_USER_PROJECT = "project";
+  public static final String CRITERIA_USER = "user";
+  public static final String CRITERIA_ROLE = "role";
+  public static final String CRITERIA_TYPE = "type";
+  public static final String CRITERIA_FULL_NAME = "fullName";
+  public static final String CRITERIA_EMAIL = "email";
+  public static final String CRITERIA_EXPIRED = "expired";
+  public static final String CRITERIA_LAST_LOGIN = "lastLogin";
+  public static final String CRITERIA_SYNCHRONIZATION_DATE = "synchronizationDate";
+  public static final String CRITERIA_USER_PROJECT = "project";
 
-	private UserCriteriaConstant() {
-		//static only
-	}
+  private UserCriteriaConstant() {
+    //static only
+  }
 }

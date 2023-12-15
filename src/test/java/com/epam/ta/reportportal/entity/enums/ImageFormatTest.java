@@ -16,39 +16,41 @@
 
 package com.epam.ta.reportportal.entity.enums;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
 class ImageFormatTest {
 
-	private Map<ImageFormat, List<String>> allowed;
-	private List<String> disallowed;
+  private Map<ImageFormat, List<String>> allowed;
+  private List<String> disallowed;
 
-	@BeforeEach
-	void setUp() {
-		allowed = Arrays.stream(ImageFormat.values())
-				.collect(Collectors.toMap(it -> it, it -> Arrays.asList(it.name(), it.name().toUpperCase(), it.name().toLowerCase())));
-		disallowed = Arrays.asList("noSuchType", "", " ", "", null);
-	}
+  @BeforeEach
+  void setUp() {
+    allowed = Arrays.stream(ImageFormat.values())
+        .collect(Collectors.toMap(it -> it,
+            it -> Arrays.asList(it.name(), it.name().toUpperCase(), it.name().toLowerCase())));
+    disallowed = Arrays.asList("noSuchType", "", " ", "", null);
+  }
 
-	@Test
-	void fromValue() {
-		allowed.forEach((key, value) -> value.forEach(val -> {
-			final Optional<ImageFormat> optional = ImageFormat.fromValue(val);
-			assertTrue(optional.isPresent());
-			assertEquals(key, optional.get());
-		}));
-		disallowed.forEach(it -> assertFalse(ImageFormat.fromValue(it).isPresent()));
-	}
+  @Test
+  void fromValue() {
+    allowed.forEach((key, value) -> value.forEach(val -> {
+      final Optional<ImageFormat> optional = ImageFormat.fromValue(val);
+      assertTrue(optional.isPresent());
+      assertEquals(key, optional.get());
+    }));
+    disallowed.forEach(it -> assertFalse(ImageFormat.fromValue(it).isPresent()));
+  }
 }

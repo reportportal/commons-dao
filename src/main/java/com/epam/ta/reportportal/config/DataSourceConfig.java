@@ -19,13 +19,15 @@ package com.epam.ta.reportportal.config;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.zonky.test.db.postgres.embedded.EmbeddedPostgres;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.*;
-
-import javax.sql.DataSource;
 import java.io.File;
 import java.io.IOException;
+import javax.sql.DataSource;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
@@ -34,22 +36,23 @@ import java.io.IOException;
 @ConfigurationProperties(prefix = "rp.datasource")
 public class DataSourceConfig extends HikariConfig {
 
-	@Primary
-	@Bean
-	@Profile("!unittest")
-	public DataSource dataSource() {
-		return new HikariDataSource(this);
-	}
+  @Primary
+  @Bean
+  @Profile("!unittest")
+  public DataSource dataSource() {
+    return new HikariDataSource(this);
+  }
 
-	@Primary
-	@Bean
-	@Profile("unittest")
-	public DataSource testDataSource(@Value("${embedded.datasource.dir}") String dataDir,
-			@Value("${embedded.datasource.clean}") Boolean clean, @Value("${embedded.datasource.port}") Integer port) throws IOException {
-		final EmbeddedPostgres.Builder builder = EmbeddedPostgres.builder()
-				.setPort(port)
-				.setDataDirectory(new File(dataDir))
-				.setCleanDataDirectory(clean);
-		return builder.start().getPostgresDatabase();
-	}
+  @Primary
+  @Bean
+  @Profile("unittest")
+  public DataSource testDataSource(@Value("${embedded.datasource.dir}") String dataDir,
+      @Value("${embedded.datasource.clean}") Boolean clean,
+      @Value("${embedded.datasource.port}") Integer port) throws IOException {
+    final EmbeddedPostgres.Builder builder = EmbeddedPostgres.builder()
+        .setPort(port)
+        .setDataDirectory(new File(dataDir))
+        .setCleanDataDirectory(clean);
+    return builder.start().getPostgresDatabase();
+  }
 }

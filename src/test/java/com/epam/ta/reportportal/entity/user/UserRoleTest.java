@@ -16,48 +16,50 @@
 
 package com.epam.ta.reportportal.entity.user;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
 class UserRoleTest {
 
-	private Map<UserRole, String> allowed;
-	private List<String> disallowed;
+  private Map<UserRole, String> allowed;
+  private List<String> disallowed;
 
-	@BeforeEach
-	void setUp() {
-		allowed = Arrays.stream(UserRole.values()).collect(Collectors.toMap(it -> it, Enum::name));
-		disallowed = Arrays.asList("MAINTAINER", "CUSTOMER");
-	}
+  @BeforeEach
+  void setUp() {
+    allowed = Arrays.stream(UserRole.values()).collect(Collectors.toMap(it -> it, Enum::name));
+    disallowed = Arrays.asList("MAINTAINER", "CUSTOMER");
+  }
 
-	@Test
-	void findByName() {
-		allowed.forEach((key, value) -> {
-			final Optional<UserRole> optional = UserRole.findByName(value);
-			assertTrue(optional.isPresent());
-			assertEquals(key, optional.get());
-		});
-		disallowed.forEach(it -> assertFalse(UserRole.findByName(it).isPresent()));
-	}
+  @Test
+  void findByName() {
+    allowed.forEach((key, value) -> {
+      final Optional<UserRole> optional = UserRole.findByName(value);
+      assertTrue(optional.isPresent());
+      assertEquals(key, optional.get());
+    });
+    disallowed.forEach(it -> assertFalse(UserRole.findByName(it).isPresent()));
+  }
 
-	@Test
-	void findByAuthority() {
-		allowed.forEach((key, value) -> {
-			final Optional<UserRole> optional = UserRole.findByAuthority(UserRole.ROLE_PREFIX + value);
-			assertTrue(optional.isPresent());
-			assertEquals(key, optional.get());
-		});
-		disallowed.forEach(it -> assertFalse(UserRole.findByAuthority(UserRole.ROLE_PREFIX + it).isPresent()));
-	}
+  @Test
+  void findByAuthority() {
+    allowed.forEach((key, value) -> {
+      final Optional<UserRole> optional = UserRole.findByAuthority(UserRole.ROLE_PREFIX + value);
+      assertTrue(optional.isPresent());
+      assertEquals(key, optional.get());
+    });
+    disallowed.forEach(
+        it -> assertFalse(UserRole.findByAuthority(UserRole.ROLE_PREFIX + it).isPresent()));
+  }
 }

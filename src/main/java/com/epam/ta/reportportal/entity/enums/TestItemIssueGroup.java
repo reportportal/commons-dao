@@ -22,66 +22,67 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * Vocabulary for supported test item issues types. They are applied as markers
- * for test steps. User marks test step according to the type of the issue,
- * caused it's failure.<br>
- * locator - predefined ID for immutable issue type<br>
+ * Vocabulary for supported test item issues types. They are applied as markers for test steps. User
+ * marks test step according to the type of the issue, caused it's failure.<br> locator - predefined
+ * ID for immutable issue type<br>
  *
  * @author Dzianis Shlychkou
  * @author Andrei_Ramanchuk
  */
 public enum TestItemIssueGroup /*implements StatisticsAwareness*/ {
 
-	NOT_ISSUE_FLAG("NOT_ISSUE", "notIssue", ""),
+  NOT_ISSUE_FLAG("NOT_ISSUE", "notIssue", ""),
 
-	PRODUCT_BUG("PRODUCT_BUG", "productBug", "pb001"),
-	AUTOMATION_BUG("AUTOMATION_BUG", "automationBug", "ab001"),
-	SYSTEM_ISSUE("SYSTEM_ISSUE", "systemIssue", "si001"),
-	TO_INVESTIGATE("TO_INVESTIGATE", "toInvestigate", "ti001"),
-	NO_DEFECT("NO_DEFECT", "noDefect", "nd001");
+  PRODUCT_BUG("PRODUCT_BUG", "productBug", "pb001"),
+  AUTOMATION_BUG("AUTOMATION_BUG", "automationBug", "ab001"),
+  SYSTEM_ISSUE("SYSTEM_ISSUE", "systemIssue", "si001"),
+  TO_INVESTIGATE("TO_INVESTIGATE", "toInvestigate", "ti001"),
+  NO_DEFECT("NO_DEFECT", "noDefect", "nd001");
 
-	private final String value;
+  private final String value;
 
-	private final String issueCounterField;
+  private final String issueCounterField;
 
-	private final String locator;
+  private final String locator;
 
-	TestItemIssueGroup(String value, String executionCounterField, String locator) {
-		this.value = value;
-		this.issueCounterField = executionCounterField;
-		this.locator = locator;
-	}
+  TestItemIssueGroup(String value, String executionCounterField, String locator) {
+    this.value = value;
+    this.issueCounterField = executionCounterField;
+    this.locator = locator;
+  }
 
-	public String getValue() {
-		return value;
-	}
+  /**
+   * Retrieves TestItemIssueType value by it's string value
+   *
+   * @param value - string representation of desired TestItemIssueType value
+   * @return TestItemIssueType value
+   */
+  public static Optional<TestItemIssueGroup> fromValue(String value) {
+    return Arrays.stream(TestItemIssueGroup.values())
+        .filter(type -> type.getValue().equalsIgnoreCase(value)).findAny();
+  }
 
-	public String getLocator() {
-		return locator;
-	}
+  public static TestItemIssueGroup validate(String value) {
+    return Arrays.stream(TestItemIssueGroup.values())
+        .filter(type -> type.getValue().replace(" ", "_").equalsIgnoreCase(value))
+        .findAny()
+        .orElse(null);
+  }
 
-	public String getIssueCounterField() {
-		return issueCounterField;
-	}
+  public static List<String> validValues() {
+    return Arrays.stream(TestItemIssueGroup.values()).map(TestItemIssueGroup::getValue)
+        .collect(Collectors.toList());
+  }
 
-	/**
-	 * Retrieves TestItemIssueType value by it's string value
-	 *
-	 * @param value - string representation of desired TestItemIssueType value
-	 * @return TestItemIssueType value
-	 */
-	public static Optional<TestItemIssueGroup> fromValue(String value) {
-		return Arrays.stream(TestItemIssueGroup.values()).filter(type -> type.getValue().equalsIgnoreCase(value)).findAny();
-	}
+  public String getValue() {
+    return value;
+  }
 
-	public static TestItemIssueGroup validate(String value) {
-		return Arrays.stream(TestItemIssueGroup.values())
-				.filter(type -> type.getValue().replace(" ", "_").equalsIgnoreCase(value))
-				.findAny()
-				.orElse(null);
-	}
+  public String getLocator() {
+    return locator;
+  }
 
-	public static List<String> validValues() {
-		return Arrays.stream(TestItemIssueGroup.values()).map(TestItemIssueGroup::getValue).collect(Collectors.toList());
-	}
+  public String getIssueCounterField() {
+    return issueCounterField;
+  }
 }

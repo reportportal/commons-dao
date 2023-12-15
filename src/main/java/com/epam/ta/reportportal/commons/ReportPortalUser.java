@@ -16,23 +16,22 @@
 
 package com.epam.ta.reportportal.commons;
 
+import static java.util.Optional.ofNullable;
+
 import com.epam.ta.reportportal.entity.project.ProjectRole;
 import com.epam.ta.reportportal.entity.user.UserRole;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import static java.util.Optional.ofNullable;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * ReportPortal user representation
@@ -41,197 +40,203 @@ import static java.util.Optional.ofNullable;
  */
 public class ReportPortalUser extends User {
 
-	private Long userId;
+  private Long userId;
 
-	private UserRole userRole;
+  private UserRole userRole;
 
-	private String email;
+  private String email;
 
-	private Map<String, ProjectDetails> projectDetails;
+  private Map<String, ProjectDetails> projectDetails;
 
-	private ReportPortalUser(String username, String password, Collection<? extends GrantedAuthority> authorities, Long userId,
-			UserRole role, Map<String, ProjectDetails> projectDetails, String email) {
-		super(username, password, authorities);
-		this.userId = userId;
-		this.userRole = role;
-		this.projectDetails = projectDetails;
-		this.email = email;
-	}
+  private ReportPortalUser(String username, String password,
+      Collection<? extends GrantedAuthority> authorities, Long userId,
+      UserRole role, Map<String, ProjectDetails> projectDetails, String email) {
+    super(username, password, authorities);
+    this.userId = userId;
+    this.userRole = role;
+    this.projectDetails = projectDetails;
+    this.email = email;
+  }
 
-	public Long getUserId() {
-		return userId;
-	}
+  public static ReportPortalUserBuilder userBuilder() {
+    return new ReportPortalUserBuilder();
+  }
 
-	public void setUserId(Long userId) {
-		this.userId = userId;
-	}
+  public Long getUserId() {
+    return userId;
+  }
 
-	public UserRole getUserRole() {
-		return userRole;
-	}
+  public void setUserId(Long userId) {
+    this.userId = userId;
+  }
 
-	public void setUserRole(UserRole userRole) {
-		this.userRole = userRole;
-	}
+  public UserRole getUserRole() {
+    return userRole;
+  }
 
-	public String getEmail() {
-		return email;
-	}
+  public void setUserRole(UserRole userRole) {
+    this.userRole = userRole;
+  }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+  public String getEmail() {
+    return email;
+  }
 
-	public Map<String, ProjectDetails> getProjectDetails() {
-		return projectDetails;
-	}
+  public void setEmail(String email) {
+    this.email = email;
+  }
 
-	public void setProjectDetails(Map<String, ProjectDetails> projectDetails) {
-		this.projectDetails = projectDetails;
-	}
+  public Map<String, ProjectDetails> getProjectDetails() {
+    return projectDetails;
+  }
 
-	public static ReportPortalUserBuilder userBuilder() {
-		return new ReportPortalUserBuilder();
-	}
+  public void setProjectDetails(Map<String, ProjectDetails> projectDetails) {
+    this.projectDetails = projectDetails;
+  }
 
-	public static class ProjectDetails implements Serializable {
+  public static class ProjectDetails implements Serializable {
 
-		@JsonProperty(value = "id")
-		private Long projectId;
+    @JsonProperty(value = "id")
+    private Long projectId;
 
-		@JsonProperty(value = "name")
-		private String projectName;
+    @JsonProperty(value = "name")
+    private String projectName;
 
-		@JsonProperty("role")
-		private ProjectRole projectRole;
+    @JsonProperty("role")
+    private ProjectRole projectRole;
 
-		public ProjectDetails(Long projectId, String projectName, ProjectRole projectRole) {
-			this.projectId = projectId;
-			this.projectName = projectName;
-			this.projectRole = projectRole;
-		}
+    public ProjectDetails(Long projectId, String projectName, ProjectRole projectRole) {
+      this.projectId = projectId;
+      this.projectName = projectName;
+      this.projectRole = projectRole;
+    }
 
-		public Long getProjectId() {
-			return projectId;
-		}
+    public static ProjectDetailsBuilder builder() {
+      return new ProjectDetailsBuilder();
+    }
 
-		public String getProjectName() {
-			return projectName;
-		}
+    public Long getProjectId() {
+      return projectId;
+    }
 
-		public ProjectRole getProjectRole() {
-			return projectRole;
-		}
+    public String getProjectName() {
+      return projectName;
+    }
 
-		public static ProjectDetailsBuilder builder() {
-			return new ProjectDetailsBuilder();
-		}
+    public ProjectRole getProjectRole() {
+      return projectRole;
+    }
 
-		public static class ProjectDetailsBuilder {
-			private Long projectId;
-			private String projectName;
-			private ProjectRole projectRole;
+    public static class ProjectDetailsBuilder {
 
-			private ProjectDetailsBuilder() {
-			}
+      private Long projectId;
+      private String projectName;
+      private ProjectRole projectRole;
 
-			public ProjectDetailsBuilder withProjectId(Long projectId) {
-				this.projectId = projectId;
-				return this;
-			}
+      private ProjectDetailsBuilder() {
+      }
 
-			public ProjectDetailsBuilder withProjectName(String projectName) {
-				this.projectName = projectName;
-				return this;
-			}
+      public ProjectDetailsBuilder withProjectId(Long projectId) {
+        this.projectId = projectId;
+        return this;
+      }
 
-			public ProjectDetailsBuilder withProjectRole(String projectRole) {
-				this.projectRole = ProjectRole.forName(projectRole)
-						.orElseThrow(() -> new ReportPortalException(ErrorType.ROLE_NOT_FOUND, projectRole));
-				return this;
-			}
+      public ProjectDetailsBuilder withProjectName(String projectName) {
+        this.projectName = projectName;
+        return this;
+      }
 
-			public ProjectDetails build() {
-				return new ProjectDetails(projectId, projectName, projectRole);
-			}
-		}
-	}
+      public ProjectDetailsBuilder withProjectRole(String projectRole) {
+        this.projectRole = ProjectRole.forName(projectRole)
+            .orElseThrow(() -> new ReportPortalException(ErrorType.ROLE_NOT_FOUND, projectRole));
+        return this;
+      }
 
-	public static class ReportPortalUserBuilder {
-		private String username;
-		private String password;
-		private Long userId;
-		private UserRole userRole;
-		private String email;
-		private Map<String, ProjectDetails> projectDetails;
-		private Collection<? extends GrantedAuthority> authorities;
+      public ProjectDetails build() {
+        return new ProjectDetails(projectId, projectName, projectRole);
+      }
+    }
+  }
 
-		private ReportPortalUserBuilder() {
+  public static class ReportPortalUserBuilder {
 
-		}
+    private String username;
+    private String password;
+    private Long userId;
+    private UserRole userRole;
+    private String email;
+    private Map<String, ProjectDetails> projectDetails;
+    private Collection<? extends GrantedAuthority> authorities;
 
-		public ReportPortalUserBuilder withUserName(String userName) {
-			this.username = userName;
-			return this;
-		}
+    private ReportPortalUserBuilder() {
 
-		public ReportPortalUserBuilder withPassword(String password) {
-			this.password = password;
-			return this;
-		}
+    }
 
-		public ReportPortalUserBuilder withAuthorities(Collection<? extends GrantedAuthority> authorities) {
-			this.authorities = authorities;
-			return this;
-		}
+    public ReportPortalUserBuilder withUserName(String userName) {
+      this.username = userName;
+      return this;
+    }
 
-		public ReportPortalUserBuilder withUserDetails(UserDetails userDetails) {
-			this.username = userDetails.getUsername();
-			this.password = userDetails.getPassword();
-			this.authorities = userDetails.getAuthorities();
-			return this;
-		}
+    public ReportPortalUserBuilder withPassword(String password) {
+      this.password = password;
+      return this;
+    }
 
-		public ReportPortalUserBuilder withUserId(Long userId) {
-			this.userId = userId;
-			return this;
-		}
+    public ReportPortalUserBuilder withAuthorities(
+        Collection<? extends GrantedAuthority> authorities) {
+      this.authorities = authorities;
+      return this;
+    }
 
-		public ReportPortalUserBuilder withUserRole(UserRole userRole) {
-			this.userRole = userRole;
-			return this;
-		}
+    public ReportPortalUserBuilder withUserDetails(UserDetails userDetails) {
+      this.username = userDetails.getUsername();
+      this.password = userDetails.getPassword();
+      this.authorities = userDetails.getAuthorities();
+      return this;
+    }
 
-		public ReportPortalUserBuilder withEmail(String email) {
-			this.email = email;
-			return this;
-		}
+    public ReportPortalUserBuilder withUserId(Long userId) {
+      this.userId = userId;
+      return this;
+    }
 
-		public ReportPortalUserBuilder withProjectDetails(Map<String, ProjectDetails> projectDetails) {
-			this.projectDetails = projectDetails;
-			return this;
-		}
+    public ReportPortalUserBuilder withUserRole(UserRole userRole) {
+      this.userRole = userRole;
+      return this;
+    }
 
-		public ReportPortalUser fromUser(com.epam.ta.reportportal.entity.user.User user) {
-			this.username = user.getLogin();
-			this.email = user.getPassword();
-			this.userId = user.getId();
-			this.userRole = user.getRole();
-			this.password = ofNullable(user.getPassword()).orElse("");
-			this.authorities = Collections.singletonList(new SimpleGrantedAuthority(user.getRole().getAuthority()));
-			this.projectDetails = user.getProjects().stream().collect(Collectors.toMap(
-					it -> it.getProject().getName(),
-					it -> ProjectDetails.builder()
-							.withProjectId(it.getProject().getId())
-							.withProjectRole(it.getProjectRole().name())
-							.withProjectName(it.getProject().getName())
-							.build()
-			));
-			return build();
-		}
+    public ReportPortalUserBuilder withEmail(String email) {
+      this.email = email;
+      return this;
+    }
 
-		public ReportPortalUser build() {
-			return new ReportPortalUser(username, password, authorities, userId, userRole, projectDetails, email);
-		}
-	}
+    public ReportPortalUserBuilder withProjectDetails(Map<String, ProjectDetails> projectDetails) {
+      this.projectDetails = projectDetails;
+      return this;
+    }
+
+    public ReportPortalUser fromUser(com.epam.ta.reportportal.entity.user.User user) {
+      this.username = user.getLogin();
+      this.email = user.getPassword();
+      this.userId = user.getId();
+      this.userRole = user.getRole();
+      this.password = ofNullable(user.getPassword()).orElse("");
+      this.authorities = Collections.singletonList(
+          new SimpleGrantedAuthority(user.getRole().getAuthority()));
+      this.projectDetails = user.getProjects().stream().collect(Collectors.toMap(
+          it -> it.getProject().getName(),
+          it -> ProjectDetails.builder()
+              .withProjectId(it.getProject().getId())
+              .withProjectRole(it.getProjectRole().name())
+              .withProjectName(it.getProject().getName())
+              .build()
+      ));
+      return build();
+    }
+
+    public ReportPortalUser build() {
+      return new ReportPortalUser(username, password, authorities, userId, userRole, projectDetails,
+          email);
+    }
+  }
 }

@@ -20,22 +20,24 @@ import com.epam.ta.reportportal.commons.BinaryDataMetaInfo;
 import com.epam.ta.reportportal.commons.ReportPortalUser;
 import com.epam.ta.reportportal.entity.attachment.AttachmentMetaInfo;
 import com.epam.ta.reportportal.entity.attachment.BinaryData;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.util.Optional;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
 public interface AttachmentBinaryDataService {
 
-	Optional<BinaryDataMetaInfo> saveAttachment(AttachmentMetaInfo attachmentMetaInfo, MultipartFile file);
+  Optional<BinaryDataMetaInfo> saveAttachment(AttachmentMetaInfo attachmentMetaInfo,
+      MultipartFile file);
 
-	void saveFileAndAttachToLog(MultipartFile file, AttachmentMetaInfo attachmentMetaInfo);
+  void saveFileAndAttachToLog(MultipartFile file, AttachmentMetaInfo attachmentMetaInfo);
 
-	void attachToLog(BinaryDataMetaInfo binaryDataMetaInfo, AttachmentMetaInfo attachmentMetaInfo);
+  void attachToLog(BinaryDataMetaInfo binaryDataMetaInfo, AttachmentMetaInfo attachmentMetaInfo);
 
-	BinaryData load(Long fileId, ReportPortalUser.ProjectDetails projectDetails);
+  BinaryData load(Long fileId, ReportPortalUser.ProjectDetails projectDetails);
 
-	void delete(String fileId);
+  void delete(String fileId);
+
+  void deleteAllByProjectId(Long projectId);
 }

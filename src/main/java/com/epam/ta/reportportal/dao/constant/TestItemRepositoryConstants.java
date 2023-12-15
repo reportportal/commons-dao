@@ -21,15 +21,15 @@ package com.epam.ta.reportportal.dao.constant;
  */
 public final class TestItemRepositoryConstants {
 
-	public static final String LAUNCH_ID = "launch_id";
-	public static final String ITEM_ID = "item_id";
-	public static final String HAS_CHILDREN = "has_children";
-	public static final String RETRIES_TABLE = "retries";
-	public static final String HAS_CONTENT = "hasContent";
-	public static final String ATTACHMENTS_COUNT = "attachmentsCount";
-	public static final String NESTED = "nested";
+  public static final String LAUNCH_ID = "launch_id";
+  public static final String ITEM_ID = "item_id";
+  public static final String HAS_CHILDREN = "has_children";
+  public static final String RETRIES_TABLE = "retries";
+  public static final String HAS_CONTENT = "hasContent";
+  public static final String ATTACHMENTS_COUNT = "attachmentsCount";
+  public static final String NESTED = "nested";
 
-	private TestItemRepositoryConstants() {
-		//static only
-	}
+  private TestItemRepositoryConstants() {
+    //static only
+  }
 }

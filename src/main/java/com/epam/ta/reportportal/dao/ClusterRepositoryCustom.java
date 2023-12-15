@@ -1,7 +1,6 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.cluster.Cluster;
-
 import java.util.Set;
 
 /**
@@ -9,5 +8,5 @@ import java.util.Set;
  */
 public interface ClusterRepositoryCustom {
 
-	int saveClusterTestItems(Cluster cluster, Set<Long> itemIds);
+  int saveClusterTestItems(Cluster cluster, Set<Long> itemIds);
 }

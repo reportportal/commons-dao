@@ -17,7 +17,6 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.attribute.Attribute;
-
 import java.util.Set;
 
 /**
@@ -25,5 +24,5 @@ import java.util.Set;
  */
 public interface AttributeRepositoryCustom {
 
-	Set<Attribute> getDefaultProjectAttributes();
+  Set<Attribute> getDefaultProjectAttributes();
 }

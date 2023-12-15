@@ -25,7 +25,6 @@ import com.google.common.collect.Lists;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -38,74 +37,80 @@ import static org.junit.jupiter.api.Assertions.*;
 @Sql("/db/fill/shareable/shareable-fill.sql")
 class UserFilterRepositoryTest extends BaseTest {
 
-	@Autowired
-	private UserFilterRepository userFilterRepository;
+  @Autowired
+  private UserFilterRepository userFilterRepository;
 
-	@Test
-	public void shouldFindByIdAndProjectIdWhenExists() {
-		Optional<UserFilter> userFilter = userFilterRepository.findByIdAndProjectId(1L, 1L);
+  @Test
+  public void shouldFindByIdAndProjectIdWhenExists() {
+    Optional<UserFilter> userFilter = userFilterRepository.findByIdAndProjectId(1L, 1L);
 
-		assertTrue(userFilter.isPresent());
-	}
+    assertTrue(userFilter.isPresent());
+  }
 
-	@Test
-	public void shouldNotFindByIdAndProjectIdWhenIdNotExists() {
-		Optional<UserFilter> userFilter = userFilterRepository.findByIdAndProjectId(55L, 1L);
+  @Test
+  public void shouldNotFindByIdAndProjectIdWhenIdNotExists() {
+    Optional<UserFilter> userFilter = userFilterRepository.findByIdAndProjectId(55L, 1L);
 
-		assertFalse(userFilter.isPresent());
-	}
+    assertFalse(userFilter.isPresent());
+  }
 
-	@Test
-	public void shouldNotFindByIdAndProjectIdWhenProjectIdNotExists() {
-		Optional<UserFilter> userFilter = userFilterRepository.findByIdAndProjectId(5L, 11L);
+  @Test
+  public void shouldNotFindByIdAndProjectIdWhenProjectIdNotExists() {
+    Optional<UserFilter> userFilter = userFilterRepository.findByIdAndProjectId(5L, 11L);
 
-		assertFalse(userFilter.isPresent());
-	}
+    assertFalse(userFilter.isPresent());
+  }
 
-	@Test
-	public void shouldNotFindByIdAndProjectIdWhenIdAndProjectIdNotExist() {
-		Optional<UserFilter> userFilter = userFilterRepository.findByIdAndProjectId(55L, 11L);
+  @Test
+  public void shouldNotFindByIdAndProjectIdWhenIdAndProjectIdNotExist() {
+    Optional<UserFilter> userFilter = userFilterRepository.findByIdAndProjectId(55L, 11L);
 
-		assertFalse(userFilter.isPresent());
-	}
+    assertFalse(userFilter.isPresent());
+  }
 
-	@Test
-	public void shouldFindByIdsAndProjectIdWhenExists() {
-		List<UserFilter> userFilters = userFilterRepository.findAllByIdInAndProjectId(Lists.newArrayList(1L, 2L), 1L);
+  @Test
+  public void shouldFindByIdsAndProjectIdWhenExists() {
+    List<UserFilter> userFilters = userFilterRepository.findAllByIdInAndProjectId(
+        Lists.newArrayList(1L, 2L), 1L);
 
-		assertNotNull(userFilters);
-		assertEquals(2L, userFilters.size());
-	}
+    assertNotNull(userFilters);
+    assertEquals(2L, userFilters.size());
+  }
 
-	@Test
-	public void shouldNotFindByIdsAndProjectIdWhenProjectIdNotExists() {
-		List<UserFilter> userFilters = userFilterRepository.findAllByIdInAndProjectId(Lists.newArrayList(1L, 2L), 2L);
+  @Test
+  public void shouldNotFindByIdsAndProjectIdWhenProjectIdNotExists() {
+    List<UserFilter> userFilters = userFilterRepository.findAllByIdInAndProjectId(
+        Lists.newArrayList(1L, 2L), 2L);
 
-		assertNotNull(userFilters);
-		assertTrue(userFilters.isEmpty());
-	}
+    assertNotNull(userFilters);
+    assertTrue(userFilters.isEmpty());
+  }
 
-	@Test
-	void existsByNameAndOwnerAndProjectIdTest() {
-		assertTrue(userFilterRepository.existsByNameAndOwnerAndProjectId("Admin Filter", "superadmin", 1L));
-		assertTrue(userFilterRepository.existsByNameAndOwnerAndProjectId("Default Shared Filter", "default", 2L));
-		assertFalse(userFilterRepository.existsByNameAndOwnerAndProjectId("DEMO_FILTER", "yahoo", 1L));
-		assertFalse(userFilterRepository.existsByNameAndOwnerAndProjectId("Admin Filter", "superadmin", 2L));
-	}
+  @Test
+  void existsByNameAndOwnerAndProjectIdTest() {
+    assertTrue(
+        userFilterRepository.existsByNameAndOwnerAndProjectId("Admin Filter", "superadmin", 1L));
+    assertTrue(
+        userFilterRepository.existsByNameAndOwnerAndProjectId("Default Shared Filter", "default",
+            2L));
+    assertFalse(userFilterRepository.existsByNameAndOwnerAndProjectId("DEMO_FILTER", "yahoo", 1L));
+    assertFalse(
+        userFilterRepository.existsByNameAndOwnerAndProjectId("Admin Filter", "superadmin", 2L));
+  }
 
-	@Test
-	void findAllByProjectId() {
-		final Long projectId = 1L;
-		final List<UserFilter> filters = userFilterRepository.findAllByProjectId(projectId);
-		assertNotNull(filters, "Filters not found");
-		assertTrue(!filters.isEmpty(), "Filters should not be empty");
-		filters.forEach(it -> assertEquals(projectId, it.getProject().getId()));
-	}
+  @Test
+  void findAllByProjectId() {
+    final Long projectId = 1L;
+    final List<UserFilter> filters = userFilterRepository.findAllByProjectId(projectId);
+    assertNotNull(filters, "Filters not found");
+    assertTrue(!filters.isEmpty(), "Filters should not be empty");
+    filters.forEach(it -> assertEquals(projectId, it.getProject().getId()));
+  }
 
-	private Filter buildDefaultFilter() {
-		return Filter.builder()
-				.withTarget(UserFilter.class)
-				.withCondition(new FilterCondition(Condition.LOWER_THAN, false, "1000", CRITERIA_ID))
-				.build();
-	}
+  private Filter buildDefaultFilter() {
+    return Filter.builder()
+        .withTarget(UserFilter.class)
+        .withCondition(new FilterCondition(Condition.LOWER_THAN, false, "1000", CRITERIA_ID))
+        .build();
+  }
 }

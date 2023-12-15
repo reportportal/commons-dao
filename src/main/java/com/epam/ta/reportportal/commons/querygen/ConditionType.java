@@ -22,6 +22,6 @@ package com.epam.ta.reportportal.commons.querygen;
  * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
  */
 enum ConditionType {
-	WHERE,
-	HAVING
+  WHERE,
+  HAVING
 }

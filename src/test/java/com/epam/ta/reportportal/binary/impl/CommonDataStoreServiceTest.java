@@ -28,6 +28,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.Random;
@@ -35,6 +36,8 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -56,33 +59,53 @@ class CommonDataStoreServiceTest extends BaseTest {
   @Value("${datastore.path:/data/store}")
   private String storageRootPath;
 
+  @Value("${datastore.bucketPrefix:prj-}")
+  private String bucketPrefix;
+
+  @Value("${datastore.bucketPostfix:}")
+  private String bucketPostfix;
+  private static final String BUCKET_NAME = "bucket";
+
+  private String getModifiedPath(String originalPath) {
+    String bucketPath = bucketPrefix + BUCKET_NAME + bucketPostfix;
+    return originalPath.replace(BUCKET_NAME, bucketPath);
+  }
+
   @Test
   void saveTest() throws IOException {
     CommonsMultipartFile multipartFile = getMultipartFile("meh.jpg");
     String fileId =
-        dataStoreService.save(multipartFile.getOriginalFilename(), multipartFile.getInputStream());
+        dataStoreService.save(BUCKET_NAME + File.separator + multipartFile.getOriginalFilename(),
+            multipartFile.getInputStream()
+        );
     assertNotNull(fileId);
-    assertTrue(Files.exists(Paths.get(storageRootPath, dataEncoder.decode(fileId))));
+    String decodedPath = getModifiedPath(dataEncoder.decode(fileId));
+    Path filePath = Paths.get(storageRootPath, decodedPath);
+    assertTrue(filePath.toFile().exists(), "File " + filePath + " does not exist");
     dataStoreService.delete(fileId);
   }
 
   @Test
   void saveThumbnailTest() throws IOException {
     CommonsMultipartFile multipartFile = getMultipartFile("meh.jpg");
-    String fileId = dataStoreService.saveThumbnail(multipartFile.getOriginalFilename(),
+    String fileId = dataStoreService.saveThumbnail(
+        BUCKET_NAME + File.separator + multipartFile.getOriginalFilename(),
         multipartFile.getInputStream()
     );
     assertNotNull(fileId);
-    assertTrue(Files.exists(Paths.get(storageRootPath, dataEncoder.decode(fileId))));
+    String decodedPath = getModifiedPath(dataEncoder.decode(fileId));
+    Path filePath = Paths.get(storageRootPath, decodedPath);
+    assertTrue(filePath.toFile().exists(), "File " + filePath + " does not exist");
     dataStoreService.delete(fileId);
   }
 
   @Test
   void saveAndLoadTest() throws IOException {
     CommonsMultipartFile multipartFile = getMultipartFile("meh.jpg");
-    String fileId = dataStoreService.saveThumbnail(multipartFile.getOriginalFilename(),
-        multipartFile.getInputStream()
-    );
+    String fileId =
+        dataStoreService.saveThumbnail(BUCKET_NAME + "/" + multipartFile.getOriginalFilename(),
+            multipartFile.getInputStream()
+        );
 
     Optional<InputStream> content = dataStoreService.load(fileId);
 
@@ -94,14 +117,14 @@ class CommonDataStoreServiceTest extends BaseTest {
   void saveAndDeleteTest() throws IOException {
     CommonsMultipartFile multipartFile = getMultipartFile("meh.jpg");
     Random random = new Random();
-    String fileId =
-        dataStoreService.save(random.nextLong() + "/" + multipartFile.getOriginalFilename(),
-            multipartFile.getInputStream()
-        );
+    String fileId = dataStoreService.save(
+        BUCKET_NAME + "/" + random.nextLong() + "/" + multipartFile.getOriginalFilename(),
+        multipartFile.getInputStream()
+    );
 
     dataStoreService.delete(fileId);
 
-    assertFalse(Files.exists(Paths.get(dataEncoder.decode(fileId))));
+    assertFalse(Files.exists(Paths.get(dataEncoder.decode(getModifiedPath(fileId)))));
   }
 
   public static CommonsMultipartFile getMultipartFile(String path) throws IOException {

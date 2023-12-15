@@ -24,31 +24,31 @@ import java.util.List;
  */
 public class TestItemHistory implements Serializable {
 
-	private String groupingField;
+  private String groupingField;
 
-	private List<Long> itemIds;
+  private List<Long> itemIds;
 
-	public TestItemHistory() {
-	}
+  public TestItemHistory() {
+  }
 
-	public TestItemHistory(String groupingField, List<Long> itemIds) {
-		this.groupingField = groupingField;
-		this.itemIds = itemIds;
-	}
+  public TestItemHistory(String groupingField, List<Long> itemIds) {
+    this.groupingField = groupingField;
+    this.itemIds = itemIds;
+  }
 
-	public String getGroupingField() {
-		return groupingField;
-	}
+  public String getGroupingField() {
+    return groupingField;
+  }
 
-	public void setGroupingField(String groupingField) {
-		this.groupingField = groupingField;
-	}
+  public void setGroupingField(String groupingField) {
+    this.groupingField = groupingField;
+  }
 
-	public List<Long> getItemIds() {
-		return itemIds;
-	}
+  public List<Long> getItemIds() {
+    return itemIds;
+  }
 
-	public void setItemIds(List<Long> itemIds) {
-		this.itemIds = itemIds;
-	}
+  public void setItemIds(List<Long> itemIds) {
+    this.itemIds = itemIds;
+  }
 }

@@ -28,6 +28,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
@@ -39,6 +42,9 @@ import org.hibernate.annotations.TypeDef;
 @Entity
 @Table(name = "activity", schema = "public")
 @TypeDef(name = "activityDetails", typeClass = ActivityDetails.class)
+@Getter
+@Setter
+@ToString
 public class Activity implements Serializable {
 
   @Id
@@ -100,125 +106,6 @@ public class Activity implements Serializable {
     this.isSavedEvent = true;
   }
 
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public LocalDateTime getCreatedAt() {
-    return createdAt;
-  }
-
-  public void setCreatedAt(LocalDateTime createdAt) {
-    this.createdAt = createdAt;
-  }
-
-  public EventAction getAction() {
-    return action;
-  }
-
-  public void setAction(EventAction action) {
-    this.action = action;
-  }
-
-  public String getEventName() {
-    return eventName;
-  }
-
-  public void setEventName(String eventName) {
-    this.eventName = eventName;
-  }
-
-  public EventPriority getPriority() {
-    return priority;
-  }
-
-  public void setPriority(EventPriority priority) {
-    this.priority = priority;
-  }
-
-  public Long getObjectId() {
-    return objectId;
-  }
-
-  public void setObjectId(Long objectId) {
-    this.objectId = objectId;
-  }
-
-  public String getObjectName() {
-    return objectName;
-  }
-
-  public void setObjectName(String objectName) {
-    this.objectName = objectName;
-  }
-
-  public EventObject getObjectType() {
-    return objectType;
-  }
-
-  public void setObjectType(EventObject objectType) {
-    this.objectType = objectType;
-  }
-
-  public Long getProjectId() {
-    return projectId;
-  }
-
-  public void setProjectId(Long projectId) {
-    this.projectId = projectId;
-  }
-
-  public String getProjectName() {
-    return projectName;
-  }
-
-  public void setProjectName(String projectName) {
-    this.projectName = projectName;
-  }
-
-  public ActivityDetails getDetails() {
-    return details;
-  }
-
-  public void setDetails(ActivityDetails details) {
-    this.details = details;
-  }
-
-  public Long getSubjectId() {
-    return subjectId;
-  }
-
-  public void setSubjectId(Long subjectId) {
-    this.subjectId = subjectId;
-  }
-
-  public String getSubjectName() {
-    return subjectName;
-  }
-
-  public void setSubjectName(String subjectName) {
-    this.subjectName = subjectName;
-  }
-
-  public EventSubject getSubjectType() {
-    return subjectType;
-  }
-
-  public void setSubjectType(EventSubject subjectType) {
-    this.subjectType = subjectType;
-  }
-
-  public boolean isSavedEvent() {
-    return isSavedEvent;
-  }
-
-  public void setSavedEvent(boolean savedEvent) {
-    isSavedEvent = savedEvent;
-  }
 
   @Override
   public boolean equals(Object o) {
@@ -237,14 +124,4 @@ public class Activity implements Serializable {
     return Objects.hash(id);
   }
 
-  @Override
-  public String toString() {
-    return "Activity{" + "createdAt=" + createdAt
-        + ", action=" + action + ", eventName='" + eventName + '\''
-        + ", priority=" + priority + ", objectId=" + objectId
-        + ", objectName='" + objectName + '\'' + ", objectType="
-        + objectType + ", projectId=" + projectId + ", details="
-        + details + ", subjectId=" + subjectId + ", subjectName='"
-        + subjectName + '\'' + ", subjectType=" + subjectType + '}';
-  }
 }

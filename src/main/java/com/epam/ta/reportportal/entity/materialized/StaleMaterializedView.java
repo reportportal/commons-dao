@@ -7,34 +7,34 @@ import java.time.LocalDateTime;
  */
 public class StaleMaterializedView {
 
-	private Long id;
-	private String name;
-	private LocalDateTime creationDate;
+  private Long id;
+  private String name;
+  private LocalDateTime creationDate;
 
-	public StaleMaterializedView() {
-	}
+  public StaleMaterializedView() {
+  }
 
-	public Long getId() {
-		return id;
-	}
+  public Long getId() {
+    return id;
+  }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-	public String getName() {
-		return name;
-	}
+  public String getName() {
+    return name;
+  }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+  public void setName(String name) {
+    this.name = name;
+  }
 
-	public LocalDateTime getCreationDate() {
-		return creationDate;
-	}
+  public LocalDateTime getCreationDate() {
+    return creationDate;
+  }
 
-	public void setCreationDate(LocalDateTime creationDate) {
-		this.creationDate = creationDate;
-	}
+  public void setCreationDate(LocalDateTime creationDate) {
+    this.creationDate = creationDate;
+  }
 }

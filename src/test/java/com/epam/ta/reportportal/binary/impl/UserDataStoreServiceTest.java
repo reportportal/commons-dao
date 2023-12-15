@@ -45,48 +45,71 @@ class UserDataStoreServiceTest extends BaseTest {
   @Value("${datastore.path:/data/store}")
   private String storageRootPath;
 
+  @Value("${datastore.bucketPrefix:prj-}")
+  private String bucketPrefix;
+
+  @Value("${datastore.bucketPostfix:}")
+  private String bucketPostfix;
+
+  private static final String BUCKET_NAME = "bucket";
+
   private static Random random = new Random();
 
   @Test
   void saveLoadAndDeleteTest() throws IOException {
     InputStream inputStream = new ClassPathResource("meh.jpg").getInputStream();
 
-    String fileId = userDataStoreService.save(random.nextLong() + "meh.jpg", inputStream);
+    String bucketPath = bucketPrefix + BUCKET_NAME + bucketPostfix;
+
+    String fileId =
+        userDataStoreService.save(BUCKET_NAME + "/" + random.nextLong() + "meh.jpg", inputStream);
 
     Optional<InputStream> loadedData = userDataStoreService.load(fileId);
 
     assertTrue(loadedData.isPresent());
-    assertTrue(
-        Files.exists(Paths.get(storageRootPath, userDataStoreService.dataEncoder.decode(fileId))));
+    try (InputStream ignored = loadedData.get()) {
+      String decodedPath = userDataStoreService.dataEncoder.decode(fileId);
+      decodedPath = decodedPath.replace(BUCKET_NAME, bucketPath);
+      assertTrue(Files.exists(Paths.get(storageRootPath, decodedPath)));
+    }
 
     userDataStoreService.delete(fileId);
 
     ReportPortalException exception =
         assertThrows(ReportPortalException.class, () -> userDataStoreService.load(fileId));
     assertEquals("Unable to load binary data by id 'Unable to find file'", exception.getMessage());
-    assertFalse(
-        Files.exists(Paths.get(storageRootPath, userDataStoreService.dataEncoder.decode(fileId))));
+    String decodedPath = userDataStoreService.dataEncoder.decode(fileId);
+    decodedPath = decodedPath.replace(BUCKET_NAME, bucketPath);
+    assertFalse(Files.exists(Paths.get(storageRootPath, decodedPath)));
   }
 
   @Test
   void saveLoadAndDeleteThumbnailTest() throws IOException {
     InputStream inputStream = new ClassPathResource("meh.jpg").getInputStream();
 
+    String bucketPath = bucketPrefix + BUCKET_NAME + bucketPostfix;
+
     String thumbnailId =
-        userDataStoreService.saveThumbnail(random.nextLong() + "thmbnail.jpg", inputStream);
+        userDataStoreService.saveThumbnail(BUCKET_NAME + "/" + random.nextLong() + "thmbnail.jpg",
+            inputStream
+        );
 
     Optional<InputStream> loadedData = userDataStoreService.load(thumbnailId);
 
     assertTrue(loadedData.isPresent());
-    assertTrue(Files.exists(
-        Paths.get(storageRootPath, userDataStoreService.dataEncoder.decode(thumbnailId))));
+    try (InputStream ignored = loadedData.get()) {
+      String decodedPath = userDataStoreService.dataEncoder.decode(thumbnailId);
+      decodedPath = decodedPath.replace(BUCKET_NAME, bucketPath);
+      assertTrue(Files.exists(Paths.get(storageRootPath, decodedPath)));
+    }
 
     userDataStoreService.delete(thumbnailId);
 
     ReportPortalException exception =
         assertThrows(ReportPortalException.class, () -> userDataStoreService.load(thumbnailId));
     assertEquals("Unable to load binary data by id 'Unable to find file'", exception.getMessage());
-    assertFalse(Files.exists(
-        Paths.get(storageRootPath, userDataStoreService.dataEncoder.decode(thumbnailId))));
+    String decodedPath = userDataStoreService.dataEncoder.decode(thumbnailId);
+    decodedPath = decodedPath.replace(BUCKET_NAME, bucketPath);
+    assertFalse(Files.exists(Paths.get(storageRootPath, decodedPath)));
   }
 }

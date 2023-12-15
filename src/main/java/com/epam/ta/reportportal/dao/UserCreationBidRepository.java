@@ -17,21 +17,25 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.user.UserCreationBid;
+import java.util.Date;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.Date;
-import java.util.Optional;
-
 /**
  * @author Ivan Budaev
  */
-public interface UserCreationBidRepository extends ReportPortalRepository<UserCreationBid, String>, UserCreationBidRepositoryCustom {
+public interface UserCreationBidRepository extends ReportPortalRepository<UserCreationBid, String>,
+    UserCreationBidRepositoryCustom {
 
-	Optional<UserCreationBid> findByEmail(String email);
+  @Query(value = "SELECT bid.* FROM user_creation_bid bid WHERE bid.uuid = :uuid AND (bid.metadata -> 'metadata'->>'type' = :type)", nativeQuery = true)
+  Optional<UserCreationBid> findByUuidAndType(@Param("uuid") String uuid,
+      @Param("type") String type);
 
-	@Modifying
-	@Query(value = "DELETE FROM UserCreationBid u WHERE  u.lastModified < :date")
-	int expireBidsOlderThan(@Param("date") Date date);
+  @Modifying
+  @Query(value = "DELETE FROM UserCreationBid u WHERE  u.lastModified < :date")
+  int expireBidsOlderThan(@Param("date") Date date);
+
+  Optional<UserCreationBid> findFirstByEmailOrderByLastModifiedDesc(String email);
 }

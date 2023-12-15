@@ -17,16 +17,16 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.bts.Ticket;
-
 import java.util.List;
 import java.util.Optional;
 
 /**
  * @author Pavel Bortnik
  */
-public interface TicketRepository extends ReportPortalRepository<Ticket, Long>, TicketRepositoryCustom {
+public interface TicketRepository extends ReportPortalRepository<Ticket, Long>,
+    TicketRepositoryCustom {
 
-	Optional<Ticket> findByTicketId(String ticketId);
+  Optional<Ticket> findByTicketId(String ticketId);
 
-	List<Ticket> findByTicketIdIn(List<String> ticketId);
+  List<Ticket> findByTicketIdIn(List<String> ticketId);
 }

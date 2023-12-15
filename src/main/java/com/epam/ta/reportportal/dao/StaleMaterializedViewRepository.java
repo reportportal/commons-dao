@@ -1,7 +1,6 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.materialized.StaleMaterializedView;
-
 import java.util.Optional;
 
 /**
@@ -9,7 +8,7 @@ import java.util.Optional;
  */
 public interface StaleMaterializedViewRepository {
 
-	Optional<StaleMaterializedView> findById(Long id);
+  Optional<StaleMaterializedView> findById(Long id);
 
-	StaleMaterializedView insert(StaleMaterializedView view);
+  StaleMaterializedView insert(StaleMaterializedView view);
 }

@@ -16,20 +16,21 @@
 
 package com.epam.ta.reportportal.dao;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.entity.bts.Ticket;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.jdbc.Sql;
-
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.jdbc.Sql;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
@@ -37,43 +38,46 @@ import static org.junit.jupiter.api.Assertions.*;
 @Sql("/db/fill/ticket/ticket-fill.sql")
 class TicketRepositoryTest extends BaseTest {
 
-	@Autowired
-	private TicketRepository repository;
+  @Autowired
+  private TicketRepository repository;
 
-	@Test
-	void findByTicketId() {
-		final String ticketId = "ticket_id_1";
+  @Test
+  void findByTicketId() {
+    final String ticketId = "ticket_id_1";
 
-		final Optional<Ticket> ticketOptional = repository.findByTicketId(ticketId);
+    final Optional<Ticket> ticketOptional = repository.findByTicketId(ticketId);
 
-		assertTrue(ticketOptional.isPresent(), "Ticket not found");
-		assertEquals(ticketId, ticketOptional.get().getTicketId(), "Incorrect ticket id");
-	}
+    assertTrue(ticketOptional.isPresent(), "Ticket not found");
+    assertEquals(ticketId, ticketOptional.get().getTicketId(), "Incorrect ticket id");
+  }
 
-	@Test
-	void findByTicketIdIn() {
-		List<String> ids = Arrays.asList("ticket_id_1", "ticket_id_3");
+  @Test
+  void findByTicketIdIn() {
+    List<String> ids = Arrays.asList("ticket_id_1", "ticket_id_3");
 
-		final List<Ticket> tickets = repository.findByTicketIdIn(ids);
+    final List<Ticket> tickets = repository.findByTicketIdIn(ids);
 
-		assertNotNull(tickets, "Tickets not found");
-		assertEquals(2, tickets.size(), "Incorrect tickets count");
-		assertThat(tickets.stream().map(Ticket::getTicketId).collect(Collectors.toList())).containsExactlyInAnyOrder(ids.get(0),
-				ids.get(1)
-		);
-	}
+    assertNotNull(tickets, "Tickets not found");
+    assertEquals(2, tickets.size(), "Incorrect tickets count");
+    assertThat(tickets.stream().map(Ticket::getTicketId)
+        .collect(Collectors.toList())).containsExactlyInAnyOrder(ids.get(0),
+        ids.get(1)
+    );
+  }
 
-	@Test
-	void deleteById() {
-		repository.deleteById(2L);
-		final List<Ticket> tickets = repository.findAll();
+  @Test
+  void deleteById() {
+    repository.deleteById(2L);
+    final List<Ticket> tickets = repository.findAll();
 
-		assertEquals(2, tickets.size());
-	}
+    assertEquals(2, tickets.size());
+  }
 
-	@Test
-	void findUniqueTicketsCountBefore() {
-		assertEquals(1, repository.findUniqueCountByProjectBefore(1L, LocalDateTime.now().minusDays(2)));
-		assertEquals(0, repository.findUniqueCountByProjectBefore(2L, LocalDateTime.now().minusDays(2)));
-	}
+  @Test
+  void findUniqueTicketsCountBefore() {
+    assertEquals(1,
+        repository.findUniqueCountByProjectBefore(1L, LocalDateTime.now().minusDays(2)));
+    assertEquals(0,
+        repository.findUniqueCountByProjectBefore(2L, LocalDateTime.now().minusDays(2)));
+  }
 }

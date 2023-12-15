@@ -16,11 +16,17 @@
 
 package com.epam.ta.reportportal.dao;
 
+import static com.epam.ta.reportportal.dao.util.ResultFetchers.USER_FILTER_FETCHER;
+
 import com.epam.ta.reportportal.commons.querygen.ConvertibleCondition;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,13 +34,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import static com.epam.ta.reportportal.dao.util.ResultFetchers.USER_FILTER_FETCHER;
 
 /**
  * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
@@ -49,9 +48,9 @@ public class UserFilterRepositoryCustomImpl implements UserFilterRepositoryCusto
 		this.dsl = dsl;
 	}
 
-	@Override
-	public List<UserFilter> findByFilter(Queryable filter) {
-		return USER_FILTER_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(
+  @Override
+  public List<UserFilter> findByFilter(Queryable filter) {
+    return USER_FILTER_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(
 				filter,
 				filter.getFilterConditions()
 						.stream()
@@ -60,10 +59,10 @@ public class UserFilterRepositoryCustomImpl implements UserFilterRepositoryCusto
 						.map(FilterCondition::getSearchCriteria)
 						.collect(Collectors.toSet())
 		).wrap().build()));
-	}
+  }
 
-	@Override
-	public Page<UserFilter> findByFilter(Queryable filter, Pageable pageable) {
+  @Override
+  public Page<UserFilter> findByFilter(Queryable filter, Pageable pageable) {
 		Set<String> fields = filter.getFilterConditions()
 				.stream()
 				.map(ConvertibleCondition::getAllConditions)
@@ -77,6 +76,6 @@ public class UserFilterRepositoryCustomImpl implements UserFilterRepositoryCusto
 				.wrap()
 				.withWrapperSort(pageable.getSort())
 				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter, fields).build()));
-	}
+  }
 
 }

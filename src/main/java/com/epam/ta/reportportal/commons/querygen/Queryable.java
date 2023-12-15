@@ -17,10 +17,9 @@
 package com.epam.ta.reportportal.commons.querygen;
 
 import com.epam.ta.reportportal.commons.querygen.query.QuerySupplier;
-import org.jooq.Condition;
-
 import java.util.List;
 import java.util.Map;
+import org.jooq.Condition;
 
 /**
  * Can be used to generate SQL queries with help of JOOQ
@@ -30,30 +29,30 @@ import java.util.Map;
  */
 public interface Queryable {
 
-	/**
-	 * Builds a query with lazy joins
-	 *
-	 * @return {@link QuerySupplier}
-	 */
-	QuerySupplier toQuery();
+  /**
+   * Builds a query with lazy joins
+   *
+   * @return {@link QuerySupplier}
+   */
+  QuerySupplier toQuery();
 
-	/**
-	 * Build a map where key is {@link ConditionType} and value is a composite {@link Condition}
-	 * that should be applied either in {@link ConditionType#HAVING} or {@link ConditionType#WHERE} clause
-	 *
-	 * @return Resulted map
-	 */
-	Map<ConditionType, Condition> toCondition();
+  /**
+   * Build a map where key is {@link ConditionType} and value is a composite {@link Condition} that
+   * should be applied either in {@link ConditionType#HAVING} or {@link ConditionType#WHERE} clause
+   *
+   * @return Resulted map
+   */
+  Map<ConditionType, Condition> toCondition();
 
-	/**
-	 * @return {@link FilterTarget}
-	 */
-	FilterTarget getTarget();
+  /**
+   * @return {@link FilterTarget}
+   */
+  FilterTarget getTarget();
 
-	/**
-	 * @return Set of {@link FilterCondition}
-	 */
-	List<ConvertibleCondition> getFilterConditions();
+  /**
+   * @return Set of {@link FilterCondition}
+   */
+  List<ConvertibleCondition> getFilterConditions();
 
-	boolean replaceSearchCriteria(FilterCondition oldCondition, FilterCondition newCondition);
+  boolean replaceSearchCriteria(FilterCondition oldCondition, FilterCondition newCondition);
 }

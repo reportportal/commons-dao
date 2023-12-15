@@ -16,60 +16,59 @@
 
 package com.epam.ta.reportportal.commons;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static java.util.Optional.ofNullable;
 
+import com.google.common.base.Preconditions;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
-import static java.util.Optional.ofNullable;
-
 /**
- * Some useful utils for working with entities<br>
- * For example: usernames, project names, tags, etc.
+ * Some useful utils for working with entities<br> For example: usernames, project names, tags,
+ * etc.
  *
  * @author Andrei Varabyeu
  */
 public class EntityUtils {
 
-	private static final String OLD_SEPARATOR = ",";
-	private static final String NEW_SEPARATOR = "_";
+  public static final Function<Date, LocalDateTime> TO_LOCAL_DATE_TIME = date -> ofNullable(
+      date).map(d -> LocalDateTime.ofInstant(d.toInstant(),
+      ZoneOffset.UTC
+  )).orElse(null);
+  public static final Function<LocalDateTime, Date> TO_DATE = localDateTime -> ofNullable(
+      localDateTime).map(l -> Date.from(l.atZone(
+      ZoneOffset.UTC).toInstant())).orElse(null);
+  /**
+   * Remove leading and trailing spaces from list of string
+   */
+  public static final Function<String, String> TRIM_FUNCTION = it -> ofNullable(it).map(
+      String::trim).orElse(null);
+  public static final Predicate<String> NOT_EMPTY = s -> !isNullOrEmpty(s);
+  private static final String OLD_SEPARATOR = ",";
+  private static final String NEW_SEPARATOR = "_";
+  /**
+   * Convert declined symbols on allowed for WS and UI
+   */
+  public static final Function<String, String> REPLACE_SEPARATOR = s -> ofNullable(s).map(
+          it -> it.replace(OLD_SEPARATOR, NEW_SEPARATOR))
+      .orElse(null);
 
-	private EntityUtils() {
-		//static only
-	}
+  private EntityUtils() {
+    //static only
+  }
 
-	public static final Function<Date, LocalDateTime> TO_LOCAL_DATE_TIME = date -> ofNullable(date).map(d -> LocalDateTime.ofInstant(d.toInstant(),
-			ZoneOffset.UTC
-	)).orElse(null);
+  /**
+   * Normalize any ID for database ID fields, for example
+   *
+   * @param id ID to normalize
+   * @return String
+   */
 
-	public static final Function<LocalDateTime, Date> TO_DATE = localDateTime -> ofNullable(localDateTime).map(l -> Date.from(l.atZone(
-			ZoneOffset.UTC).toInstant())).orElse(null);
-
-	/**
-	 * Remove leading and trailing spaces from list of string
-	 */
-	public static final Function<String, String> TRIM_FUNCTION = it -> ofNullable(it).map(String::trim).orElse(null);
-	public static final Predicate<String> NOT_EMPTY = s -> !isNullOrEmpty(s);
-
-	/**
-	 * Convert declined symbols on allowed for WS and UI
-	 */
-	public static final Function<String, String> REPLACE_SEPARATOR = s -> ofNullable(s).map(it -> it.replace(OLD_SEPARATOR, NEW_SEPARATOR))
-			.orElse(null);
-
-	/**
-	 * Normalize any ID for database ID fields, for example
-	 *
-	 * @param id ID to normalize
-	 * @return String
-	 */
-
-	public static String normalizeId(String id) {
-		return Preconditions.checkNotNull(id, "Provided value shouldn't be null").toLowerCase();
-	}
+  public static String normalizeId(String id) {
+    return Preconditions.checkNotNull(id, "Provided value shouldn't be null").toLowerCase();
+  }
 
 }

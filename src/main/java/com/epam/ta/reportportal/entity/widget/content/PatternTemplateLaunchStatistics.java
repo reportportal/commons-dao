@@ -26,31 +26,31 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonInclude(Include.NON_NULL)
 public class PatternTemplateLaunchStatistics extends PatternTemplateStatistics {
 
-	@JsonProperty(value = "id")
-	private Long id;
+  @JsonProperty(value = "id")
+  private Long id;
 
-	@JsonProperty(value = "number")
-	private Integer number;
+  @JsonProperty(value = "number")
+  private Integer number;
 
-	public PatternTemplateLaunchStatistics(String name, Integer number, Long count, Long id) {
-		super(name, count);
-		this.number = number;
-		this.id = id;
-	}
+  public PatternTemplateLaunchStatistics(String name, Integer number, Long count, Long id) {
+    super(name, count);
+    this.number = number;
+    this.id = id;
+  }
 
-	public Long getId() {
-		return id;
-	}
+  public Long getId() {
+    return id;
+  }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-	public Integer getNumber() {
-		return number;
-	}
+  public Integer getNumber() {
+    return number;
+  }
 
-	public void setNumber(Integer number) {
-		this.number = number;
-	}
+  public void setNumber(Integer number) {
+    this.number = number;
+  }
 }

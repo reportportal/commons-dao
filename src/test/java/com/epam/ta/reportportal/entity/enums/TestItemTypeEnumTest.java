@@ -16,76 +16,78 @@
 
 package com.epam.ta.reportportal.entity.enums;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
 class TestItemTypeEnumTest {
 
-	private Map<TestItemTypeEnum, List<String>> allowed;
-	private List<String> disallowed;
+  private Map<TestItemTypeEnum, List<String>> allowed;
+  private List<String> disallowed;
 
-	@BeforeEach
-	void setUp() throws Exception {
-		allowed = Arrays.stream(TestItemTypeEnum.values())
-				.collect(Collectors.toMap(it -> it, it -> Arrays.asList(it.name(), it.name().toUpperCase(), it.name().toLowerCase())));
-		disallowed = Arrays.asList("noSuchIssueGroup", "", " ", null);
-	}
+  @BeforeEach
+  void setUp() throws Exception {
+    allowed = Arrays.stream(TestItemTypeEnum.values())
+        .collect(Collectors.toMap(it -> it,
+            it -> Arrays.asList(it.name(), it.name().toUpperCase(), it.name().toLowerCase())));
+    disallowed = Arrays.asList("noSuchIssueGroup", "", " ", null);
+  }
 
-	@Test
-	void fromValue() {
-		allowed.forEach((key, value) -> value.forEach(val -> {
-			final Optional<TestItemTypeEnum> optional = TestItemTypeEnum.fromValue(val);
-			assertTrue(optional.isPresent());
-			assertEquals(key, optional.get());
-		}));
-		disallowed.forEach(it -> assertFalse(TestItemTypeEnum.fromValue(it).isPresent()));
-	}
+  @Test
+  void fromValue() {
+    allowed.forEach((key, value) -> value.forEach(val -> {
+      final Optional<TestItemTypeEnum> optional = TestItemTypeEnum.fromValue(val);
+      assertTrue(optional.isPresent());
+      assertEquals(key, optional.get());
+    }));
+    disallowed.forEach(it -> assertFalse(TestItemTypeEnum.fromValue(it).isPresent()));
+  }
 
-	@Test
-	void sameLevel() {
-		final TestItemTypeEnum suite = TestItemTypeEnum.SUITE;
-		final TestItemTypeEnum story = TestItemTypeEnum.STORY;
-		final TestItemTypeEnum scenario = TestItemTypeEnum.SCENARIO;
-		final TestItemTypeEnum step = TestItemTypeEnum.STEP;
-		assertTrue(suite.sameLevel(story));
-		assertFalse(suite.sameLevel(scenario));
-		assertFalse(suite.sameLevel(step));
+  @Test
+  void sameLevel() {
+    final TestItemTypeEnum suite = TestItemTypeEnum.SUITE;
+    final TestItemTypeEnum story = TestItemTypeEnum.STORY;
+    final TestItemTypeEnum scenario = TestItemTypeEnum.SCENARIO;
+    final TestItemTypeEnum step = TestItemTypeEnum.STEP;
+    assertTrue(suite.sameLevel(story));
+    assertFalse(suite.sameLevel(scenario));
+    assertFalse(suite.sameLevel(step));
 
-	}
+  }
 
-	@Test
-	void higherThan() {
-		final TestItemTypeEnum suite = TestItemTypeEnum.SUITE;
-		final TestItemTypeEnum story = TestItemTypeEnum.STORY;
-		final TestItemTypeEnum scenario = TestItemTypeEnum.SCENARIO;
-		final TestItemTypeEnum step = TestItemTypeEnum.STEP;
-		assertTrue(suite.higherThan(step));
-		assertTrue(scenario.higherThan(step));
-		assertFalse(suite.higherThan(story));
-		assertFalse(step.higherThan(scenario));
-		assertFalse(scenario.higherThan(story));
-	}
+  @Test
+  void higherThan() {
+    final TestItemTypeEnum suite = TestItemTypeEnum.SUITE;
+    final TestItemTypeEnum story = TestItemTypeEnum.STORY;
+    final TestItemTypeEnum scenario = TestItemTypeEnum.SCENARIO;
+    final TestItemTypeEnum step = TestItemTypeEnum.STEP;
+    assertTrue(suite.higherThan(step));
+    assertTrue(scenario.higherThan(step));
+    assertFalse(suite.higherThan(story));
+    assertFalse(step.higherThan(scenario));
+    assertFalse(scenario.higherThan(story));
+  }
 
-	@Test
-	void lowerThan() {
-		final TestItemTypeEnum suite = TestItemTypeEnum.SUITE;
-		final TestItemTypeEnum story = TestItemTypeEnum.STORY;
-		final TestItemTypeEnum scenario = TestItemTypeEnum.SCENARIO;
-		final TestItemTypeEnum step = TestItemTypeEnum.STEP;
-		assertTrue(step.lowerThan(scenario));
-		assertTrue(scenario.lowerThan(story));
-		assertFalse(story.lowerThan(suite));
-		assertFalse(scenario.lowerThan(step));
-	}
+  @Test
+  void lowerThan() {
+    final TestItemTypeEnum suite = TestItemTypeEnum.SUITE;
+    final TestItemTypeEnum story = TestItemTypeEnum.STORY;
+    final TestItemTypeEnum scenario = TestItemTypeEnum.SCENARIO;
+    final TestItemTypeEnum step = TestItemTypeEnum.STEP;
+    assertTrue(step.lowerThan(scenario));
+    assertTrue(scenario.lowerThan(story));
+    assertFalse(story.lowerThan(suite));
+    assertFalse(scenario.lowerThan(step));
+  }
 }

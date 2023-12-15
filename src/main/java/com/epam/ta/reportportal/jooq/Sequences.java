@@ -104,11 +104,6 @@ public class Sequences {
     public static final Sequence<Long> LOG_ID_SEQ = new SequenceImpl<Long>("log_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
 
     /**
-     * The sequence <code>public.oauth_access_token_id_seq</code>
-     */
-    public static final Sequence<Long> OAUTH_ACCESS_TOKEN_ID_SEQ = new SequenceImpl<Long>("oauth_access_token_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
-
-    /**
      * The sequence <code>public.oauth_registration_restriction_id_seq</code>
      */
     public static final Sequence<Integer> OAUTH_REGISTRATION_RESTRICTION_ID_SEQ = new SequenceImpl<Integer>("oauth_registration_restriction_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.INTEGER.nullable(false));

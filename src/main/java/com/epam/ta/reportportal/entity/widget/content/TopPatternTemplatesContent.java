@@ -19,7 +19,6 @@ package com.epam.ta.reportportal.entity.widget.content;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Lists;
-
 import java.io.Serializable;
 import java.util.List;
 
@@ -29,32 +28,32 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TopPatternTemplatesContent implements Serializable {
 
-	@JsonProperty("attributeValue")
-	private String attributeValue;
+  @JsonProperty("attributeValue")
+  private String attributeValue;
 
-	@JsonProperty(value = "patterns")
-	private List<PatternTemplateStatistics> patternTemplates = Lists.newArrayList();
+  @JsonProperty(value = "patterns")
+  private List<PatternTemplateStatistics> patternTemplates = Lists.newArrayList();
 
-	public TopPatternTemplatesContent() {
-	}
+  public TopPatternTemplatesContent() {
+  }
 
-	public TopPatternTemplatesContent(String attributeValue) {
-		this.attributeValue = attributeValue;
-	}
+  public TopPatternTemplatesContent(String attributeValue) {
+    this.attributeValue = attributeValue;
+  }
 
-	public String getAttributeValue() {
-		return attributeValue;
-	}
+  public String getAttributeValue() {
+    return attributeValue;
+  }
 
-	public void setAttributeValue(String attributeValue) {
-		this.attributeValue = attributeValue;
-	}
+  public void setAttributeValue(String attributeValue) {
+    this.attributeValue = attributeValue;
+  }
 
-	public List<PatternTemplateStatistics> getPatternTemplates() {
-		return patternTemplates;
-	}
+  public List<PatternTemplateStatistics> getPatternTemplates() {
+    return patternTemplates;
+  }
 
-	public void setPatternTemplates(List<PatternTemplateStatistics> patternTemplates) {
-		this.patternTemplates = patternTemplates;
-	}
+  public void setPatternTemplates(List<PatternTemplateStatistics> patternTemplates) {
+    this.patternTemplates = patternTemplates;
+  }
 }

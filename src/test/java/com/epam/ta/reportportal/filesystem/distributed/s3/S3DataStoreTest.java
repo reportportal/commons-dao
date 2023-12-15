@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test;
  */
 class S3DataStoreTest {
 
-  private static final String FILE_PATH = "someFile";
+  private static final String FILE_NAME = "someFile";
   private static final String BUCKET_PREFIX = "prj-";
   private static final String BUCKET_POSTFIX = "-postfix";
   private static final String DEFAULT_BUCKET_NAME = "rp-bucket";
@@ -51,7 +51,8 @@ class S3DataStoreTest {
 
   private final S3DataStore s3DataStore =
       new S3DataStore(blobStore, BUCKET_PREFIX, BUCKET_POSTFIX, DEFAULT_BUCKET_NAME, REGION,
-          featureFlagHandler);
+          featureFlagHandler
+      );
 
   @Test
   void save() throws Exception {
@@ -61,21 +62,23 @@ class S3DataStoreTest {
         mock(BlobBuilder.PayloadBlobBuilder.class);
     Blob blobMock = mock(Blob.class);
 
+    String filePath = DEFAULT_BUCKET_NAME + "/" + FILE_NAME;
+
     when(inputStream.available()).thenReturn(ZERO);
-    when(payloadBlobBuilderMock.contentDisposition(FILE_PATH)).thenReturn(payloadBlobBuilderMock);
+    when(payloadBlobBuilderMock.contentDisposition(FILE_NAME)).thenReturn(payloadBlobBuilderMock);
     when(payloadBlobBuilderMock.contentLength(ZERO)).thenReturn(payloadBlobBuilderMock);
     when(payloadBlobBuilderMock.build()).thenReturn(blobMock);
     when(blobBuilderMock.payload(inputStream)).thenReturn(payloadBlobBuilderMock);
 
     when(blobStore.containerExists(any(String.class))).thenReturn(true);
-    when(blobStore.blobBuilder(FILE_PATH)).thenReturn(blobBuilderMock);
+    when(blobStore.blobBuilder(FILE_NAME)).thenReturn(blobBuilderMock);
 
     when(featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)).thenReturn(false);
 
-    s3DataStore.save(FILE_PATH, inputStream);
+    s3DataStore.save(filePath, inputStream);
 
-    verify(blobStore, times(1))
-        .putBlob(DEFAULT_BUCKET_NAME, blobMock);
+    verify(blobStore, times(1)).putBlob(
+        BUCKET_PREFIX + DEFAULT_BUCKET_NAME + BUCKET_POSTFIX, blobMock);
   }
 
   @Test
@@ -84,12 +87,15 @@ class S3DataStoreTest {
     Blob mockBlob = mock(Blob.class);
     Payload mockPayload = mock(Payload.class);
 
+    String filePath = DEFAULT_BUCKET_NAME + "/" + FILE_NAME;
+
     when(mockPayload.openStream()).thenReturn(inputStream);
     when(mockBlob.getPayload()).thenReturn(mockPayload);
 
-    when(blobStore.getBlob(DEFAULT_BUCKET_NAME,
-        FILE_PATH)).thenReturn(mockBlob);
-    InputStream loaded = s3DataStore.load(FILE_PATH);
+    when(blobStore.getBlob(BUCKET_PREFIX + DEFAULT_BUCKET_NAME + BUCKET_POSTFIX,
+        FILE_NAME
+    )).thenReturn(mockBlob);
+    InputStream loaded = s3DataStore.load(filePath);
 
     Assertions.assertEquals(inputStream, loaded);
   }
@@ -97,9 +103,11 @@ class S3DataStoreTest {
   @Test
   void delete() throws Exception {
 
-    s3DataStore.delete(FILE_PATH);
+    String filePath = DEFAULT_BUCKET_NAME + "/" + FILE_NAME;
 
-    verify(blobStore, times(1))
-        .removeBlob(DEFAULT_BUCKET_NAME, FILE_PATH);
+    s3DataStore.delete(filePath);
+
+    verify(blobStore, times(1)).removeBlob(
+        BUCKET_PREFIX + DEFAULT_BUCKET_NAME + BUCKET_POSTFIX, FILE_NAME);
   }
 }

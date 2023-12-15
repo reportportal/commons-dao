@@ -16,41 +16,43 @@
 
 package com.epam.ta.reportportal.entity;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
 class AnalyzeModeTest {
 
-	private Map<AnalyzeMode, List<String>> allowed;
-	private List<String> disallowed;
+  private Map<AnalyzeMode, List<String>> allowed;
+  private List<String> disallowed;
 
-	@BeforeEach
-	void setUp() throws Exception {
-		allowed = Arrays.stream(AnalyzeMode.values())
-				.collect(Collectors.toMap(it -> it,
-						it -> Arrays.asList(it.getValue(), it.getValue().toUpperCase(), it.getValue().toLowerCase())
-				));
-		disallowed = Arrays.asList("noSuchMode", "", " ", null);
-	}
+  @BeforeEach
+  void setUp() throws Exception {
+    allowed = Arrays.stream(AnalyzeMode.values())
+        .collect(Collectors.toMap(it -> it,
+            it -> Arrays.asList(it.getValue(), it.getValue().toUpperCase(),
+                it.getValue().toLowerCase())
+        ));
+    disallowed = Arrays.asList("noSuchMode", "", " ", null);
+  }
 
-	@Test
-	void fromString() {
-		allowed.forEach((key, value) -> value.forEach(val -> {
-			final Optional<AnalyzeMode> optional = AnalyzeMode.fromString(val);
-			assertTrue(optional.isPresent());
-			assertEquals(key, optional.get());
-		}));
-		disallowed.forEach(it -> assertFalse(AnalyzeMode.fromString(it).isPresent()));
-	}
+  @Test
+  void fromString() {
+    allowed.forEach((key, value) -> value.forEach(val -> {
+      final Optional<AnalyzeMode> optional = AnalyzeMode.fromString(val);
+      assertTrue(optional.isPresent());
+      assertEquals(key, optional.get());
+    }));
+    disallowed.forEach(it -> assertFalse(AnalyzeMode.fromString(it).isPresent()));
+  }
 }

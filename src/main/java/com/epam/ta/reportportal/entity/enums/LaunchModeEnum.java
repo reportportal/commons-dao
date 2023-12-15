@@ -17,7 +17,6 @@
 package com.epam.ta.reportportal.entity.enums;
 
 import com.epam.ta.reportportal.ws.model.launch.Mode;
-
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -25,14 +24,15 @@ import java.util.Optional;
  * @author Pavel Bortnik
  */
 public enum LaunchModeEnum {
-	DEFAULT,
-	DEBUG;
+  DEFAULT,
+  DEBUG;
 
-	public static Optional<LaunchModeEnum> findByName(String name) {
-		return Arrays.stream(LaunchModeEnum.values()).filter(type -> type.name().equalsIgnoreCase(name)).findAny();
-	}
+  public static Optional<LaunchModeEnum> findByName(String name) {
+    return Arrays.stream(LaunchModeEnum.values()).filter(type -> type.name().equalsIgnoreCase(name))
+        .findAny();
+  }
 
-	public static Optional<LaunchModeEnum> findByMode(Mode mode) {
-		return findByName(mode.name());
-	}
+  public static Optional<LaunchModeEnum> findByMode(Mode mode) {
+    return findByName(mode.name());
+  }
 }

@@ -40,7 +40,7 @@ VALUES (13, 'jira', 6, false, 'superadmin', now(), '{
   }
 }');
 
-INSERT INTO integration (id, name,  project_id, type, enabled, creator, creation_date, params)--integration id = 14 (superadmin project JIRA)
+INSERT INTO integration (id, name, project_id, type, enabled, creator, creation_date, params)--integration id = 14 (superadmin project JIRA)
 VALUES (14, 'jira1', 1, 6, false, 'superadmin', now(), '{
   "params": {
     "url" : "projectbts.com",

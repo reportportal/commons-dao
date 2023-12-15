@@ -18,31 +18,30 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.entity.activity.Activity;
-import org.springframework.data.domain.Sort;
-
 import java.time.Duration;
 import java.util.List;
+import org.springframework.data.domain.Sort;
 
 /**
  * @author Ihar Kahadouski
  */
 public interface ActivityRepositoryCustom extends FilterableRepository<Activity> {
 
-	/**
-	 * Delete outdated activities
-	 *
-	 * @param projectId ID of project
-	 * @param period    Time period
-	 */
-	void deleteModifiedLaterAgo(Long projectId, Duration period);
+  /**
+   * Delete outdated activities
+   *
+   * @param projectId ID of project
+   * @param period    Time period
+   */
+  void deleteModifiedLaterAgo(Long projectId, Duration period);
 
-	/**
-	 * Find limiting count of results
-	 *
-	 * @param filter Filter
-	 * @param sort   Sorting details
-	 * @param limit  Maximum number of returning items
-	 * @return Found activities
-	 */
-	List<Activity> findByFilterWithSortingAndLimit(Queryable filter, Sort sort, int limit);
+  /**
+   * Find limiting count of results
+   *
+   * @param filter Filter
+   * @param sort   Sorting details
+   * @param limit  Maximum number of returning items
+   * @return Found activities
+   */
+  List<Activity> findByFilterWithSortingAndLimit(Queryable filter, Sort sort, int limit);
 }

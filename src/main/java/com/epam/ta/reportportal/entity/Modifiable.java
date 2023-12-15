@@ -25,14 +25,14 @@ import java.util.Date;
  */
 public interface Modifiable {
 
-	String LAST_MODIFIED = "last_modified";
+  String LAST_MODIFIED = "last_modified";
 
-	String UPLOADED = "uploadDate";
+  String UPLOADED = "uploadDate";
 
-	/**
-	 * Last modified date
-	 *
-	 * @return
-	 */
-	Date getLastModified();
+  /**
+   * Last modified date
+   *
+   * @return
+   */
+  Date getLastModified();
 }

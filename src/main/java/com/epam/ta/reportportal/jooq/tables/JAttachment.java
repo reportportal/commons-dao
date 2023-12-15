@@ -21,7 +21,7 @@ import org.jooq.Identity;
 import org.jooq.Index;
 import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row9;
+import org.jooq.Row10;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -43,7 +43,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JAttachment extends TableImpl<JAttachmentRecord> {
 
-    private static final long serialVersionUID = -1988681978;
+    private static final long serialVersionUID = -453732948;
 
     /**
      * The reference instance of <code>public.attachment</code>
@@ -102,6 +102,11 @@ public class JAttachment extends TableImpl<JAttachmentRecord> {
      * The column <code>public.attachment.creation_date</code>.
      */
     public final TableField<JAttachmentRecord, Timestamp> CREATION_DATE = createField(DSL.name("creation_date"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "");
+
+    /**
+     * The column <code>public.attachment.file_name</code>.
+     */
+    public final TableField<JAttachmentRecord, String> FILE_NAME = createField(DSL.name("file_name"), org.jooq.impl.SQLDataType.VARCHAR(512), this, "");
 
     /**
      * Create a <code>public.attachment</code> table reference
@@ -188,11 +193,11 @@ public class JAttachment extends TableImpl<JAttachmentRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row9 type methods
+    // Row10 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row9<Long, String, String, String, Long, Long, Long, Long, Timestamp> fieldsRow() {
-        return (Row9) super.fieldsRow();
+    public Row10<Long, String, String, String, Long, Long, Long, Long, Timestamp, String> fieldsRow() {
+        return (Row10) super.fieldsRow();
     }
 }

@@ -26,30 +26,31 @@ import java.util.Optional;
  */
 public enum SendCase {
 
-	//@formatter:off
-	ALWAYS("always"),
-	FAILED("failed"),
-	TO_INVESTIGATE("toInvestigate"),
-	MORE_10("more10"),
-	MORE_20("more20"),
-	MORE_50("more50");
-	//@formatter:on
+  //@formatter:off
+  ALWAYS("always"),
+  FAILED("failed"),
+  TO_INVESTIGATE("toInvestigate"),
+  MORE_10("more10"),
+  MORE_20("more20"),
+  MORE_50("more50");
+  //@formatter:on
 
-	private final String value;
+  private final String value;
 
-	SendCase(String value) {
-		this.value = value;
-	}
+  SendCase(String value) {
+    this.value = value;
+  }
 
-	public static Optional<SendCase> findByName(String name) {
-		return Arrays.stream(SendCase.values()).filter(val -> val.getCaseString().equalsIgnoreCase(name)).findAny();
-	}
+  public static Optional<SendCase> findByName(String name) {
+    return Arrays.stream(SendCase.values())
+        .filter(val -> val.getCaseString().equalsIgnoreCase(name)).findAny();
+  }
 
-	public static boolean isPresent(String name) {
-		return findByName(name).isPresent();
-	}
+  public static boolean isPresent(String name) {
+    return findByName(name).isPresent();
+  }
 
-	public String getCaseString() {
-		return value;
-	}
+  public String getCaseString() {
+    return value;
+  }
 }

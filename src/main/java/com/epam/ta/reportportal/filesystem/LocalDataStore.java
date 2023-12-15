@@ -16,82 +16,143 @@
 
 package com.epam.ta.reportportal.filesystem;
 
+import com.epam.ta.reportportal.entity.enums.FeatureFlag;
 import com.epam.ta.reportportal.exception.ReportPortalException;
+import com.epam.ta.reportportal.filesystem.distributed.s3.StoredFile;
+import com.epam.ta.reportportal.util.FeatureFlagHandler;
 import com.epam.ta.reportportal.ws.model.ErrorType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.util.List;
 import java.util.Objects;
+import org.jclouds.blobstore.BlobStore;
+import org.jclouds.blobstore.domain.Blob;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Dzianis_Shybeka
  */
 public class LocalDataStore implements DataStore {
 
-	private static final Logger logger = LoggerFactory.getLogger(LocalDataStore.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(LocalDataStore.class);
+  private final BlobStore blobStore;
 
-	private final String storageRootPath;
+  private final FeatureFlagHandler featureFlagHandler;
 
-	public LocalDataStore(String storageRootPath) {
-		this.storageRootPath = storageRootPath;
-	}
+  private final String bucketPrefix;
 
-	@Override
-	public String save(String filePath, InputStream inputStream) {
+  private final String bucketPostfix;
 
-		try {
+  private final String defaultBucketName;
 
-			Path targetPath = Paths.get(storageRootPath, filePath);
-			Path targetDirectory = targetPath.getParent();
+  public LocalDataStore(BlobStore blobStore, FeatureFlagHandler featureFlagHandler,
+      String bucketPrefix, String bucketPostfix, String defaultBucketName) {
+    this.blobStore = blobStore;
+    this.featureFlagHandler = featureFlagHandler;
+    this.bucketPrefix = bucketPrefix;
+    this.bucketPostfix = Objects.requireNonNullElse(bucketPostfix, "");
+    this.defaultBucketName = defaultBucketName;
+  }
 
-			if (Objects.nonNull(targetDirectory) && !Files.isDirectory(targetDirectory)) {
-				Files.createDirectories(targetDirectory);
-			}
+  @Override
+  public String save(String filePath, InputStream inputStream) {
+    if (filePath == null) {
+      return "";
+    }
+    StoredFile storedFile = getStoredFile(filePath);
+    try {
+      if (!blobStore.containerExists(storedFile.getBucket())) {
+        blobStore.createContainerInLocation(null, storedFile.getBucket());
+      }
+      Blob objectBlob = blobStore.blobBuilder(storedFile.getFilePath()).payload(inputStream)
+          .contentDisposition(storedFile.getFilePath()).contentLength(inputStream.available())
+          .build();
+      blobStore.putBlob(storedFile.getBucket(), objectBlob);
+      return filePath;
+    } catch (IOException e) {
+      throw new ReportPortalException(ErrorType.INCORRECT_REQUEST, "Unable to save file", e);
+    }
+  }
 
-			logger.debug("Saving to: {} ", targetPath.toAbsolutePath());
+  @Override
+  public InputStream load(String filePath) {
+    if (filePath == null) {
+      throw new ReportPortalException(ErrorType.UNABLE_TO_LOAD_BINARY_DATA, "Unable to find file");
+    }
+    StoredFile storedFile = getStoredFile(filePath);
+    Blob fileBlob = blobStore.getBlob(storedFile.getBucket(), storedFile.getFilePath());
+    if (fileBlob != null) {
+      try {
+        return fileBlob.getPayload().openStream();
+      } catch (IOException e) {
+        throw new ReportPortalException(ErrorType.UNABLE_TO_LOAD_BINARY_DATA, e.getMessage(), e);
+      }
+    }
+    throw new ReportPortalException(ErrorType.UNABLE_TO_LOAD_BINARY_DATA, "Unable to find file");
+  }
 
-			Files.copy(inputStream, targetPath, StandardCopyOption.REPLACE_EXISTING);
+  @Override
+  public boolean exists(String filePath) {
+    if (filePath == null) {
+      return false;
+    }
+    StoredFile storedFile = getStoredFile(filePath);
+    if (blobStore.containerExists(storedFile.getBucket())) {
+      return blobStore.blobExists(storedFile.getBucket(), storedFile.getFilePath());
+    } else {
+      LOGGER.warn("Container '{}' does not exist", storedFile.getBucket());
+      return false;
+    }
+  }
 
-			return filePath;
-		} catch (IOException e) {
+  @Override
+  public void delete(String filePath) {
+    if (filePath == null) {
+      return;
+    }
+    StoredFile storedFile = getStoredFile(filePath);
+    try {
+      blobStore.removeBlob(storedFile.getBucket(), storedFile.getFilePath());
+    } catch (Exception e) {
+      throw new ReportPortalException(ErrorType.INCORRECT_REQUEST, "Unable to delete file", e);
+    }
+  }
 
-			logger.error("Unable to save log file '{}'", filePath, e);
+  @Override
+  public void deleteAll(List<String> filePaths, String bucketName) {
+    if (!featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)) {
+      blobStore.removeBlobs(bucketPrefix + bucketName + bucketPostfix, filePaths);
+    } else {
+      blobStore.removeBlobs(bucketName, filePaths);
+    }
+  }
 
-			throw new ReportPortalException(ErrorType.INCORRECT_REQUEST, "Unable to save log file");
-		}
-	}
+  @Override
+  public void deleteContainer(String bucketName) {
+    blobStore.deleteContainer(bucketName);
+  }
 
-	@Override
-	public InputStream load(String filePath) {
+  private StoredFile getStoredFile(String filePath) {
+    if (featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)) {
+      return new StoredFile(defaultBucketName, filePath);
+    }
+    Path targetPath = Paths.get(filePath);
+    int nameCount = targetPath.getNameCount();
+    String bucketName;
+    if (nameCount > 1) {
+      bucketName = bucketPrefix + retrievePath(targetPath, 0, 1) + bucketPostfix;
+      return new StoredFile(bucketName, retrievePath(targetPath, 1, nameCount));
+    } else {
+      bucketName = defaultBucketName;
+      return new StoredFile(bucketName, retrievePath(targetPath, 0, 1));
+    }
+  }
 
-		try {
-
-			return Files.newInputStream(Paths.get(storageRootPath, filePath));
-		} catch (IOException e) {
-
-			logger.error("Unable to find file '{}'", filePath, e);
-
-			throw new ReportPortalException(ErrorType.UNABLE_TO_LOAD_BINARY_DATA, "Unable to find file");
-		}
-	}
-
-	@Override
-	public void delete(String filePath) {
-
-		try {
-
-			Files.deleteIfExists(Paths.get(storageRootPath, filePath));
-		} catch (IOException e) {
-
-			logger.error("Unable to delete file '{}'", filePath, e);
-
-			throw new ReportPortalException(ErrorType.INCORRECT_REQUEST, "Unable to delete file");
-		}
-	}
+  private String retrievePath(Path path, int beginIndex, int endIndex) {
+    return String.valueOf(path.subpath(beginIndex, endIndex));
+  }
 }
+

@@ -16,21 +16,6 @@
 
 package com.epam.ta.reportportal.util;
 
-import com.epam.ta.reportportal.commons.querygen.CriteriaHolder;
-import com.epam.ta.reportportal.commons.querygen.FilterTarget;
-import com.epam.ta.reportportal.commons.validation.BusinessRule;
-import com.epam.ta.reportportal.exception.ReportPortalException;
-import com.epam.ta.reportportal.ws.model.ErrorType;
-import org.jooq.SortField;
-import org.jooq.SortOrder;
-import org.springframework.data.domain.Sort;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.function.BiFunction;
-import java.util.stream.StreamSupport;
-
 import static com.epam.ta.reportportal.commons.querygen.FilterTarget.FILTERED_QUERY;
 import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.STATISTICS_KEY;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
@@ -38,30 +23,48 @@ import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static org.jooq.impl.DSL.field;
 
+import com.epam.ta.reportportal.commons.querygen.CriteriaHolder;
+import com.epam.ta.reportportal.commons.querygen.FilterTarget;
+import com.epam.ta.reportportal.commons.validation.BusinessRule;
+import com.epam.ta.reportportal.exception.ReportPortalException;
+import com.epam.ta.reportportal.ws.model.ErrorType;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.BiFunction;
+import java.util.stream.StreamSupport;
+import org.jooq.SortField;
+import org.jooq.SortOrder;
+import org.springframework.data.domain.Sort;
+
 /**
  * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
  */
 public final class SortUtils {
 
-	private SortUtils() {
-		//static only
-	}
+  public static final BiFunction<Sort, FilterTarget, List<SortField<?>>> TO_SORT_FIELDS = (sort, filterTarget) -> ofNullable(
+      sort).map(s -> StreamSupport
+      .stream(s.spliterator(), false)
+      .map(order -> {
+        BusinessRule.expect(filterTarget, Objects::nonNull)
+            .verify(ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR, "Provided value shouldn't be null");
+        CriteriaHolder criteria = filterTarget.getCriteriaByFilter(order.getProperty())
+            .orElseThrow(() -> new ReportPortalException(ErrorType.INCORRECT_SORTING_PARAMETERS,
+                order.getProperty()));
 
-	public static final BiFunction<Sort, FilterTarget, List<SortField<?>>> TO_SORT_FIELDS = (sort, filterTarget) -> ofNullable(sort).map(s -> StreamSupport
-			.stream(s.spliterator(), false)
-			.map(order -> {
-				BusinessRule.expect(filterTarget, Objects::nonNull)
-						.verify(ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR, "Provided value shouldn't be null");
-				CriteriaHolder criteria = filterTarget.getCriteriaByFilter(order.getProperty())
-						.orElseThrow(() -> new ReportPortalException(ErrorType.INCORRECT_SORTING_PARAMETERS, order.getProperty()));
+        if (criteria.getFilterCriteria().startsWith(STATISTICS_KEY)) {
+          return fieldName(FILTERED_QUERY, criteria.getFilterCriteria()).sort(
+              order.getDirection().isDescending() ?
+                  SortOrder.DESC :
+                  SortOrder.ASC);
+        } else {
+          return field(criteria.getQueryCriteria()).sort(
+              order.getDirection().isDescending() ? SortOrder.DESC : SortOrder.ASC);
+        }
+      })
+      .collect(toList())).orElseGet(Collections::emptyList);
 
-				if (criteria.getFilterCriteria().startsWith(STATISTICS_KEY)) {
-					return fieldName(FILTERED_QUERY, criteria.getFilterCriteria()).sort(order.getDirection().isDescending() ?
-							SortOrder.DESC :
-							SortOrder.ASC);
-				} else {
-					return field(criteria.getQueryCriteria()).sort(order.getDirection().isDescending() ? SortOrder.DESC : SortOrder.ASC);
-				}
-			})
-			.collect(toList())).orElseGet(Collections::emptyList);
+  private SortUtils() {
+    //static only
+  }
 }
