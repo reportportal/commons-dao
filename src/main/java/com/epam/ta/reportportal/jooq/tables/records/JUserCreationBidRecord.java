@@ -76,24 +76,10 @@ public class JUserCreationBidRecord extends UpdatableRecordImpl<JUserCreationBid
     }
 
     /**
-     * Setter for <code>public.user_creation_bid.default_project_id</code>.
-     */
-    public void setDefaultProjectId(Long value) {
-        set(3, value);
-    }
-
-    /**
-     * Getter for <code>public.user_creation_bid.default_project_id</code>.
-     */
-    public Long getDefaultProjectId() {
-        return (Long) get(3);
-    }
-
-    /**
      * Setter for <code>public.user_creation_bid.role</code>.
      */
     public void setRole(String value) {
-        set(4, value);
+        set(3, value);
     }
 
     /**
@@ -184,8 +170,8 @@ public class JUserCreationBidRecord extends UpdatableRecordImpl<JUserCreationBid
     }
 
     @Override
-    public Field<Long> field4() {
-        return JUserCreationBid.USER_CREATION_BID.DEFAULT_PROJECT_ID;
+    public Field<String> field4() {
+        return JUserCreationBid.USER_CREATION_BID.ROLE;
     }
 
     @Override
@@ -219,8 +205,8 @@ public class JUserCreationBidRecord extends UpdatableRecordImpl<JUserCreationBid
     }
 
     @Override
-    public Long component4() {
-        return getDefaultProjectId();
+    public String component4() {
+        return getRole();
     }
 
     @Override
@@ -254,8 +240,8 @@ public class JUserCreationBidRecord extends UpdatableRecordImpl<JUserCreationBid
     }
 
     @Override
-    public Long value4() {
-        return getDefaultProjectId();
+    public String value4() {
+        return getRole();
     }
 
     @Override
@@ -292,8 +278,8 @@ public class JUserCreationBidRecord extends UpdatableRecordImpl<JUserCreationBid
     }
 
     @Override
-    public JUserCreationBidRecord value4(Long value) {
-        setDefaultProjectId(value);
+    public JUserCreationBidRecord value4(String value) {
+        setRole(value);
         return this;
     }
 
