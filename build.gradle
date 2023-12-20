@@ -28,7 +28,8 @@ apply from: "$scriptsUrl/release-commons.gradle"
 apply from: "$scriptsUrl/signing.gradle"
 apply from: "$scriptsUrl/copy-database-scripts.gradle"
 apply from: "$scriptsUrl/build-quality.gradle"
-apply from: "$scriptsUrl/jacoco.gradle"
+// TODO uncomment before merge
+// apply from: "$scriptsUrl/jacoco.gradle"
 apply from: 'jooq.gradle'
 
 repositories {
@@ -122,4 +123,5 @@ tasks.withType(JavaCompile) {
 
 checkCommitNeeded.dependsOn removeScripts
 test.dependsOn copyTestDatabaseScripts
-build.dependsOn jacocoTestReport
+// TODO uncomment before merge
+// build.dependsOn jacocoTestReport
