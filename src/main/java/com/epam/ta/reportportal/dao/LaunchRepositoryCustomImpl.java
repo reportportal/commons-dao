@@ -416,6 +416,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
             .and(LAUNCH.NAME.eq(launch.getName()))
             .and(LAUNCH.NUMBER.lt(launch.getNumber().intValue())
             .and(LAUNCH.PROJECT_ID.eq(launch.getProjectId()))))
+            .and(LAUNCH.MODE.ne(JLaunchModeEnum.DEBUG))
         .orderBy(LAUNCH.NUMBER.desc())
         .limit(1)
         .fetchOptionalInto(Long.class);
