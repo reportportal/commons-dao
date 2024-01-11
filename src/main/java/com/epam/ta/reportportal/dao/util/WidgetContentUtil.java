@@ -29,6 +29,7 @@ import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConst
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.CRITERIA;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.DELTA;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.EXECUTIONS_PASSED;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.EXECUTIONS_SKIPPED;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.EXECUTIONS_TOTAL;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.FILTER_NAME;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.FLAKY_COUNT;
@@ -609,7 +610,6 @@ public class WidgetContentUtil {
   public static final BiFunction<Result<? extends Record>, HealthCheckTableGetParams,
       Map<String, HealthCheckTableStatisticsContent>> COMPONENT_HEALTH_CHECK_TABLE_STATS_FETCHER =
       (result, params) -> {
-
         Map<String, HealthCheckTableStatisticsContent> resultMap = new LinkedHashMap<>();
 
         result.forEach(record -> {
@@ -628,12 +628,14 @@ public class WidgetContentUtil {
 
         });
 
-        resultMap.forEach((key, content) -> {
+        resultMap.values()
+            .stream()
+            .map(content -> excludeSkippedTests(params, content))
+            .forEach(content -> {
           double passingRate = 100.0 * content.getStatistics().getOrDefault(EXECUTIONS_PASSED, 0)
-              / content.getStatistics()
-              .getOrDefault(EXECUTIONS_TOTAL, 1);
-          content.setPassingRate(
-              new BigDecimal(passingRate).setScale(2, RoundingMode.HALF_UP).doubleValue());
+              / content.getStatistics().getOrDefault(EXECUTIONS_TOTAL, 1);
+              content.setPassingRate(new BigDecimal(passingRate).setScale(2, RoundingMode.HALF_UP)
+                  .doubleValue());
         });
 
         return resultMap;
@@ -650,5 +652,17 @@ public class WidgetContentUtil {
 		));
 		return resultMap;
 	};
+
+  private static HealthCheckTableStatisticsContent excludeSkippedTests(
+      HealthCheckTableGetParams params, HealthCheckTableStatisticsContent content) {
+    if (params.isExcludeSkippedTests() && content.getStatistics().containsKey(EXECUTIONS_SKIPPED)) {
+      int newTotal = content.getStatistics().getOrDefault(EXECUTIONS_TOTAL, 1) -
+          content.getStatistics().getOrDefault(EXECUTIONS_SKIPPED, 0);
+
+      content.getStatistics().remove(EXECUTIONS_SKIPPED);
+      content.getStatistics().put(EXECUTIONS_TOTAL, newTotal);
+    }
+    return content;
+  }
 
 }

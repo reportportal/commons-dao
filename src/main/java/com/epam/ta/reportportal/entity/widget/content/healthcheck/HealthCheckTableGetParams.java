@@ -71,7 +71,7 @@ public class HealthCheckTableGetParams {
     return previousLevels;
   }
 
-  public Boolean getExcludeSkippedTests() {
+  public Boolean isExcludeSkippedTests() {
     return excludeSkippedTests;
   }
 }
