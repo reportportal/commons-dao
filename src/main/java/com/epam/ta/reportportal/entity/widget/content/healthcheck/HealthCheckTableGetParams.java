@@ -42,7 +42,7 @@ public class HealthCheckTableGetParams {
   public static HealthCheckTableGetParams of(String viewName, String currentLevelKey, Sort sort,
       boolean includeCustomColumn, Boolean excludeSkippedTests) {
     return new HealthCheckTableGetParams(viewName, currentLevelKey, sort, includeCustomColumn,
-        false);
+        excludeSkippedTests);
   }
 
   public static HealthCheckTableGetParams of(String viewName, String currentLevelKey, Sort sort,
