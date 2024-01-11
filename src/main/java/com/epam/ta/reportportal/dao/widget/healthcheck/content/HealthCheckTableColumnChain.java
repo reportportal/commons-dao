@@ -19,12 +19,12 @@ public class HealthCheckTableColumnChain implements
     WidgetProviderChain<HealthCheckTableGetParams, Map<String, List<String>>> {
 
   private final WidgetQueryProvider<HealthCheckTableGetParams> customColumnQueryProvider;
-  private final WidgetContentProvider<Map<String, List<String>>> healthCheckTableColumnProvider;
+  private final WidgetContentProvider<HealthCheckTableGetParams, Map<String, List<String>>> healthCheckTableColumnProvider;
 
   @Autowired
   public HealthCheckTableColumnChain(
       WidgetQueryProvider<HealthCheckTableGetParams> customColumnQueryProvider,
-      WidgetContentProvider<Map<String, List<String>>> healthCheckTableColumnProvider) {
+      WidgetContentProvider<HealthCheckTableGetParams, Map<String, List<String>>> healthCheckTableColumnProvider) {
     this.customColumnQueryProvider = customColumnQueryProvider;
     this.healthCheckTableColumnProvider = healthCheckTableColumnProvider;
   }
@@ -34,7 +34,7 @@ public class HealthCheckTableColumnChain implements
     if (!params.isIncludeCustomColumn()) {
       return Collections.emptyMap();
     }
-    return customColumnQueryProvider.andThen(healthCheckTableColumnProvider).apply(params);
+    return healthCheckTableColumnProvider.apply(customColumnQueryProvider.apply(params), params);
   }
 
   @Override
