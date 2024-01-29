@@ -187,7 +187,7 @@ public class ElasticSearchClient {
       if (org.apache.commons.collections.CollectionUtils.isNotEmpty(hits)) {
         for (LinkedHashMap<String, Object> hit : hits) {
           Map<String, Object> source = (Map<String, Object>) hit.get("_source");
-          Long testItemId = ((Integer) source.get("itemId")).longValue();
+          Long testItemId = (Long) source.get("itemId");
           testItemIds.add(testItemId);
         }
 
@@ -250,10 +250,10 @@ public class ElasticSearchClient {
       timestampString += "." + "0".repeat(6);
     }
 
-    return new LogMessage(((Integer) source.get("id")).longValue(),
+    return new LogMessage((Long) source.get("id"),
         LocalDateTime.parse(timestampString, DateTimeFormatter.ofPattern(ELASTIC_DATETIME_FORMAT)),
-        (String) source.get("message"), ((Integer) source.get("itemId")).longValue(),
-        ((Integer) source.get("launchId")).longValue(), projectId
+        (String) source.get("message"), (Long) source.get("itemId"),
+        (Long) source.get("launchId"), projectId
     );
   }
 
