@@ -1299,7 +1299,8 @@ class WidgetContentRepositoryTest extends BaseTest {
         false,
         600,
         itemsFilter,
-        "new"
+        "new",
+        false
     );
 
     assertTrue(contents.isEmpty());
