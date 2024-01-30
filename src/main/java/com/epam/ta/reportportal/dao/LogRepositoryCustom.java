@@ -216,7 +216,7 @@ public interface LogRepositoryCustom extends FilterableRepository<Log> {
       String path, Integer level);
 
   /**
-   * Retrieves log message id of specified test item with log level greather or equals than
+   * Retrieves log message id of specified test item with log level greater or equals than
    * {@code level}
    *
    * @param launchId @link TestItem#getLaunchId()}

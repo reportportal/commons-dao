@@ -41,7 +41,7 @@ repositories {
 
 dependencyManagement {
     imports {
-        mavenBom(releaseMode ? 'com.epam.reportportal:commons-bom:' + getProperty('bom.version') : 'com.github.reportportal:commons-bom:6aa55fc0')
+        mavenBom(releaseMode ? 'com.epam.reportportal:commons-bom:5.10.0' : 'com.epam.reportportal:commons-bom:5.10.0')
         mavenBom('io.zonky.test.postgres:embedded-postgres-binaries-bom:12.9.0')
     }
 }
@@ -53,7 +53,7 @@ dependencies {
         compile 'com.epam.reportportal:commons-model'
     } else {
         compile 'com.github.reportportal:commons:07566b8e'
-        compile 'com.github.reportportal:commons-rules:01ec4d17'
+        compile 'com.github.reportportal:commons-rules:42d4dd5634'
         compile 'com.github.reportportal:commons-model:83f012f'
     }
 
