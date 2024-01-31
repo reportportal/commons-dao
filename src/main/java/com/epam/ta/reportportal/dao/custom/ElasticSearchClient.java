@@ -359,8 +359,14 @@ public class ElasticSearchClient {
     return new HttpEntity<>(body, headers);
   }
 
+  /**
+   * Returns long value through the string cast to avoid different types returned from text engine
+   *
+   * @param longVal Object from text engine response
+   * @return Long value
+   */
   private Long getLongValue(Object longVal) {
-    return Long.valueOf((String) longVal);
+    return Long.valueOf(String.valueOf(longVal));
   }
 
 }
