@@ -17,6 +17,7 @@
 package com.epam.ta.reportportal.commons;
 
 import static com.epam.ta.reportportal.commons.EntityUtils.TO_LOCAL_DATE_TIME;
+import static com.epam.ta.reportportal.commons.EntityUtils.TO_UTC_LOCAL_DATE_TIME;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.CRITERIA_LAUNCH_MODE;
 
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
@@ -58,6 +59,14 @@ public class Preconditions {
     com.google.common.base.Preconditions.checkNotNull(than, ErrorType.BAD_REQUEST_ERROR);
     return date -> {
       LocalDateTime localDateTime = TO_LOCAL_DATE_TIME.apply(date);
+      return localDateTime.isAfter(than) || localDateTime.isEqual(than);
+    };
+  }
+
+  public static Predicate<LocalDateTime> sameLocalDateTimeOrLater(final LocalDateTime than) {
+    com.google.common.base.Preconditions.checkNotNull(than, ErrorType.BAD_REQUEST_ERROR);
+    return date -> {
+      LocalDateTime localDateTime = TO_UTC_LOCAL_DATE_TIME.apply(date);
       return localDateTime.isAfter(than) || localDateTime.isEqual(than);
     };
   }

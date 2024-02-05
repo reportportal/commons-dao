@@ -21,10 +21,12 @@ import static java.util.Optional.ofNullable;
 
 import com.google.common.base.Preconditions;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 
 /**
  * Some useful utils for working with entities<br> For example: usernames, project names, tags,
@@ -38,6 +40,15 @@ public class EntityUtils {
       date).map(d -> LocalDateTime.ofInstant(d.toInstant(),
       ZoneOffset.UTC
   )).orElse(null);
+
+  public static final UnaryOperator<LocalDateTime> TO_UTC_LOCAL_DATE_TIME =
+      localDateTime -> ofNullable(localDateTime)
+          .map(date -> date
+              .atZone(ZoneId.systemDefault())
+              .withZoneSameInstant(ZoneOffset.UTC)
+              .toLocalDateTime())
+          .orElse(null);
+
   public static final Function<LocalDateTime, Date> TO_DATE = localDateTime -> ofNullable(
       localDateTime).map(l -> Date.from(l.atZone(
       ZoneOffset.UTC).toInstant())).orElse(null);
