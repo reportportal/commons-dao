@@ -87,7 +87,7 @@ public class JApiKeys extends TableImpl<JApiKeysRecord> {
     /**
      * The column <code>public.api_keys.last_used_at</code>.
      */
-    public final TableField<JApiKeysRecord, Date> LAST_USED_AT = createField(DSL.name("last_used_at"), org.jooq.impl.SQLDataType.DATE, this, "");
+    public final TableField<JApiKeysRecord, Timestamp> LAST_USED_AT = createField(DSL.name("last_used_at"), org.jooq.impl.SQLDataType.TIMESTAMP, this, "");
 
     /**
      * Create a <code>public.api_keys</code> table reference

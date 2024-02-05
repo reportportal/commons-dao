@@ -18,10 +18,8 @@ package com.epam.ta.reportportal.entity.user;
 
 import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.Modifiable;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -30,6 +28,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -40,6 +42,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Table(name = "user_creation_bid")
 @TypeDef(name = "json", typeClass = Metadata.class)
 @EntityListeners(AuditingEntityListener.class)
+@Getter
+@Setter
 public class UserCreationBid implements Serializable, Modifiable {
 
   @Id
@@ -48,7 +52,7 @@ public class UserCreationBid implements Serializable, Modifiable {
 
   @LastModifiedDate
   @Column(name = LAST_MODIFIED)
-  private Date lastModified;
+  private LocalDateTime lastModified;
 
   @Column(name = "email")
   private String email;
@@ -67,60 +71,9 @@ public class UserCreationBid implements Serializable, Modifiable {
 	@Column(name = "metadata")
 	private Metadata metadata;
 
-  public String getUuid() {
-    return uuid;
-  }
-
-  public void setUuid(String uuid) {
-    this.uuid = uuid;
-  }
-
-  public String getEmail() {
-    return email;
-  }
-
-  public void setEmail(String email) {
-    this.email = email;
-  }
-
-  public String getProjectName() {
-    return projectName;
-  }
-
-  public void setProjectName(String projectName) {
-    this.projectName = projectName;
-  }
-
-  public String getRole() {
-    return role;
-  }
-
-  public void setRole(String role) {
-    this.role = role;
-  }
-
   @Override
-  public Date getLastModified() {
+  public LocalDateTime getLastModified() {
     return lastModified;
   }
 
-	public void setLastModified(Date lastModified) {
-		this.lastModified = lastModified;
-	}
-
-	public Metadata getMetadata() {
-		return metadata;
-	}
-
-	public void setMetadata(Metadata metadata) {
-		this.metadata = metadata;
-	}
-
-  public User getInvitingUser() {
-    return invitingUser;
-  }
-
-  public void setInvitingUser(User invitingUser) {
-    this.invitingUser = invitingUser;
-  }
 }

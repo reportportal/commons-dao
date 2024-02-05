@@ -18,12 +18,13 @@ package com.epam.ta.reportportal.entity.user;
 
 import com.epam.ta.reportportal.entity.Modifiable;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import lombok.Data;
 import org.springframework.data.annotation.LastModifiedDate;
 
 /**
@@ -31,6 +32,7 @@ import org.springframework.data.annotation.LastModifiedDate;
  */
 @Entity
 @Table(name = "restore_password_bid")
+@Data
 public class RestorePasswordBid implements Serializable, Modifiable {
 
   /**
@@ -43,7 +45,7 @@ public class RestorePasswordBid implements Serializable, Modifiable {
 
   @LastModifiedDate
   @Column(name = LAST_MODIFIED)
-  private Date lastModifiedDate;
+  private LocalDateTime lastModifiedDate;
 
   @Column(name = "email")
   private String email;
@@ -57,11 +59,11 @@ public class RestorePasswordBid implements Serializable, Modifiable {
   }
 
   @Override
-  public Date getLastModified() {
+  public LocalDateTime getLastModified() {
     return lastModifiedDate;
   }
 
-  public void setLastModifiedDate(Date lastModifiedDate) {
+  public void setLastModifiedDate(LocalDateTime lastModifiedDate) {
     this.lastModifiedDate = lastModifiedDate;
   }
 

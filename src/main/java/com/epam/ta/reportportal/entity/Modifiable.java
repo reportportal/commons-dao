@@ -16,7 +16,7 @@
 
 package com.epam.ta.reportportal.entity;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * Item may be modified
@@ -34,5 +34,5 @@ public interface Modifiable {
    *
    * @return
    */
-  Date getLastModified();
+  LocalDateTime getLastModified();
 }

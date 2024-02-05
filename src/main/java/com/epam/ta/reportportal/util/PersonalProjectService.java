@@ -31,8 +31,7 @@ import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.epam.ta.reportportal.entity.user.User;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Sets;
-import java.sql.Date;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -87,7 +86,7 @@ public final class PersonalProjectService {
   public Project generatePersonalProject(User user) {
     Project project = new Project();
     project.setName(generatePersonalProjectName(user.getLogin()));
-    project.setCreationDate(Date.from(ZonedDateTime.now().toInstant()));
+    project.setCreationDate(LocalDateTime.now());
     project.setProjectType(ProjectType.PERSONAL);
 
     ProjectUser projectUser = new ProjectUser().withUser(user)
