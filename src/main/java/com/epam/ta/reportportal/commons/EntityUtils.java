@@ -49,6 +49,23 @@ public class EntityUtils {
               .toLocalDateTime())
           .orElse(null);
 
+
+  /**
+   * This operator performs time zone conversion for date and time.
+   * Specifically, it converts input dates from UTC timezone to the system default timezone.
+   * Usage:
+   * LocalDateTime originalDate = ...;
+   * LocalDateTime localDate =  FROM_UTC_TO_LOCAL_DATE_TIME.apply(originalDate);
+   *
+   */
+  public static final UnaryOperator<LocalDateTime> FROM_UTC_TO_LOCAL_DATE_TIME =
+      localDateTime -> ofNullable(localDateTime)
+          .map(date -> date.atZone(ZoneOffset.UTC)
+              .toInstant()
+              .atZone(ZoneId.systemDefault())
+              .toLocalDateTime())
+          .orElse(null);
+
   public static final Function<LocalDateTime, Date> TO_DATE = localDateTime -> ofNullable(
       localDateTime).map(l -> Date.from(l.atZone(
       ZoneOffset.UTC).toInstant())).orElse(null);
