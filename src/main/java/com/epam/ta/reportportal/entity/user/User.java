@@ -17,8 +17,9 @@
 package com.epam.ta.reportportal.entity.user;
 
 import com.epam.ta.reportportal.entity.Metadata;
-import com.google.common.collect.Sets;
+import com.epam.ta.reportportal.entity.organization.OrganizationUser;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import javax.persistence.CascadeType;
@@ -32,6 +33,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
@@ -41,6 +44,8 @@ import org.hibernate.annotations.TypeDef;
 @Entity
 @TypeDef(name = "meta", typeClass = Metadata.class)
 @Table(name = "users", schema = "public")
+@Getter
+@Setter
 public class User implements Serializable {
 
   private static final long serialVersionUID = 923392981;
@@ -84,106 +89,11 @@ public class User implements Serializable {
 
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = {CascadeType.PERSIST,
       CascadeType.MERGE, CascadeType.REFRESH})
-  private Set<ProjectUser> projects = Sets.newHashSet();
+  private Set<ProjectUser> projects = new HashSet<>();
 
-  public User() {
-  }
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
+  private Set<OrganizationUser> organizationUser = new HashSet<>();
 
-  public Long getId() {
-    return this.id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public String getLogin() {
-    return this.login;
-  }
-
-  public void setLogin(String login) {
-    this.login = login;
-  }
-
-  public String getPassword() {
-    return this.password;
-  }
-
-  public void setPassword(String password) {
-    this.password = password;
-  }
-
-  public String getEmail() {
-    return this.email;
-  }
-
-  public void setEmail(String email) {
-    this.email = email;
-  }
-
-  public UserRole getRole() {
-    return role;
-  }
-
-  public void setRole(UserRole role) {
-    this.role = role;
-  }
-
-  public Set<ProjectUser> getProjects() {
-    return projects;
-  }
-
-  public void setProjects(Set<ProjectUser> projects) {
-    this.projects = projects;
-  }
-
-  public String getFullName() {
-    return this.fullName;
-  }
-
-  public void setFullName(String fullName) {
-    this.fullName = fullName;
-  }
-
-  public boolean isExpired() {
-    return isExpired;
-  }
-
-  public void setExpired(boolean expired) {
-    isExpired = expired;
-  }
-
-  public String getAttachment() {
-    return attachment;
-  }
-
-  public void setAttachment(String attachment) {
-    this.attachment = attachment;
-  }
-
-  public String getAttachmentThumbnail() {
-    return attachmentThumbnail;
-  }
-
-  public void setAttachmentThumbnail(String attachmentThumbnail) {
-    this.attachmentThumbnail = attachmentThumbnail;
-  }
-
-  public UserType getUserType() {
-    return userType;
-  }
-
-  public void setUserType(UserType userType) {
-    this.userType = userType;
-  }
-
-  public Metadata getMetadata() {
-    return metadata;
-  }
-
-  public void setMetadata(Metadata metadata) {
-    this.metadata = metadata;
-  }
 
   @Override
   public boolean equals(Object o) {
@@ -210,5 +120,4 @@ public class User implements Serializable {
     return Objects.hash(id, login, password, email, role, fullName, isExpired, metadata, attachment,
         attachmentThumbnail, userType);
   }
-
 }

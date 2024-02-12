@@ -380,8 +380,7 @@ class UserRepositoryTest extends BaseTest {
 
   @Test
   void findAllMembersByProjectManagerRole() {
-    List<String> emails = userRepository.findEmailsByProjectAndRole(1L,
-        ProjectRole.PROJECT_MANAGER);
+    List<String> emails = userRepository.findEmailsByProjectAndRole(1L, ProjectRole.PROJECT_MANAGER);
 
     assertFalse(emails.isEmpty());
 

@@ -8,35 +8,35 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class ProjectUserRepositoryTest extends BaseTest {
+class ProjectUserRepositoryTest extends BaseTest {
 
   @Autowired
   private ProjectUserRepository projectUserRepository;
 
 
   @Test
-  void shouldFindDetailsByUserIdAndProjectName() {
+  void shouldFindDetailsByUserIdAndProjectKey() {
 
-    final String projectName = "superadmin_personal";
-    final Optional<ReportPortalUser.ProjectDetails> projectDetails = projectUserRepository.findDetailsByUserIdAndProjectName(
+    final String projectKey = "superadmin_personal";
+    final Optional<ReportPortalUser.ProjectDetails> projectDetails = projectUserRepository.findDetailsByUserIdAndProjectKey(
         1L,
-        projectName
+        projectKey
     );
 
     Assertions.assertTrue(projectDetails.isPresent());
 
-    Assertions.assertEquals(projectName, projectDetails.get().getProjectName());
+    Assertions.assertEquals(projectKey, projectDetails.get().getProjectName());
     Assertions.assertEquals(1L, projectDetails.get().getProjectId());
     Assertions.assertEquals(ProjectRole.PROJECT_MANAGER, projectDetails.get().getProjectRole());
   }
 
   @Test
-  void shouldNotFindDetailsByUserIdAndProjectNameWhenNotExists() {
+  void shouldNotFindDetailsByUserIdAndProjectKeyWhenNotExists() {
 
-    final String projectName = "superadmin_personal";
-    final Optional<ReportPortalUser.ProjectDetails> projectDetails = projectUserRepository.findDetailsByUserIdAndProjectName(
+    final String projectKey = "falcon-key";
+    final Optional<ReportPortalUser.ProjectDetails> projectDetails = projectUserRepository.findDetailsByUserIdAndProjectKey(
         2L,
-        projectName
+        projectKey
     );
 
     Assertions.assertFalse(projectDetails.isPresent());
