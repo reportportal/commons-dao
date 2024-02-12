@@ -81,6 +81,16 @@ class ProjectRepositoryTest extends BaseTest {
   }
 
   @Test
+  void findByKey() {
+    final String projectKey = "default_personal";
+
+    final Optional<Project> projectOptional = projectRepository.findByKey(projectKey);
+
+    assertTrue(projectOptional.isPresent());
+    assertEquals(projectKey, projectOptional.get().getKey());
+  }
+
+  @Test
   void existsByName() {
     assertTrue(projectRepository.existsByName("default_personal"));
     assertTrue(projectRepository.existsByName("superadmin_personal"));
@@ -166,7 +176,7 @@ class ProjectRepositoryTest extends BaseTest {
   void deleteOneByTypeAndLastRunBefore() {
     int count = projectRepository.deleteByTypeAndLastLaunchRunBefore(ProjectType.UPSA,
         LocalDateTime.now().minusDays(11), 1);
-    assertEquals(count, 1);
+    assertEquals(1, count);
     assertFalse(projectRepository.findById(100L).isPresent());
   }
 }

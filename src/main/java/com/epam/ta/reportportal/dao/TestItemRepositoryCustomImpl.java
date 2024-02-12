@@ -1196,7 +1196,11 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
   }
 
   /**
-   * @return Map<testITemId, PathName>
+   * Selects and returns a map of PathName objects based on the provided collection of TestItem objects.
+   *
+   * @param testItems the collection of TestItem objects to be used to generate the map of PathNames
+   * @return a map with the test item IDs as keys and the PathName objects as values.
+   *         If the provided collection of test items is null or empty, it returns an empty map.
    */
   @Override
   public Map<Long, PathName> selectPathNames(Collection<TestItem> testItems) {

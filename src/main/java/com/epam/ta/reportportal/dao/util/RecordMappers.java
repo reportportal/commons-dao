@@ -115,7 +115,7 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.jooq.Field;
 import org.jooq.Record;
@@ -407,7 +407,8 @@ public class RecordMappers {
     final Long projectId = r.get(PROJECT_USER.PROJECT_ID);
     final String projectName = r.get(PROJECT.NAME);
     final ProjectRole projectRole = r.into(PROJECT_USER.PROJECT_ROLE).into(ProjectRole.class);
-    return new ReportPortalUser.ProjectDetails(projectId, projectName, projectRole);
+    final String projectKey = r.get(PROJECT.KEY);
+    return new ReportPortalUser.ProjectDetails(projectId, projectName, projectRole, projectKey);
   };
 
   public static final RecordMapper<? super Record, Activity> ACTIVITY_MAPPER = r -> {
@@ -531,7 +532,7 @@ public class RecordMappers {
       }
     }
 
-    if (attributeList.size() > 0) {
+    if (CollectionUtils.isNotEmpty(attributeList)) {
       return Optional.of(attributeList);
     } else {
       return Optional.empty();
