@@ -18,12 +18,18 @@ package com.epam.ta.reportportal.entity.project;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Not database object. Representation of the result of project info query
  *
  * @author Pavel Bortnik
  */
+@Getter
+@Setter
+@AllArgsConstructor
 public class ProjectInfo implements Serializable {
 
   public static final String USERS_QUANTITY = "usersQuantity";
@@ -38,7 +44,11 @@ public class ProjectInfo implements Serializable {
 
   private String projectType;
 
-  private String organization;
+  private String organizationSlug;
+
+  private String projectKey;
+
+  private String projectSlug;
 
   private int usersQuantity;
 
@@ -46,67 +56,4 @@ public class ProjectInfo implements Serializable {
 
   private LocalDateTime lastRun;
 
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public LocalDateTime getCreationDate() {
-    return creationDate;
-  }
-
-  public void setCreationDate(LocalDateTime creationDate) {
-    this.creationDate = creationDate;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public String getProjectType() {
-    return projectType;
-  }
-
-  public void setProjectType(String projectType) {
-    this.projectType = projectType;
-  }
-
-  public String getOrganization() {
-    return organization;
-  }
-
-  public void setOrganization(String organization) {
-    this.organization = organization;
-  }
-
-  public int getUsersQuantity() {
-    return usersQuantity;
-  }
-
-  public void setUsersQuantity(int usersQuantity) {
-    this.usersQuantity = usersQuantity;
-  }
-
-  public int getLaunchesQuantity() {
-    return launchesQuantity;
-  }
-
-  public void setLaunchesQuantity(int launchesQuantity) {
-    this.launchesQuantity = launchesQuantity;
-  }
-
-  public LocalDateTime getLastRun() {
-    return lastRun;
-  }
-
-  public void setLastRun(LocalDateTime lastRun) {
-    this.lastRun = lastRun;
-  }
 }
