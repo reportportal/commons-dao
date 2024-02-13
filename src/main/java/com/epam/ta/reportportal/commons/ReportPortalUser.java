@@ -55,7 +55,7 @@ public class ReportPortalUser extends User {
   private String email;
 
   private Map<String, ProjectDetails> projectDetails;
-  private Map<String, ProjectDetails> organizationDetails;
+  private Map<String, OrganizationDetails> organizationDetails;
 
 
   private ReportPortalUser(String username, String password,
