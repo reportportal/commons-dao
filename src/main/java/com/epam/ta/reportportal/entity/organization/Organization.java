@@ -27,6 +27,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author Siarhei Hrabko
@@ -35,6 +36,7 @@ import lombok.Data;
 @Table(name = "organization", schema = "public")
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class Organization implements Serializable {
 
 	private static final long serialVersionUID = 6730810629133187834L;

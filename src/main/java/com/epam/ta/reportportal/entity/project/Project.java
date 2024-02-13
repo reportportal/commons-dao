@@ -42,6 +42,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -54,6 +55,7 @@ import org.hibernate.annotations.TypeDef;
 @Table(name = "project", schema = "public")
 @Getter
 @Setter
+@NoArgsConstructor
 public class Project implements Serializable {
 
   private static final long serialVersionUID = -263516611;

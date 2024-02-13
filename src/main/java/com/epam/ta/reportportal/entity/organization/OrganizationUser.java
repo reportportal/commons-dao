@@ -27,7 +27,9 @@ import javax.persistence.MapsId;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Objects;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author Siarhei Hrabko
@@ -35,6 +37,8 @@ import lombok.Data;
 @Entity
 @Table(name = "organization_user", schema = "public")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class OrganizationUser implements Serializable {
 
 	private static final long serialVersionUID = 7313055792392238124L;
