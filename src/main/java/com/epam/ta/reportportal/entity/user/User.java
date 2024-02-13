@@ -90,7 +90,7 @@ public class User implements Serializable {
   @Column(name = "type")
   private UserType userType;
 
-  @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", cascade = {CascadeType.PERSIST,
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = {CascadeType.PERSIST,
       CascadeType.MERGE, CascadeType.REFRESH})
   private Set<ProjectUser> projects = Sets.newHashSet();
 

@@ -16,11 +16,14 @@
 
 package com.epam.ta.reportportal.entity.organization;
 
+import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.entity.user.User;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
@@ -30,13 +33,16 @@ import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
 /**
  * @author Siarhei Hrabko
  */
 @Entity
-@Table(name = "organization_user", schema = "public")
 @Data
+@TypeDef(name = "pqsql_enum", typeClass = PostgreSQLEnumType.class)
+@Table(name = "organization_user", schema = "public")
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrganizationUser implements Serializable {
@@ -47,15 +53,17 @@ public class OrganizationUser implements Serializable {
 	private OrganizationUserId id;
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@MapsId("organization_id")
+	@MapsId("organizationId")
 	private Organization organization;
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@MapsId("user_id")
+	@MapsId("userId")
 	private User user;
 
 	@Column(name = "organization_role")
-	private OrganizationRole organizationRole;
+  @Enumerated(EnumType.STRING)
+  @Type(type = "pqsql_enum")
+  private OrganizationRole organizationRole;
 
 
 	@Override
@@ -67,11 +75,14 @@ public class OrganizationUser implements Serializable {
 			return false;
 		}
 		OrganizationUser that = (OrganizationUser) o;
-		return organization.equals(that.organization) && user.equals(that.user) && organizationRole == that.organizationRole;
+		return organization.equals(that.organization)
+        && id.equals(that.id)
+        && user.equals(that.user)
+        && organizationRole == that.organizationRole;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(organization, user, organizationRole);
+		return Objects.hash(id, organization, user, organizationRole);
 	}
 }
