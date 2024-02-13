@@ -18,6 +18,7 @@ package com.epam.ta.reportportal.entity.user;
 
 import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.organization.OrganizationUser;
+import com.google.common.collect.Sets;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
@@ -34,6 +35,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -46,6 +48,7 @@ import org.hibernate.annotations.TypeDef;
 @Table(name = "users", schema = "public")
 @Getter
 @Setter
+@NoArgsConstructor
 public class User implements Serializable {
 
   private static final long serialVersionUID = 923392981;
@@ -89,10 +92,10 @@ public class User implements Serializable {
 
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = {CascadeType.PERSIST,
       CascadeType.MERGE, CascadeType.REFRESH})
-  private Set<ProjectUser> projects = new HashSet<>();
+  private Set<ProjectUser> projects = Sets.newHashSet();
 
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
-  private Set<OrganizationUser> organizationUser = new HashSet<>();
+  private Set<OrganizationUser> organizationUser = Sets.newHashSet();
 
 
   @Override
@@ -104,14 +107,16 @@ public class User implements Serializable {
       return false;
     }
     User user = (User) o;
-    return isExpired == user.isExpired && Objects.equals(id, user.id) && Objects.equals(login,
-        user.login) && Objects.equals(password,
-        user.password
-    ) && Objects.equals(email, user.email) && role == user.role && Objects.equals(fullName,
-        user.fullName) && Objects.equals(metadata,
-        user.metadata
-    ) && Objects.equals(attachment, user.attachment) && Objects.equals(attachmentThumbnail,
-        user.attachmentThumbnail)
+    return isExpired == user.isExpired
+        && Objects.equals(id, user.id)
+        && Objects.equals(login, user.login)
+        && Objects.equals(password, user.password)
+        && Objects.equals(email, user.email)
+        && role == user.role
+        && Objects.equals(fullName, user.fullName)
+        && Objects.equals(metadata, user.metadata)
+        && Objects.equals(attachment, user.attachment)
+        && Objects.equals(attachmentThumbnail, user.attachmentThumbnail)
         && userType == user.userType;
   }
 
