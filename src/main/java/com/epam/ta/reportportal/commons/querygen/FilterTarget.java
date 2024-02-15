@@ -220,7 +220,10 @@ public enum FilterTarget {
     protected Collection<? extends SelectField> selectFields() {
       return Lists.newArrayList(PROJECT.ID,
           PROJECT.NAME,
+          PROJECT.KEY,
+          PROJECT.SLUG,
           PROJECT.ORGANIZATION,
+          PROJECT.ORGANIZATION_ID,
           PROJECT.PROJECT_TYPE,
           PROJECT.CREATION_DATE,
           PROJECT.METADATA,
