@@ -68,6 +68,7 @@ import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaCons
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_ALLOCATED_STORAGE;
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_ATTRIBUTE_NAME;
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_CREATION_DATE;
+import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_KEY;
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_NAME;
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_ORGANIZATION;
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_TYPE;
@@ -183,6 +184,8 @@ public enum FilterTarget {
               PROJECT.ALLOCATED_STORAGE, Long.class).get(),
           new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_NAME, PROJECT.NAME, String.class)
               .get(),
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_KEY, PROJECT.KEY, String.class)
+              .get(),
           new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ORGANIZATION,
               PROJECT.ORGANIZATION, String.class).get(),
           new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_TYPE, PROJECT.PROJECT_TYPE,
@@ -268,6 +271,8 @@ public enum FilterTarget {
           new CriteriaHolderBuilder().newBuilder(CRITERIA_ID, PROJECT.ID, Long.class).get(),
           new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_NAME, PROJECT.NAME, String.class)
               .get(),
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_KEY, PROJECT.KEY, String.class)
+              .get(),
           new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_TYPE, PROJECT.PROJECT_TYPE,
               String.class).get(),
 
@@ -296,7 +301,7 @@ public enum FilterTarget {
     public QuerySupplier getQuery() {
       SelectQuery<? extends Record> query = DSL.select(selectFields()).getQuery();
       addFrom(query);
-      query.addGroupBy(PROJECT.ID, PROJECT.CREATION_DATE, PROJECT.NAME, PROJECT.PROJECT_TYPE);
+      query.addGroupBy(PROJECT.ID, PROJECT.CREATION_DATE, PROJECT.KEY, PROJECT.PROJECT_TYPE);
       QuerySupplier querySupplier = new QuerySupplier(query);
       joinTables(querySupplier);
       return querySupplier;
@@ -312,9 +317,12 @@ public enum FilterTarget {
           DSL.max(LAUNCH.START_TIME).as(LAST_RUN),
           PROJECT.ID,
           PROJECT.CREATION_DATE,
-          PROJECT.NAME,
+          PROJECT.KEY,
+          PROJECT.SLUG,
+          PROJECT.KEY,
           PROJECT.PROJECT_TYPE,
-          PROJECT.ORGANIZATION
+          PROJECT.ORGANIZATION,
+          PROJECT.ORGANIZATION_ID
       );
     }
 
@@ -360,6 +368,12 @@ public enum FilterTarget {
       new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT, PROJECT.NAME, List.class)
           .withAggregateCriteria(DSL.arrayAgg(PROJECT.NAME).toString())
           .get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT, PROJECT.KEY, List.class)
+          .withAggregateCriteria(DSL.arrayAgg(PROJECT.KEY).toString())
+          .get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT, PROJECT.ORGANIZATION_ID, List.class)
+          .withAggregateCriteria(DSL.arrayAgg(PROJECT.ORGANIZATION_ID).toString())
+          .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_LAST_LOGIN,
           "(" + USERS.METADATA + "-> 'metadata' ->> 'last_login')::DOUBLE PRECISION ",
           Long.class
@@ -385,6 +399,9 @@ public enum FilterTarget {
           USERS.ROLE,
           USERS.METADATA,
           PROJECT.NAME,
+          PROJECT.KEY,
+          PROJECT.SLUG,
+          PROJECT.ORGANIZATION_ID,
           PROJECT.PROJECT_TYPE,
           PROJECT_USER.PROJECT_ID,
           PROJECT_USER.PROJECT_ROLE,
@@ -1197,6 +1214,8 @@ public enum FilterTarget {
       new CriteriaHolderBuilder().newBuilder(CRITERIA_NAME, INTEGRATION_TYPE.NAME, String.class)
           .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_NAME, PROJECT.NAME, String.class)
+          .get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_KEY, PROJECT.KEY, String.class)
           .get()
   )) {
     @Override
@@ -1210,7 +1229,10 @@ public enum FilterTarget {
           INTEGRATION.CREATION_DATE,
           INTEGRATION_TYPE.NAME,
           INTEGRATION_TYPE.GROUP_TYPE,
-          PROJECT.NAME
+          PROJECT.NAME,
+          PROJECT.KEY,
+          PROJECT.SLUG,
+          PROJECT.ORGANIZATION_ID
       );
     }
 
