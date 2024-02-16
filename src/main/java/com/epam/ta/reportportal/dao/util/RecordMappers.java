@@ -33,6 +33,7 @@ import static com.epam.ta.reportportal.jooq.Tables.ISSUE;
 import static com.epam.ta.reportportal.jooq.Tables.ISSUE_TYPE;
 import static com.epam.ta.reportportal.jooq.Tables.LAUNCH;
 import static com.epam.ta.reportportal.jooq.Tables.LOG;
+import static com.epam.ta.reportportal.jooq.Tables.ORGANIZATION;
 import static com.epam.ta.reportportal.jooq.Tables.PATTERN_TEMPLATE;
 import static com.epam.ta.reportportal.jooq.Tables.PROJECT;
 import static com.epam.ta.reportportal.jooq.Tables.PROJECT_USER;
@@ -80,6 +81,7 @@ import com.epam.ta.reportportal.entity.item.issue.IssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
+import com.epam.ta.reportportal.entity.organization.Organization;
 import com.epam.ta.reportportal.entity.pattern.PatternTemplate;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
@@ -389,10 +391,16 @@ public class RecordMappers {
     ProjectUser projectUser = new ProjectUser();
     projectUser.setProjectRole(r.into(PROJECT_USER.PROJECT_ROLE).into(ProjectRole.class));
 
+    Organization organization = new Organization();
+    organization.setId(r.get(ORGANIZATION.ID));
+
     Project project = new Project();
     project.setId(r.get(PROJECT_USER.PROJECT_ID));
     project.setName(r.get(PROJECT.NAME));
+    project.setKey(r.get(PROJECT.KEY));
+    project.setSlug(r.get(PROJECT.SLUG));
     project.setProjectType(ProjectType.valueOf(r.get(PROJECT.PROJECT_TYPE)));
+    project.setOrganization(organization);
 
     User user = new User();
     user.setLogin(r.get(USERS.LOGIN));

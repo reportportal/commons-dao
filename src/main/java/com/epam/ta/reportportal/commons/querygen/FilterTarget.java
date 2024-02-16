@@ -123,6 +123,7 @@ import static com.epam.ta.reportportal.jooq.Tables.ISSUE_TYPE;
 import static com.epam.ta.reportportal.jooq.Tables.ITEM_ATTRIBUTE;
 import static com.epam.ta.reportportal.jooq.Tables.LAUNCH;
 import static com.epam.ta.reportportal.jooq.Tables.LOG;
+import static com.epam.ta.reportportal.jooq.Tables.ORGANIZATION;
 import static com.epam.ta.reportportal.jooq.Tables.PARAMETER;
 import static com.epam.ta.reportportal.jooq.Tables.PATTERN_TEMPLATE;
 import static com.epam.ta.reportportal.jooq.Tables.PATTERN_TEMPLATE_TEST_ITEM;
@@ -401,11 +402,13 @@ public enum FilterTarget {
           PROJECT.NAME,
           PROJECT.KEY,
           PROJECT.SLUG,
-          PROJECT.ORGANIZATION_ID,
           PROJECT.PROJECT_TYPE,
           PROJECT_USER.PROJECT_ID,
           PROJECT_USER.PROJECT_ROLE,
-          PROJECT_USER.USER_ID
+          PROJECT_USER.USER_ID,
+          ORGANIZATION.ID,
+          ORGANIZATION.SLUG,
+          ORGANIZATION.NAME
       );
     }
 
@@ -418,6 +421,7 @@ public enum FilterTarget {
     protected void joinTables(QuerySupplier query) {
       query.addJoin(PROJECT_USER, JoinType.LEFT_OUTER_JOIN, USERS.ID.eq(PROJECT_USER.USER_ID));
       query.addJoin(PROJECT, JoinType.LEFT_OUTER_JOIN, PROJECT_USER.PROJECT_ID.eq(PROJECT.ID));
+      query.addJoin(ORGANIZATION, JoinType.LEFT_OUTER_JOIN, ORGANIZATION.ID.eq(PROJECT.ORGANIZATION_ID));
     }
 
     @Override
