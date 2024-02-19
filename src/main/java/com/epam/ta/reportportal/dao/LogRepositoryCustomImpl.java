@@ -187,6 +187,18 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
             .fetch());
   }
 
+  public Map<Long, List<IndexLog>> findTestItemsAllIndex(List<Long> itemIds, int logLevel) {
+    return INDEX_LOG_FETCHER.apply(
+        dsl.selectDistinct(LOG.ID, LOG.LOG_LEVEL, LOG.LOG_MESSAGE, LOG.LOG_TIME,
+                LOG.ITEM_ID, CLUSTERS.INDEX_ID)
+            .from(LOG)
+            .leftJoin(CLUSTERS)
+            .on(LOG.CLUSTER_ID.eq(CLUSTERS.ID))
+            .and(LOG.ITEM_ID.in(itemIds))
+            .and(LOG.LOG_LEVEL.greaterOrEqual(logLevel))
+            .fetch());
+  }
+
   @Override
   public List<Log> findLatestUnderTestItemByLaunchIdAndTestItemIdsAndLogLevelGte(Long launchId,
       Long itemId, int logLevel, int limit) {

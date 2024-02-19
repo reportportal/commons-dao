@@ -86,6 +86,15 @@ public interface LogRepositoryCustom extends FilterableRepository<Log> {
       int logLevel);
 
   /**
+   * Find logs as {@link IndexLog} under {@link TestItem}
+   *
+   * @param itemIds  {@link List} of the {@link Log#getTestItem()} IDs
+   * @param logLevel {@link Log#getLogLevel()}
+   * @return {@link List} of {@link Log}
+   */
+  Map<Long, List<IndexLog>> findTestItemsAllIndex(List<Long> itemIds, int logLevel);
+
+  /**
    * Find n latest logs for item
    *
    * @param launchId {@link} ID of the {@link Launch} to search {@link Log} under
