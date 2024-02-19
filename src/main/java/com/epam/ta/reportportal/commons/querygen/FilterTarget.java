@@ -320,7 +320,7 @@ public enum FilterTarget {
           PROJECT.CREATION_DATE,
           PROJECT.KEY,
           PROJECT.SLUG,
-          PROJECT.KEY,
+          PROJECT.NAME,
           PROJECT.PROJECT_TYPE,
           PROJECT.ORGANIZATION,
           PROJECT.ORGANIZATION_ID
