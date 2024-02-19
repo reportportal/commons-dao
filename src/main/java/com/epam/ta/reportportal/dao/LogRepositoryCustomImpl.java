@@ -190,7 +190,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
   public Map<Long, List<IndexLog>> findTestItemsAllIndex(List<Long> itemIds, int logLevel) {
     return INDEX_LOG_FETCHER.apply(
         dsl.selectDistinct(LOG.ID, LOG.LOG_LEVEL, LOG.LOG_MESSAGE, LOG.LOG_TIME,
-                LOG.ITEM_ID, CLUSTERS.INDEX_ID)
+                LOG.ITEM_ID.as(ROOT_ITEM_ID), CLUSTERS.INDEX_ID)
             .from(LOG)
             .leftJoin(CLUSTERS)
             .on(LOG.CLUSTER_ID.eq(CLUSTERS.ID))
