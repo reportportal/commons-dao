@@ -31,7 +31,7 @@ import org.springframework.web.client.RestTemplate;
  * @author <a href="mailto:maksim_antonov@epam.com">Maksim Antonov</a>
  */
 @Service
-@ConditionalOnProperty(prefix = "rp.elasticsearch", name = "host")
+@ConditionalOnProperty(prefix = "rp.searchengine", name = "host")
 public class ElasticSearchClient {
 
   public static final String INDEX_PREFIX = "logs-reportportal-";
@@ -44,9 +44,9 @@ public class ElasticSearchClient {
   private final String host;
   private final RestTemplate restTemplate;
 
-  public ElasticSearchClient(@Value("${rp.elasticsearch.host}") String host,
-      @Value("${rp.elasticsearch.username:}") String username,
-      @Value("${rp.elasticsearch.password:}") String password) {
+  public ElasticSearchClient(@Value("${rp.searchengine.host}") String host,
+      @Value("${rp.searchengine.username:}") String username,
+      @Value("${rp.searchengine.password:}") String password) {
     restTemplate = new RestTemplate();
 
     if (!username.isEmpty() && !password.isEmpty()) {
