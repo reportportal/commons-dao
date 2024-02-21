@@ -8,3 +8,4 @@ ignore:
   - 'com/epam/ta/reportportal/entity/bts',
   - 'com/epam/ta/reportportal/entity/ldap',
   - 'com/epam/ta/reportportal/entity/widget/content/**'
+  - 'com/epam/ta/reportportal/entity/organization',

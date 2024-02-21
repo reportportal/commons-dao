@@ -23,5 +23,7 @@ import com.epam.ta.reportportal.entity.organization.OrganizationUserId;
 /**
  * @author Siarhei Hrabko
  */
-public interface OrganizationUserRepository extends ReportPortalRepository<OrganizationUser, OrganizationUserId> {
+public interface OrganizationUserRepository extends
+    ReportPortalRepository<OrganizationUser, OrganizationUserId> {
+
 }

@@ -38,7 +38,9 @@ import org.springframework.context.annotation.Profile;
 @Configuration
 @ConfigurationProperties(prefix = "rp.datasource")
 public class DataSourceConfig extends HikariConfig {
+
   private static final Logger log = LoggerFactory.getLogger(DataSourceConfig.class);
+
   @Primary
   @Bean
   @Profile("!unittest")

@@ -26,11 +26,11 @@ import java.util.Optional;
  */
 public interface OrganizationRepository extends ReportPortalRepository<Organization, Long> {
 
-	/**
-	 * @param name name of organization
-	 * @return {@link Optional} of {@link Organization}
-	 */
-	Optional<Organization> findByName(String name);
+  /**
+   * @param name name of organization
+   * @return {@link Optional} of {@link Organization}
+   */
+  Optional<Organization> findByName(String name);
 
   /**
    * @param slug slug name of organization

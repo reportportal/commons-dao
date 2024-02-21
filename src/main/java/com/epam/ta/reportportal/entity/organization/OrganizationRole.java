@@ -28,7 +28,8 @@ public enum OrganizationRole {
   MEMBER;
 
   public static Optional<OrganizationRole> forName(final String name) {
-    return Arrays.stream(OrganizationRole.values()).filter(role -> role.name().equalsIgnoreCase(name))
+    return Arrays.stream(OrganizationRole.values())
+        .filter(role -> role.name().equalsIgnoreCase(name))
         .findAny();
   }
 }

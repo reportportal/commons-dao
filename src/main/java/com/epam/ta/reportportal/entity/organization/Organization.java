@@ -39,18 +39,18 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Organization implements Serializable {
 
-	private static final long serialVersionUID = 6730810629133187834L;
+  private static final long serialVersionUID = 6730810629133187834L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id", unique = true, nullable = false, precision = 64)
-	private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "id", unique = true, nullable = false, precision = 64)
+  private Long id;
 
   @Column(name = "creation_date", nullable = false)
   private LocalDateTime creationDate;
 
-	@Column(name = "name")
-	private String name;
+  @Column(name = "name")
+  private String name;
 
   @Column(name = "organization_type")
   private OrganizationType organizationType;

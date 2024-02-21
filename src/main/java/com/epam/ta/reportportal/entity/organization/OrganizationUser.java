@@ -47,42 +47,42 @@ import org.hibernate.annotations.TypeDef;
 @AllArgsConstructor
 public class OrganizationUser implements Serializable {
 
-	private static final long serialVersionUID = 7313055792392238124L;
+  private static final long serialVersionUID = 7313055792392238124L;
 
-	@EmbeddedId
-	private OrganizationUserId id;
+  @EmbeddedId
+  private OrganizationUserId id;
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	@MapsId("organizationId")
-	private Organization organization;
+  @ManyToOne(fetch = FetchType.EAGER)
+  @MapsId("organizationId")
+  private Organization organization;
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	@MapsId("userId")
-	private User user;
+  @ManyToOne(fetch = FetchType.EAGER)
+  @MapsId("userId")
+  private User user;
 
-	@Column(name = "organization_role")
+  @Column(name = "organization_role")
   @Enumerated(EnumType.STRING)
   @Type(type = "pqsql_enum")
   private OrganizationRole organizationRole;
 
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (!(o instanceof OrganizationUser)) {
-			return false;
-		}
-		OrganizationUser that = (OrganizationUser) o;
-		return organization.equals(that.organization)
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof OrganizationUser)) {
+      return false;
+    }
+    OrganizationUser that = (OrganizationUser) o;
+    return organization.equals(that.organization)
         && id.equals(that.id)
         && user.equals(that.user)
         && organizationRole == that.organizationRole;
-	}
+  }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(id, organization, user, organizationRole);
-	}
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, organization, user, organizationRole);
+  }
 }

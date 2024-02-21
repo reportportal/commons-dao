@@ -29,20 +29,20 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 class OrganizationRepositoryTest extends BaseTest {
 
-	@Autowired
-	private OrganizationRepository organizationRepository;
+  @Autowired
+  private OrganizationRepository organizationRepository;
 
-	@Test
-	void findByNameTest() {
-		//given
-		String name = "My organization";
+  @Test
+  void findByNameTest() {
+    //given
+    String name = "My organization";
 
-		//when
-		Optional<Organization> organization = organizationRepository.findByName(name);
+    //when
+    Optional<Organization> organization = organizationRepository.findByName(name);
 
-		//then
-		assertTrue("Organization found", organization.isPresent());
-	}
+    //then
+    assertTrue("Organization found", organization.isPresent());
+  }
 
   @Test
   void findBySlugTest() {

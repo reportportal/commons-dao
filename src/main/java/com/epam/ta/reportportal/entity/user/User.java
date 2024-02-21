@@ -20,7 +20,6 @@ import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.organization.OrganizationUser;
 import com.google.common.collect.Sets;
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import javax.persistence.CascadeType;
@@ -94,7 +93,8 @@ public class User implements Serializable {
       CascadeType.MERGE, CascadeType.REFRESH})
   private Set<ProjectUser> projects = Sets.newHashSet();
 
-  @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = {CascadeType.PERSIST,
+      CascadeType.MERGE, CascadeType.REFRESH})
   private Set<OrganizationUser> organizationUser = Sets.newHashSet();
 
 

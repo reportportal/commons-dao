@@ -28,10 +28,10 @@ import lombok.Data;
 @Data
 public class OrganizationUserId implements Serializable {
 
-	@Column(name = "organization_id")
-	private Long organizationId;
+  @Column(name = "organization_id")
+  private Long organizationId;
 
-	@Column(name = "user_id")
-	private Long userId;
+  @Column(name = "user_id")
+  private Long userId;
 
 }

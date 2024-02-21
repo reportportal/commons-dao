@@ -31,7 +31,8 @@ public enum OrganizationType {
   UPSA;
 
   public static Optional<OrganizationType> findByName(String name) {
-    return Arrays.stream(OrganizationType.values()).filter(type -> type.name().equalsIgnoreCase(name))
+    return Arrays.stream(OrganizationType.values())
+        .filter(type -> type.name().equalsIgnoreCase(name))
         .findAny();
   }
 

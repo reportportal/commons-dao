@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 EPAM Systems
+ * Copyright 2024 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,28 +16,31 @@
 
 package com.epam.ta.reportportal.entity.enums.converter;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import com.epam.ta.reportportal.entity.enums.OrganizationType;
-import com.epam.ta.reportportal.exception.ReportPortalException;
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
+import java.util.Arrays;
+import java.util.stream.Collectors;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  * Organization type converter. Converts from ordinal value to String representations
  *
  * @author Siarhei Hrabko
  */
-@Converter(autoApply = true)
-public class OrganizationTypeConverter implements AttributeConverter<OrganizationType, String> {
+public class OrganizationTypeConverterTest extends AttributeConverterTest {
 
-  @Override
-  public String convertToDatabaseColumn(OrganizationType attribute) {
-    return attribute.toString();
+  @BeforeEach
+  void setUp() {
+    this.converter = new OrganizationTypeConverter();
+    allowedValues = Arrays.stream(OrganizationType.values())
+        .collect(Collectors.toMap(it -> it,
+            it -> Arrays.asList(it.name(), it.name().toUpperCase(), it.name().toLowerCase())));
   }
 
   @Override
-  public OrganizationType convertToEntityAttribute(String orgType) {
-    return OrganizationType.findByName(orgType)
-        .orElseThrow(
-            () -> new ReportPortalException("Can not convert organization type from database."));
+  protected void convertToColumnTest() {
+    Arrays.stream(OrganizationType.values())
+        .forEach(it -> assertEquals(it.name(), converter.convertToDatabaseColumn(it)));
   }
 }
