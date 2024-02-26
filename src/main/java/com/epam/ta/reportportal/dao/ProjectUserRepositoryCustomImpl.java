@@ -22,23 +22,25 @@ public class ProjectUserRepositoryCustomImpl implements ProjectUserRepositoryCus
   }
 
 	@Override
-	public Optional<ReportPortalUser.ProjectDetails> findDetailsByUserIdAndProjectName(Long userId, String projectName) {
-		return dsl.select(PROJECT_USER.PROJECT_ID, PROJECT_USER.PROJECT_ROLE, PROJECT.NAME)
+	public Optional<ReportPortalUser.ProjectDetails> findDetailsByUserIdAndProjectKey(Long userId, String projectKey) {
+		return dsl.select(PROJECT_USER.PROJECT_ID, PROJECT_USER.PROJECT_ROLE, PROJECT.NAME, PROJECT.KEY)
 				.from(PROJECT_USER)
 				.join(PROJECT)
 				.on(PROJECT_USER.PROJECT_ID.eq(PROJECT.ID))
 				.where(PROJECT_USER.USER_ID.eq(userId))
-				.and(PROJECT.NAME.eq(projectName))
+				.and(PROJECT.KEY.eq(projectKey))
 				.fetchOptional(PROJECT_DETAILS_MAPPER);
 	}
 
   @Override
-  public Optional<ReportPortalUser.ProjectDetails> findAdminDetailsProjectName(String projectName) {
-    return dsl.select(PROJECT.ID.as(PROJECT_USER.PROJECT_ID),
+  public Optional<ReportPortalUser.ProjectDetails> findAdminDetailsProjectKey(String projectKey) {
+    return dsl.select(
+            PROJECT.ID.as(PROJECT_USER.PROJECT_ID),
             DSL.val("PROJECT_MANAGER").as(PROJECT_USER.PROJECT_ROLE),
-            PROJECT.NAME)
+            PROJECT.NAME,
+            PROJECT.KEY)
         .from(PROJECT)
-        .where(PROJECT.NAME.eq(projectName))
+        .where(PROJECT.KEY.eq(projectKey))
         .fetchOptional(PROJECT_DETAILS_MAPPER);
   }
 }

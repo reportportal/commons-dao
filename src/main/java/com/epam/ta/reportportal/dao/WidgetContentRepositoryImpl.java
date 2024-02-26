@@ -865,7 +865,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						ACTIVITY.OBJECT_NAME,
 						ACTIVITY.SUBJECT_NAME,
 						USERS.LOGIN,
-						PROJECT.NAME
+						PROJECT.NAME,
+						PROJECT.KEY
 				)
         .from(ACTIVITY)
         .join(ACTIVITIES)

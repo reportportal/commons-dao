@@ -250,6 +250,7 @@ public class WidgetContentUtil {
 				: r.get(ACTIVITY.SUBJECT_NAME));
 		activityResource.setProjectId(r.get(ACTIVITY.PROJECT_ID));
 		activityResource.setProjectName(r.get(PROJECT.NAME));
+		activityResource.setProjectKey(r.get(PROJECT.KEY));
 		activityResource.setActionType(r.get(ACTIVITY.EVENT_NAME));
 		activityResource.setObjectType(r.get(ACTIVITY.OBJECT_TYPE));
 		activityResource.setObjectName(r.get(ACTIVITY.OBJECT_NAME));

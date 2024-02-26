@@ -34,6 +34,7 @@ import static com.epam.ta.reportportal.jooq.Tables.FILTER_SORT;
 import static com.epam.ta.reportportal.jooq.Tables.INTEGRATION;
 import static com.epam.ta.reportportal.jooq.Tables.LAUNCH;
 import static com.epam.ta.reportportal.jooq.Tables.LOG;
+import static com.epam.ta.reportportal.jooq.Tables.OWNED_ENTITY;
 import static com.epam.ta.reportportal.jooq.Tables.PARAMETER;
 import static com.epam.ta.reportportal.jooq.Tables.PROJECT_ATTRIBUTE;
 import static com.epam.ta.reportportal.jooq.tables.JProject.PROJECT;
@@ -67,25 +68,17 @@ import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
 import org.jooq.Record;
 import org.jooq.Result;
 import org.springframework.data.domain.Sort;
 import org.springframework.util.CollectionUtils;
-
-import java.util.*;
-import java.util.function.Function;
-
-import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.PAGE_NUMBER;
-import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.TYPE;
-import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.LOG_LEVEL;
-import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ID;
-import static com.epam.ta.reportportal.dao.util.RecordMappers.*;
-import static com.epam.ta.reportportal.jooq.Tables.*;
-import static com.epam.ta.reportportal.jooq.tables.JProject.PROJECT;
-import static com.epam.ta.reportportal.jooq.tables.JProjectUser.PROJECT_USER;
-import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
-import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
-import static java.util.Optional.ofNullable;
 
 /**
  * Fetches results from db by JOOQ queries into Java objects.
