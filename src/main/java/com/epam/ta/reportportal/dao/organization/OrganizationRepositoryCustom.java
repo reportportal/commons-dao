@@ -16,25 +16,24 @@
 
 package com.epam.ta.reportportal.dao.organization;
 
-import com.epam.ta.reportportal.dao.ReportPortalRepository;
+import com.epam.ta.reportportal.dao.FilterableRepository;
 import com.epam.ta.reportportal.entity.organization.Organization;
-
+import java.util.List;
 import java.util.Optional;
 
 /**
+ * Repository interface for searching and filtering organization records.
+ *
  * @author Siarhei Hrabko
  */
-public interface OrganizationRepository extends ReportPortalRepository<Organization, Long> {
+public interface OrganizationRepositoryCustom extends FilterableRepository<Organization> {
 
-  /**
-   * @param name name of organization
-   * @return {@link Optional} of {@link Organization}
-   */
-  Optional<Organization> findByName(String name);
+  List<Organization> findAllByUserLogin(String login);
 
-  /**
-   * @param slug slug name of organization
-   * @return {@link Optional} of {@link Organization}
-   */
-  Optional<Organization> findBySlug(String slug);
+  Optional<Organization> findById(Long orgId);
+
+  Optional<Organization> findOrganizationByName(String name);
+
+  Optional<Organization> findOrganizationBySlug(String slug);
+
 }

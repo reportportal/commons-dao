@@ -192,6 +192,15 @@ public class RecordMappers {
   };
 
   /**
+   * Maps record into {@link Organization} object
+   */
+  public static final RecordMapper<? super Record, Organization> ORGANIZATION_MAPPER = row -> {
+    Organization project = row.into(Organization.class);
+
+    return project;
+  };
+
+  /**
    * Maps record into {@link TestItemResults} object
    */
   public static final RecordMapper<? super Record, TestItemResults> TEST_ITEM_RESULTS_RECORD_MAPPER = r -> {
@@ -391,16 +400,13 @@ public class RecordMappers {
     ProjectUser projectUser = new ProjectUser();
     projectUser.setProjectRole(r.into(PROJECT_USER.PROJECT_ROLE).into(ProjectRole.class));
 
-    Organization organization = new Organization();
-    organization.setId(r.get(ORGANIZATION.ID));
-
     Project project = new Project();
     project.setId(r.get(PROJECT_USER.PROJECT_ID));
     project.setName(r.get(PROJECT.NAME));
     project.setKey(r.get(PROJECT.KEY));
     project.setSlug(r.get(PROJECT.SLUG));
     project.setProjectType(ProjectType.valueOf(r.get(PROJECT.PROJECT_TYPE)));
-    project.setOrganization(organization);
+    project.setOrganizationId(r.get(ORGANIZATION.ID));
 
     User user = new User();
     user.setLogin(r.get(USERS.LOGIN));
