@@ -98,7 +98,7 @@ public class Project implements Serializable {
   @Column(name = "organization")
   private String org;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
   @MapsId("organization_id")
   private Organization organization;
 
