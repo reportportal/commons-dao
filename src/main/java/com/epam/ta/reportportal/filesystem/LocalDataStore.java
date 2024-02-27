@@ -20,7 +20,7 @@ import com.epam.ta.reportportal.entity.enums.FeatureFlag;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.filesystem.distributed.s3.StoredFile;
 import com.epam.ta.reportportal.util.FeatureFlagHandler;
-import com.epam.ta.reportportal.ws.model.ErrorType;
+import com.epam.ta.reportportal.ws.reporting.ErrorType;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;

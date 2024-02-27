@@ -17,7 +17,7 @@
 package com.epam.ta.reportportal.entity.attachment;
 
 import com.epam.ta.reportportal.exception.ReportPortalException;
-import com.epam.ta.reportportal.ws.model.ErrorType;
+import com.epam.ta.reportportal.ws.reporting.ErrorType;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
