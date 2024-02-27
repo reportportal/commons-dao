@@ -192,6 +192,15 @@ public class RecordMappers {
   };
 
   /**
+   * Maps record into {@link Organization} object
+   */
+  public static final RecordMapper<? super Record, Organization> ORGANIZATION_MAPPER = row -> {
+    Organization project = row.into(Organization.class);
+
+    return project;
+  };
+
+  /**
    * Maps record into {@link TestItemResults} object
    */
   public static final RecordMapper<? super Record, TestItemResults> TEST_ITEM_RESULTS_RECORD_MAPPER = r -> {

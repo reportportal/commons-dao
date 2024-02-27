@@ -56,6 +56,7 @@ import com.epam.ta.reportportal.entity.item.Parameter;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
+import com.epam.ta.reportportal.entity.organization.Organization;
 import com.epam.ta.reportportal.entity.pattern.PatternTemplateTestItem;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectAttribute;
@@ -119,6 +120,25 @@ public class ResultFetchers {
       projects.put(id, project);
     });
     return new ArrayList<>(projects.values());
+  };
+
+  /**
+   * Fetches records from db results into list of {@link Organization} objects.
+   */
+  public static final Function<Result<? extends Record>, List<Organization>> ORGANIZATION_FETCHER = records -> {
+    Map<Long, Organization> orgs = Maps.newLinkedHashMap();
+    records.forEach(record -> {
+      Long id = record.get(PROJECT.ID);
+      Organization organization;
+      if (!orgs.containsKey(id)) {
+        organization = RecordMappers.ORGANIZATION_MAPPER.map(record);
+      } else {
+        organization = orgs.get(id);
+      }
+      orgs.put(id, organization);
+    });
+
+    return new ArrayList<>(orgs.values());
   };
 
   /**

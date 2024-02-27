@@ -37,6 +37,7 @@ import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteria
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_OWNER;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PROJECT;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PROJECT_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_SLUG;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_START_TIME;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_USER_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.IntegrationCriteriaConstant.CRITERIA_INTEGRATION_TYPE;
@@ -65,12 +66,15 @@ import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaCons
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_LOG_PROJECT_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_LOG_TIME;
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_TEST_ITEM_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.OrganizationCriteriaConstant.CRITERIA_ORG_CREATED_DATE;
+import static com.epam.ta.reportportal.commons.querygen.constant.OrganizationCriteriaConstant.CRITERIA_ORG_TYPE;
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_ALLOCATED_STORAGE;
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_ATTRIBUTE_NAME;
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_CREATION_DATE;
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_KEY;
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_NAME;
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_ORGANIZATION;
+import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_ORGANIZATION_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_TYPE;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_CLUSTER_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_DURATION;
@@ -153,6 +157,7 @@ import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
+import com.epam.ta.reportportal.entity.organization.Organization;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectInfo;
 import com.epam.ta.reportportal.entity.user.User;
@@ -189,6 +194,9 @@ public enum FilterTarget {
               .get(),
           new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ORGANIZATION,
               PROJECT.ORGANIZATION, String.class).get(),
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_SLUG, PROJECT.SLUG, String.class).get(),
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ORGANIZATION_ID,
+              PROJECT.ORGANIZATION_ID, Long.class).get(),
           new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_TYPE, PROJECT.PROJECT_TYPE,
               String.class).get(),
           new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ATTRIBUTE_NAME,
@@ -1400,6 +1408,42 @@ public enum FilterTarget {
     @Override
     protected Field<Long> idField() {
       return FILTER.ID;
+    }
+  },
+
+  ORGANIZATION_TARGET(Organization.class, Arrays.asList(
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_ID, ORGANIZATION.ID, Long.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_NAME, ORGANIZATION.NAME, String.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_SLUG, ORGANIZATION.SLUG, String.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_CREATED_DATE, ORGANIZATION.CREATION_DATE,
+          Timestamp.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_TYPE, ORGANIZATION.ORGANIZATION_TYPE,
+          String.class).get()
+  )) {
+    @Override
+    protected Collection<? extends SelectField> selectFields() {
+      return Lists.newArrayList(ORGANIZATION.ID,
+          ORGANIZATION.ID,
+          ORGANIZATION.NAME,
+          ORGANIZATION.SLUG,
+          ORGANIZATION.CREATION_DATE,
+          ORGANIZATION.ORGANIZATION_TYPE
+      );
+    }
+
+    @Override
+    protected void addFrom(SelectQuery<? extends Record> query) {
+      query.addFrom(ORGANIZATION);
+    }
+
+    @Override
+    protected void joinTables(QuerySupplier query) {
+
+    }
+
+    @Override
+    protected Field<Long> idField() {
+      return ORGANIZATION.ID.cast(Long.class);
     }
   };
 
