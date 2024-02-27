@@ -21,7 +21,7 @@ import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.HAVING_COND
 import com.epam.ta.reportportal.commons.validation.BusinessRule;
 import com.epam.ta.reportportal.commons.validation.Suppliers;
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
-import com.epam.ta.reportportal.ws.model.ErrorType;
+import com.epam.ta.reportportal.ws.reporting.ErrorType;
 import com.google.common.collect.Lists;
 import java.io.Serializable;
 import java.util.Collections;

@@ -29,7 +29,7 @@ import static org.jooq.impl.DSL.field;
 import com.epam.ta.reportportal.commons.querygen.query.JoinEntity;
 import com.epam.ta.reportportal.commons.querygen.query.QuerySupplier;
 import com.epam.ta.reportportal.exception.ReportPortalException;
-import com.epam.ta.reportportal.ws.model.ErrorType;
+import com.epam.ta.reportportal.ws.reporting.ErrorType;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;

@@ -22,7 +22,7 @@ import com.epam.ta.reportportal.entity.enums.FeatureFlag;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.filesystem.DataStore;
 import com.epam.ta.reportportal.util.FeatureFlagHandler;
-import com.epam.ta.reportportal.ws.model.ErrorType;
+import com.epam.ta.reportportal.ws.reporting.ErrorType;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
