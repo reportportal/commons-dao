@@ -54,7 +54,7 @@ dependencies {
     } else {
         compile 'com.github.reportportal:commons:07566b8e'
         compile 'com.github.reportportal:commons-rules:1f6bfed'
-        compile 'com.github.reportportal:commons-model:41e9fdb'
+        compile 'com.github.reportportal:commons-model:38a52fb'
         implementation 'com.github.reportportal:commons-reporting:c324bab'
     }
 
