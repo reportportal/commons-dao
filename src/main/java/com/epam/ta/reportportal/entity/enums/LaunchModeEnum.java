@@ -16,7 +16,7 @@
 
 package com.epam.ta.reportportal.entity.enums;
 
-import com.epam.ta.reportportal.ws.model.launch.Mode;
+import com.epam.ta.reportportal.ws.reporting.Mode;
 import java.util.Arrays;
 import java.util.Optional;
 
