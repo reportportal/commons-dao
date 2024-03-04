@@ -48,11 +48,9 @@ public class ProjectInfo implements Serializable {
 
   private String organizationId;
 
-  private String organizationSlug;
+  private String key;
 
-  private String projectKey;
-
-  private String projectSlug;
+  private String slug;
 
   private int usersQuantity;
 

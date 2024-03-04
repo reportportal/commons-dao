@@ -173,7 +173,7 @@ public class RecordMappers {
    */
   public static final RecordMapper<? super Record, Project> PROJECT_MAPPER = r -> {
     Project project = r.into(PROJECT.ID, PROJECT.NAME, PROJECT.ORGANIZATION, PROJECT.CREATION_DATE,
-            PROJECT.PROJECT_TYPE)
+            PROJECT.PROJECT_TYPE, PROJECT.ORGANIZATION_ID, PROJECT.KEY, PROJECT.SLUG)
         .into(Project.class);
     ofNullable(r.field(PROJECT.METADATA)).ifPresent(f -> {
       String metaDataString = r.get(f, String.class);
