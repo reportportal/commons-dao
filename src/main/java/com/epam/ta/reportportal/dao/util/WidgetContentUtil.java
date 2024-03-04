@@ -628,12 +628,12 @@ public class WidgetContentUtil {
 
         });
 
-				resultMap.forEach((key, content) -> {
-					double passingRate = 100.0 * content.getStatistics().getOrDefault(EXECUTIONS_PASSED, 0) /
-							content.getStatistics().getOrDefault(EXECUTIONS_TOTAL, 1);
-					content.setPassingRate(BigDecimal.valueOf(passingRate)
-							.setScale(2, RoundingMode.HALF_UP).doubleValue());
-				});
+        resultMap.forEach((key, content) -> {
+          double passingRate = 100.0 * content.getStatistics().getOrDefault(EXECUTIONS_PASSED, 0) /
+              content.getStatistics().getOrDefault(EXECUTIONS_TOTAL, 1);
+          content.setPassingRate(BigDecimal.valueOf(passingRate)
+              .setScale(2, RoundingMode.HALF_UP).doubleValue());
+        });
 
         return resultMap;
       };
