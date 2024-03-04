@@ -67,6 +67,7 @@ import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaCons
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_LOG_TIME;
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_TEST_ITEM_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.OrganizationCriteriaConstant.CRITERIA_ORG_CREATED_DATE;
+import static com.epam.ta.reportportal.commons.querygen.constant.OrganizationCriteriaConstant.CRITERIA_ORG_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.OrganizationCriteriaConstant.CRITERIA_ORG_TYPE;
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_ALLOCATED_STORAGE;
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_ATTRIBUTE_NAME;
@@ -289,6 +290,9 @@ public enum FilterTarget {
 
           new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_CREATION_DATE,
               PROJECT.CREATION_DATE, Timestamp.class).get(),
+
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_ID,
+              PROJECT.ORGANIZATION_ID, Long.class).get(),
 
           new CriteriaHolderBuilder().newBuilder(USERS_QUANTITY, USERS_QUANTITY, Long.class)
               .withAggregateCriteria(DSL.countDistinct(PROJECT_USER.USER_ID).toString())

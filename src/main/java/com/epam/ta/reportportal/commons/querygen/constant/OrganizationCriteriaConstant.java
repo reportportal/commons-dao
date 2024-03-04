@@ -23,6 +23,7 @@ package com.epam.ta.reportportal.commons.querygen.constant;
  */
 public final class OrganizationCriteriaConstant {
 
+  public static final String CRITERIA_ORG_ID = "organization_id";
   public static final String CRITERIA_ORG_TYPE = "organization_type";
   public static final String CRITERIA_ORG_CREATED_DATE = "creation_date";
 

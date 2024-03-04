@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.dao;
 
+import static com.epam.ta.reportportal.commons.querygen.constant.OrganizationCriteriaConstant.CRITERIA_ORG_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_NAME;
 import static com.epam.ta.reportportal.entity.project.ProjectInfo.USERS_QUANTITY;
 import static java.util.Optional.ofNullable;
@@ -169,6 +170,18 @@ class ProjectRepositoryTest extends BaseTest {
             CRITERIA_PROJECT_NAME
         ), PageRequest.of(0, 10));
     assertEquals(1, projectInfoPage.getTotalElements());
+  }
+
+  @Test
+  void findProjectInfoByOrgIdFilterWithPagination() {
+    final Page<ProjectInfo> projectInfoPage = projectRepository.findProjectInfoByFilter(
+        new Filter(ProjectInfo.class,
+            Condition.EQUALS,
+            false,
+            "1",
+            CRITERIA_ORG_ID
+        ), PageRequest.of(0, 10));
+    assertEquals(2, projectInfoPage.getTotalElements());
   }
 
   @Sql("/db/fill/project/expired-project-fill.sql")
