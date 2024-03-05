@@ -1135,7 +1135,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
         .as(dsl.with(LAUNCHES)
             .as(QueryBuilder.newBuilder(launchFilter, collectJoinFields(launchFilter))
                 .with(launchesSort)
-                .with(launchesLimit)
+                //.with(launchesLimit)
                 .build())
             .select(max(LAUNCH.ID).as(ID),
                 LAUNCH.NAME,
@@ -1185,7 +1185,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
       query = FIRST_LEVEL_TABLE.getQuery();
     }
     dsl.execute(DSL.sql(String.format("CREATE MATERIALIZED VIEW %s AS (%s)", DSL.name(viewName),
-        query.toString())));
+        query.toString()), launchesLimit));
   }
 
   @Override
