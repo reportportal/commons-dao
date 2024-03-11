@@ -16,7 +16,6 @@
 
 package com.epam.ta.reportportal.dao.organization;
 
-import static com.epam.ta.reportportal.entity.project.ProjectInfo.USERS_QUANTITY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 
@@ -24,10 +23,12 @@ import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.entity.organization.Organization;
-import com.epam.ta.reportportal.entity.project.ProjectInfo;
+import com.epam.ta.reportportal.entity.organization.OrganizationInfo;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -82,4 +83,23 @@ class OrganizationRepositoryCustomTest extends BaseTest {
     assertEquals(1, orgs.size());
   }
 
+
+  @ParameterizedTest
+  @CsvSource(value = {
+      "slug|eq|my-organization|1",
+      "usersQuantity|eq|2|1",
+      "launchesQuantity|gt|-1|1",
+      "projectsQuantity|eq|2|1"
+      //, "lastRun|gt|2020-03-11T15:02:20.233|1"
+  }, delimiter = '|')
+  void findOrganizationInfoByFilter(String field, String condition, String value, int rows) {
+    final List<OrganizationInfo> orgsInfo = organizationRepositoryCustom.findOrganizationInfoByFilter(
+        new Filter(OrganizationInfo.class,
+            Condition.findByMarker(condition).get(),
+            false,
+            value,
+            field
+        ));
+    assertEquals(rows, orgsInfo.size());
+  }
 }

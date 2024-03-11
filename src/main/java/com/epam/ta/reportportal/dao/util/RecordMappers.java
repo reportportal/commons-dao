@@ -95,10 +95,10 @@ import com.epam.ta.reportportal.entity.widget.WidgetOptions;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.Tables;
 import com.epam.ta.reportportal.jooq.tables.JLog;
-import com.epam.ta.reportportal.ws.reporting.ErrorType;
 import com.epam.ta.reportportal.ws.model.analyzer.IndexLaunch;
 import com.epam.ta.reportportal.ws.model.analyzer.IndexLog;
 import com.epam.ta.reportportal.ws.model.analyzer.IndexTestItem;
+import com.epam.ta.reportportal.ws.reporting.ErrorType;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -175,8 +175,12 @@ public class RecordMappers {
     Project project = r.into(PROJECT.ID, PROJECT.NAME, PROJECT.ORGANIZATION, PROJECT.CREATION_DATE,
             PROJECT.PROJECT_TYPE, PROJECT.ORGANIZATION_ID)
         .into(Project.class);
-    project.setKey(r.get(PROJECT.KEY));
-    project.setSlug(r.get(PROJECT.SLUG));
+    ofNullable(r.field(PROJECT.KEY))
+        .ifPresent(f -> project.setKey(r.get(PROJECT.KEY)));
+    ofNullable(r.field(PROJECT.SLUG))
+        .ifPresent(f -> project.setSlug(r.get(PROJECT.SLUG)));
+
+
     ofNullable(r.field(PROJECT.METADATA)).ifPresent(f -> {
       String metaDataString = r.get(f, String.class);
       ofNullable(metaDataString).ifPresent(md -> {
@@ -197,9 +201,8 @@ public class RecordMappers {
    * Maps record into {@link Organization} object
    */
   public static final RecordMapper<? super Record, Organization> ORGANIZATION_MAPPER = row -> {
-    Organization project = row.into(Organization.class);
-
-    return project;
+    Organization organization = row.into(Organization.class);
+    return organization;
   };
 
   /**

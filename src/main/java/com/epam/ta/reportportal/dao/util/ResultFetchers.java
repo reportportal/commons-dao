@@ -34,6 +34,7 @@ import static com.epam.ta.reportportal.jooq.Tables.FILTER_SORT;
 import static com.epam.ta.reportportal.jooq.Tables.INTEGRATION;
 import static com.epam.ta.reportportal.jooq.Tables.LAUNCH;
 import static com.epam.ta.reportportal.jooq.Tables.LOG;
+import static com.epam.ta.reportportal.jooq.Tables.ORGANIZATION;
 import static com.epam.ta.reportportal.jooq.Tables.OWNED_ENTITY;
 import static com.epam.ta.reportportal.jooq.Tables.PARAMETER;
 import static com.epam.ta.reportportal.jooq.Tables.PROJECT_ATTRIBUTE;
@@ -128,7 +129,7 @@ public class ResultFetchers {
   public static final Function<Result<? extends Record>, List<Organization>> ORGANIZATION_FETCHER = records -> {
     Map<Long, Organization> orgs = Maps.newLinkedHashMap();
     records.forEach(record -> {
-      Long id = record.get(PROJECT.ID);
+      Long id = record.get(ORGANIZATION.ID);
       Organization organization;
       if (!orgs.containsKey(id)) {
         organization = RecordMappers.ORGANIZATION_MAPPER.map(record);
