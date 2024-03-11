@@ -90,7 +90,6 @@ class OrganizationRepositoryCustomTest extends BaseTest {
       "usersQuantity|eq|2|1",
       "launchesQuantity|gt|-1|1",
       "projectsQuantity|eq|2|1"
-      //, "lastRun|gt|2020-03-11T15:02:20.233|1"
   }, delimiter = '|')
   void findOrganizationInfoByFilter(String field, String condition, String value, int rows) {
     final List<OrganizationInfo> orgsInfo = organizationRepositoryCustom.findOrganizationInfoByFilter(
