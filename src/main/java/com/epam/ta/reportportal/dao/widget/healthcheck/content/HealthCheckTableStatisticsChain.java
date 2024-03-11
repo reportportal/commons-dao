@@ -25,20 +25,20 @@ public class HealthCheckTableStatisticsChain
     WidgetProviderChain<HealthCheckTableGetParams, Map<String, HealthCheckTableStatisticsContent>> {
 
   private final WidgetQueryProvider<HealthCheckTableGetParams> statisticsQueryProvider;
-  private final WidgetContentProvider<Map<String, HealthCheckTableStatisticsContent>> healthCheckTableStatisticsProvider;
+  private final WidgetContentProvider<HealthCheckTableGetParams, Map<String, HealthCheckTableStatisticsContent>> healthCheckTableStatisticsProvider;
 
   @Autowired
   public HealthCheckTableStatisticsChain(
       WidgetQueryProvider<HealthCheckTableGetParams> statisticsQueryProvider,
-      WidgetContentProvider<Map<String, HealthCheckTableStatisticsContent>> healthCheckTableStatisticsProvider) {
+      WidgetContentProvider<HealthCheckTableGetParams, Map<String, HealthCheckTableStatisticsContent>> healthCheckTableStatisticsProvider) {
     this.statisticsQueryProvider = statisticsQueryProvider;
     this.healthCheckTableStatisticsProvider = healthCheckTableStatisticsProvider;
   }
 
   @Override
   public Map<String, HealthCheckTableStatisticsContent> apply(HealthCheckTableGetParams params) {
-    Map<String, HealthCheckTableStatisticsContent> result = statisticsQueryProvider.andThen(
-            healthCheckTableStatisticsProvider)
+    Map<String, HealthCheckTableStatisticsContent> result = statisticsQueryProvider
+        .andThen(query -> healthCheckTableStatisticsProvider.apply(query, params))
         .apply(params);
     return getResult(params, result);
   }

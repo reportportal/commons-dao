@@ -177,7 +177,7 @@ import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.epam.ta.reportportal.jooq.tables.JItemAttribute;
 import com.epam.ta.reportportal.util.WidgetSortUtils;
 import com.epam.ta.reportportal.ws.model.ActivityResource;
-import com.epam.ta.reportportal.ws.model.ErrorType;
+import com.epam.ta.reportportal.ws.reporting.ErrorType;
 import com.google.common.collect.Lists;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -1059,7 +1059,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
   @Override
   public List<ComponentHealthCheckContent> componentHealthCheck(Filter launchFilter,
       Sort launchSort, boolean isLatest, int launchesLimit,
-      Filter testItemFilter, String currentLevelKey) {
+      Filter testItemFilter, String currentLevelKey, boolean excludeSkipped) {
 
     Table<? extends Record> launchesTable = QueryUtils.createQueryBuilderWithLatestLaunchesOption(
             launchFilter, launchSort, isLatest)
@@ -1094,8 +1094,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
             .on((TEST_ITEM.ITEM_ID.eq(ITEM_ATTRIBUTE.ITEM_ID)
                 .or(TEST_ITEM.LAUNCH_ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID))).and(
                 ITEM_ATTRIBUTE.KEY.eq(currentLevelKey).and(ITEM_ATTRIBUTE.SYSTEM.isFalse())))
-            .groupBy(TEST_ITEM.ITEM_ID, TEST_ITEM_RESULTS.STATUS, ITEM_ATTRIBUTE.KEY,
-                ITEM_ATTRIBUTE.VALUE)
+            .groupBy(TEST_ITEM.ITEM_ID, TEST_ITEM_RESULTS.STATUS, ITEM_ATTRIBUTE.KEY, ITEM_ATTRIBUTE.VALUE)
+            .having(filterSkippedTests(excludeSkipped))
             .asTable(ITEMS))
         .groupBy(fieldName(ITEMS, VALUE))
         .orderBy(DSL.round(DSL.val(PERCENTAGE_MULTIPLIER)
@@ -1104,6 +1104,19 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
                     fieldName(ITEMS, STATUS).cast(JStatusEnum.class).eq(JStatusEnum.PASSED)))
             .div(DSL.nullif(DSL.count(fieldName(ITEMS, ITEM_ID)), 0)), 2))
         .fetch());
+  }
+
+  private Condition filterSkippedTests(boolean excludeSkipped) {
+    Condition condition = DSL.noCondition();
+    if (excludeSkipped) {
+       return DSL.notExists(
+           dsl.selectOne().from(STATISTICS).join(STATISTICS_FIELD)
+               .on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
+               .where(TEST_ITEM.ITEM_ID.eq(STATISTICS.ITEM_ID)
+                   .and(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
+                   .and(STATISTICS_FIELD.NAME.eq(EXECUTIONS_SKIPPED))));
+    }
+    return condition;
   }
 
   @Override

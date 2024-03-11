@@ -134,5 +134,6 @@ public class WidgetContentRepositoryConstants {
   public static final String AGGREGATED_VALUES = "aggregated_values";
   public static final String CUSTOM_COLUMN = "custom_column";
   public static final String CUSTOM_COLUMN_SORTING = "customColumn";
+  public static final String EXCLUDE_SKIPPED_TABLE = "exclude_skipped_table";
 
 }
