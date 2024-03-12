@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.entity.project.email;
 import com.epam.ta.reportportal.entity.enums.LogicalOperator;
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.entity.enums.SendCase;
+import com.epam.ta.reportportal.entity.integration.IntegrationParams;
 import com.epam.ta.reportportal.entity.project.Project;
 import java.io.Serializable;
 import java.util.Set;
@@ -47,6 +48,7 @@ import org.hibernate.annotations.TypeDef;
 @Entity
 @Table(name = "sender_case")
 @TypeDef(name = "pqsql_enum", typeClass = PostgreSQLEnumType.class)
+@TypeDef(name = "ruleDetails", typeClass = SenderCaseOptions.class)
 public class SenderCase implements Serializable {
 
   @Id
