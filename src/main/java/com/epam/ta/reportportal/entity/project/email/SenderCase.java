@@ -86,8 +86,9 @@ public class SenderCase implements Serializable {
   @Column(name = "type")
   private String type;
 
+  @Type(type = "senderCaseOptions")
   @Column(name = "rule_details")
-  private String ruleDetails;
+  private SenderCaseOptions ruleDetails;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "attributes_operator")
@@ -99,7 +100,7 @@ public class SenderCase implements Serializable {
 
   public SenderCase(Long id, String ruleName, Set<String> recipients, Set<String> launchNames,
       Set<LaunchAttributeRule> launchAttributeRules, SendCase sendCase, Project project,
-      boolean enabled, String type, String ruleDetails, LogicalOperator attributesOperator) {
+      boolean enabled, String type, SenderCaseOptions ruleDetails, LogicalOperator attributesOperator) {
     this.id = id;
     this.ruleName = ruleName;
     this.recipients = recipients;
@@ -193,11 +194,11 @@ public class SenderCase implements Serializable {
     this.type = type;
   }
 
-  public String getRuleDetails() {
+  public SenderCaseOptions getRuleDetails() {
     return ruleDetails;
   }
 
-  public void setRuleDetails(String ruleDetails) {
+  public void setRuleDetails(SenderCaseOptions ruleDetails) {
     this.ruleDetails = ruleDetails;
   }
 }
