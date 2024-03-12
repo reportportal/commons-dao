@@ -18,7 +18,6 @@ package com.epam.ta.reportportal.dao.organization;
 
 import static com.epam.ta.reportportal.dao.util.QueryUtils.collectJoinFields;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.ORGANIZATION_FETCHER;
-import static com.epam.ta.reportportal.dao.util.ResultFetchers.ORGANIZATION_INFO_FETCHER;
 import static com.epam.ta.reportportal.jooq.Tables.ORGANIZATION;
 import static com.epam.ta.reportportal.jooq.Tables.ORGANIZATION_USER;
 import static com.epam.ta.reportportal.jooq.Tables.USERS;
@@ -27,7 +26,6 @@ import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.entity.organization.Organization;
 import com.epam.ta.reportportal.entity.organization.OrganizationInfo;
-import com.epam.ta.reportportal.entity.project.ProjectInfo;
 import java.util.List;
 import java.util.Optional;
 import org.jooq.DSLContext;
