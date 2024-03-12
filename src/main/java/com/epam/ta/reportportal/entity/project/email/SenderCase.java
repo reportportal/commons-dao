@@ -83,6 +83,12 @@ public class SenderCase implements Serializable {
   @Column(name = "enabled")
   private boolean enabled;
 
+  @Column(name = "type")
+  private String type;
+
+  @Column(name = "rule_details")
+  private String ruleDetails;
+
 	@Enumerated(EnumType.STRING)
 	@Column(name = "attributes_operator")
 	@Type(type = "pqsql_enum")
@@ -91,13 +97,19 @@ public class SenderCase implements Serializable {
 	public SenderCase() {
 	}
 
-  public SenderCase(Set<String> recipients, Set<String> launchNames, Set<LaunchAttributeRule> launchAttributeRules, SendCase sendCase,
-      boolean enabled, LogicalOperator attributesOperator) {
+  public SenderCase(Long id, String ruleName, Set<String> recipients, Set<String> launchNames,
+      Set<LaunchAttributeRule> launchAttributeRules, SendCase sendCase, Project project,
+      boolean enabled, String type, String ruleDetails, LogicalOperator attributesOperator) {
+    this.id = id;
+    this.ruleName = ruleName;
     this.recipients = recipients;
     this.launchNames = launchNames;
     this.launchAttributeRules = launchAttributeRules;
     this.sendCase = sendCase;
+    this.project = project;
     this.enabled = enabled;
+    this.type = type;
+    this.ruleDetails = ruleDetails;
     this.attributesOperator = attributesOperator;
   }
 
@@ -171,5 +183,21 @@ public class SenderCase implements Serializable {
 
   public void setAttributesOperator(LogicalOperator attributesOperator) {
     this.attributesOperator = attributesOperator;
+  }
+
+  public String getType() {
+    return type;
+  }
+
+  public void setType(String type) {
+    this.type = type;
+  }
+
+  public String getRuleDetails() {
+    return ruleDetails;
+  }
+
+  public void setRuleDetails(String ruleDetails) {
+    this.ruleDetails = ruleDetails;
   }
 }
