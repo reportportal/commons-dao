@@ -35,7 +35,7 @@ public class SenderCaseOptions extends JsonbUserType implements Serializable {
 
   @Override
   public Class<?> returnedClass() {
-    return null;
+    return SenderCaseOptions.class;
   }
 
   public Map<String, Object> getOptions() {
