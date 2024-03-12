@@ -47,7 +47,6 @@ public class OrganizationInfo implements Serializable {
   private int usersQuantity;
   private int projectsQuantity;
   private int launchesQuantity;
-  private String projectName;
 
   private LocalDateTime lastRun;
 

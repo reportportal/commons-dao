@@ -65,6 +65,7 @@ import com.epam.ta.reportportal.entity.dashboard.DashboardWidget;
 import com.epam.ta.reportportal.entity.dashboard.DashboardWidgetId;
 import com.epam.ta.reportportal.entity.enums.IntegrationAuthFlowEnum;
 import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
+import com.epam.ta.reportportal.entity.enums.OrganizationType;
 import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
@@ -82,6 +83,7 @@ import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.organization.Organization;
+import com.epam.ta.reportportal.entity.organization.OrganizationInfo;
 import com.epam.ta.reportportal.entity.pattern.PatternTemplate;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
@@ -203,6 +205,20 @@ public class RecordMappers {
   public static final RecordMapper<? super Record, Organization> ORGANIZATION_MAPPER = row -> {
     Organization organization = row.into(Organization.class);
     return organization;
+  };
+
+  /**
+   * Maps record into {@link OrganizationInfo} object
+   */
+  public static final RecordMapper<? super Record, OrganizationInfo> ORGANIZATION_INFO_MAPPER = row -> {
+    OrganizationInfo orgInfo = new OrganizationInfo();
+    orgInfo.setId(row.get(ORGANIZATION.ID));
+    orgInfo.setOrganizationType(OrganizationType.valueOf(row.get(ORGANIZATION.ORGANIZATION_TYPE)));
+    orgInfo.setSlug(row.get(ORGANIZATION.SLUG));
+    orgInfo.setName(row.get(ORGANIZATION.NAME));
+    orgInfo.setCreationDate(row.get(ORGANIZATION.CREATION_DATE, LocalDateTime.class));
+
+    return orgInfo;
   };
 
   /**

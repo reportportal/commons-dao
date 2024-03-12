@@ -58,6 +58,7 @@ import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.organization.Organization;
+import com.epam.ta.reportportal.entity.organization.OrganizationInfo;
 import com.epam.ta.reportportal.entity.pattern.PatternTemplateTestItem;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectAttribute;
@@ -141,6 +142,26 @@ public class ResultFetchers {
 
     return new ArrayList<>(orgs.values());
   };
+
+  /**
+   * Fetches records from db results into list of {@link Organization} objects.
+   */
+  public static final Function<Result<? extends Record>, List<OrganizationInfo>> ORGANIZATION_INFO_FETCHER = records -> {
+    Map<Long, OrganizationInfo> orgsInfo = Maps.newLinkedHashMap();
+    records.forEach(record -> {
+      Long id = record.get(ORGANIZATION.ID);
+      OrganizationInfo organization;
+      if (!orgsInfo.containsKey(id)) {
+        organization = RecordMappers.ORGANIZATION_INFO_MAPPER.map(record);
+      } else {
+        organization = orgsInfo.get(id);
+      }
+      orgsInfo.put(id, organization);
+    });
+
+    return new ArrayList<>(orgsInfo.values());
+  };
+
 
   /**
    * Fetches records from db results into list of {@link Launch} objects.

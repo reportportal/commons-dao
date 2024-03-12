@@ -1466,24 +1466,15 @@ public enum FilterTarget {
           .withAggregateCriteria(DSL.countDistinct(ORGANIZATION_USER.USER_ID).toString())
           .get(),
       new CriteriaHolderBuilder().newBuilder(PROJECTS_QUANTITY,
-              PROJECTS_QUANTITY,
-              Long.class,
-              Lists.newArrayList(JoinEntity.of(PROJECT,
-                  JoinType.LEFT_OUTER_JOIN,
-                  PROJECT.ORGANIZATION_ID.eq(ORGANIZATION.ID)
-              ))
-          ).withAggregateCriteria(DSL.countDistinct(PROJECT.ID).toString()).get(),
+          PROJECTS_QUANTITY,
+          Long.class)
+          .withAggregateCriteria(DSL.countDistinct(PROJECT.ID).toString()).get(),
 
       new CriteriaHolderBuilder().newBuilder(LAST_RUN, LAST_RUN, Timestamp.class)
           .withAggregateCriteria(DSL.max(LAUNCH.START_TIME).toString())
           .get(),
 
-      new CriteriaHolderBuilder().newBuilder(LAUNCHES_QUANTITY,
-              LAUNCHES_QUANTITY,
-              Long.class,
-              Lists.newArrayList(
-                  JoinEntity.of(LAUNCH, JoinType.LEFT_OUTER_JOIN, PROJECT.ID.eq(LAUNCH.PROJECT_ID)))
-          )
+      new CriteriaHolderBuilder().newBuilder(LAUNCHES_QUANTITY, LAUNCHES_QUANTITY, Long.class)
           .withAggregateCriteria(
               DSL.countDistinct(choose().when(LAUNCH.MODE.eq(JLaunchModeEnum.DEFAULT)
                   .and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS)), LAUNCH.ID)).toString())
@@ -1494,9 +1485,18 @@ public enum FilterTarget {
 
   )) {
     @Override
+    public QuerySupplier getQuery() {
+      SelectQuery<? extends Record> query = DSL.select(selectFields()).getQuery();
+      addFrom(query);
+      query.addGroupBy(ORGANIZATION.ID);
+      QuerySupplier querySupplier = new QuerySupplier(query);
+      joinTables(querySupplier);
+      return querySupplier;
+    }
+
+    @Override
     protected Collection<? extends SelectField> selectFields() {
       return Lists.newArrayList(ORGANIZATION.ID,
-          ORGANIZATION.ID,
           ORGANIZATION.NAME,
           ORGANIZATION.SLUG,
           ORGANIZATION.CREATION_DATE,
@@ -1505,7 +1505,7 @@ public enum FilterTarget {
           DSL.countDistinct(PROJECT.ID).as(PROJECTS_QUANTITY),
           DSL.countDistinct(choose()
                   .when(LAUNCH.MODE.eq(JLaunchModeEnum.DEFAULT)
-                  .and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS)), LAUNCH.ID))
+                      .and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS)), LAUNCH.ID))
               .as(LAUNCHES_QUANTITY),
           DSL.max(LAUNCH.START_TIME).as(LAST_RUN)
       );
@@ -1518,16 +1518,32 @@ public enum FilterTarget {
 
     @Override
     protected void joinTables(QuerySupplier query) {
-      query.addJoin(PROJECT, JoinType.LEFT_OUTER_JOIN,
+      query.addJoin(PROJECT,
+          JoinType.LEFT_OUTER_JOIN,
           PROJECT.ORGANIZATION_ID.eq(ORGANIZATION.ID));
-      query.addJoin(ORGANIZATION_USER, JoinType.LEFT_OUTER_JOIN,
+
+      query.addJoin(ORGANIZATION_USER,
+          JoinType.LEFT_OUTER_JOIN,
           ORGANIZATION_USER.ORGANIZATION_ID.eq(PROJECT.ORGANIZATION_ID));
-      query.addJoin(LAUNCH, JoinType.LEFT_OUTER_JOIN, PROJECT.ID.eq(LAUNCH.PROJECT_ID));
+
+      query.addJoin(LAUNCH,
+          JoinType.LEFT_OUTER_JOIN,
+          PROJECT.ID.eq(LAUNCH.PROJECT_ID));
     }
 
     @Override
     protected Field<Long> idField() {
       return ORGANIZATION.ID.cast(Long.class);
+    }
+
+    @Override
+    public QuerySupplier wrapQuery(SelectQuery<? extends Record> query) {
+      throw new UnsupportedOperationException("Doesn't supported for Organization Info query");
+    }
+
+    @Override
+    public QuerySupplier wrapQuery(SelectQuery<? extends Record> query, String... excluding) {
+      throw new UnsupportedOperationException("Doesn't supported for Organization Info query");
     }
   };
 

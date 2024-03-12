@@ -18,6 +18,7 @@ package com.epam.ta.reportportal.dao.organization;
 
 import static com.epam.ta.reportportal.dao.util.QueryUtils.collectJoinFields;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.ORGANIZATION_FETCHER;
+import static com.epam.ta.reportportal.dao.util.ResultFetchers.ORGANIZATION_INFO_FETCHER;
 import static com.epam.ta.reportportal.jooq.Tables.ORGANIZATION;
 import static com.epam.ta.reportportal.jooq.Tables.ORGANIZATION_USER;
 import static com.epam.ta.reportportal.jooq.Tables.USERS;
@@ -26,6 +27,7 @@ import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.entity.organization.Organization;
 import com.epam.ta.reportportal.entity.organization.OrganizationInfo;
+import com.epam.ta.reportportal.entity.project.ProjectInfo;
 import java.util.List;
 import java.util.Optional;
 import org.jooq.DSLContext;
@@ -107,14 +109,15 @@ public class OrganizationRepositoryCustomImpl implements OrganizationRepositoryC
 
   @Override
   public List<OrganizationInfo> findOrganizationInfoByFilter(Queryable filter) {
-    return dsl.fetch(QueryBuilder.newBuilder(filter).build()).into(OrganizationInfo.class);
+    return dsl.fetch(QueryBuilder.newBuilder(filter, collectJoinFields(filter))
+            .build())
+        .into(OrganizationInfo.class);
   }
 
   @Override
   public Page<OrganizationInfo> findOrganizationInfoByFilter(Queryable filter, Pageable pageable) {
     return PageableExecutionUtils.getPage(
-        dsl.fetch(QueryBuilder.newBuilder(filter)
-            .with(pageable).build())
+        dsl.fetch(QueryBuilder.newBuilder(filter).with(pageable).build())
             .into(OrganizationInfo.class),
         pageable,
         () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
