@@ -83,10 +83,10 @@ public class SenderCase implements Serializable {
   @Column(name = "enabled")
   private boolean enabled;
 
-  @Column(name = "type")
+  @Column(name = "rule_type")
   private String type;
 
-  @Type(type = "senderCaseOptions")
+  @Type(type = "ruleDetails")
   @Column(name = "rule_details")
   private SenderCaseOptions ruleDetails;
 
