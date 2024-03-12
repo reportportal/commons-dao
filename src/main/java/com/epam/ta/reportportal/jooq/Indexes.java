@@ -30,13 +30,10 @@ import com.epam.ta.reportportal.jooq.tables.JLaunchAttributeRules;
 import com.epam.ta.reportportal.jooq.tables.JLaunchNames;
 import com.epam.ta.reportportal.jooq.tables.JLaunchNumber;
 import com.epam.ta.reportportal.jooq.tables.JLog;
-import com.epam.ta.reportportal.jooq.tables.JOauthAccessToken;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
 import com.epam.ta.reportportal.jooq.tables.JOnboarding;
-import com.epam.ta.reportportal.jooq.tables.JOrganization;
-import com.epam.ta.reportportal.jooq.tables.JOrganizationUser;
 import com.epam.ta.reportportal.jooq.tables.JOwnedEntity;
 import com.epam.ta.reportportal.jooq.tables.JParameter;
 import com.epam.ta.reportportal.jooq.tables.JPatternTemplate;
@@ -60,9 +57,7 @@ import com.epam.ta.reportportal.jooq.tables.JUserPreference;
 import com.epam.ta.reportportal.jooq.tables.JUsers;
 import com.epam.ta.reportportal.jooq.tables.JWidget;
 import com.epam.ta.reportportal.jooq.tables.JWidgetFilter;
-
 import javax.annotation.processing.Generated;
-
 import org.jooq.Index;
 import org.jooq.OrderField;
 import org.jooq.impl.Internal;
