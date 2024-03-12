@@ -22,8 +22,8 @@ import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaC
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
-import com.epam.ta.reportportal.ws.model.ErrorType;
-import com.epam.ta.reportportal.ws.model.launch.Mode;
+import com.epam.ta.reportportal.ws.reporting.ErrorType;
+import com.epam.ta.reportportal.ws.reporting.Mode;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Date;

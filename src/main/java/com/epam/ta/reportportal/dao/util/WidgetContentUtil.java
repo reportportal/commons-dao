@@ -87,7 +87,7 @@ import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTab
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableStatisticsContent;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.ws.model.ActivityResource;
-import com.epam.ta.reportportal.ws.model.ErrorType;
+import com.epam.ta.reportportal.ws.reporting.ErrorType;
 import com.epam.ta.reportportal.ws.model.attribute.ItemAttributeResource;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -628,14 +628,11 @@ public class WidgetContentUtil {
 
         });
 
-        resultMap.values()
-            .stream()
-            .map(content -> excludeSkippedTests(params, content))
-            .forEach(content -> {
-          double passingRate = 100.0 * content.getStatistics().getOrDefault(EXECUTIONS_PASSED, 0)
-              / content.getStatistics().getOrDefault(EXECUTIONS_TOTAL, 1);
-              content.setPassingRate(new BigDecimal(passingRate).setScale(2, RoundingMode.HALF_UP)
-                  .doubleValue());
+        resultMap.forEach((key, content) -> {
+          double passingRate = 100.0 * content.getStatistics().getOrDefault(EXECUTIONS_PASSED, 0) /
+              content.getStatistics().getOrDefault(EXECUTIONS_TOTAL, 1);
+          content.setPassingRate(BigDecimal.valueOf(passingRate)
+              .setScale(2, RoundingMode.HALF_UP).doubleValue());
         });
 
         return resultMap;

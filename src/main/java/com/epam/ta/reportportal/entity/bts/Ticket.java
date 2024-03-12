@@ -151,11 +151,13 @@ public class Ticket implements Serializable {
       return false;
     }
     Ticket ticket = (Ticket) o;
-    return Objects.equals(ticketId, ticket.ticketId);
+    return Objects.equals(ticketId, ticket.ticketId) && Objects.equals(
+        btsProject, ticket.btsProject);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(ticketId);
+    return Objects.hash(ticketId, btsProject);
   }
 }
+
