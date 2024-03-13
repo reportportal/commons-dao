@@ -100,19 +100,16 @@ public class SenderCase implements Serializable {
 	public SenderCase() {
 	}
 
-  public SenderCase(Long id, String ruleName, Set<String> recipients, Set<String> launchNames,
-      Set<LaunchAttributeRule> launchAttributeRules, SendCase sendCase, Project project,
-      boolean enabled, String type, SenderCaseOptions ruleDetails, LogicalOperator attributesOperator) {
-    this.id = id;
+  public SenderCase(String ruleName, Set<String> recipients, Set<String> launchNames,
+      Set<LaunchAttributeRule> launchAttributeRules, SendCase sendCase,
+      boolean enabled, String type, LogicalOperator attributesOperator) {
     this.ruleName = ruleName;
     this.recipients = recipients;
     this.launchNames = launchNames;
     this.launchAttributeRules = launchAttributeRules;
     this.sendCase = sendCase;
-    this.project = project;
     this.enabled = enabled;
     this.type = type;
-    this.ruleDetails = ruleDetails;
     this.attributesOperator = attributesOperator;
   }
 
