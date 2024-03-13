@@ -22,5 +22,7 @@ import com.epam.ta.reportportal.entity.user.ProjectUserId;
 /**
  * @author Pavel Bortnik
  */
-public interface ProjectUserRepository extends ReportPortalRepository<ProjectUser, ProjectUserId> {
+public interface ProjectUserRepository extends ReportPortalRepository<ProjectUser, ProjectUserId>,
+    ProjectUserRepositoryCustom {
+
 }

@@ -21,16 +21,17 @@ import java.util.Optional;
 
 public enum IntegrationGroupEnum {
 
-	BTS,
-	NOTIFICATION,
-	AUTH,
-	OTHER;
+  BTS,
+  NOTIFICATION,
+  AUTH,
+  OTHER;
 
-	public static Optional<IntegrationGroupEnum> findByName(String name) {
-		return Arrays.stream(IntegrationGroupEnum.values()).filter(i -> i.name().equalsIgnoreCase(name)).findAny();
-	}
+  public static Optional<IntegrationGroupEnum> findByName(String name) {
+    return Arrays.stream(IntegrationGroupEnum.values()).filter(i -> i.name().equalsIgnoreCase(name))
+        .findAny();
+  }
 
-	public static boolean isPresent(String name) {
-		return findByName(name).isPresent();
-	}
+  public static boolean isPresent(String name) {
+    return findByName(name).isPresent();
+  }
 }

@@ -16,48 +16,51 @@
 
 package com.epam.ta.reportportal.entity.project.email;
 
-import com.epam.ta.reportportal.entity.enums.SendCase;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.epam.ta.reportportal.entity.enums.SendCase;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
 class SendCaseTest {
 
-	private Map<SendCase, List<String>> allowed;
-	private List<String> disallowed;
+  private Map<SendCase, List<String>> allowed;
+  private List<String> disallowed;
 
-	@BeforeEach
-	void setUp() throws Exception {
-		allowed = Arrays.stream(SendCase.values())
-				.collect(Collectors.toMap(it -> it,
-						it -> Arrays.asList(it.getCaseString(), it.getCaseString().toUpperCase(), it.getCaseString().toLowerCase())
-				));
-		disallowed = Arrays.asList("noSuchSendCase", "", " ", null);
-	}
+  @BeforeEach
+  void setUp() throws Exception {
+    allowed = Arrays.stream(SendCase.values())
+        .collect(Collectors.toMap(it -> it,
+            it -> Arrays.asList(it.getCaseString(), it.getCaseString().toUpperCase(),
+                it.getCaseString().toLowerCase())
+        ));
+    disallowed = Arrays.asList("noSuchSendCase", "", " ", null);
+  }
 
-	@Test
-	void findByName() {
-		allowed.forEach((key, value) -> value.forEach(val -> {
-			final Optional<SendCase> optional = SendCase.findByName(val);
-			assertTrue(optional.isPresent());
-			assertEquals(key, optional.get());
-		}));
-		disallowed.forEach(it -> assertFalse(SendCase.findByName(it).isPresent()));
-	}
+  @Test
+  void findByName() {
+    allowed.forEach((key, value) -> value.forEach(val -> {
+      final Optional<SendCase> optional = SendCase.findByName(val);
+      assertTrue(optional.isPresent());
+      assertEquals(key, optional.get());
+    }));
+    disallowed.forEach(it -> assertFalse(SendCase.findByName(it).isPresent()));
+  }
 
-	@Test
-	void isPresent() {
-		allowed.entrySet().stream().flatMap(it -> it.getValue().stream()).forEach(it -> assertTrue(SendCase.isPresent(it)));
-		disallowed.forEach(it -> assertFalse(SendCase.isPresent(it)));
-	}
+  @Test
+  void isPresent() {
+    allowed.entrySet().stream().flatMap(it -> it.getValue().stream())
+        .forEach(it -> assertTrue(SendCase.isPresent(it)));
+    disallowed.forEach(it -> assertFalse(SendCase.isPresent(it)));
+  }
 }

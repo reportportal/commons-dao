@@ -26,29 +26,29 @@ import org.jooq.TableLike;
  */
 public final class JoinEntity {
 
-	private final TableLike<?> table;
-	private final JoinType joinType;
-	private final Condition joinCondition;
+  private final TableLike<?> table;
+  private final JoinType joinType;
+  private final Condition joinCondition;
 
-	private JoinEntity(TableLike<?> table, JoinType joinType, Condition joinCondition) {
-		this.table = table;
-		this.joinType = joinType;
-		this.joinCondition = joinCondition;
-	}
+  private JoinEntity(TableLike<?> table, JoinType joinType, Condition joinCondition) {
+    this.table = table;
+    this.joinType = joinType;
+    this.joinCondition = joinCondition;
+  }
 
-	public TableLike<? extends Record> getTable() {
-		return table;
-	}
+  public static JoinEntity of(TableLike<?> table, JoinType joinType, Condition joinCondition) {
+    return new JoinEntity(table, joinType, joinCondition);
+  }
 
-	public JoinType getJoinType() {
-		return joinType;
-	}
+  public TableLike<? extends Record> getTable() {
+    return table;
+  }
 
-	public Condition getJoinCondition() {
-		return joinCondition;
-	}
+  public JoinType getJoinType() {
+    return joinType;
+  }
 
-	public static JoinEntity of(TableLike<?> table, JoinType joinType, Condition joinCondition) {
-		return new JoinEntity(table, joinType, joinCondition);
-	}
+  public Condition getJoinCondition() {
+    return joinCondition;
+  }
 }

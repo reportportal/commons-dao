@@ -16,47 +16,50 @@
 
 package com.epam.ta.reportportal.entity.enums;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
 class ProjectAttributeEnumTest {
 
-	private Map<ProjectAttributeEnum, List<String>> allowed;
-	private List<String> disallowed;
+  private Map<ProjectAttributeEnum, List<String>> allowed;
+  private List<String> disallowed;
 
-	@BeforeEach
-	void setUp() {
-		allowed = Arrays.stream(ProjectAttributeEnum.values())
-				.collect(Collectors.toMap(it -> it,
-						it -> Arrays.asList(it.getAttribute(), it.getAttribute().toUpperCase(), it.getAttribute().toLowerCase())
-				));
-		disallowed = Arrays.asList("noSuchAttribute", "", " ", null);
-	}
+  @BeforeEach
+  void setUp() {
+    allowed = Arrays.stream(ProjectAttributeEnum.values())
+        .collect(Collectors.toMap(it -> it,
+            it -> Arrays.asList(it.getAttribute(), it.getAttribute().toUpperCase(),
+                it.getAttribute().toLowerCase())
+        ));
+    disallowed = Arrays.asList("noSuchAttribute", "", " ", null);
+  }
 
-	@Test
-	void findByAttributeName() {
-		allowed.forEach((key, value) -> value.forEach(val -> {
-			final Optional<ProjectAttributeEnum> optional = ProjectAttributeEnum.findByAttributeName(val);
-			assertTrue(optional.isPresent());
-			assertEquals(key, optional.get());
-		}));
-		disallowed.forEach(it -> assertFalse(ProjectAttributeEnum.findByAttributeName(it).isPresent()));
-	}
+  @Test
+  void findByAttributeName() {
+    allowed.forEach((key, value) -> value.forEach(val -> {
+      final Optional<ProjectAttributeEnum> optional = ProjectAttributeEnum.findByAttributeName(val);
+      assertTrue(optional.isPresent());
+      assertEquals(key, optional.get());
+    }));
+    disallowed.forEach(it -> assertFalse(ProjectAttributeEnum.findByAttributeName(it).isPresent()));
+  }
 
-	@Test
-	void isPresent() {
-		allowed.entrySet().stream().flatMap(it -> it.getValue().stream()).forEach(it -> assertTrue(ProjectAttributeEnum.isPresent(it)));
-		disallowed.forEach(it -> assertFalse(ProjectAttributeEnum.isPresent(it)));
-	}
+  @Test
+  void isPresent() {
+    allowed.entrySet().stream().flatMap(it -> it.getValue().stream())
+        .forEach(it -> assertTrue(ProjectAttributeEnum.isPresent(it)));
+    disallowed.forEach(it -> assertFalse(ProjectAttributeEnum.isPresent(it)));
+  }
 }

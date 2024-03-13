@@ -24,29 +24,14 @@ import org.jooq.impl.SequenceImpl;
 public class Sequences {
 
     /**
-     * The sequence <code>public.acl_class_id_seq</code>
-     */
-    public static final Sequence<Long> ACL_CLASS_ID_SEQ = new SequenceImpl<Long>("acl_class_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
-
-    /**
-     * The sequence <code>public.acl_entry_id_seq</code>
-     */
-    public static final Sequence<Long> ACL_ENTRY_ID_SEQ = new SequenceImpl<Long>("acl_entry_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
-
-    /**
-     * The sequence <code>public.acl_object_identity_id_seq</code>
-     */
-    public static final Sequence<Long> ACL_OBJECT_IDENTITY_ID_SEQ = new SequenceImpl<Long>("acl_object_identity_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
-
-    /**
-     * The sequence <code>public.acl_sid_id_seq</code>
-     */
-    public static final Sequence<Long> ACL_SID_ID_SEQ = new SequenceImpl<Long>("acl_sid_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
-
-    /**
      * The sequence <code>public.activity_id_seq</code>
      */
     public static final Sequence<Long> ACTIVITY_ID_SEQ = new SequenceImpl<Long>("activity_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
+
+    /**
+     * The sequence <code>public.api_keys_id_seq</code>
+     */
+    public static final Sequence<Long> API_KEYS_ID_SEQ = new SequenceImpl<Long>("api_keys_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
 
     /**
      * The sequence <code>public.attachment_id_seq</code>
@@ -57,6 +42,11 @@ public class Sequences {
      * The sequence <code>public.attribute_id_seq</code>
      */
     public static final Sequence<Long> ATTRIBUTE_ID_SEQ = new SequenceImpl<Long>("attribute_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
+
+    /**
+     * The sequence <code>public.clusters_id_seq</code>
+     */
+    public static final Sequence<Long> CLUSTERS_ID_SEQ = new SequenceImpl<Long>("clusters_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
 
     /**
      * The sequence <code>public.filter_condition_id_seq</code>
@@ -114,11 +104,6 @@ public class Sequences {
     public static final Sequence<Long> LOG_ID_SEQ = new SequenceImpl<Long>("log_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
 
     /**
-     * The sequence <code>public.oauth_access_token_id_seq</code>
-     */
-    public static final Sequence<Long> OAUTH_ACCESS_TOKEN_ID_SEQ = new SequenceImpl<Long>("oauth_access_token_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
-
-    /**
      * The sequence <code>public.oauth_registration_restriction_id_seq</code>
      */
     public static final Sequence<Integer> OAUTH_REGISTRATION_RESTRICTION_ID_SEQ = new SequenceImpl<Integer>("oauth_registration_restriction_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.INTEGER.nullable(false));
@@ -127,6 +112,11 @@ public class Sequences {
      * The sequence <code>public.oauth_registration_scope_id_seq</code>
      */
     public static final Sequence<Integer> OAUTH_REGISTRATION_SCOPE_ID_SEQ = new SequenceImpl<Integer>("oauth_registration_scope_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.INTEGER.nullable(false));
+
+    /**
+     * The sequence <code>public.onboarding_id_seq</code>
+     */
+    public static final Sequence<Short> ONBOARDING_ID_SEQ = new SequenceImpl<Short>("onboarding_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.SMALLINT.nullable(false));
 
     /**
      * The sequence <code>public.pattern_template_id_seq</code>
@@ -167,6 +157,11 @@ public class Sequences {
      * The sequence <code>public.shareable_entity_id_seq</code>
      */
     public static final Sequence<Long> SHAREABLE_ENTITY_ID_SEQ = new SequenceImpl<Long>("shareable_entity_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
+
+    /**
+     * The sequence <code>public.stale_materialized_view_id_seq</code>
+     */
+    public static final Sequence<Long> STALE_MATERIALIZED_VIEW_ID_SEQ = new SequenceImpl<Long>("stale_materialized_view_id_seq", JPublic.PUBLIC, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
 
     /**
      * The sequence <code>public.statistics_field_sf_id_seq</code>

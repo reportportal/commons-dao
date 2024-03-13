@@ -16,11 +16,23 @@
 
 package com.epam.ta.reportportal.dao;
 
-import com.epam.ta.reportportal.commons.querygen.ProjectFilter;
+import com.epam.ta.reportportal.commons.querygen.ConvertibleCondition;
+import com.epam.ta.reportportal.commons.querygen.FilterCondition;
+import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
+import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.entity.dashboard.Dashboard;
+import org.jooq.DSLContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.DASHBOARD_FETCHER;
 
@@ -28,20 +40,42 @@ import static com.epam.ta.reportportal.dao.util.ResultFetchers.DASHBOARD_FETCHER
  * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
  */
 @Repository
-public class DashboardRepositoryCustomImpl extends AbstractShareableRepositoryImpl<Dashboard> implements DashboardRepositoryCustom {
+public class DashboardRepositoryCustomImpl implements DashboardRepositoryCustom {
 
-	@Override
-	public Page<Dashboard> getPermitted(ProjectFilter filter, Pageable pageable, String userName) {
-		return getPermitted(DASHBOARD_FETCHER, filter, pageable, userName);
+	private DSLContext dsl;
+
+	@Autowired
+	public void setDsl(DSLContext dsl) {
+		this.dsl = dsl;
 	}
 
 	@Override
-	public Page<Dashboard> getOwn(ProjectFilter filter, Pageable pageable, String userName) {
-		return getOwn(DASHBOARD_FETCHER, filter, pageable, userName);
+	public List<Dashboard> findByFilter(Queryable filter) {
+		return DASHBOARD_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(
+				filter,
+				filter.getFilterConditions()
+						.stream()
+						.map(ConvertibleCondition::getAllConditions)
+						.flatMap(Collection::stream)
+						.map(FilterCondition::getSearchCriteria)
+						.collect(Collectors.toSet())
+		).wrap().build()));
 	}
 
 	@Override
-	public Page<Dashboard> getShared(ProjectFilter filter, Pageable pageable, String userName) {
-		return getShared(DASHBOARD_FETCHER, filter, pageable, userName);
+	public Page<Dashboard> findByFilter(Queryable filter, Pageable pageable) {
+		Set<String> fields = filter.getFilterConditions()
+				.stream()
+				.map(ConvertibleCondition::getAllConditions)
+				.flatMap(Collection::stream)
+				.map(FilterCondition::getSearchCriteria)
+				.collect(Collectors.toSet());
+		fields.addAll(pageable.getSort().get().map(Sort.Order::getProperty).collect(Collectors.toSet()));
+
+		return PageableExecutionUtils.getPage(DASHBOARD_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter, fields)
+				.with(pageable)
+				.wrap()
+				.withWrapperSort(pageable.getSort())
+				.build())), pageable, () -> dsl.fetchCount(QueryBuilder.newBuilder(filter, fields).build()));
 	}
 }

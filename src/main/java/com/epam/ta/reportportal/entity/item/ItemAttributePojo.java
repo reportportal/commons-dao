@@ -24,73 +24,74 @@ import java.util.Objects;
  */
 public class ItemAttributePojo implements Serializable {
 
-	private Long itemId;
+  private Long itemId;
 
-	private String key;
+  private String key;
 
-	private String value;
+  private String value;
 
-	private boolean isSystem;
+  private boolean isSystem;
 
-	public ItemAttributePojo() {
-	}
+  public ItemAttributePojo() {
+  }
 
-	public ItemAttributePojo(Long itemId, String key, String value, boolean isSystem) {
-		this.itemId = itemId;
-		this.key = key;
-		this.value = value;
-		this.isSystem = isSystem;
-	}
+  public ItemAttributePojo(Long itemId, String key, String value, boolean isSystem) {
+    this.itemId = itemId;
+    this.key = key;
+    this.value = value;
+    this.isSystem = isSystem;
+  }
 
-	public Long getItemId() {
-		return itemId;
-	}
+  public Long getItemId() {
+    return itemId;
+  }
 
-	public void setItemId(Long itemId) {
-		this.itemId = itemId;
-	}
+  public void setItemId(Long itemId) {
+    this.itemId = itemId;
+  }
 
-	public String getKey() {
-		return key;
-	}
+  public String getKey() {
+    return key;
+  }
 
-	public void setKey(String key) {
-		this.key = key;
-	}
+  public void setKey(String key) {
+    this.key = key;
+  }
 
-	public String getValue() {
-		return value;
-	}
+  public String getValue() {
+    return value;
+  }
 
-	public void setValue(String value) {
-		this.value = value;
-	}
+  public void setValue(String value) {
+    this.value = value;
+  }
 
-	public boolean isSystem() {
-		return isSystem;
-	}
+  public boolean isSystem() {
+    return isSystem;
+  }
 
-	public void setSystem(boolean system) {
-		isSystem = system;
-	}
+  public void setSystem(boolean system) {
+    isSystem = system;
+  }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-		ItemAttributePojo that = (ItemAttributePojo) o;
-		return isSystem == that.isSystem && Objects.equals(itemId, that.itemId) && Objects.equals(key, that.key) && Objects.equals(
-				value,
-				that.value
-		);
-	}
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    ItemAttributePojo that = (ItemAttributePojo) o;
+    return isSystem == that.isSystem && Objects.equals(itemId, that.itemId) && Objects.equals(key,
+        that.key) && Objects.equals(
+        value,
+        that.value
+    );
+  }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(itemId, key, value, isSystem);
-	}
+  @Override
+  public int hashCode() {
+    return Objects.hash(itemId, key, value, isSystem);
+  }
 }

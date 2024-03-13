@@ -24,30 +24,30 @@ import java.util.List;
  */
 public class PathName implements Serializable {
 
-	private LaunchPathName launchPathName;
-	private List<ItemPathName> itemPaths;
+  private LaunchPathName launchPathName;
+  private List<ItemPathName> itemPaths;
 
-	public PathName() {
-	}
+  public PathName() {
+  }
 
-	public PathName(LaunchPathName launchPathName, List<ItemPathName> itemPaths) {
-		this.launchPathName = launchPathName;
-		this.itemPaths = itemPaths;
-	}
+  public PathName(LaunchPathName launchPathName, List<ItemPathName> itemPaths) {
+    this.launchPathName = launchPathName;
+    this.itemPaths = itemPaths;
+  }
 
-	public LaunchPathName getLaunchPathName() {
-		return launchPathName;
-	}
+  public LaunchPathName getLaunchPathName() {
+    return launchPathName;
+  }
 
-	public void setLaunchPathName(LaunchPathName launchPathName) {
-		this.launchPathName = launchPathName;
-	}
+  public void setLaunchPathName(LaunchPathName launchPathName) {
+    this.launchPathName = launchPathName;
+  }
 
-	public List<ItemPathName> getItemPaths() {
-		return itemPaths;
-	}
+  public List<ItemPathName> getItemPaths() {
+    return itemPaths;
+  }
 
-	public void setItemPaths(List<ItemPathName> itemPaths) {
-		this.itemPaths = itemPaths;
-	}
+  public void setItemPaths(List<ItemPathName> itemPaths) {
+    this.itemPaths = itemPaths;
+  }
 }

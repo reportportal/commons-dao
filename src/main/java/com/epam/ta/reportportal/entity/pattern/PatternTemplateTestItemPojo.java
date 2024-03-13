@@ -24,48 +24,49 @@ import java.util.Objects;
  */
 public class PatternTemplateTestItemPojo implements Serializable {
 
-	private Long patternTemplateId;
+  private Long patternTemplateId;
 
-	private Long testItemId;
+  private Long testItemId;
 
-	public PatternTemplateTestItemPojo() {
-	}
+  public PatternTemplateTestItemPojo() {
+  }
 
-	public PatternTemplateTestItemPojo(Long patternTemplateId, Long testItemId) {
-		this.patternTemplateId = patternTemplateId;
-		this.testItemId = testItemId;
-	}
+  public PatternTemplateTestItemPojo(Long patternTemplateId, Long testItemId) {
+    this.patternTemplateId = patternTemplateId;
+    this.testItemId = testItemId;
+  }
 
-	public Long getPatternTemplateId() {
-		return patternTemplateId;
-	}
+  public Long getPatternTemplateId() {
+    return patternTemplateId;
+  }
 
-	public void setPatternTemplateId(Long patternTemplateId) {
-		this.patternTemplateId = patternTemplateId;
-	}
+  public void setPatternTemplateId(Long patternTemplateId) {
+    this.patternTemplateId = patternTemplateId;
+  }
 
-	public Long getTestItemId() {
-		return testItemId;
-	}
+  public Long getTestItemId() {
+    return testItemId;
+  }
 
-	public void setTestItemId(Long testItemId) {
-		this.testItemId = testItemId;
-	}
+  public void setTestItemId(Long testItemId) {
+    this.testItemId = testItemId;
+  }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-		PatternTemplateTestItemPojo that = (PatternTemplateTestItemPojo) o;
-		return Objects.equals(patternTemplateId, that.patternTemplateId) && Objects.equals(testItemId, that.testItemId);
-	}
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    PatternTemplateTestItemPojo that = (PatternTemplateTestItemPojo) o;
+    return Objects.equals(patternTemplateId, that.patternTemplateId) && Objects.equals(testItemId,
+        that.testItemId);
+  }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(patternTemplateId, testItemId);
-	}
+  @Override
+  public int hashCode() {
+    return Objects.hash(patternTemplateId, testItemId);
+  }
 }

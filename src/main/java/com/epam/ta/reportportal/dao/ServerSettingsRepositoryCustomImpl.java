@@ -16,15 +16,14 @@
 
 package com.epam.ta.reportportal.dao;
 
+import static com.epam.ta.reportportal.jooq.tables.JServerSettings.SERVER_SETTINGS;
+
 import com.epam.ta.reportportal.entity.ServerSettings;
+import java.util.List;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
-
-import static com.epam.ta.reportportal.jooq.tables.JServerSettings.SERVER_SETTINGS;
 
 /**
  * @author Ivan Budaev
@@ -32,20 +31,19 @@ import static com.epam.ta.reportportal.jooq.tables.JServerSettings.SERVER_SETTIN
 @Repository
 public class ServerSettingsRepositoryCustomImpl implements ServerSettingsRepositoryCustom {
 
-	private final DSLContext dsl;
+  static final String SERVER_SETTING_KEY = "server.";
+  private final DSLContext dsl;
 
-	static final String SERVER_SETTING_KEY = "server.";
+  @Autowired
+  public ServerSettingsRepositoryCustomImpl(DSLContext dsl) {
+    this.dsl = dsl;
+  }
 
-	@Autowired
-	public ServerSettingsRepositoryCustomImpl(DSLContext dsl) {
-		this.dsl = dsl;
-	}
-
-	@Override
-	public List<ServerSettings> selectServerSettings() {
-		return dsl.select()
-				.from(SERVER_SETTINGS)
-				.where(SERVER_SETTINGS.KEY.like(DSL.escape(SERVER_SETTING_KEY, '\\') + "%"))
-				.fetchInto(ServerSettings.class);
-	}
+  @Override
+  public List<ServerSettings> selectServerSettings() {
+    return dsl.select()
+        .from(SERVER_SETTINGS)
+        .where(SERVER_SETTINGS.KEY.like(DSL.escape(SERVER_SETTING_KEY, '\\') + "%"))
+        .fetchInto(ServerSettings.class);
+  }
 }

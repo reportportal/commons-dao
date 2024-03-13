@@ -17,7 +17,6 @@
 package com.epam.ta.reportportal.entity.bts;
 
 import com.google.common.collect.Sets;
-
 import java.io.Serializable;
 import java.util.Set;
 
@@ -26,57 +25,57 @@ import java.util.Set;
  */
 public class DefectFormField implements Serializable {
 
-	private String fieldId;
+  private String fieldId;
 
-	private String type;
+  private String type;
 
-	private boolean isRequired;
+  private boolean isRequired;
 
-	private Set<String> values;
+  private Set<String> values;
 
-	private Set<DefectFieldAllowedValue> defectFieldAllowedValues = Sets.newHashSet();
+  private Set<DefectFieldAllowedValue> defectFieldAllowedValues = Sets.newHashSet();
 
-	public DefectFormField() {
-	}
+  public DefectFormField() {
+  }
 
-	public String getFieldId() {
-		return fieldId;
-	}
+  public String getFieldId() {
+    return fieldId;
+  }
 
-	public void setFieldId(String fieldId) {
-		this.fieldId = fieldId;
-	}
+  public void setFieldId(String fieldId) {
+    this.fieldId = fieldId;
+  }
 
-	public String getType() {
-		return type;
-	}
+  public String getType() {
+    return type;
+  }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+  public void setType(String type) {
+    this.type = type;
+  }
 
-	public boolean isRequired() {
-		return isRequired;
-	}
+  public boolean isRequired() {
+    return isRequired;
+  }
 
-	public void setRequired(boolean required) {
-		isRequired = required;
-	}
+  public void setRequired(boolean required) {
+    isRequired = required;
+  }
 
-	public Set<String> getValues() {
-		return values;
-	}
+  public Set<String> getValues() {
+    return values;
+  }
 
-	public void setValues(Set<String> values) {
-		this.values = values;
-	}
+  public void setValues(Set<String> values) {
+    this.values = values;
+  }
 
-	public Set<DefectFieldAllowedValue> getDefectFieldAllowedValues() {
-		return defectFieldAllowedValues;
-	}
+  public Set<DefectFieldAllowedValue> getDefectFieldAllowedValues() {
+    return defectFieldAllowedValues;
+  }
 
-	public void setDefectFieldAllowedValues(Set<DefectFieldAllowedValue> defectFieldAllowedValues) {
-		this.defectFieldAllowedValues.clear();
-		this.defectFieldAllowedValues.addAll(defectFieldAllowedValues);
-	}
+  public void setDefectFieldAllowedValues(Set<DefectFieldAllowedValue> defectFieldAllowedValues) {
+    this.defectFieldAllowedValues.clear();
+    this.defectFieldAllowedValues.addAll(defectFieldAllowedValues);
+  }
 }

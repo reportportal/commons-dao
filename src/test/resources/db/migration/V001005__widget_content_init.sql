@@ -1,8 +1,7 @@
 CREATE OR REPLACE FUNCTION widget_content_init()
     RETURNS VOID AS
 $$
-DECLARE
-    launch1         BIGINT;
+    DECLARE launch1 BIGINT;
     DECLARE launch2 BIGINT;
     DECLARE launch3 BIGINT;
     DECLARE launch4 BIGINT;
@@ -16,8 +15,8 @@ BEGIN
     alter sequence ticket_id_seq restart with 1;
     alter sequence activity_id_seq restart with 1;
 
-    INSERT INTO public.shareable_entity (id, shared, owner, project_id)
-    VALUES (1, false, 'superadmin', 1);
+    INSERT INTO public.owned_entity (id, owner, project_id)
+    VALUES (1, 'superadmin', 1);
     INSERT INTO public.filter (id, name, target, description)
     VALUES (1, 'filter name', 'Launch', 'filter for product status widget');
 
@@ -98,6 +97,7 @@ BEGIN
     INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES ('build', '1.3.2', null, launch2, false);
     INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES ('build', '1.9.1', null, launch3, false);
     INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES ('build', '3', null, launch4, false);
+    INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES ('build', 'true_system_attr', null, launch1, true);
 
 
     INSERT INTO public.ticket (id, ticket_id, submitter, submit_date, bts_url, bts_project, url)
@@ -112,43 +112,44 @@ BEGIN
     INSERT INTO public.pattern_template (id, name, "value", type, enabled, project_id)
     VALUES (2, 'SECOND PATTERN', 'bbbb', 'STRING', true, 1);
 
-    INSERT INTO test_item (test_case_hash, NAME, uuid, TYPE, start_time, description, last_modified, unique_id, launch_id)
+    INSERT INTO test_item (test_case_hash, NAME, uuid, type, start_time, description, last_modified, unique_id, launch_id)
     VALUES (1, 'Step', 'uuid1', 'STEP', now(), 'description', now(), 'uniqueId', launch1);
     itemId = (SELECT (currval(pg_get_serial_sequence('test_item', 'item_id'))));
-    INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (itemId, 'FAILED', 0.35, now());
+    INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (itemId, 'FAILED', 0.35 + itemId, now());
     INSERT INTO public.pattern_template_test_item (pattern_id, item_id) VALUES (1, itemId);
     INSERT INTO public.pattern_template_test_item (pattern_id, item_id) VALUES (2, itemId);
     INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES (null, 'test', itemId, null, false);
     INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES (null, 'value', itemId, null, false);
 
-    INSERT INTO test_item (test_case_hash, NAME, uuid, TYPE, start_time, description, last_modified, unique_id, launch_id)
+    INSERT INTO test_item (test_case_hash, NAME, uuid, type, start_time, description, last_modified, unique_id, launch_id)
     VALUES (2, 'Step','uuid2', 'STEP', now(), 'description', now(), 'uniqueId', launch1);
     itemId = (SELECT (currval(pg_get_serial_sequence('test_item', 'item_id'))));
-    INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (itemId, 'FAILED', 0.35, now());
+    INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (itemId, 'FAILED', 0.35 + itemId, now());
     INSERT INTO issue (issue_id, issue_type, issue_description) VALUES (itemId, floor(random() * 5 + 1), 'issue description');
     INSERT INTO issue_ticket (issue_id, ticket_id) VALUES (itemId, 3);
     INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES (null, 'test', itemId, null, false);
     INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES (null, 'value', itemId, null, false);
 
-    INSERT INTO test_item (test_case_hash, NAME, uuid, TYPE, start_time, description, last_modified, unique_id, launch_id)
-    VALUES (3, 'Step','uuid3', 'STEP', now(), 'description', now(), 'uniqueId', launch1);
+    INSERT INTO test_item (test_case_hash, NAME, uuid, type, start_time, description, last_modified,
+                           unique_id, launch_id)
+    VALUES (3, 'Step', 'uuid3', 'STEP', now(), 'description', now(), 'uniqueId', launch1);
     itemId = (SELECT (currval(pg_get_serial_sequence('test_item', 'item_id'))));
-    INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (itemId, 'FAILED', 0.35, now());
+    INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (itemId, 'FAILED', 0.35 + itemId, now());
     INSERT INTO issue (issue_id, issue_type, issue_description) VALUES (itemId, floor(random() * 5 + 1), 'issue description');
     INSERT INTO issue_ticket (issue_id, ticket_id) VALUES (itemId, 2);
     INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES (null, 'test', itemId, null, false);
     INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES (null, 'value', itemId, null, false);
 
-    INSERT INTO test_item (test_case_hash, NAME, uuid, TYPE, start_time, description, last_modified, unique_id, launch_id)
+    INSERT INTO test_item (test_case_hash, NAME, uuid, type, start_time, description, last_modified, unique_id, launch_id)
     VALUES (4, 'Step','uuid4', 'STEP', now(), 'description', now(), 'uniqueId', launch1);
     itemId = (SELECT (currval(pg_get_serial_sequence('test_item', 'item_id'))));
-    INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (itemId, 'FAILED', 0.35, now());
+    INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (itemId, 'FAILED', 0.35 + itemId, now());
     INSERT INTO issue (issue_id, issue_type, issue_description) VALUES (itemId, floor(random() * 5 + 1), 'issue description');
     INSERT INTO issue_ticket (issue_id, ticket_id) VALUES (itemId, 1);
     INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES (null, 'test', itemId, null, false);
     INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES (null, 'value', itemId, null, false);
 
-    INSERT INTO test_item (test_case_hash, NAME,uuid, TYPE, start_time, description, last_modified, unique_id, launch_id)
+    INSERT INTO test_item (test_case_hash, NAME,uuid, type, start_time, description, last_modified, unique_id, launch_id)
     VALUES (5, 'Step','uuid5', 'STEP', now(), 'description', now(), 'uniqueId', launch4);
     itemId = (SELECT (currval(pg_get_serial_sequence('test_item', 'item_id'))));
     INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (itemId, 'FAILED', 0.35, now());
@@ -159,7 +160,7 @@ BEGIN
     INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES (null, 'test', itemId, null, false);
     INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES (null, 'value', itemId, null, false);
 
-    INSERT INTO test_item (test_case_hash, NAME, uuid, TYPE, start_time, description, last_modified, unique_id, launch_id)
+    INSERT INTO test_item (test_case_hash, NAME, uuid, type, start_time, description, last_modified, unique_id, launch_id)
     VALUES (6, 'Step','uuid6','STEP', now(), 'description', now(), 'uniqueId', launch4);
     itemId = (SELECT (currval(pg_get_serial_sequence('test_item', 'item_id'))));
     INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (itemId, 'FAILED', 0.35, now());
@@ -170,7 +171,7 @@ BEGIN
     INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES (null, 'value', itemId, null, false);
     INSERT INTO item_attribute ("key", "value", item_id, launch_id, system) VALUES (null, 'lol', itemId, null, false);
 
-    INSERT INTO test_item (test_case_hash, NAME, uuid, TYPE, start_time, description, last_modified, unique_id, launch_id)
+    INSERT INTO test_item (test_case_hash, NAME, uuid, type, start_time, description, last_modified, unique_id, launch_id)
     VALUES (7, 'Step', 'uuid7', 'STEP', now(), 'description', now(), 'uniqueId', launch4);
     itemId = (SELECT (currval(pg_get_serial_sequence('test_item', 'item_id'))));
     INSERT INTO test_item_results (result_id, status, duration, end_time) VALUES (itemId, 'FAILED', 0.35, now());
@@ -276,14 +277,18 @@ BEGIN
     INSERT INTO statistics (launch_id, statistics_field_id, s_counter) VALUES (launch4, 13, 2);
     INSERT INTO statistics (launch_id, statistics_field_id, s_counter) VALUES (launch4, 14, 6);
 
-    INSERT INTO activity (user_id, project_id, entity, action, details, creation_date, object_id)
-    VALUES (1, 1, 'LAUNCH', 'createLaunch', null, now(), null);
-    INSERT INTO activity (user_id, project_id, entity, action, details, creation_date, object_id)
-    VALUES (1, 1, 'LAUNCH', 'createLaunch', null, now(), null);
-    INSERT INTO activity (user_id, project_id, entity, action, details, creation_date, object_id)
-    VALUES (1, 1, 'LAUNCH', 'createLaunch', null, now(), null);
-    INSERT INTO activity (user_id, project_id, entity, action, details, creation_date, object_id)
-    VALUES (1, 1, 'LAUNCH', 'createLaunch', null, now(), null);
+    INSERT INTO activity (action, event_name,  created_at, details, object_id, object_name, object_type, priority,
+    project_id, subject_id, subject_name, subject_type)
+    VALUES ('CREATE', 'createLaunch', now(), null, null, 'objectName', 'LAUNCH', 'MEDIUM', 1, 1, 'superadmin', 'USER');
+    INSERT INTO activity (action, event_name, created_at, details, object_id, object_name, object_type, priority,
+    project_id, subject_id, subject_name, subject_type)
+    VALUES ('CREATE', 'createLaunch', now(), null, null, 'objectName', 'LAUNCH', 'MEDIUM', 1, 1, 'superadmin', 'USER');
+    INSERT INTO activity (action, event_name, created_at, details, object_id, object_name, object_type, priority,
+    project_id, subject_id, subject_name, subject_type)
+    VALUES ('CREATE', 'createLaunch', now(), null, null, 'objectName', 'LAUNCH', 'MEDIUM', 1, 1, 'superadmin', 'USER');
+    INSERT INTO activity (action, event_name, created_at, details, object_id, object_name, object_type, priority,
+    project_id, subject_id, subject_name, subject_type)
+    VALUES ('CREATE', 'createLaunch', now(), null, null, 'objectName', 'LAUNCH', 'MEDIUM', 1, 1, 'superadmin', 'USER');
 
 END;
 $$

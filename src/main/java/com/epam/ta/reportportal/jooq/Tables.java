@@ -4,13 +4,13 @@
 package com.epam.ta.reportportal.jooq;
 
 
-import com.epam.ta.reportportal.jooq.tables.JAclClass;
-import com.epam.ta.reportportal.jooq.tables.JAclEntry;
-import com.epam.ta.reportportal.jooq.tables.JAclObjectIdentity;
-import com.epam.ta.reportportal.jooq.tables.JAclSid;
 import com.epam.ta.reportportal.jooq.tables.JActivity;
+import com.epam.ta.reportportal.jooq.tables.JApiKeys;
 import com.epam.ta.reportportal.jooq.tables.JAttachment;
+import com.epam.ta.reportportal.jooq.tables.JAttachmentDeletion;
 import com.epam.ta.reportportal.jooq.tables.JAttribute;
+import com.epam.ta.reportportal.jooq.tables.JClusters;
+import com.epam.ta.reportportal.jooq.tables.JClustersTestItem;
 import com.epam.ta.reportportal.jooq.tables.JContentField;
 import com.epam.ta.reportportal.jooq.tables.JDashboard;
 import com.epam.ta.reportportal.jooq.tables.JDashboardWidget;
@@ -30,10 +30,11 @@ import com.epam.ta.reportportal.jooq.tables.JLaunchAttributeRules;
 import com.epam.ta.reportportal.jooq.tables.JLaunchNames;
 import com.epam.ta.reportportal.jooq.tables.JLaunchNumber;
 import com.epam.ta.reportportal.jooq.tables.JLog;
-import com.epam.ta.reportportal.jooq.tables.JOauthAccessToken;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
+import com.epam.ta.reportportal.jooq.tables.JOnboarding;
+import com.epam.ta.reportportal.jooq.tables.JOwnedEntity;
 import com.epam.ta.reportportal.jooq.tables.JParameter;
 import com.epam.ta.reportportal.jooq.tables.JPatternTemplate;
 import com.epam.ta.reportportal.jooq.tables.JPatternTemplateTestItem;
@@ -45,7 +46,8 @@ import com.epam.ta.reportportal.jooq.tables.JRecipients;
 import com.epam.ta.reportportal.jooq.tables.JRestorePasswordBid;
 import com.epam.ta.reportportal.jooq.tables.JSenderCase;
 import com.epam.ta.reportportal.jooq.tables.JServerSettings;
-import com.epam.ta.reportportal.jooq.tables.JShareableEntity;
+import com.epam.ta.reportportal.jooq.tables.JShedlock;
+import com.epam.ta.reportportal.jooq.tables.JStaleMaterializedView;
 import com.epam.ta.reportportal.jooq.tables.JStatistics;
 import com.epam.ta.reportportal.jooq.tables.JStatisticsField;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
@@ -79,29 +81,14 @@ import org.jooq.Result;
 public class Tables {
 
     /**
-     * The table <code>public.acl_class</code>.
-     */
-    public static final JAclClass ACL_CLASS = JAclClass.ACL_CLASS;
-
-    /**
-     * The table <code>public.acl_entry</code>.
-     */
-    public static final JAclEntry ACL_ENTRY = JAclEntry.ACL_ENTRY;
-
-    /**
-     * The table <code>public.acl_object_identity</code>.
-     */
-    public static final JAclObjectIdentity ACL_OBJECT_IDENTITY = JAclObjectIdentity.ACL_OBJECT_IDENTITY;
-
-    /**
-     * The table <code>public.acl_sid</code>.
-     */
-    public static final JAclSid ACL_SID = JAclSid.ACL_SID;
-
-    /**
      * The table <code>public.activity</code>.
      */
     public static final JActivity ACTIVITY = JActivity.ACTIVITY;
+
+    /**
+     * The table <code>public.api_keys</code>.
+     */
+    public static final JApiKeys API_KEYS = JApiKeys.API_KEYS;
 
     /**
      * The table <code>public.attachment</code>.
@@ -109,9 +96,24 @@ public class Tables {
     public static final JAttachment ATTACHMENT = JAttachment.ATTACHMENT;
 
     /**
+     * The table <code>public.attachment_deletion</code>.
+     */
+    public static final JAttachmentDeletion ATTACHMENT_DELETION = JAttachmentDeletion.ATTACHMENT_DELETION;
+
+    /**
      * The table <code>public.attribute</code>.
      */
     public static final JAttribute ATTRIBUTE = JAttribute.ATTRIBUTE;
+
+    /**
+     * The table <code>public.clusters</code>.
+     */
+    public static final JClusters CLUSTERS = JClusters.CLUSTERS;
+
+    /**
+     * The table <code>public.clusters_test_item</code>.
+     */
+    public static final JClustersTestItem CLUSTERS_TEST_ITEM = JClustersTestItem.CLUSTERS_TEST_ITEM;
 
     /**
      * The table <code>public.content_field</code>.
@@ -209,11 +211,6 @@ public class Tables {
     public static final JLog LOG = JLog.LOG;
 
     /**
-     * The table <code>public.oauth_access_token</code>.
-     */
-    public static final JOauthAccessToken OAUTH_ACCESS_TOKEN = JOauthAccessToken.OAUTH_ACCESS_TOKEN;
-
-    /**
      * The table <code>public.oauth_registration</code>.
      */
     public static final JOauthRegistration OAUTH_REGISTRATION = JOauthRegistration.OAUTH_REGISTRATION;
@@ -227,6 +224,16 @@ public class Tables {
      * The table <code>public.oauth_registration_scope</code>.
      */
     public static final JOauthRegistrationScope OAUTH_REGISTRATION_SCOPE = JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE;
+
+    /**
+     * The table <code>public.onboarding</code>.
+     */
+    public static final JOnboarding ONBOARDING = JOnboarding.ONBOARDING;
+
+    /**
+     * The table <code>public.owned_entity</code>.
+     */
+    public static final JOwnedEntity OWNED_ENTITY = JOwnedEntity.OWNED_ENTITY;
 
     /**
      * The table <code>public.parameter</code>.
@@ -305,9 +312,14 @@ public class Tables {
     public static final JServerSettings SERVER_SETTINGS = JServerSettings.SERVER_SETTINGS;
 
     /**
-     * The table <code>public.shareable_entity</code>.
+     * The table <code>public.shedlock</code>.
      */
-    public static final JShareableEntity SHAREABLE_ENTITY = JShareableEntity.SHAREABLE_ENTITY;
+    public static final JShedlock SHEDLOCK = JShedlock.SHEDLOCK;
+
+    /**
+     * The table <code>public.stale_materialized_view</code>.
+     */
+    public static final JStaleMaterializedView STALE_MATERIALIZED_VIEW = JStaleMaterializedView.STALE_MATERIALIZED_VIEW;
 
     /**
      * The table <code>public.statistics</code>.

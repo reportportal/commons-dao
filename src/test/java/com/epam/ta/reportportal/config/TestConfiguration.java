@@ -21,10 +21,16 @@ import com.epam.reportportal.commons.Thumbnailator;
 import com.epam.reportportal.commons.ThumbnailatorImpl;
 import com.epam.reportportal.commons.TikaContentTypeResolver;
 import com.epam.ta.reportportal.filesystem.DataEncoder;
+import com.epam.ta.reportportal.util.FeatureFlagHandler;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.quartz.QuartzAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -37,26 +43,45 @@ import org.springframework.context.annotation.PropertySource;
 @PropertySource({ "classpath:test-application.properties" })
 public class TestConfiguration {
 
-	@Bean("attachmentThumbnailator")
-	public Thumbnailator attachmentThumbnailator(@Value("${datastore.thumbnail.attachment.width}") int width,
-			@Value("${datastore.thumbnail.attachment.height}") int height) {
-		return new ThumbnailatorImpl(width, height);
-	}
+  @Bean("attachmentThumbnailator")
+  public Thumbnailator attachmentThumbnailator(
+      @Value("${datastore.thumbnail.attachment.width}") int width,
+      @Value("${datastore.thumbnail.attachment.height}") int height) {
+    return new ThumbnailatorImpl(width, height);
+  }
 
-	@Bean("userPhotoThumbnailator")
-	public Thumbnailator userPhotoThumbnailator(@Value("${datastore.thumbnail.avatar.width}") int width,
-			@Value("${datastore.thumbnail.avatar.height}") int height) {
-		return new ThumbnailatorImpl(width, height);
-	}
+  @Bean("userPhotoThumbnailator")
+  public Thumbnailator userPhotoThumbnailator(
+      @Value("${datastore.thumbnail.avatar.width}") int width,
+      @Value("${datastore.thumbnail.avatar.height}") int height) {
+    return new ThumbnailatorImpl(width, height);
+  }
 
-	@Bean
-	public ContentTypeResolver contentTypeResolver() {
-		return new TikaContentTypeResolver();
-	}
+  @Bean
+  public FeatureFlagHandler featureFlagHandler(
+      @Value("#{'${rp.feature.flags}'.split(',')}") Set<String> featureFlagsSet) {
+    return new FeatureFlagHandler(featureFlagsSet);
+  }
 
-	@Bean
-	public DataEncoder dataEncoder() {
-		return new DataEncoder();
-	}
+  @Bean
+  public ContentTypeResolver contentTypeResolver() {
+    return new TikaContentTypeResolver();
+  }
+
+  @Bean
+  public DataEncoder dataEncoder() {
+    return new DataEncoder();
+  }
+
+  @Bean(name = "caffeineCacheManager")
+  public CacheManager cacheManager() {
+    CaffeineCacheManager cacheManager = new CaffeineCacheManager();
+    cacheManager.setCaffeine(cacheProperties());
+    return cacheManager;
+  }
+
+  private Caffeine<Object, Object> cacheProperties() {
+    return Caffeine.newBuilder().expireAfterWrite(1, TimeUnit.MINUTES);
+  }
 
 }

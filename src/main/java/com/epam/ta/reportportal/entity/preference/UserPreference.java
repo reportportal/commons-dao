@@ -19,9 +19,14 @@ package com.epam.ta.reportportal.entity.preference;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.user.User;
-
-import javax.persistence.*;
 import java.io.Serializable;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 /**
  * @author Pavel Bortnik
@@ -30,48 +35,48 @@ import java.io.Serializable;
 @Table(name = "user_preference", schema = "public")
 public class UserPreference implements Serializable {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	private UserFilter filter;
+  @ManyToOne(fetch = FetchType.LAZY)
+  private UserFilter filter;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	private Project project;
+  @ManyToOne(fetch = FetchType.LAZY)
+  private Project project;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	private User user;
+  @ManyToOne(fetch = FetchType.LAZY)
+  private User user;
 
-	public Long getId() {
-		return id;
-	}
+  public Long getId() {
+    return id;
+  }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-	public UserFilter getFilter() {
-		return filter;
-	}
+  public UserFilter getFilter() {
+    return filter;
+  }
 
-	public void setFilter(UserFilter filter) {
-		this.filter = filter;
-	}
+  public void setFilter(UserFilter filter) {
+    this.filter = filter;
+  }
 
-	public Project getProject() {
-		return project;
-	}
+  public Project getProject() {
+    return project;
+  }
 
-	public void setProject(Project project) {
-		this.project = project;
-	}
+  public void setProject(Project project) {
+    this.project = project;
+  }
 
-	public User getUser() {
-		return user;
-	}
+  public User getUser() {
+    return user;
+  }
 
-	public void setUser(User user) {
-		this.user = user;
-	}
+  public void setUser(User user) {
+    this.user = user;
+  }
 }

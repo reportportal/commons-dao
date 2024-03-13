@@ -17,43 +17,44 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Filter;
+import java.io.Serializable;
+import javax.persistence.EntityManager;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import java.io.Serializable;
-
 /**
  * @author Pavel Bortnik
  */
-public class ReportPortalRepositoryImpl<T, ID extends Serializable> extends SimpleJpaRepository<T, ID>
-		implements ReportPortalRepository<T, ID> {
+public class ReportPortalRepositoryImpl<T, ID extends Serializable> extends
+    SimpleJpaRepository<T, ID>
+    implements ReportPortalRepository<T, ID> {
 
-	private final EntityManager entityManager;
+  private final EntityManager entityManager;
 
-	private DSLContext dsl;
+  private DSLContext dsl;
 
-	@Autowired
-	public void setDsl(DSLContext dsl) {
-		this.dsl = dsl;
-	}
+  public ReportPortalRepositoryImpl(JpaEntityInformation<T, ?> entityInformation,
+      EntityManager entityManager) {
+    super(entityInformation, entityManager);
+    this.entityManager = entityManager;
+  }
 
-	public ReportPortalRepositoryImpl(JpaEntityInformation<T, ?> entityInformation, EntityManager entityManager) {
-		super(entityInformation, entityManager);
-		this.entityManager = entityManager;
-	}
+  @Autowired
+  public void setDsl(DSLContext dsl) {
+    this.dsl = dsl;
+  }
 
-	@Override
-	@Transactional
-	public void refresh(T t) {
-		entityManager.refresh(t);
-	}
+  @Override
+  @Transactional
+  public void refresh(T t) {
+    entityManager.refresh(t);
+  }
 
-	@Override
-	public boolean exists(Filter filter) {
-		return dsl.fetchExists(filter.toQuery().get());
-	}
+  @Override
+  public boolean exists(Filter filter) {
+    return dsl.fetchExists(filter.toQuery().get());
+  }
 }

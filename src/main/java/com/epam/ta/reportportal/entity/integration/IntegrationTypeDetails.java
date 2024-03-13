@@ -17,7 +17,6 @@
 package com.epam.ta.reportportal.entity.integration;
 
 import com.epam.ta.reportportal.commons.JsonbUserType;
-
 import java.io.Serializable;
 import java.util.Map;
 
@@ -26,18 +25,18 @@ import java.util.Map;
  */
 public class IntegrationTypeDetails extends JsonbUserType implements Serializable {
 
-	@Override
-	public Class<?> returnedClass() {
-		return IntegrationTypeDetails.class;
-	}
+  private Map<String, Object> details;
 
-	private Map<String, Object> details;
+  @Override
+  public Class<?> returnedClass() {
+    return IntegrationTypeDetails.class;
+  }
 
-	public Map<String, Object> getDetails() {
-		return details;
-	}
+  public Map<String, Object> getDetails() {
+    return details;
+  }
 
-	public void setDetails(Map<String, Object> details) {
-		this.details = details;
-	}
+  public void setDetails(Map<String, Object> details) {
+    this.details = details;
+  }
 }

@@ -20,35 +20,41 @@ import com.epam.ta.reportportal.commons.ReportPortalUser;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
 import com.epam.ta.reportportal.entity.user.User;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-
 import java.util.Map;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * @author Pavel Bortnik
  */
 public interface UserRepositoryCustom extends FilterableRepository<User> {
 
-	/**
-	 * Finds entities list according provided filter
-	 *
-	 * @param filter   Filter - Query representation
-	 * @param pageable Page Representation
-	 * @param exclude  Fields to exclude from query
-	 * @return Found Paged objects
-	 */
-	Page<User> findByFilterExcluding(Queryable filter, Pageable pageable, String... exclude);
+  Page<User> findByFilterExcludingProjects(Queryable filter, Pageable pageable);
 
-	Map<String, ProjectRole> findUsernamesWithProjectRolesByProjectId(Long projectId);
+  Optional<User> findRawById(Long id);
 
-	/**
-	 * Finds details about user and his project by login.
-	 *
-	 * @param login Login to find
-	 * @return User details
-	 */
-	Optional<ReportPortalUser> findUserDetails(String login);
+  /**
+   * Finds entities list according provided filter
+   *
+   * @param filter   Filter - Query representation
+   * @param pageable Page Representation
+   * @param exclude  Fields to exclude from query
+   * @return Found Paged objects
+   */
+  Page<User> findByFilterExcluding(Queryable filter, Pageable pageable, String... exclude);
 
+  Map<String, ProjectRole> findUsernamesWithProjectRolesByProjectId(Long projectId);
+
+  /**
+   * Finds details about user and his project by login.
+   *
+   * @param login Login to find
+   * @return User details
+   */
+  Optional<ReportPortalUser> findUserDetails(String login);
+
+  Optional<ReportPortalUser> findReportPortalUser(String login);
+
+  Optional<ReportPortalUser> findReportPortalUser(Long userId);
 }

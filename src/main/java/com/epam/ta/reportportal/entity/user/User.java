@@ -18,13 +18,22 @@ package com.epam.ta.reportportal.entity.user;
 
 import com.epam.ta.reportportal.entity.Metadata;
 import com.google.common.collect.Sets;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Set;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
 /**
  * @author Andrei Varabyeu
@@ -34,167 +43,172 @@ import java.util.Set;
 @Table(name = "users", schema = "public")
 public class User implements Serializable {
 
-	private static final long serialVersionUID = 923392981;
+  private static final long serialVersionUID = 923392981;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id", unique = true, nullable = false, precision = 64)
-	private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "id", unique = true, nullable = false, precision = 64)
+  private Long id;
 
-	@Column(name = "login")
-	private String login;
+  @Column(name = "login")
+  private String login;
 
-	@Column(name = "password")
-	private String password;
+  @Column(name = "password")
+  private String password;
 
-	@Column(name = "email")
-	private String email;
+  @Column(name = "email")
+  private String email;
 
-	@Column(name = "role")
-	@Enumerated(EnumType.STRING)
-	private UserRole role;
+  @Column(name = "role")
+  @Enumerated(EnumType.STRING)
+  private UserRole role;
 
-	@Column(name = "full_name")
-	private String fullName;
+  @Column(name = "full_name")
+  private String fullName;
 
-	@Column(name = "expired")
-	private boolean isExpired;
+  @Column(name = "expired")
+  private boolean isExpired;
 
-	@Column(name = "metadata")
-	@Type(type = "meta")
-	private Metadata metadata;
+  @Column(name = "metadata")
+  @Type(type = "meta")
+  private Metadata metadata;
 
-	@Column(name = "attachment")
-	private String attachment;
+  @Column(name = "attachment")
+  private String attachment;
 
-	@Column(name = "attachment_thumbnail")
-	private String attachmentThumbnail;
+  @Column(name = "attachment_thumbnail")
+  private String attachmentThumbnail;
 
-	@Column(name = "type")
-	private UserType userType;
+  @Column(name = "type")
+  private UserType userType;
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH })
-	private Set<ProjectUser> projects = Sets.newHashSet();
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = {CascadeType.PERSIST,
+      CascadeType.MERGE, CascadeType.REFRESH})
+  private Set<ProjectUser> projects = Sets.newHashSet();
 
-	public User() {
-	}
+  public User() {
+  }
 
-	public Long getId() {
-		return this.id;
-	}
+  public Long getId() {
+    return this.id;
+  }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-	public String getLogin() {
-		return this.login;
-	}
+  public String getLogin() {
+    return this.login;
+  }
 
-	public void setLogin(String login) {
-		this.login = login;
-	}
+  public void setLogin(String login) {
+    this.login = login;
+  }
 
-	public String getPassword() {
-		return this.password;
-	}
+  public String getPassword() {
+    return this.password;
+  }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+  public void setPassword(String password) {
+    this.password = password;
+  }
 
-	public String getEmail() {
-		return this.email;
-	}
+  public String getEmail() {
+    return this.email;
+  }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+  public void setEmail(String email) {
+    this.email = email;
+  }
 
-	public UserRole getRole() {
-		return role;
-	}
+  public UserRole getRole() {
+    return role;
+  }
 
-	public void setRole(UserRole role) {
-		this.role = role;
-	}
+  public void setRole(UserRole role) {
+    this.role = role;
+  }
 
-	public Set<ProjectUser> getProjects() {
-		return projects;
-	}
+  public Set<ProjectUser> getProjects() {
+    return projects;
+  }
 
-	public void setProjects(Set<ProjectUser> projects) {
-		this.projects = projects;
-	}
+  public void setProjects(Set<ProjectUser> projects) {
+    this.projects = projects;
+  }
 
-	public String getFullName() {
-		return this.fullName;
-	}
+  public String getFullName() {
+    return this.fullName;
+  }
 
-	public void setFullName(String fullName) {
-		this.fullName = fullName;
-	}
+  public void setFullName(String fullName) {
+    this.fullName = fullName;
+  }
 
-	public boolean isExpired() {
-		return isExpired;
-	}
+  public boolean isExpired() {
+    return isExpired;
+  }
 
-	public void setExpired(boolean expired) {
-		isExpired = expired;
-	}
+  public void setExpired(boolean expired) {
+    isExpired = expired;
+  }
 
-	public String getAttachment() {
-		return attachment;
-	}
+  public String getAttachment() {
+    return attachment;
+  }
 
-	public void setAttachment(String attachment) {
-		this.attachment = attachment;
-	}
+  public void setAttachment(String attachment) {
+    this.attachment = attachment;
+  }
 
-	public String getAttachmentThumbnail() {
-		return attachmentThumbnail;
-	}
+  public String getAttachmentThumbnail() {
+    return attachmentThumbnail;
+  }
 
-	public void setAttachmentThumbnail(String attachmentThumbnail) {
-		this.attachmentThumbnail = attachmentThumbnail;
-	}
+  public void setAttachmentThumbnail(String attachmentThumbnail) {
+    this.attachmentThumbnail = attachmentThumbnail;
+  }
 
-	public UserType getUserType() {
-		return userType;
-	}
+  public UserType getUserType() {
+    return userType;
+  }
 
-	public void setUserType(UserType userType) {
-		this.userType = userType;
-	}
+  public void setUserType(UserType userType) {
+    this.userType = userType;
+  }
 
-	public Metadata getMetadata() {
-		return metadata;
-	}
+  public Metadata getMetadata() {
+    return metadata;
+  }
 
-	public void setMetadata(Metadata metadata) {
-		this.metadata = metadata;
-	}
+  public void setMetadata(Metadata metadata) {
+    this.metadata = metadata;
+  }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-		User user = (User) o;
-		return isExpired == user.isExpired && Objects.equals(id, user.id) && Objects.equals(login, user.login) && Objects.equals(password,
-				user.password
-		) && Objects.equals(email, user.email) && role == user.role && Objects.equals(fullName, user.fullName) && Objects.equals(metadata,
-				user.metadata
-		) && Objects.equals(attachment, user.attachment) && Objects.equals(attachmentThumbnail, user.attachmentThumbnail)
-				&& userType == user.userType;
-	}
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    User user = (User) o;
+    return isExpired == user.isExpired && Objects.equals(id, user.id) && Objects.equals(login,
+        user.login) && Objects.equals(password,
+        user.password
+    ) && Objects.equals(email, user.email) && role == user.role && Objects.equals(fullName,
+        user.fullName) && Objects.equals(metadata,
+        user.metadata
+    ) && Objects.equals(attachment, user.attachment) && Objects.equals(attachmentThumbnail,
+        user.attachmentThumbnail)
+        && userType == user.userType;
+  }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(id, login, password, email, role, fullName, isExpired, metadata, attachment, attachmentThumbnail, userType);
-	}
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, login, password, email, role, fullName, isExpired, metadata, attachment,
+        attachmentThumbnail, userType);
+  }
 
 }

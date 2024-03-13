@@ -16,43 +16,45 @@
 
 package com.epam.ta.reportportal.entity.enums.converter;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import com.epam.ta.reportportal.entity.enums.LogLevel;
 import com.epam.ta.reportportal.exception.ReportPortalException;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
 class LogLevelConverterTest {
 
-	private LogLevelConverter converter = new LogLevelConverter();
-	private Map<LogLevel, Integer> allowedValues;
+  private LogLevelConverter converter = new LogLevelConverter();
+  private Map<LogLevel, Integer> allowedValues;
 
-	@BeforeEach
-	void setUp() {
-		allowedValues = Arrays.stream(LogLevel.values()).collect(Collectors.toMap(it -> it, LogLevel::toInt));
-	}
+  @BeforeEach
+  void setUp() {
+    allowedValues = Arrays.stream(LogLevel.values())
+        .collect(Collectors.toMap(it -> it, LogLevel::toInt));
+  }
 
-	@Test
-	void convertToDatabaseColumn() {
-		Arrays.stream(LogLevel.values()).forEach(it -> assertEquals(it.toInt(), (int) converter.convertToDatabaseColumn(it)));
-	}
+  @Test
+  void convertToDatabaseColumn() {
+    Arrays.stream(LogLevel.values())
+        .forEach(it -> assertEquals(it.toInt(), (int) converter.convertToDatabaseColumn(it)));
+  }
 
-	@Test
-	void convertToEntityAttribute() {
-		allowedValues.forEach((key, value) -> assertEquals(key, converter.convertToEntityAttribute(value)));
-	}
+  @Test
+  void convertToEntityAttribute() {
+    allowedValues.forEach(
+        (key, value) -> assertEquals(key, converter.convertToEntityAttribute(value)));
+  }
 
-	@Test
-	void convertToEntityAttributeFail() {
-		assertThrows(ReportPortalException.class, () -> converter.convertToEntityAttribute(-100));
-	}
+  @Test
+  void convertToEntityAttributeFail() {
+    assertThrows(ReportPortalException.class, () -> converter.convertToEntityAttribute(-100));
+  }
 }

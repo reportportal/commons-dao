@@ -23,5 +23,5 @@ import com.epam.ta.reportportal.entity.statistics.StatisticsField;
  */
 public interface StatisticsFieldRepository extends ReportPortalRepository<StatisticsField, Long> {
 
-	void deleteByName(String name);
+  void deleteByName(String name);
 }

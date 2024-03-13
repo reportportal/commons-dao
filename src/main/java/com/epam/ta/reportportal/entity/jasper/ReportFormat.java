@@ -16,7 +16,6 @@
 package com.epam.ta.reportportal.entity.jasper;
 
 import com.google.common.net.MediaType;
-
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -24,34 +23,33 @@ import java.util.Optional;
  * Supported Jasper Report formats
  *
  * @author Andrei_Ramanchuk
- * @author Andrei Varabyeu
- * Make content type part of ReportFormat enum
+ * @author Andrei Varabyeu Make content type part of ReportFormat enum
  */
 public enum ReportFormat {
-	//@formatter:off
-	XLS("xls", MediaType.MICROSOFT_EXCEL.withoutParameters().toString()),
-	HTML("html", MediaType.HTML_UTF_8.withoutParameters().toString()),
-	PDF("pdf", MediaType.PDF.withoutParameters().toString()),
-	CSV("csv", MediaType.CSV_UTF_8.withoutParameters().toString());
-	//@formatter:on
+  //@formatter:off
+  XLS("xls", MediaType.MICROSOFT_EXCEL.withoutParameters().toString()),
+  HTML("html", MediaType.HTML_UTF_8.withoutParameters().toString()),
+  PDF("pdf", MediaType.PDF.withoutParameters().toString()),
+  CSV("csv", MediaType.CSV_UTF_8.withoutParameters().toString());
+  //@formatter:on
 
-	private String value;
-	private String contentType;
+  private String value;
+  private String contentType;
 
-	ReportFormat(String value, String contentType) {
-		this.value = value;
-		this.contentType = contentType;
-	}
+  ReportFormat(String value, String contentType) {
+    this.value = value;
+    this.contentType = contentType;
+  }
 
-	public String getValue() {
-		return value;
-	}
+  public static Optional<ReportFormat> findByName(String name) {
+    return Arrays.stream(values()).filter(format -> format.name().equalsIgnoreCase(name)).findAny();
+  }
 
-	public String getContentType() {
-		return contentType;
-	}
+  public String getValue() {
+    return value;
+  }
 
-	public static Optional<ReportFormat> findByName(String name) {
-		return Arrays.stream(values()).filter(format -> format.name().equalsIgnoreCase(name)).findAny();
-	}
+  public String getContentType() {
+    return contentType;
+  }
 }

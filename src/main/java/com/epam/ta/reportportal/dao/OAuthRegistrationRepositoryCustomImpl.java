@@ -23,4 +23,5 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public class OAuthRegistrationRepositoryCustomImpl implements OAuthRegistrationRepositoryCustom {
+
 }

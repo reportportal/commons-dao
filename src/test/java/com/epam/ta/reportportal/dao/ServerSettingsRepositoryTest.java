@@ -16,38 +16,37 @@
 
 package com.epam.ta.reportportal.dao;
 
-import com.epam.ta.reportportal.BaseTest;
-import com.epam.ta.reportportal.entity.ServerSettings;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.List;
-import java.util.Optional;
-
 import static com.epam.ta.reportportal.dao.ServerSettingsRepositoryCustomImpl.SERVER_SETTING_KEY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import com.epam.ta.reportportal.BaseTest;
+import com.epam.ta.reportportal.entity.ServerSettings;
+import java.util.List;
+import java.util.Optional;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
 class ServerSettingsRepositoryTest extends BaseTest {
 
-	@Autowired
-	private ServerSettingsRepository repository;
+  @Autowired
+  private ServerSettingsRepository repository;
 
-	@Test
-	public void findSettings() {
-		final List<ServerSettings> settings = repository.selectServerSettings();
-		assertEquals(2L, settings.size());
-		settings.forEach(setting -> assertTrue(setting.getKey().startsWith(SERVER_SETTING_KEY)));
-	}
+  @Test
+  public void findSettings() {
+    final List<ServerSettings> settings = repository.selectServerSettings();
+    assertEquals(2L, settings.size());
+    settings.forEach(setting -> assertTrue(setting.getKey().startsWith(SERVER_SETTING_KEY)));
+  }
 
-	@Test
-	public void generateSecret() {
-		final String s = repository.generateSecret();
-		final Optional<ServerSettings> byKey = repository.findByKey("secret.key");
-		assertTrue(byKey.isPresent());
-		assertEquals(s, byKey.get().getValue());
-	}
+  @Test
+  public void generateSecret() {
+    final String s = repository.generateSecret();
+    final Optional<ServerSettings> byKey = repository.findByKey("secret.key");
+    assertTrue(byKey.isPresent());
+    assertEquals(s, byKey.get().getValue());
+  }
 }

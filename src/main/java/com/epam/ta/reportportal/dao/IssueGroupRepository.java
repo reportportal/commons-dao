@@ -24,5 +24,5 @@ import com.epam.ta.reportportal.entity.item.issue.IssueGroup;
  */
 public interface IssueGroupRepository extends ReportPortalRepository<IssueGroup, Long> {
 
-	IssueGroup findByTestItemIssueGroup(TestItemIssueGroup testItemIssueGroup);
+  IssueGroup findByTestItemIssueGroup(TestItemIssueGroup testItemIssueGroup);
 }

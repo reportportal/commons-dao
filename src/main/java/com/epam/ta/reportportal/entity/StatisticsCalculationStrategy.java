@@ -26,29 +26,30 @@ import java.util.Optional;
  */
 public enum StatisticsCalculationStrategy {
 
-	/**
-	 * Step based strategy. Only steps should be calculated as statistics items
-	 */
-	STEP_BASED,
+  /**
+   * Step based strategy. Only steps should be calculated as statistics items
+   */
+  STEP_BASED,
 
-	/**
-	 * All (including befores and afters) should be calculated as statistics items
-	 */
-	ALL_ITEMS_BASED,
+  /**
+   * All (including befores and afters) should be calculated as statistics items
+   */
+  ALL_ITEMS_BASED,
 
-	/**
-	 * Optimized for BDD-based launches. Does NOT calculates stats for step/scenario level, only starting from TEST level
-	 */
-	TEST_BASED;
+  /**
+   * Optimized for BDD-based launches. Does NOT calculates stats for step/scenario level, only
+   * starting from TEST level
+   */
+  TEST_BASED;
 
-	/**
-	 * Loads strategy by it's string name. Case matters.
-	 *
-	 * @param strategy Strategy string
-	 * @return Optional of found enum value
-	 */
-	public static Optional<StatisticsCalculationStrategy> fromString(String strategy) {
-		return Arrays.stream(values()).filter(s -> s.name().equals(strategy)).findAny();
-	}
+  /**
+   * Loads strategy by it's string name. Case matters.
+   *
+   * @param strategy Strategy string
+   * @return Optional of found enum value
+   */
+  public static Optional<StatisticsCalculationStrategy> fromString(String strategy) {
+    return Arrays.stream(values()).filter(s -> s.name().equals(strategy)).findAny();
+  }
 
 }

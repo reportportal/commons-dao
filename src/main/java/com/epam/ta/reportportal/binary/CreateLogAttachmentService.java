@@ -20,7 +20,7 @@ import com.epam.ta.reportportal.dao.LogRepository;
 import com.epam.ta.reportportal.entity.attachment.Attachment;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.exception.ReportPortalException;
-import com.epam.ta.reportportal.ws.model.ErrorType;
+import com.epam.ta.reportportal.ws.reporting.ErrorType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,16 +32,17 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class CreateLogAttachmentService {
 
-	private final LogRepository logRepository;
+  private final LogRepository logRepository;
 
-	@Autowired
-	public CreateLogAttachmentService(LogRepository logRepository) {
-		this.logRepository = logRepository;
-	}
+  @Autowired
+  public CreateLogAttachmentService(LogRepository logRepository) {
+    this.logRepository = logRepository;
+  }
 
-	public void create(Attachment attachment, Long logId) {
-		Log log = logRepository.findById(logId).orElseThrow(() -> new ReportPortalException(ErrorType.LOG_NOT_FOUND, logId));
-		log.setAttachment(attachment);
-		logRepository.save(log);
-	}
+  public void create(Attachment attachment, Long logId) {
+    Log log = logRepository.findById(logId)
+        .orElseThrow(() -> new ReportPortalException(ErrorType.LOG_NOT_FOUND, logId));
+    log.setAttachment(attachment);
+    logRepository.save(log);
+  }
 }

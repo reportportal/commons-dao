@@ -18,9 +18,10 @@ import javax.annotation.processing.Generated;
 import org.jooq.Field;
 import org.jooq.ForeignKey;
 import org.jooq.Index;
+import org.jooq.JSONB;
 import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row5;
+import org.jooq.Row7;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -42,7 +43,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JUserCreationBid extends TableImpl<JUserCreationBidRecord> {
 
-    private static final long serialVersionUID = 1036111992;
+    private static final long serialVersionUID = 1009841154;
 
     /**
      * The reference instance of <code>public.user_creation_bid</code>
@@ -73,14 +74,24 @@ public class JUserCreationBid extends TableImpl<JUserCreationBidRecord> {
     public final TableField<JUserCreationBidRecord, String> EMAIL = createField(DSL.name("email"), org.jooq.impl.SQLDataType.VARCHAR.nullable(false), this, "");
 
     /**
-     * The column <code>public.user_creation_bid.default_project_id</code>.
-     */
-    public final TableField<JUserCreationBidRecord, Long> DEFAULT_PROJECT_ID = createField(DSL.name("default_project_id"), org.jooq.impl.SQLDataType.BIGINT, this, "");
-
-    /**
      * The column <code>public.user_creation_bid.role</code>.
      */
     public final TableField<JUserCreationBidRecord, String> ROLE = createField(DSL.name("role"), org.jooq.impl.SQLDataType.VARCHAR.nullable(false), this, "");
+
+    /**
+     * The column <code>public.user_creation_bid.inviting_user_id</code>.
+     */
+    public final TableField<JUserCreationBidRecord, Long> INVITING_USER_ID = createField(DSL.name("inviting_user_id"), org.jooq.impl.SQLDataType.BIGINT, this, "");
+
+    /**
+     * The column <code>public.user_creation_bid.project_name</code>.
+     */
+    public final TableField<JUserCreationBidRecord, String> PROJECT_NAME = createField(DSL.name("project_name"), org.jooq.impl.SQLDataType.VARCHAR.nullable(false), this, "");
+
+    /**
+     * The column <code>public.user_creation_bid.metadata</code>.
+     */
+    public final TableField<JUserCreationBidRecord, JSONB> METADATA = createField(DSL.name("metadata"), org.jooq.impl.SQLDataType.JSONB, this, "");
 
     /**
      * Create a <code>public.user_creation_bid</code> table reference
@@ -122,7 +133,7 @@ public class JUserCreationBid extends TableImpl<JUserCreationBidRecord> {
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.USER_BID_PROJECT_IDX, Indexes.USER_CREATION_BID_PK);
+        return Arrays.<Index>asList(Indexes.USER_CREATION_BID_PK);
     }
 
     @Override
@@ -137,11 +148,11 @@ public class JUserCreationBid extends TableImpl<JUserCreationBidRecord> {
 
     @Override
     public List<ForeignKey<JUserCreationBidRecord, ?>> getReferences() {
-        return Arrays.<ForeignKey<JUserCreationBidRecord, ?>>asList(Keys.USER_CREATION_BID__USER_CREATION_BID_DEFAULT_PROJECT_ID_FKEY);
+        return Arrays.<ForeignKey<JUserCreationBidRecord, ?>>asList(Keys.USER_CREATION_BID__USER_CREATION_BID_INVITING_USER_ID_FKEY);
     }
 
-    public JProject project() {
-        return new JProject(this, Keys.USER_CREATION_BID__USER_CREATION_BID_DEFAULT_PROJECT_ID_FKEY);
+    public JUsers users() {
+        return new JUsers(this, Keys.USER_CREATION_BID__USER_CREATION_BID_INVITING_USER_ID_FKEY);
     }
 
     @Override
@@ -171,11 +182,11 @@ public class JUserCreationBid extends TableImpl<JUserCreationBidRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row5 type methods
+    // Row7 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row5<String, Timestamp, String, Long, String> fieldsRow() {
-        return (Row5) super.fieldsRow();
+    public Row7<String, Timestamp, String, String, Long, String, JSONB> fieldsRow() {
+        return (Row7) super.fieldsRow();
     }
 }

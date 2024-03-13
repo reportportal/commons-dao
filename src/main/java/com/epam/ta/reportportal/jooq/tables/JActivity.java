@@ -22,7 +22,7 @@ import org.jooq.Index;
 import org.jooq.JSONB;
 import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row9;
+import org.jooq.Row13;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -44,7 +44,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JActivity extends TableImpl<JActivityRecord> {
 
-    private static final long serialVersionUID = 152202898;
+    private static final long serialVersionUID = 551259526;
 
     /**
      * The reference instance of <code>public.activity</code>
@@ -65,29 +65,44 @@ public class JActivity extends TableImpl<JActivityRecord> {
     public final TableField<JActivityRecord, Long> ID = createField(DSL.name("id"), org.jooq.impl.SQLDataType.BIGINT.nullable(false).defaultValue(org.jooq.impl.DSL.field("nextval('activity_id_seq'::regclass)", org.jooq.impl.SQLDataType.BIGINT)), this, "");
 
     /**
-     * The column <code>public.activity.user_id</code>.
+     * The column <code>public.activity.created_at</code>.
      */
-    public final TableField<JActivityRecord, Long> USER_ID = createField(DSL.name("user_id"), org.jooq.impl.SQLDataType.BIGINT, this, "");
-
-    /**
-     * The column <code>public.activity.username</code>.
-     */
-    public final TableField<JActivityRecord, String> USERNAME = createField(DSL.name("username"), org.jooq.impl.SQLDataType.VARCHAR, this, "");
-
-    /**
-     * The column <code>public.activity.project_id</code>.
-     */
-    public final TableField<JActivityRecord, Long> PROJECT_ID = createField(DSL.name("project_id"), org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "");
-
-    /**
-     * The column <code>public.activity.entity</code>.
-     */
-    public final TableField<JActivityRecord, String> ENTITY = createField(DSL.name("entity"), org.jooq.impl.SQLDataType.VARCHAR(128).nullable(false), this, "");
+    public final TableField<JActivityRecord, Timestamp> CREATED_AT = createField(DSL.name("created_at"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "");
 
     /**
      * The column <code>public.activity.action</code>.
      */
-    public final TableField<JActivityRecord, String> ACTION = createField(DSL.name("action"), org.jooq.impl.SQLDataType.VARCHAR(128).nullable(false), this, "");
+    public final TableField<JActivityRecord, String> ACTION = createField(DSL.name("action"), org.jooq.impl.SQLDataType.VARCHAR(24).nullable(false), this, "");
+
+    /**
+     * The column <code>public.activity.event_name</code>.
+     */
+    public final TableField<JActivityRecord, String> EVENT_NAME = createField(DSL.name("event_name"), org.jooq.impl.SQLDataType.VARCHAR(32).nullable(false), this, "");
+
+    /**
+     * The column <code>public.activity.priority</code>.
+     */
+    public final TableField<JActivityRecord, String> PRIORITY = createField(DSL.name("priority"), org.jooq.impl.SQLDataType.VARCHAR(12).nullable(false), this, "");
+
+    /**
+     * The column <code>public.activity.object_id</code>.
+     */
+    public final TableField<JActivityRecord, Long> OBJECT_ID = createField(DSL.name("object_id"), org.jooq.impl.SQLDataType.BIGINT, this, "");
+
+    /**
+     * The column <code>public.activity.object_name</code>.
+     */
+    public final TableField<JActivityRecord, String> OBJECT_NAME = createField(DSL.name("object_name"), org.jooq.impl.SQLDataType.VARCHAR(128).nullable(false), this, "");
+
+    /**
+     * The column <code>public.activity.object_type</code>.
+     */
+    public final TableField<JActivityRecord, String> OBJECT_TYPE = createField(DSL.name("object_type"), org.jooq.impl.SQLDataType.VARCHAR(24).nullable(false), this, "");
+
+    /**
+     * The column <code>public.activity.project_id</code>.
+     */
+    public final TableField<JActivityRecord, Long> PROJECT_ID = createField(DSL.name("project_id"), org.jooq.impl.SQLDataType.BIGINT, this, "");
 
     /**
      * The column <code>public.activity.details</code>.
@@ -95,14 +110,19 @@ public class JActivity extends TableImpl<JActivityRecord> {
     public final TableField<JActivityRecord, JSONB> DETAILS = createField(DSL.name("details"), org.jooq.impl.SQLDataType.JSONB, this, "");
 
     /**
-     * The column <code>public.activity.creation_date</code>.
+     * The column <code>public.activity.subject_id</code>.
      */
-    public final TableField<JActivityRecord, Timestamp> CREATION_DATE = createField(DSL.name("creation_date"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "");
+    public final TableField<JActivityRecord, Long> SUBJECT_ID = createField(DSL.name("subject_id"), org.jooq.impl.SQLDataType.BIGINT, this, "");
 
     /**
-     * The column <code>public.activity.object_id</code>.
+     * The column <code>public.activity.subject_name</code>.
      */
-    public final TableField<JActivityRecord, Long> OBJECT_ID = createField(DSL.name("object_id"), org.jooq.impl.SQLDataType.BIGINT, this, "");
+    public final TableField<JActivityRecord, String> SUBJECT_NAME = createField(DSL.name("subject_name"), org.jooq.impl.SQLDataType.VARCHAR(128).nullable(false), this, "");
+
+    /**
+     * The column <code>public.activity.subject_type</code>.
+     */
+    public final TableField<JActivityRecord, String> SUBJECT_TYPE = createField(DSL.name("subject_type"), org.jooq.impl.SQLDataType.VARCHAR(32).nullable(false), this, "");
 
     /**
      * Create a <code>public.activity</code> table reference
@@ -144,7 +164,7 @@ public class JActivity extends TableImpl<JActivityRecord> {
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.ACTIVITY_CREATION_DATE_IDX, Indexes.ACTIVITY_OBJECT_IDX, Indexes.ACTIVITY_PK, Indexes.ACTIVITY_PROJECT_IDX);
+        return Arrays.<Index>asList(Indexes.ACTIVITY_CREATED_AT_IDX, Indexes.ACTIVITY_OBJECT_IDX, Indexes.ACTIVITY_PK, Indexes.ACTIVITY_PROJECT_IDX);
     }
 
     @Override
@@ -164,11 +184,7 @@ public class JActivity extends TableImpl<JActivityRecord> {
 
     @Override
     public List<ForeignKey<JActivityRecord, ?>> getReferences() {
-        return Arrays.<ForeignKey<JActivityRecord, ?>>asList(Keys.ACTIVITY__ACTIVITY_USER_ID_FKEY, Keys.ACTIVITY__ACTIVITY_PROJECT_ID_FKEY);
-    }
-
-    public JUsers users() {
-        return new JUsers(this, Keys.ACTIVITY__ACTIVITY_USER_ID_FKEY);
+        return Arrays.<ForeignKey<JActivityRecord, ?>>asList(Keys.ACTIVITY__ACTIVITY_PROJECT_ID_FKEY);
     }
 
     public JProject project() {
@@ -202,11 +218,11 @@ public class JActivity extends TableImpl<JActivityRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row9 type methods
+    // Row13 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row9<Long, Long, String, Long, String, String, JSONB, Timestamp, Long> fieldsRow() {
-        return (Row9) super.fieldsRow();
+    public Row13<Long, Timestamp, String, String, String, Long, String, String, Long, JSONB, Long, String, String> fieldsRow() {
+        return (Row13) super.fieldsRow();
     }
 }

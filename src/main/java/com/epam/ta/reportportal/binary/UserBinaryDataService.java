@@ -18,22 +18,21 @@ package com.epam.ta.reportportal.binary;
 
 import com.epam.ta.reportportal.entity.attachment.BinaryData;
 import com.epam.ta.reportportal.entity.user.User;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.io.InputStream;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
 public interface UserBinaryDataService {
 
-	void saveUserPhoto(User user, MultipartFile file);
+  void saveUserPhoto(User user, MultipartFile file);
 
-	void saveUserPhoto(User user, BinaryData binaryData);
+  void saveUserPhoto(User user, BinaryData binaryData);
 
-	void saveUserPhoto(User user, InputStream inputStream, String contentType);
+  void saveUserPhoto(User user, InputStream inputStream, String contentType);
 
-	BinaryData loadUserPhoto(User user, boolean loadThumbnail);
+  BinaryData loadUserPhoto(User user, boolean loadThumbnail);
 
-	public void deleteUserPhoto(User user);
+  public void deleteUserPhoto(User user);
 }

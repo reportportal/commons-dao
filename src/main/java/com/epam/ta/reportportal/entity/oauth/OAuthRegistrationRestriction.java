@@ -16,77 +16,82 @@
 
 package com.epam.ta.reportportal.entity.oauth;
 
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 @Entity
 @Table(name = "oauth_registration_restriction", schema = "public")
 public class OAuthRegistrationRestriction implements Serializable {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id")
-	private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "id")
+  private Long id;
 
-	@ManyToOne
-	@JoinColumn(name = "oauth_registration_fk")
-	private OAuthRegistration registration;
+  @ManyToOne
+  @JoinColumn(name = "oauth_registration_fk")
+  private OAuthRegistration registration;
 
-	@Column(name = "type")
-	private String type;
+  @Column(name = "type")
+  private String type;
 
-	@Column(name = "value")
-	private String value;
+  @Column(name = "value")
+  private String value;
 
-	public Long getId() {
-		return id;
-	}
+  public Long getId() {
+    return id;
+  }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-	public OAuthRegistration getRegistration() {
-		return registration;
-	}
+  public OAuthRegistration getRegistration() {
+    return registration;
+  }
 
-	public void setRegistration(OAuthRegistration registration) {
-		this.registration = registration;
-	}
+  public void setRegistration(OAuthRegistration registration) {
+    this.registration = registration;
+  }
 
-	public String getType() {
-		return type;
-	}
+  public String getType() {
+    return type;
+  }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+  public void setType(String type) {
+    this.type = type;
+  }
 
-	public String getValue() {
-		return value;
-	}
+  public String getValue() {
+    return value;
+  }
 
-	public void setValue(String value) {
-		this.value = value;
-	}
+  public void setValue(String value) {
+    this.value = value;
+  }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-		OAuthRegistrationRestriction that = (OAuthRegistrationRestriction) o;
-		return Objects.equals(type, that.type) && Objects.equals(value, that.value);
-	}
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    OAuthRegistrationRestriction that = (OAuthRegistrationRestriction) o;
+    return Objects.equals(type, that.type) && Objects.equals(value, that.value);
+  }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(type, value);
-	}
+  @Override
+  public int hashCode() {
+    return Objects.hash(type, value);
+  }
 }

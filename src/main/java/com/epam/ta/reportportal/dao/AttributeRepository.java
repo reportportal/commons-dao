@@ -21,11 +21,11 @@ package com.epam.ta.reportportal.dao;
  */
 
 import com.epam.ta.reportportal.entity.attribute.Attribute;
-
 import java.util.Optional;
 
-public interface AttributeRepository extends ReportPortalRepository<Attribute, Long>, AttributeRepositoryCustom {
+public interface AttributeRepository extends ReportPortalRepository<Attribute, Long>,
+    AttributeRepositoryCustom {
 
-	Optional<Attribute> findByName(String attributeName);
+  Optional<Attribute> findByName(String attributeName);
 
 }

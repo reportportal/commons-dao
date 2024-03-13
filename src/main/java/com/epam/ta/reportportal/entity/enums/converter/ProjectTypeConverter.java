@@ -18,7 +18,6 @@ package com.epam.ta.reportportal.entity.enums.converter;
 
 import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.exception.ReportPortalException;
-
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
@@ -27,14 +26,16 @@ import javax.persistence.Converter;
  */
 @Converter(autoApply = true)
 public class ProjectTypeConverter implements AttributeConverter<ProjectType, String> {
-	@Override
-	public String convertToDatabaseColumn(ProjectType attribute) {
-		return attribute.toString();
-	}
 
-	@Override
-	public ProjectType convertToEntityAttribute(String dbProjectRoleName) {
-		return ProjectType.findByName(dbProjectRoleName)
-				.orElseThrow(() -> new ReportPortalException("Can not convert project type name from database."));
-	}
+  @Override
+  public String convertToDatabaseColumn(ProjectType attribute) {
+    return attribute.toString();
+  }
+
+  @Override
+  public ProjectType convertToEntityAttribute(String dbProjectRoleName) {
+    return ProjectType.findByName(dbProjectRoleName)
+        .orElseThrow(
+            () -> new ReportPortalException("Can not convert project type name from database."));
+  }
 }

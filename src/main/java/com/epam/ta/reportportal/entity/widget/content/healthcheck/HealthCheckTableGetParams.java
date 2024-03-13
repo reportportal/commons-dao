@@ -1,65 +1,77 @@
 package com.epam.ta.reportportal.entity.widget.content.healthcheck;
 
 import com.google.common.collect.Lists;
-import org.springframework.data.domain.Sort;
-
 import java.util.List;
+import org.springframework.data.domain.Sort;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
 public class HealthCheckTableGetParams {
 
-	private final String viewName;
-	private final String currentLevelKey;
-	private final Sort sort;
+  private final String viewName;
+  private final String currentLevelKey;
+  private final Sort sort;
 
-	private final boolean includeCustomColumn;
-	private final List<LevelEntry> previousLevels;
+  private final boolean includeCustomColumn;
+  private final List<LevelEntry> previousLevels;
 
-	private HealthCheckTableGetParams(String viewName, String currentLevelKey, Sort sort, boolean includeCustomColumn) {
-		this.viewName = viewName;
-		this.currentLevelKey = currentLevelKey;
-		this.sort = sort;
-		this.includeCustomColumn = includeCustomColumn;
-		this.previousLevels = Lists.newArrayList();
-	}
+  private final Boolean excludeSkippedTests;
 
-	private HealthCheckTableGetParams(String viewName, String currentLevelKey, Sort sort, boolean includeCustomColumn,
-			List<LevelEntry> previousLevels) {
-		this.viewName = viewName;
-		this.currentLevelKey = currentLevelKey;
-		this.sort = sort;
-		this.includeCustomColumn = includeCustomColumn;
-		this.previousLevels = previousLevels;
-	}
+  private HealthCheckTableGetParams(String viewName, String currentLevelKey, Sort sort,
+      boolean includeCustomColumn, Boolean excludeSkippedTests) {
+    this.viewName = viewName;
+    this.currentLevelKey = currentLevelKey;
+    this.sort = sort;
+    this.includeCustomColumn = includeCustomColumn;
+    this.excludeSkippedTests = excludeSkippedTests;
+    this.previousLevels = Lists.newArrayList();
+  }
 
-	public static HealthCheckTableGetParams of(String viewName, String currentLevelKey, Sort sort, boolean includeCustomColumn) {
-		return new HealthCheckTableGetParams(viewName, currentLevelKey, sort, includeCustomColumn);
-	}
+  private HealthCheckTableGetParams(String viewName, String currentLevelKey, Sort sort,
+      boolean includeCustomColumn,
+      List<LevelEntry> previousLevels, Boolean excludeSkippedTests) {
+    this.viewName = viewName;
+    this.currentLevelKey = currentLevelKey;
+    this.sort = sort;
+    this.includeCustomColumn = includeCustomColumn;
+    this.previousLevels = previousLevels;
+    this.excludeSkippedTests = excludeSkippedTests;
+  }
 
-	public static HealthCheckTableGetParams of(String viewName, String currentLevelKey, Sort sort, boolean includeCustomColumn,
-			List<LevelEntry> previousLevels) {
-		return new HealthCheckTableGetParams(viewName, currentLevelKey, sort, includeCustomColumn, previousLevels);
-	}
+  public static HealthCheckTableGetParams of(String viewName, String currentLevelKey, Sort sort,
+      boolean includeCustomColumn, Boolean excludeSkippedTests) {
+    return new HealthCheckTableGetParams(viewName, currentLevelKey, sort, includeCustomColumn,
+        excludeSkippedTests);
+  }
 
-	public String getViewName() {
-		return viewName;
-	}
+  public static HealthCheckTableGetParams of(String viewName, String currentLevelKey, Sort sort,
+      boolean includeCustomColumn, List<LevelEntry> previousLevels, Boolean excludeSkippedTests) {
+    return new HealthCheckTableGetParams(viewName, currentLevelKey, sort, includeCustomColumn,
+        previousLevels, excludeSkippedTests);
+  }
 
-	public String getCurrentLevelKey() {
-		return currentLevelKey;
-	}
+  public String getViewName() {
+    return viewName;
+  }
 
-	public Sort getSort() {
-		return sort;
-	}
+  public String getCurrentLevelKey() {
+    return currentLevelKey;
+  }
 
-	public boolean isIncludeCustomColumn() {
-		return includeCustomColumn;
-	}
+  public Sort getSort() {
+    return sort;
+  }
 
-	public List<LevelEntry> getPreviousLevels() {
-		return previousLevels;
-	}
+  public boolean isIncludeCustomColumn() {
+    return includeCustomColumn;
+  }
+
+  public List<LevelEntry> getPreviousLevels() {
+    return previousLevels;
+  }
+
+  public Boolean isExcludeSkippedTests() {
+    return excludeSkippedTests;
+  }
 }

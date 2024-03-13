@@ -16,19 +16,18 @@
 
 package com.epam.ta.reportportal.dao;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
 import com.epam.ta.reportportal.entity.item.issue.IssueEntityPojo;
 import com.google.common.collect.Lists;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
-
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
@@ -36,30 +35,30 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Sql("/db/fill/item/items-fill.sql")
 class IssueEntityRepositoryTest extends BaseTest {
 
-	@Autowired
-	private IssueEntityRepository repository;
+  @Autowired
+  private IssueEntityRepository repository;
 
-	@Test
-	void findAllByIssueId() {
-		final Long toInvestigateTypeId = 1L;
-		final int expectedSize = 11;
+  @Test
+  void findAllByIssueId() {
+    final Long automationBugTypeId = 2L;
+    final int expectedSize = 11;
 
-		final List<IssueEntity> issueEntities = repository.findAllByIssueTypeId(toInvestigateTypeId);
-		assertEquals(expectedSize, issueEntities.size(), "Incorrect size of issue entities");
-		issueEntities.forEach(it -> assertEquals(TestItemIssueGroup.TO_INVESTIGATE,
-				it.getIssueType().getIssueGroup().getTestItemIssueGroup(),
-				"Issue entities should be int 'to investigate' group"
-		));
+    final List<IssueEntity> issueEntities = repository.findAllByIssueTypeId(automationBugTypeId);
+    assertEquals(expectedSize, issueEntities.size(), "Incorrect size of issue entities");
+    issueEntities.forEach(it -> assertEquals(TestItemIssueGroup.AUTOMATION_BUG,
+        it.getIssueType().getIssueGroup().getTestItemIssueGroup(),
+        "Issue entities should be from 'automation bug' group"
+    ));
 
-	}
+  }
 
-	@Test
-	void insertByItemIdAndIssueTypeId() {
-		int result = repository.saveMultiple(Lists.newArrayList(
-				new IssueEntityPojo(1L, 1L, "description", false, false),
-				new IssueEntityPojo(2L, 1L, "description", false, false)
-		));
+  @Test
+  void insertByItemIdAndIssueTypeId() {
+    int result = repository.saveMultiple(Lists.newArrayList(
+        new IssueEntityPojo(1L, 1L, "description", false, false),
+        new IssueEntityPojo(2L, 1L, "description", false, false)
+    ));
 
-		Assertions.assertEquals(2, result);
-	}
+    Assertions.assertEquals(2, result);
+  }
 }

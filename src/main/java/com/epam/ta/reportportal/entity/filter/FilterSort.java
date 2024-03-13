@@ -17,13 +17,19 @@
 package com.epam.ta.reportportal.entity.filter;
 
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
+import java.io.Serializable;
+import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.springframework.data.domain.Sort;
-
-import javax.persistence.*;
-import java.io.Serializable;
-import java.util.Objects;
 
 /**
  * @author Pavel Bortnik
@@ -33,57 +39,57 @@ import java.util.Objects;
 @Table(name = "filter_sort", schema = "public")
 public class FilterSort implements Serializable {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id", unique = true, nullable = false, precision = 64)
-	private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "id", unique = true, nullable = false, precision = 64)
+  private Long id;
 
-	@Column(name = "field")
-	private String field;
+  @Column(name = "field")
+  private String field;
 
-	@Column(name = "direction", nullable = false)
-	@Enumerated(EnumType.STRING)
-	@Type(type = "pqsql_enum")
-	private Sort.Direction direction;
+  @Column(name = "direction", nullable = false)
+  @Enumerated(EnumType.STRING)
+  @Type(type = "pqsql_enum")
+  private Sort.Direction direction;
 
-	public Long getId() {
-		return id;
-	}
+  public Long getId() {
+    return id;
+  }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-	public String getField() {
-		return field;
-	}
+  public String getField() {
+    return field;
+  }
 
-	public void setField(String field) {
-		this.field = field;
-	}
+  public void setField(String field) {
+    this.field = field;
+  }
 
-	public Sort.Direction getDirection() {
-		return direction;
-	}
+  public Sort.Direction getDirection() {
+    return direction;
+  }
 
-	public void setDirection(Sort.Direction direction) {
-		this.direction = direction;
-	}
+  public void setDirection(Sort.Direction direction) {
+    this.direction = direction;
+  }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-		FilterSort that = (FilterSort) o;
-		return Objects.equals(field, that.field) && direction == that.direction;
-	}
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    FilterSort that = (FilterSort) o;
+    return Objects.equals(field, that.field) && direction == that.direction;
+  }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(field, direction);
-	}
+  @Override
+  public int hashCode() {
+    return Objects.hash(field, direction);
+  }
 }

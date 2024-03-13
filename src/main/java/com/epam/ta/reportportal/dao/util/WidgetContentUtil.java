@@ -17,48 +17,43 @@
 
 package com.epam.ta.reportportal.dao.util;
 
-import com.epam.ta.reportportal.commons.querygen.CriteriaHolder;
-import com.epam.ta.reportportal.commons.querygen.FilterTarget;
-import com.epam.ta.reportportal.entity.activity.ActivityDetails;
-import com.epam.ta.reportportal.entity.widget.content.*;
-import com.epam.ta.reportportal.entity.widget.content.healthcheck.ComponentHealthCheckContent;
-import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableStatisticsContent;
-import com.epam.ta.reportportal.exception.ReportPortalException;
-import com.epam.ta.reportportal.ws.model.ActivityResource;
-import com.epam.ta.reportportal.ws.model.ErrorType;
-import com.epam.ta.reportportal.ws.model.attribute.ItemAttributeResource;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.google.common.base.CaseFormat;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.jooq.Field;
-import org.jooq.Record;
-import org.jooq.RecordMapper;
-import org.jooq.Result;
-import org.jooq.impl.DSL;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import static com.epam.ta.reportportal.commons.EntityUtils.TO_DATE;
 import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.STATISTICS_KEY;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_END_TIME;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAST_MODIFIED;
-import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.*;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.AGGREGATED_VALUES;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ATTRIBUTE_KEY;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ATTRIBUTE_VALUE;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ATTR_ID;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ATTR_TABLE;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.CRITERIA;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.DELTA;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.EXECUTIONS_PASSED;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.EXECUTIONS_SKIPPED;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.EXECUTIONS_TOTAL;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.FILTER_NAME;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.FLAKY_COUNT;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ID;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.INVESTIGATED;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ITEM_ATTRIBUTES;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ITEM_NAME;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.KEY;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.LAUNCHES;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.LAUNCHES_TABLE;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.NOT_PASSED_STATISTICS_KEY;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.PASSING_RATE;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.PERCENTAGE;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.SF_NAME;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.START_TIME_HISTORY;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.STATISTICS_COUNTER;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.STATISTICS_TABLE;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.STATUSES;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.STATUS_HISTORY;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.SUM;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.TOTAL;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.TO_INVESTIGATE;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.UNIQUE_ID;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.VALUE;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
 import static com.epam.ta.reportportal.jooq.tables.JItemAttribute.ITEM_ATTRIBUTE;
@@ -71,6 +66,65 @@ import static com.epam.ta.reportportal.jooq.tables.JTicket.TICKET;
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
 import static java.util.Optional.ofNullable;
 
+import com.epam.ta.reportportal.commons.querygen.CriteriaHolder;
+import com.epam.ta.reportportal.commons.querygen.FilterTarget;
+import com.epam.ta.reportportal.entity.activity.ActivityDetails;
+import com.epam.ta.reportportal.entity.widget.content.ChartStatisticsContent;
+import com.epam.ta.reportportal.entity.widget.content.CriteriaHistoryItem;
+import com.epam.ta.reportportal.entity.widget.content.CumulativeTrendChartContent;
+import com.epam.ta.reportportal.entity.widget.content.CumulativeTrendChartEntry;
+import com.epam.ta.reportportal.entity.widget.content.FlakyCasesTableContent;
+import com.epam.ta.reportportal.entity.widget.content.LaunchesTableContent;
+import com.epam.ta.reportportal.entity.widget.content.NotPassedCasesContent;
+import com.epam.ta.reportportal.entity.widget.content.OverallStatisticsContent;
+import com.epam.ta.reportportal.entity.widget.content.PatternTemplateLaunchStatistics;
+import com.epam.ta.reportportal.entity.widget.content.PatternTemplateStatistics;
+import com.epam.ta.reportportal.entity.widget.content.ProductStatusStatisticsContent;
+import com.epam.ta.reportportal.entity.widget.content.TopPatternTemplatesContent;
+import com.epam.ta.reportportal.entity.widget.content.UniqueBugContent;
+import com.epam.ta.reportportal.entity.widget.content.healthcheck.ComponentHealthCheckContent;
+import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableGetParams;
+import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableStatisticsContent;
+import com.epam.ta.reportportal.exception.ReportPortalException;
+import com.epam.ta.reportportal.ws.model.ActivityResource;
+import com.epam.ta.reportportal.ws.reporting.ErrorType;
+import com.epam.ta.reportportal.ws.model.attribute.ItemAttributeResource;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.google.common.base.CaseFormat;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.jooq.Field;
+import org.jooq.Record;
+import org.jooq.RecordMapper;
+import org.jooq.Result;
+import org.jooq.impl.DSL;
+
 /**
  * Util class for widget content repository.
  *
@@ -78,7 +132,7 @@ import static java.util.Optional.ofNullable;
  */
 public class WidgetContentUtil {
 
-	private static ObjectMapper objectMapper;
+	private static final ObjectMapper objectMapper;
 
 	static {
 		objectMapper = new ObjectMapper();
@@ -121,6 +175,10 @@ public class WidgetContentUtil {
 		return new OverallStatisticsContent(values);
 	};
 
+	public static <K, V> void consumeIfNotNull(K key, V value, BiConsumer<K, V> consumer) {
+		ofNullable(key).ifPresent(k -> ofNullable(value).ifPresent(v -> consumer.accept(k, v)));
+	}
+
 	public static final BiFunction<Result<? extends Record>, List<String>, List<LaunchesTableContent>> LAUNCHES_TABLE_FETCHER = (result, contentFields) -> {
 
 		List<String> nonStatisticsFields = contentFields.stream().filter(cf -> !cf.startsWith(STATISTICS_KEY)).collect(Collectors.toList());
@@ -160,9 +218,9 @@ public class WidgetContentUtil {
 
 			nonStatisticsFields.forEach(cf -> {
 				if (CRITERIA_END_TIME.equalsIgnoreCase(cf) || CRITERIA_LAST_MODIFIED.equalsIgnoreCase(cf)) {
-					content.getValues().put(cf, record.get(criteria.get(cf), Timestamp.class));
+					consumeIfNotNull(cf, record.get(criteria.get(cf), Timestamp.class), (k, v) -> content.getValues().put(k, v));
 				} else {
-					content.getValues().put(cf, String.valueOf(record.get(criteria.get(cf))));
+					consumeIfNotNull(cf, record.get(criteria.get(cf)), (k, v) -> content.getValues().put(k, String.valueOf(v)));
 				}
 			});
 
@@ -187,12 +245,16 @@ public class WidgetContentUtil {
 
 		ActivityResource activityResource = new ActivityResource();
 		activityResource.setId(r.get(ACTIVITY.ID));
-		activityResource.setUser(r.get(USERS.LOGIN));
+		activityResource.setUser(r.get(USERS.LOGIN) != null
+				? r.get(USERS.LOGIN)
+				: r.get(ACTIVITY.SUBJECT_NAME));
 		activityResource.setProjectId(r.get(ACTIVITY.PROJECT_ID));
 		activityResource.setProjectName(r.get(PROJECT.NAME));
-		activityResource.setActionType(r.get(ACTIVITY.ACTION));
-		activityResource.setObjectType(r.get(ACTIVITY.ENTITY));
-		activityResource.setLastModified(TO_DATE.apply(r.get(ACTIVITY.CREATION_DATE, LocalDateTime.class)));
+		activityResource.setActionType(r.get(ACTIVITY.EVENT_NAME));
+		activityResource.setObjectType(r.get(ACTIVITY.OBJECT_TYPE));
+		activityResource.setObjectName(r.get(ACTIVITY.OBJECT_NAME));
+		activityResource.setLastModified(
+				TO_DATE.apply(r.get(ACTIVITY.CREATED_AT, LocalDateTime.class)));
 		activityResource.setLoggedObjectId(r.get(ACTIVITY.OBJECT_ID));
 		String detailsJson = r.get(ACTIVITY.DETAILS, String.class);
 		ofNullable(detailsJson).ifPresent(s -> {
@@ -268,10 +330,12 @@ public class WidgetContentUtil {
 			}
 		});
 
-		return filterMapping.entrySet().stream().collect(LinkedHashMap::new,
-				(res, filterMap) -> res.put(filterMap.getKey(), new ArrayList<>(filterMap.getValue().values())),
-				LinkedHashMap::putAll
-		);
+		return filterMapping.entrySet()
+				.stream()
+				.collect(LinkedHashMap::new,
+						(res, filterMap) -> res.put(filterMap.getKey(), new ArrayList<>(filterMap.getValue().values())),
+						LinkedHashMap::putAll
+				);
 	};
 
 	public static final BiFunction<Result<? extends Record>, Map<String, String>, List<ProductStatusStatisticsContent>> PRODUCT_STATUS_LAUNCH_GROUPED_FETCHER = (result, attributes) -> {
@@ -404,8 +468,7 @@ public class WidgetContentUtil {
 
 			ofNullable(record.get(fieldName(STATISTICS_TABLE, STATISTICS_COUNTER),
 					String.class
-			)).ifPresent(counter -> statisticsContent.getValues()
-					.put(contentField, counter));
+			)).ifPresent(counter -> statisticsContent.getValues().put(contentField, counter));
 
 			ofNullable(record.get(fieldName(DELTA), String.class)).ifPresent(delta -> statisticsContent.getValues().put(DELTA, delta));
 
@@ -423,6 +486,19 @@ public class WidgetContentUtil {
 				entry.setTotal(record.get(DSL.field(fieldName(TOTAL)), Long.class));
 				entry.setItemName(record.get(DSL.field(fieldName(ITEM_NAME)), String.class));
 				entry.setUniqueId(record.get(DSL.field(fieldName(UNIQUE_ID)), String.class));
+				entry.setStartTime(Collections.singletonList(record.get(DSL.field(fieldName(START_TIME_HISTORY)), Date.class)));
+				return entry;
+			})
+			.collect(Collectors.toList());
+
+	public static final Function<Result<? extends Record>, List<CriteriaHistoryItem>> CRITERIA_HISTORY_ITEM_FETCHER = result -> result.stream()
+			.map(record -> {
+				CriteriaHistoryItem entry = new CriteriaHistoryItem();
+				entry.setStatus(record.get(DSL.field(fieldName(STATUS_HISTORY)), Boolean[].class));
+				entry.setCriteria(record.get(DSL.field(fieldName(CRITERIA)), Long.class));
+				entry.setTotal(record.get(DSL.field(fieldName(TOTAL)), Long.class));
+				entry.setName(record.get(TEST_ITEM.NAME));
+				entry.setUniqueId(record.get(TEST_ITEM.UNIQUE_ID));
 				entry.setStartTime(Collections.singletonList(record.get(DSL.field(fieldName(START_TIME_HISTORY)), Date.class)));
 				return entry;
 			})
@@ -522,8 +598,7 @@ public class WidgetContentUtil {
 		return new ArrayList<>(content.values());
 	};
 
-	public static final Function<Result<? extends Record>, List<ComponentHealthCheckContent>> COMPONENT_HEALTH_CHECK_FETCHER = result -> result
-			.stream()
+	public static final Function<Result<? extends Record>, List<ComponentHealthCheckContent>> COMPONENT_HEALTH_CHECK_FETCHER = result -> result.stream()
 			.map(record -> {
 				String attributeValue = record.get(fieldName(VALUE), String.class);
 				Long total = record.get(fieldName(TOTAL), Long.class);
@@ -532,34 +607,36 @@ public class WidgetContentUtil {
 			})
 			.collect(Collectors.toList());
 
-	public static final Function<Result<? extends Record>, Map<String, HealthCheckTableStatisticsContent>> COMPONENT_HEALTH_CHECK_TABLE_STATS_FETCHER = result -> {
+  public static final BiFunction<Result<? extends Record>, HealthCheckTableGetParams,
+      Map<String, HealthCheckTableStatisticsContent>> COMPONENT_HEALTH_CHECK_TABLE_STATS_FETCHER =
+      (result, params) -> {
+        Map<String, HealthCheckTableStatisticsContent> resultMap = new LinkedHashMap<>();
 
-		Map<String, HealthCheckTableStatisticsContent> resultMap = new LinkedHashMap<>();
+        result.forEach(record -> {
+          String attributeValue = record.get(fieldName(VALUE), String.class);
+          String statisticsField = record.get(STATISTICS_FIELD.NAME, String.class);
+          Integer counter = record.get(fieldName(SUM), Integer.class);
 
-		result.forEach(record -> {
-			String attributeValue = record.get(fieldName(VALUE), String.class);
-			String statisticsField = record.get(STATISTICS_FIELD.NAME, String.class);
-			Integer counter = record.get(fieldName(SUM), Integer.class);
+          HealthCheckTableStatisticsContent content;
+          if (resultMap.containsKey(attributeValue)) {
+            content = resultMap.get(attributeValue);
+          } else {
+            content = new HealthCheckTableStatisticsContent();
+            resultMap.put(attributeValue, content);
+          }
+          content.getStatistics().put(statisticsField, counter);
 
-			HealthCheckTableStatisticsContent content;
-			if (resultMap.containsKey(attributeValue)) {
-				content = resultMap.get(attributeValue);
-			} else {
-				content = new HealthCheckTableStatisticsContent();
-				resultMap.put(attributeValue, content);
-			}
-			content.getStatistics().put(statisticsField, counter);
+        });
 
-		});
+        resultMap.forEach((key, content) -> {
+          double passingRate = 100.0 * content.getStatistics().getOrDefault(EXECUTIONS_PASSED, 0) /
+              content.getStatistics().getOrDefault(EXECUTIONS_TOTAL, 1);
+          content.setPassingRate(BigDecimal.valueOf(passingRate)
+              .setScale(2, RoundingMode.HALF_UP).doubleValue());
+        });
 
-		resultMap.forEach((key, content) -> {
-			double passingRate = 100.0 * content.getStatistics().getOrDefault(EXECUTIONS_PASSED, 0) / content.getStatistics()
-					.getOrDefault(EXECUTIONS_TOTAL, 1);
-			content.setPassingRate(new BigDecimal(passingRate).setScale(2, RoundingMode.HALF_UP).doubleValue());
-		});
-
-		return resultMap;
-	};
+        return resultMap;
+      };
 
 	public static final Function<Result<? extends Record>, Map<String, List<String>>> COMPONENT_HEALTH_CHECK_TABLE_COLUMN_FETCHER = result -> {
 
@@ -568,10 +645,21 @@ public class WidgetContentUtil {
 		result.forEach(record -> resultMap.put(record.get(fieldName(VALUE), String.class),
 				ofNullable(record.get(fieldName(AGGREGATED_VALUES),
 						String[].class
-				)).map(values -> (List<String>) Lists.newArrayList(values))
-						.orElseGet(Collections::emptyList)
+				)).map(values -> (List<String>) Lists.newArrayList(values)).orElseGet(Collections::emptyList)
 		));
 		return resultMap;
 	};
+
+  private static HealthCheckTableStatisticsContent excludeSkippedTests(
+      HealthCheckTableGetParams params, HealthCheckTableStatisticsContent content) {
+    if (params.isExcludeSkippedTests() && content.getStatistics().containsKey(EXECUTIONS_SKIPPED)) {
+      int newTotal = content.getStatistics().getOrDefault(EXECUTIONS_TOTAL, 1) -
+          content.getStatistics().getOrDefault(EXECUTIONS_SKIPPED, 0);
+
+      content.getStatistics().remove(EXECUTIONS_SKIPPED);
+      content.getStatistics().put(EXECUTIONS_TOTAL, newTotal);
+    }
+    return content;
+  }
 
 }

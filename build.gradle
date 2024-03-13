@@ -25,6 +25,7 @@ plugins {
 
 apply from: 'project-properties.gradle'
 apply from: "$scriptsUrl/release-commons.gradle"
+apply from: "$scriptsUrl/signing.gradle"
 apply from: "$scriptsUrl/copy-database-scripts.gradle"
 apply from: "$scriptsUrl/build-quality.gradle"
 apply from: "$scriptsUrl/jacoco.gradle"
@@ -32,12 +33,16 @@ apply from: 'jooq.gradle'
 
 repositories {
     mavenCentral { url "https://repo1.maven.org/maven2" }
-    releaseMode ? maven { url "http://dl.bintray.com/epam/reportportal" } : maven { url 'https://jitpack.io' }
+
+    if (!releaseMode) {
+        maven { url 'https://jitpack.io' }
+    }
 }
 
 dependencyManagement {
     imports {
-        mavenBom(releaseMode ? 'com.epam.reportportal:commons-bom:' + getProperty('bom.version') : 'com.github.reportportal:commons-bom:efc4947e')
+        mavenBom(releaseMode ? 'com.epam.reportportal:commons-bom:5.10.0' : 'com.epam.reportportal:commons-bom:5.10.0')
+        mavenBom('io.zonky.test.postgres:embedded-postgres-binaries-bom:12.9.0')
     }
 }
 
@@ -47,9 +52,10 @@ dependencies {
         compile 'com.epam.reportportal:commons-rules'
         compile 'com.epam.reportportal:commons-model'
     } else {
-        compile 'com.github.reportportal:commons:def053af'
-        compile 'com.github.reportportal:commons-rules:331c402'
-        compile 'com.github.reportportal:commons-model:22ccaac'
+        compile 'com.github.reportportal:commons:07566b8e'
+        compile 'com.github.reportportal:commons-rules:1f6bfed'
+        compile 'com.github.reportportal:commons-model:41e9fdb'
+        implementation 'com.github.reportportal:commons-reporting:c324bab'
     }
 
     //https://nvd.nist.gov/vuln/detail/CVE-2020-10683 (dom4j 2.1.3 version dependency) AND https://nvd.nist.gov/vuln/detail/CVE-2019-14900
@@ -66,6 +72,7 @@ dependencies {
 
     compile 'io.minio:minio:6.0.13'
 
+    implementation group: 'org.json', name: 'json', version: '20220320'
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
     compile 'org.hibernate.validator:hibernate-validator'
 
@@ -77,12 +84,24 @@ dependencies {
 
     compile 'org.jasypt:jasypt:1.9.3'
 
-    implementation enforcedPlatform('io.zonky.test.postgres:embedded-postgres-binaries-bom:12.0.0')
     compile 'io.zonky.test:embedded-postgres:1.2.6'
     compile 'org.flywaydb:flyway-core:6.3.1'
 
+    compile 'org.apache.jclouds.api:s3:2.5.0'
+    compile 'org.apache.jclouds.provider:aws-s3:2.5.0'
+    implementation 'org.apache.jclouds.api:filesystem:2.5.0'
+
+    // add lombok support
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
+    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
+    implementation 'com.github.ben-manes.caffeine:caffeine'
+
     testCompile 'org.springframework.boot:spring-boot-starter-test'
     testCompile 'org.flywaydb.flyway-test-extensions:flyway-spring-test:6.1.0'
+
 }
 
 dependencyCheck {
@@ -97,7 +116,13 @@ test {
     }
 }
 
-afterReleaseBuild.dependsOn bintrayUpload
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+    options.compilerArgs << "-parameters"
+    options.debug = true
+    options.debugOptions.debugLevel = "source,lines,vars"
+}
+
 checkCommitNeeded.dependsOn removeScripts
 test.dependsOn copyTestDatabaseScripts
 build.dependsOn jacocoTestReport

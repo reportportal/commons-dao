@@ -16,17 +16,16 @@
 
 package com.epam.ta.reportportal.dao;
 
+import static com.epam.ta.reportportal.dao.util.RecordMappers.ATTRIBUTE_MAPPER;
+import static com.epam.ta.reportportal.jooq.tables.JAttribute.ATTRIBUTE;
+
 import com.epam.ta.reportportal.entity.attribute.Attribute;
 import com.epam.ta.reportportal.entity.enums.ProjectAttributeEnum;
+import java.util.Arrays;
+import java.util.Set;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
-import java.util.Arrays;
-import java.util.Set;
-
-import static com.epam.ta.reportportal.dao.util.RecordMappers.ATTRIBUTE_MAPPER;
-import static com.epam.ta.reportportal.jooq.tables.JAttribute.ATTRIBUTE;
 
 /**
  * @author Ivan Budaev
@@ -34,21 +33,21 @@ import static com.epam.ta.reportportal.jooq.tables.JAttribute.ATTRIBUTE;
 @Repository
 public class AttributeRepositoryCustomImpl implements AttributeRepositoryCustom {
 
-	private final DSLContext dsl;
+  private final DSLContext dsl;
 
-	@Autowired
-	public AttributeRepositoryCustomImpl(DSLContext dsl) {
-		this.dsl = dsl;
-	}
+  @Autowired
+  public AttributeRepositoryCustomImpl(DSLContext dsl) {
+    this.dsl = dsl;
+  }
 
-	@Override
-	public Set<Attribute> getDefaultProjectAttributes() {
-		return dsl.select()
-				.from(ATTRIBUTE)
-				.where(ATTRIBUTE.NAME.in(Arrays.stream(ProjectAttributeEnum.values())
-						.map(ProjectAttributeEnum::getAttribute)
-						.toArray(String[]::new)))
-				.fetchSet(ATTRIBUTE_MAPPER);
+  @Override
+  public Set<Attribute> getDefaultProjectAttributes() {
+    return dsl.select()
+        .from(ATTRIBUTE)
+        .where(ATTRIBUTE.NAME.in(Arrays.stream(ProjectAttributeEnum.values())
+            .map(ProjectAttributeEnum::getAttribute)
+            .toArray(String[]::new)))
+        .fetchSet(ATTRIBUTE_MAPPER);
 
-	}
+  }
 }

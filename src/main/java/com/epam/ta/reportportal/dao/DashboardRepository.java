@@ -17,43 +17,45 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.dashboard.Dashboard;
-
 import java.util.List;
 import java.util.Optional;
 
 /**
  * @author Pavel Bortnik
  */
-public interface DashboardRepository extends ReportPortalRepository<Dashboard, Long>, DashboardRepositoryCustom {
+public interface DashboardRepository extends ReportPortalRepository<Dashboard, Long>,
+    DashboardRepositoryCustom {
 
-	/**
-	 * Finds dashboard by 'id' and 'project id'
-	 *
-	 * @param id        {@link Dashboard#id}
-	 * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} whose dashboard will be extracted
-	 * @return {@link Dashboard} wrapped in the {@link Optional}
-	 */
-	Optional<Dashboard> findByIdAndProjectId(Long id, Long projectId);
+  /**
+   * Finds dashboard by 'id' and 'project id'
+   *
+   * @param id        {@link Dashboard#id}
+   * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} whose
+   *                  dashboard will be extracted
+   * @return {@link Dashboard} wrapped in the {@link Optional}
+   */
+  Optional<Dashboard> findByIdAndProjectId(Long id, Long projectId);
 
-	List<Dashboard> findAllByProjectId(Long projectId);
+  List<Dashboard> findAllByProjectId(Long projectId);
 
-	/**
-	 * Checks the existence of the {@link Dashboard} with specified name for a user on a project
-	 *
-	 * @param name      {@link Dashboard#name}
-	 * @param owner     {@link Dashboard#owner}
-	 * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} on which dashboard existence will be checked
-	 * @return if exists 'true' else 'false'
-	 */
-	boolean existsByNameAndOwnerAndProjectId(String name, String owner, Long projectId);
+  /**
+   * Checks the existence of the {@link Dashboard} with specified name for a user on a project
+   *
+   * @param name      {@link Dashboard#name}
+   * @param owner     {@link Dashboard#owner}
+   * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} on which
+   *                  dashboard existence will be checked
+   * @return if exists 'true' else 'false'
+   */
+  boolean existsByNameAndOwnerAndProjectId(String name, String owner, Long projectId);
 
-	/**
-	 * Checks the existence of the {@link Dashboard} with specified name on a project
-	 *
-	 * @param name      {@link Dashboard#name}
-	 * @param projectId {@link com.epam.ta.reportportal.entity.project.Project#id}
-	 * @return if exists 'true' else 'false'
-	 */
-	boolean existsByNameAndProjectId(String name, Long projectId);
+  /**
+   * Checks the existence of the {@link Dashboard} with specified name on a project
+   *
+   * @param name      {@link Dashboard#name}
+   * @param projectId {@link com.epam.ta.reportportal.entity.project.Project#id}
+   * @return if exists 'true' else 'false'
+   */
+  boolean existsByNameAndProjectId(String name, Long projectId);
 
 }

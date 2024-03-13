@@ -17,10 +17,9 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Filter;
+import java.io.Serializable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
-
-import java.io.Serializable;
 
 /**
  * @author Pavel Bortnik
@@ -28,8 +27,8 @@ import java.io.Serializable;
 @NoRepositoryBean
 public interface ReportPortalRepository<T, ID extends Serializable> extends JpaRepository<T, ID> {
 
-	void refresh(T t);
+  void refresh(T t);
 
-	boolean exists(Filter filter);
+  boolean exists(Filter filter);
 
 }

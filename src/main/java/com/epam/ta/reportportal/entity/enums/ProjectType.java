@@ -20,23 +20,23 @@ import java.util.Arrays;
 import java.util.Optional;
 
 /**
- * Project Type enumeration<br>
- * Used for supporting different project types processing
+ * Project Type enumeration<br> Used for supporting different project types processing
  *
  * @author Andrei_Ramanchuk
  * @author <a href="mailto:andrei_varabyeu@epam.com">Andrei Varabyeu</a>
  */
 public enum ProjectType {
 
-	PERSONAL,
-	INTERNAL,
-	UPSA;
+  PERSONAL,
+  INTERNAL,
+  UPSA;
 
-	public static Optional<ProjectType> findByName(String name) {
-		return Arrays.stream(ProjectType.values()).filter(type -> type.name().equalsIgnoreCase(name)).findAny();
-	}
+  public static Optional<ProjectType> findByName(String name) {
+    return Arrays.stream(ProjectType.values()).filter(type -> type.name().equalsIgnoreCase(name))
+        .findAny();
+  }
 
-	public static boolean isPresent(String name) {
-		return findByName(name).isPresent();
-	}
+  public static boolean isPresent(String name) {
+    return findByName(name).isPresent();
+  }
 }

@@ -24,10 +24,11 @@ import java.util.Optional;
  */
 public enum PatternTemplateType {
 
-	STRING,
-	REGEX;
+  STRING,
+  REGEX;
 
-	public static Optional<PatternTemplateType> fromString(String string) {
-		return Arrays.stream(PatternTemplateType.values()).filter(type -> type.name().equalsIgnoreCase(string)).findFirst();
-	}
+  public static Optional<PatternTemplateType> fromString(String string) {
+    return Arrays.stream(PatternTemplateType.values())
+        .filter(type -> type.name().equalsIgnoreCase(string)).findFirst();
+  }
 }

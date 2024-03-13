@@ -16,17 +16,6 @@
 
 package com.epam.ta.reportportal.dao.util;
 
-import com.epam.ta.reportportal.commons.querygen.ConvertibleCondition;
-import com.epam.ta.reportportal.commons.querygen.FilterCondition;
-import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
-import com.epam.ta.reportportal.commons.querygen.Queryable;
-import org.jooq.SortOrder;
-import org.jooq.impl.DSL;
-import org.springframework.data.domain.Sort;
-
-import java.util.Collection;
-import java.util.Set;
-
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ID;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.LAUNCHES;
 import static com.epam.ta.reportportal.jooq.tables.JLaunch.LAUNCH;
@@ -34,53 +23,64 @@ import static java.util.stream.Collectors.toSet;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.name;
 
+import com.epam.ta.reportportal.commons.querygen.ConvertibleCondition;
+import com.epam.ta.reportportal.commons.querygen.FilterCondition;
+import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
+import com.epam.ta.reportportal.commons.querygen.Queryable;
+import java.util.Collection;
+import java.util.Set;
+import org.jooq.SortOrder;
+import org.jooq.impl.DSL;
+import org.springframework.data.domain.Sort;
+
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
 public final class QueryUtils {
 
-	private QueryUtils() {
-		//static only
-	}
+  private QueryUtils() {
+    //static only
+  }
 
-	public static QueryBuilder createQueryBuilderWithLatestLaunchesOption(Queryable filter, Sort sort, boolean isLatest) {
+  public static QueryBuilder createQueryBuilderWithLatestLaunchesOption(Queryable filter, Sort sort,
+      boolean isLatest) {
 
-		Set<String> joinFields = collectJoinFields(filter, sort);
-		QueryBuilder queryBuilder = QueryBuilder.newBuilder(filter, joinFields);
+    Set<String> joinFields = collectJoinFields(filter, sort);
+    QueryBuilder queryBuilder = QueryBuilder.newBuilder(filter, joinFields);
 
-		if (isLatest) {
-			queryBuilder.with(LAUNCH.NUMBER, SortOrder.DESC)
-					.addCondition(LAUNCH.ID.in(DSL.with(LAUNCHES)
-							.as(QueryBuilder.newBuilder(filter, joinFields).build())
-							.selectDistinct(LAUNCH.ID)
-							.on(LAUNCH.NAME)
-							.from(LAUNCH)
-							.join(LAUNCHES)
-							.on(field(name(LAUNCHES, ID), Long.class).eq(LAUNCH.ID))
-							.orderBy(LAUNCH.NAME, LAUNCH.NUMBER.desc())));
-		}
+    if (isLatest) {
+      queryBuilder.with(LAUNCH.NUMBER, SortOrder.DESC)
+          .addCondition(LAUNCH.ID.in(DSL.with(LAUNCHES)
+              .as(QueryBuilder.newBuilder(filter, joinFields).build())
+              .selectDistinct(LAUNCH.ID)
+              .on(LAUNCH.NAME)
+              .from(LAUNCH)
+              .join(LAUNCHES)
+              .on(field(name(LAUNCHES, ID), Long.class).eq(LAUNCH.ID))
+              .orderBy(LAUNCH.NAME, LAUNCH.NUMBER.desc())));
+    }
 
-		return queryBuilder;
+    return queryBuilder;
 
-	}
+  }
 
-	public static Set<String> collectJoinFields(Queryable filter) {
-		return filter.getFilterConditions()
-				.stream()
-				.map(ConvertibleCondition::getAllConditions)
-				.flatMap(Collection::stream)
-				.map(FilterCondition::getSearchCriteria)
-				.collect(toSet());
-	}
+  public static Set<String> collectJoinFields(Queryable filter) {
+    return filter.getFilterConditions()
+        .stream()
+        .map(ConvertibleCondition::getAllConditions)
+        .flatMap(Collection::stream)
+        .map(FilterCondition::getSearchCriteria)
+        .collect(toSet());
+  }
 
-	public static Set<String> collectJoinFields(Sort sort) {
-		return sort.get().map(Sort.Order::getProperty).collect(toSet());
-	}
+  public static Set<String> collectJoinFields(Sort sort) {
+    return sort.get().map(Sort.Order::getProperty).collect(toSet());
+  }
 
-	public static Set<String> collectJoinFields(Queryable filter, Sort sort) {
-		Set<String> joinFields = collectJoinFields(filter);
-		joinFields.addAll(collectJoinFields(sort));
-		return joinFields;
-	}
+  public static Set<String> collectJoinFields(Queryable filter, Sort sort) {
+    Set<String> joinFields = collectJoinFields(filter);
+    joinFields.addAll(collectJoinFields(sort));
+    return joinFields;
+  }
 
 }

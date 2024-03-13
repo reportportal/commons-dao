@@ -21,6 +21,6 @@ import com.epam.ta.reportportal.entity.filter.UserFilter;
 /**
  * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
  */
-public interface UserFilterRepositoryCustom extends ShareableRepository<UserFilter> {
+public interface UserFilterRepositoryCustom extends FilterableRepository<UserFilter> {
 
 }

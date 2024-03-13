@@ -25,37 +25,38 @@ import java.util.Optional;
  */
 public enum EmailSettingsEnum {
 
-	RP_HOST("rpHost"),
-	HOST("host"),
-	PORT("port"),
-	PROTOCOL("protocol"),
-	AUTH_ENABLED("authEnabled"),
-	STAR_TLS_ENABLED("starTlsEnabled"),
-	SSL_ENABLED("sslEnabled"),
-	USERNAME("username"),
-	PASSWORD("password"),
-	FROM("from");
+  RP_HOST("rpHost"),
+  HOST("host"),
+  PORT("port"),
+  PROTOCOL("protocol"),
+  AUTH_ENABLED("authEnabled"),
+  STAR_TLS_ENABLED("starTlsEnabled"),
+  SSL_ENABLED("sslEnabled"),
+  USERNAME("username"),
+  PASSWORD("password"),
+  FROM("from");
 
-	private String attribute;
+  private String attribute;
 
-	EmailSettingsEnum(String attribute) {
-		this.attribute = attribute;
-	}
+  EmailSettingsEnum(String attribute) {
+    this.attribute = attribute;
+  }
 
-	public String getAttribute() {
-		return attribute;
-	}
+  public static Optional<EmailSettingsEnum> findByAttribute(String attribute) {
+    return Optional.ofNullable(attribute)
+        .flatMap(attr -> Arrays.stream(values()).filter(it -> it.attribute.equalsIgnoreCase(attr))
+            .findAny());
+  }
 
-	public Optional<String> getAttribute(Map<String, Object> params) {
-		return Optional.ofNullable(params.get(this.attribute)).map(String::valueOf);
-	}
+  public static boolean isPresent(String attribute) {
+    return findByAttribute(attribute).isPresent();
+  }
 
-	public static Optional<EmailSettingsEnum> findByAttribute(String attribute) {
-		return Optional.ofNullable(attribute)
-				.flatMap(attr -> Arrays.stream(values()).filter(it -> it.attribute.equalsIgnoreCase(attr)).findAny());
-	}
+  public String getAttribute() {
+    return attribute;
+  }
 
-	public static boolean isPresent(String attribute) {
-		return findByAttribute(attribute).isPresent();
-	}
+  public Optional<String> getAttribute(Map<String, Object> params) {
+    return Optional.ofNullable(params.get(this.attribute)).map(String::valueOf);
+  }
 }

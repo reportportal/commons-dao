@@ -20,44 +20,44 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
- * Accessible method implementation. Set accessibility == true for specified
- * method and can invoke methods
+ * Accessible method implementation. Set accessibility == true for specified method and can invoke
+ * methods
  *
  * @author Andrei Varabyeu
  */
 public class AccessibleMethod {
 
-	private final Method method;
-	private final Object bean;
+  private final Method method;
+  private final Object bean;
 
-	AccessibleMethod(Object bean, Method method) {
-		this.bean = bean;
-		this.method = method;
-	}
+  AccessibleMethod(Object bean, Method method) {
+    this.bean = bean;
+    this.method = method;
+  }
 
-	public Object invoke(Object... args) throws Throwable {
-		try {
-			return invoke(this.bean, this.method, args);
-		} catch (IllegalAccessException accessException) { //NOSONAR
-			this.method.setAccessible(true);
-			try {
-				return invoke(this.bean, this.method, args);
-			} catch (IllegalAccessException e) { //NOSONAR
-				throw new IllegalAccessError(e.getMessage());
-			}
-		}
+  public Object invoke(Object... args) throws Throwable {
+    try {
+      return invoke(this.bean, this.method, args);
+    } catch (IllegalAccessException accessException) { //NOSONAR
+      this.method.setAccessible(true);
+      try {
+        return invoke(this.bean, this.method, args);
+      } catch (IllegalAccessException e) { //NOSONAR
+        throw new IllegalAccessError(e.getMessage());
+      }
+    }
 
-	}
+  }
 
-	private Object invoke(Object bean, Method m, Object... args) throws Throwable {
-		try {
-			return m.invoke(bean, args);
-		} catch (IllegalArgumentException e) {
-			throw new RuntimeException(e);
-		} catch (InvocationTargetException e) {
-			throw e.getTargetException();
-		}
+  private Object invoke(Object bean, Method m, Object... args) throws Throwable {
+    try {
+      return m.invoke(bean, args);
+    } catch (IllegalArgumentException e) {
+      throw new RuntimeException(e);
+    } catch (InvocationTargetException e) {
+      throw e.getTargetException();
+    }
 
-	}
+  }
 
 }
