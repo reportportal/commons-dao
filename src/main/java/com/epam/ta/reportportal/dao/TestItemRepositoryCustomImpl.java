@@ -1224,7 +1224,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
             List<Long> itemPaths =
                 testItemWithPathIds.getOrDefault(testItem.getItemId(),
-                new ArrayList<>());
+                    new ArrayList<>());
             itemPaths.add(itemIdFromPath);
             testItemWithPathIds.put(testItem.getItemId(), itemPaths);
           }

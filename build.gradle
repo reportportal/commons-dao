@@ -70,6 +70,8 @@ dependencies {
     compile 'org.jooq:jooq'
     jooqRuntime 'org.postgresql:postgresql:42.2.13'
 
+    compile 'io.minio:minio:6.0.13'
+
     implementation group: 'org.json', name: 'json', version: '20220320'
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
     compile 'org.hibernate.validator:hibernate-validator'
@@ -94,6 +96,8 @@ dependencies {
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
     testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
     testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
+    implementation 'com.github.ben-manes.caffeine:caffeine'
 
     testCompile 'org.springframework.boot:spring-boot-starter-test'
     testCompile 'org.flywaydb.flyway-test-extensions:flyway-spring-test:6.1.0'
