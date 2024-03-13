@@ -29,6 +29,7 @@ import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConst
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.CRITERIA;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.DELTA;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.EXECUTIONS_PASSED;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.EXECUTIONS_SKIPPED;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.EXECUTIONS_TOTAL;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.FILTER_NAME;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.FLAKY_COUNT;
@@ -82,10 +83,11 @@ import com.epam.ta.reportportal.entity.widget.content.ProductStatusStatisticsCon
 import com.epam.ta.reportportal.entity.widget.content.TopPatternTemplatesContent;
 import com.epam.ta.reportportal.entity.widget.content.UniqueBugContent;
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.ComponentHealthCheckContent;
+import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableGetParams;
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableStatisticsContent;
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.ws.model.ActivityResource;
-import com.epam.ta.reportportal.ws.model.ErrorType;
+import com.epam.ta.reportportal.ws.reporting.ErrorType;
 import com.epam.ta.reportportal.ws.model.attribute.ItemAttributeResource;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -605,34 +607,36 @@ public class WidgetContentUtil {
 			})
 			.collect(Collectors.toList());
 
-	public static final Function<Result<? extends Record>, Map<String, HealthCheckTableStatisticsContent>> COMPONENT_HEALTH_CHECK_TABLE_STATS_FETCHER = result -> {
+  public static final BiFunction<Result<? extends Record>, HealthCheckTableGetParams,
+      Map<String, HealthCheckTableStatisticsContent>> COMPONENT_HEALTH_CHECK_TABLE_STATS_FETCHER =
+      (result, params) -> {
+        Map<String, HealthCheckTableStatisticsContent> resultMap = new LinkedHashMap<>();
 
-		Map<String, HealthCheckTableStatisticsContent> resultMap = new LinkedHashMap<>();
+        result.forEach(record -> {
+          String attributeValue = record.get(fieldName(VALUE), String.class);
+          String statisticsField = record.get(STATISTICS_FIELD.NAME, String.class);
+          Integer counter = record.get(fieldName(SUM), Integer.class);
 
-		result.forEach(record -> {
-			String attributeValue = record.get(fieldName(VALUE), String.class);
-			String statisticsField = record.get(STATISTICS_FIELD.NAME, String.class);
-			Integer counter = record.get(fieldName(SUM), Integer.class);
+          HealthCheckTableStatisticsContent content;
+          if (resultMap.containsKey(attributeValue)) {
+            content = resultMap.get(attributeValue);
+          } else {
+            content = new HealthCheckTableStatisticsContent();
+            resultMap.put(attributeValue, content);
+          }
+          content.getStatistics().put(statisticsField, counter);
 
-			HealthCheckTableStatisticsContent content;
-			if (resultMap.containsKey(attributeValue)) {
-				content = resultMap.get(attributeValue);
-			} else {
-				content = new HealthCheckTableStatisticsContent();
-				resultMap.put(attributeValue, content);
-			}
-			content.getStatistics().put(statisticsField, counter);
+        });
 
-		});
+        resultMap.forEach((key, content) -> {
+          double passingRate = 100.0 * content.getStatistics().getOrDefault(EXECUTIONS_PASSED, 0) /
+              content.getStatistics().getOrDefault(EXECUTIONS_TOTAL, 1);
+          content.setPassingRate(BigDecimal.valueOf(passingRate)
+              .setScale(2, RoundingMode.HALF_UP).doubleValue());
+        });
 
-		resultMap.forEach((key, content) -> {
-			double passingRate = 100.0 * content.getStatistics().getOrDefault(EXECUTIONS_PASSED, 0) / content.getStatistics()
-					.getOrDefault(EXECUTIONS_TOTAL, 1);
-			content.setPassingRate(new BigDecimal(passingRate).setScale(2, RoundingMode.HALF_UP).doubleValue());
-		});
-
-		return resultMap;
-	};
+        return resultMap;
+      };
 
 	public static final Function<Result<? extends Record>, Map<String, List<String>>> COMPONENT_HEALTH_CHECK_TABLE_COLUMN_FETCHER = result -> {
 
@@ -645,5 +649,17 @@ public class WidgetContentUtil {
 		));
 		return resultMap;
 	};
+
+  private static HealthCheckTableStatisticsContent excludeSkippedTests(
+      HealthCheckTableGetParams params, HealthCheckTableStatisticsContent content) {
+    if (params.isExcludeSkippedTests() && content.getStatistics().containsKey(EXECUTIONS_SKIPPED)) {
+      int newTotal = content.getStatistics().getOrDefault(EXECUTIONS_TOTAL, 1) -
+          content.getStatistics().getOrDefault(EXECUTIONS_SKIPPED, 0);
+
+      content.getStatistics().remove(EXECUTIONS_SKIPPED);
+      content.getStatistics().put(EXECUTIONS_TOTAL, newTotal);
+    }
+    return content;
+  }
 
 }

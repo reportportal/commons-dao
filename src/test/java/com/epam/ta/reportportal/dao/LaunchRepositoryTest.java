@@ -46,7 +46,7 @@ import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.epam.ta.reportportal.ws.model.analyzer.IndexLaunch;
-import com.epam.ta.reportportal.ws.model.launch.Mode;
+import com.epam.ta.reportportal.ws.reporting.Mode;
 import com.google.common.collect.Comparators;
 import java.time.Duration;
 import java.time.LocalDateTime;

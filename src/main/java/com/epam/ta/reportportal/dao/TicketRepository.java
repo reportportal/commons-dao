@@ -29,4 +29,6 @@ public interface TicketRepository extends ReportPortalRepository<Ticket, Long>,
   Optional<Ticket> findByTicketId(String ticketId);
 
   List<Ticket> findByTicketIdIn(List<String> ticketId);
+
+  Optional<Ticket> findByTicketIdAndBtsProject(String ticketId, String btsProject);
 }

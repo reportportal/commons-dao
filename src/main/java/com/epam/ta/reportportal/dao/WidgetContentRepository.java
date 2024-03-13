@@ -313,7 +313,7 @@ public interface WidgetContentRepository {
    */
   List<ComponentHealthCheckContent> componentHealthCheck(Filter launchFilter, Sort launchSort,
       boolean isLatest, int launchesLimit,
-      Filter testItemFilter, String currentLevelKey);
+      Filter testItemFilter, String currentLevelKey, boolean excludeSkipped);
 
   /**
    * Generate a materialized view for cumulative trend chart widget.
