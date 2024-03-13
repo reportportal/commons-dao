@@ -75,7 +75,7 @@ import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTab
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.LevelEntry;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.ws.model.ActivityResource;
-import com.epam.ta.reportportal.ws.model.launch.Mode;
+import com.epam.ta.reportportal.ws.reporting.Mode;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import java.math.BigDecimal;
@@ -1299,7 +1299,8 @@ class WidgetContentRepositoryTest extends BaseTest {
         false,
         600,
         itemsFilter,
-        "new"
+        "new",
+        false
     );
 
     assertTrue(contents.isEmpty());
@@ -1335,7 +1336,7 @@ class WidgetContentRepositoryTest extends BaseTest {
     List<HealthCheckTableContent> healthCheckTableContents = widgetContentRepository.componentHealthCheckTable(
         HealthCheckTableGetParams
             .of("first", "build", Sort.by(Sort.Direction.DESC, "customColumn"), true,
-                new ArrayList<>()));
+                new ArrayList<>(), false));
 
     assertTrue(healthCheckTableContents.isEmpty());
 
@@ -1353,7 +1354,8 @@ class WidgetContentRepositoryTest extends BaseTest {
             Sort.by(Sort.Direction.DESC, "passingRate"),
             false,
             com.google.common.collect.Lists.newArrayList(LevelEntry.of("k1", "v1"),
-                LevelEntry.of("k2", "v2"))
+                LevelEntry.of("k2", "v2")),
+            false
         ));
 
     assertTrue(healthCheckTableContents.isEmpty());
@@ -1363,7 +1365,8 @@ class WidgetContentRepositoryTest extends BaseTest {
             "build",
             Sort.by(Sort.Direction.ASC, "passingRate"),
             false,
-            new ArrayList<>()
+            new ArrayList<>(),
+            false
         ));
 
     assertTrue(healthCheckTableContents.isEmpty());
@@ -1373,7 +1376,8 @@ class WidgetContentRepositoryTest extends BaseTest {
             "build",
             Sort.by(Sort.Direction.DESC, "statistics$executions$total"),
             false,
-            new ArrayList<>()
+            new ArrayList<>(),
+            false
         ));
 
     assertTrue(healthCheckTableContents.isEmpty());
@@ -1384,7 +1388,8 @@ class WidgetContentRepositoryTest extends BaseTest {
             Sort.by(Sort.Direction.DESC, "statistics$executions$failed"),
             false,
             com.google.common.collect.Lists.newArrayList(LevelEntry.of("k1", "v1"),
-                LevelEntry.of("k2", "v2"))
+                LevelEntry.of("k2", "v2")),
+            false
         ));
 
     assertTrue(healthCheckTableContents.isEmpty());
@@ -1437,7 +1442,8 @@ class WidgetContentRepositoryTest extends BaseTest {
             "build",
             Sort.by(Sort.Direction.DESC, "customColumn"),
             true,
-            new ArrayList<>()
+            new ArrayList<>(),
+            false
         ));
 
     assertTrue(healthCheckTableContents.isEmpty());
