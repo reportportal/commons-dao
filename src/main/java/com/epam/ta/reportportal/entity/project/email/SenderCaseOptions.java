@@ -18,10 +18,12 @@ package com.epam.ta.reportportal.entity.project.email;
 import com.epam.ta.reportportal.commons.JsonbUserType;
 import java.io.Serializable;
 import java.util.Map;
+import lombok.Data;
 
 /**
  * @author <a href="mailto:andrei_piankouski@epam.com">Andrei Piankouski</a>
  */
+@Data
 public class SenderCaseOptions extends JsonbUserType implements Serializable {
 
   private Map<String, Object> options;
@@ -29,20 +31,8 @@ public class SenderCaseOptions extends JsonbUserType implements Serializable {
   public SenderCaseOptions() {
   }
 
-  public SenderCaseOptions(Map<String, Object> options) {
-    this.options = options;
-  }
-
   @Override
   public Class<?> returnedClass() {
     return SenderCaseOptions.class;
-  }
-
-  public Map<String, Object> getOptions() {
-    return options;
-  }
-
-  public void setOptions(Map<String, Object> options) {
-    this.options = options;
   }
 }
