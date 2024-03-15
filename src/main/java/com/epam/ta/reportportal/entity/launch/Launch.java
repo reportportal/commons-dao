@@ -57,9 +57,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 @TypeDef(name = "pqsql_enum", typeClass = PostgreSQLEnumType.class)
 @Table(name = "launch", schema = "public", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"name", "number", "project_id"})}, indexes = {
+    @UniqueConstraint(columnNames = { "name", "number", "project_id" }) }, indexes = {
     @Index(name = "launch_pk", unique = true, columnList = "id ASC"),
-    @Index(name = "unq_name_number", unique = true, columnList = "name ASC, number ASC, project_id ASC")})
+    @Index(name = "unq_name_number", unique = true, columnList = "name ASC, number ASC, project_id ASC") })
 public class Launch implements Serializable {
 
   @Id
@@ -122,6 +122,9 @@ public class Launch implements Serializable {
 
   @OneToMany(mappedBy = "launch", fetch = FetchType.LAZY, orphanRemoval = true)
   private Set<Log> logs = Sets.newHashSet();
+
+  @Column(name = "important", nullable = false)
+  private boolean important;
 
   @Column(name = "approximate_duration")
   private double approximateDuration;
@@ -278,6 +281,14 @@ public class Launch implements Serializable {
     this.approximateDuration = approximateDuration;
   }
 
+  public boolean isImportant() {
+    return important;
+  }
+
+  public void setImportant(boolean important) {
+    this.important = important;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -287,21 +298,18 @@ public class Launch implements Serializable {
       return false;
     }
     Launch launch = (Launch) o;
-    return hasRetries == launch.hasRetries && rerun == launch.rerun && Objects.equals(uuid,
-        launch.uuid) && Objects.equals(projectId,
-        launch.projectId
-    ) && Objects.equals(name, launch.name) && Objects.equals(description, launch.description)
-        && Objects.equals(startTime,
-        launch.startTime
-    ) && Objects.equals(endTime, launch.endTime) && Objects.equals(number, launch.number)
-        && mode == launch.mode
-        && status == launch.status;
+    return hasRetries == launch.hasRetries && rerun == launch.rerun && important == launch.important
+        && Objects.equals(uuid, launch.uuid) && Objects.equals(projectId, launch.projectId)
+        && Objects.equals(name, launch.name) && Objects.equals(description, launch.description)
+        && Objects.equals(startTime, launch.startTime) && Objects.equals(endTime, launch.endTime)
+        && Objects.equals(number, launch.number) && mode == launch.mode && status == launch.status;
   }
 
   @Override
   public int hashCode() {
     return Objects.hash(uuid, projectId, name, description, startTime, endTime, number, hasRetries,
-        rerun, mode, status);
+        rerun, important, mode, status
+    );
   }
 
   @Override
@@ -317,6 +325,7 @@ public class Launch implements Serializable {
     sb.append(", endTime=").append(endTime);
     sb.append(", number=").append(number);
     sb.append(", hasRetries=").append(hasRetries);
+    sb.append(", important=").append(important);
     sb.append(", rerun=").append(rerun);
     sb.append(", lastModified=").append(lastModified);
     sb.append(", mode=").append(mode);
