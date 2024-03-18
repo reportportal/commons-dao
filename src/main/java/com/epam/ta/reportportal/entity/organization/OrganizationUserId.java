@@ -19,13 +19,15 @@ package com.epam.ta.reportportal.entity.organization;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * @author Siarhei Hrabko
  */
 @Embeddable
-@Data
+@Getter
+@Setter
 public class OrganizationUserId implements Serializable {
 
   @Column(name = "organization_id")
