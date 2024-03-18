@@ -25,7 +25,7 @@ import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConst
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.Instant;
 import java.util.List;
 import javax.persistence.Column;
 
@@ -56,7 +56,7 @@ public class FlakyCasesTableContent implements Serializable {
 
   @JsonProperty(value = "startTime")
   @Column(name = START_TIME_HISTORY)
-  private List<Date> startTime;
+  private List<Instant> startTime;
 
   public FlakyCasesTableContent() {
   }
@@ -101,11 +101,11 @@ public class FlakyCasesTableContent implements Serializable {
     this.uniqueId = uniqueId;
   }
 
-  public List<Date> getStartTime() {
+  public List<Instant> getStartTime() {
     return startTime;
   }
 
-  public void setStartTime(List<Date> startTime) {
+  public void setStartTime(List<Instant> startTime) {
     this.startTime = startTime;
   }
 }

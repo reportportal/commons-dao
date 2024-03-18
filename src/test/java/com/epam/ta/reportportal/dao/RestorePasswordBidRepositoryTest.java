@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.entity.user.RestorePasswordBid;
-import java.util.Date;
+import java.time.Instant;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +46,7 @@ class RestorePasswordBidRepositoryTest extends BaseTest {
     RestorePasswordBid restorePasswordBid = new RestorePasswordBid();
     restorePasswordBid.setUuid("uuid");
     restorePasswordBid.setEmail("existed@email.com");
-    restorePasswordBid.setLastModifiedDate(new Date());
+    restorePasswordBid.setLastModifiedDate(Instant.now());
     restorePasswordBidRepository.save(restorePasswordBid);
     Optional<RestorePasswordBid> bid = restorePasswordBidRepository.findByEmail(
         "existed@email.com");

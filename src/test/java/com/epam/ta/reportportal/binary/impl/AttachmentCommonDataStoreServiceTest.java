@@ -25,8 +25,10 @@ import com.epam.ta.reportportal.commons.BinaryDataMetaInfo;
 import com.epam.ta.reportportal.dao.AttachmentRepository;
 import com.epam.ta.reportportal.entity.attachment.Attachment;
 import com.epam.ta.reportportal.entity.attachment.AttachmentMetaInfo;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.time.ZoneOffset;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +52,8 @@ class AttachmentCommonDataStoreServiceTest extends BaseTest {
     String thumbnailID = "thumbnailID";
     String contentType = "content-type";
     long fileSize = 1024;
-    final LocalDateTime creationDate = LocalDateTime.of(2020, Month.JANUARY, 1, 1, 1);
+    final Instant creationDate = LocalDateTime.of(2020, Month.JANUARY, 1, 1, 1)
+        .toInstant(ZoneOffset.UTC);
 
     BinaryDataMetaInfo binaryDataMetaInfo = new BinaryDataMetaInfo();
     binaryDataMetaInfo.setFileId(fileID);

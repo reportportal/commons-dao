@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.dao;
 
+import static com.epam.ta.reportportal.commons.EntityUtils.INSTANT_TO_TIMESTAMP;
 import static com.epam.ta.reportportal.jooq.Tables.ISSUE;
 import static com.epam.ta.reportportal.jooq.Tables.ISSUE_TICKET;
 import static com.epam.ta.reportportal.jooq.Tables.LAUNCH;
@@ -23,8 +24,7 @@ import static com.epam.ta.reportportal.jooq.Tables.TEST_ITEM;
 import static com.epam.ta.reportportal.jooq.Tables.TEST_ITEM_RESULTS;
 import static com.epam.ta.reportportal.jooq.Tables.TICKET;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
@@ -73,7 +73,7 @@ public class TicketRepositoryCustomImpl implements TicketRepositoryCustom {
   }
 
   @Override
-  public Integer findUniqueCountByProjectBefore(Long projectId, LocalDateTime from) {
+  public Integer findUniqueCountByProjectBefore(Long projectId, Instant from) {
     return dsl.fetchCount(dsl.selectDistinct(TICKET.TICKET_ID)
         .from(TICKET)
         .join(ISSUE_TICKET)
@@ -85,6 +85,6 @@ public class TicketRepositoryCustomImpl implements TicketRepositoryCustom {
         .join(LAUNCH)
         .on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
         .where(LAUNCH.PROJECT_ID.eq(projectId))
-        .and(TICKET.SUBMIT_DATE.greaterOrEqual(Timestamp.valueOf(from))));
+        .and(TICKET.SUBMIT_DATE.greaterOrEqual(INSTANT_TO_TIMESTAMP.apply(from))));
   }
 }

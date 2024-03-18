@@ -23,7 +23,7 @@ import com.epam.ta.reportportal.entity.activity.EventObject;
 import com.epam.ta.reportportal.entity.activity.EventPriority;
 import com.epam.ta.reportportal.entity.activity.EventSubject;
 import com.epam.ta.reportportal.entity.activity.HistoryField;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -87,13 +87,13 @@ public class ActivityBuilder implements Supplier<Activity> {
     return this;
   }
 
-  public ActivityBuilder addCreatedAt(LocalDateTime localDateTime) {
-    activity.setCreatedAt(localDateTime);
+  public ActivityBuilder addCreatedAt(Instant instant) {
+    activity.setCreatedAt(instant);
     return this;
   }
 
   public ActivityBuilder addCreatedNow() {
-    activity.setCreatedAt(LocalDateTime.now());
+    activity.setCreatedAt(Instant.now());
     return this;
   }
 

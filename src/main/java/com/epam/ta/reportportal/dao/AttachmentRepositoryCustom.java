@@ -17,7 +17,7 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.attachment.Attachment;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import org.springframework.data.domain.Page;
@@ -84,11 +84,11 @@ public interface AttachmentRepositoryCustom {
 
   int deleteAllByIds(Collection<Long> ids);
 
-  List<Attachment> findByItemIdsAndLogTimeBefore(Collection<Long> itemIds, LocalDateTime before);
+  List<Attachment> findByItemIdsAndLogTimeBefore(Collection<Long> itemIds, Instant before);
 
   List<Attachment> findByLaunchIdsAndLogTimeBefore(Collection<Long> launchIds,
-      LocalDateTime before);
+      Instant before);
 
-  List<Attachment> findByProjectIdsAndLogTimeBefore(Long projectId, LocalDateTime before, int limit,
+  List<Attachment> findByProjectIdsAndLogTimeBefore(Long projectId, Instant before, int limit,
       long offset);
 }

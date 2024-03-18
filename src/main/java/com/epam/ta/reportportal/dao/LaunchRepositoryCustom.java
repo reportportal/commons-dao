@@ -25,7 +25,7 @@ import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.epam.ta.reportportal.ws.model.analyzer.IndexLaunch;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -86,7 +86,7 @@ public interface LaunchRepositoryCustom extends FilterableRepository<Launch> {
    * @param fromDate  From Date to count
    * @return Launches count
    */
-  Integer countLaunches(Long projectId, String mode, LocalDateTime fromDate);
+  Integer countLaunches(Long projectId, String mode, Instant fromDate);
 
   /**
    * Counts launches with mode for specified project
@@ -105,7 +105,7 @@ public interface LaunchRepositoryCustom extends FilterableRepository<Launch> {
    * @param from      From Date to count
    * @return Map of username and launches count
    */
-  Map<String, Integer> countLaunchesGroupedByOwner(Long projectId, String mode, LocalDateTime from);
+  Map<String, Integer> countLaunchesGroupedByOwner(Long projectId, String mode, Instant from);
 
   List<Long> findIdsByProjectIdAndModeAndStatusNotEq(Long projectId, JLaunchModeEnum mode,
       JStatusEnum status, int limit);

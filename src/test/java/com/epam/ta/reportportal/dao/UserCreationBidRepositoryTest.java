@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.entity.user.UserCreationBid;
-import java.sql.Date;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
@@ -65,14 +65,13 @@ class UserCreationBidRepositoryTest extends BaseTest {
 
   @Test
   void expireBidsOlderThan() {
-    final java.util.Date date = Date.from(
-        LocalDateTime.now().minusDays(20).atZone(ZoneId.systemDefault()).toInstant());
+    Instant date = LocalDateTime.now().minusDays(20).atZone(ZoneId.systemDefault()).toInstant();
 
     int deletedCount = repository.expireBidsOlderThan(date);
     final List<UserCreationBid> bids = repository.findAll();
 
     assertEquals(1, deletedCount);
-    bids.forEach(it -> assertTrue(it.getLastModified().after(date), "Incorrect date"));
+    bids.forEach(it -> assertTrue(it.getLastModified().isAfter(date), "Incorrect date"));
   }
 
   @Test

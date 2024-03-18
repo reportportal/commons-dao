@@ -24,7 +24,7 @@ import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.TestItemResults;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.project.Project;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -72,16 +72,16 @@ public interface LaunchRepository extends ReportPortalRepository<Launch, Long>,
   @Lock(value = LockModeType.PESSIMISTIC_WRITE)
   Optional<Launch> findByUuidForUpdate(@Param("uuid") String uuid);
 
-  List<Launch> findByProjectIdAndStartTimeGreaterThanAndMode(Long projectId, LocalDateTime after,
+  List<Launch> findByProjectIdAndStartTimeGreaterThanAndMode(Long projectId, Instant after,
       LaunchModeEnum mode);
 
   @Query(value = "SELECT l.id FROM Launch l WHERE l.project_id = :projectId AND l.start_time < :before ORDER BY l.id LIMIT :size", nativeQuery = true)
   List<Long> findIdsByProjectIdAndStartTimeBefore(@Param("projectId") Long projectId,
-      @Param("before") LocalDateTime before, @Param("size") int limit);
+      @Param("before") Instant before, @Param("size") int limit);
 
   @Query(value = "SELECT l.id FROM Launch l WHERE l.project_id = :projectId AND l.start_time < :before ORDER BY l.id LIMIT :pageSize OFFSET :pageOffset", nativeQuery = true)
   List<Long> findIdsByProjectIdAndStartTimeBefore(@Param("projectId") Long projectId,
-      @Param("before") LocalDateTime before, @Param("pageSize") int limit,
+      @Param("before") Instant before, @Param("pageSize") int limit,
       @Param("pageOffset") long offset);
 
   int deleteAllByIdIn(Collection<Long> ids);
@@ -89,13 +89,13 @@ public interface LaunchRepository extends ReportPortalRepository<Launch, Long>,
   @QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
   @Query(value = "SELECT l.id FROM Launch l WHERE l.projectId = :projectId AND l.startTime < :before")
   Stream<Long> streamIdsByStartTimeBefore(@Param("projectId") Long projectId,
-      @Param("before") LocalDateTime before);
+      @Param("before") Instant before);
 
   @QueryHints(value = @QueryHint(name = HINT_FETCH_SIZE, value = "1"))
   @Query(value = "SELECT l.id FROM Launch l WHERE l.status = :status AND l.projectId = :projectId AND l.startTime < :before")
   Stream<Long> streamIdsWithStatusAndStartTimeBefore(@Param("projectId") Long projectId,
       @Param("status") StatusEnum status,
-      @Param("before") LocalDateTime before);
+      @Param("before") Instant before);
 
   @Query(value = "SELECT * FROM launch l WHERE l.id <= :startingLaunchId AND l.name = :launchName "
       + "AND l.project_id = :projectId AND l.mode <> 'DEBUG' ORDER BY start_time DESC, number DESC LIMIT :historyDepth", nativeQuery = true)

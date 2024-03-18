@@ -19,7 +19,7 @@ package com.epam.ta.reportportal.entity.item;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Objects;
 
 /**
@@ -41,9 +41,9 @@ public class NestedStep implements Serializable {
 
   private StatusEnum status;
 
-  private LocalDateTime startTime;
+  private Instant startTime;
 
-  private LocalDateTime endTime;
+  private Instant endTime;
 
   private Double duration;
 
@@ -53,7 +53,7 @@ public class NestedStep implements Serializable {
 
   public NestedStep(Long id, String name, String uuid, TestItemTypeEnum type, boolean hasContent,
       Integer attachmentsCount,
-      StatusEnum status, LocalDateTime startTime, LocalDateTime endTime, Double duration) {
+      StatusEnum status, Instant startTime, Instant endTime, Double duration) {
     this.id = id;
     this.name = name;
     this.uuid = uuid;
@@ -114,19 +114,19 @@ public class NestedStep implements Serializable {
     this.status = status;
   }
 
-  public LocalDateTime getStartTime() {
+  public Instant getStartTime() {
     return startTime;
   }
 
-  public void setStartTime(LocalDateTime startTime) {
+  public void setStartTime(Instant startTime) {
     this.startTime = startTime;
   }
 
-  public LocalDateTime getEndTime() {
+  public Instant getEndTime() {
     return endTime;
   }
 
-  public void setEndTime(LocalDateTime endTime) {
+  public void setEndTime(Instant endTime) {
     this.endTime = endTime;
   }
 

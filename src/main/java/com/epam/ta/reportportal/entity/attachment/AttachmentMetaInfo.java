@@ -17,7 +17,7 @@
 package com.epam.ta.reportportal.entity.attachment;
 
 import com.google.common.base.Preconditions;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
@@ -38,11 +38,11 @@ public class AttachmentMetaInfo {
 
   private String fileName;
 
-  private LocalDateTime creationDate;
+  private Instant creationDate;
 
   public AttachmentMetaInfo(Long projectId, Long launchId, Long itemId, Long logId,
       String launchUuid, String logUuid,
-      LocalDateTime creationDate, String fileName) {
+      Instant creationDate, String fileName) {
     this.projectId = projectId;
     this.launchId = launchId;
     this.itemId = itemId;
@@ -81,7 +81,7 @@ public class AttachmentMetaInfo {
     return logUuid;
   }
 
-  public LocalDateTime getCreationDate() {
+  public Instant getCreationDate() {
     return creationDate;
   }
 
@@ -107,7 +107,7 @@ public class AttachmentMetaInfo {
 
     private String logUuid;
 
-    private LocalDateTime creationDate;
+    private Instant creationDate;
 
     private String fileName;
 
@@ -145,7 +145,7 @@ public class AttachmentMetaInfo {
       return this;
     }
 
-    public AttachmentMetaInfoBuilder withCreationDate(LocalDateTime creationDate) {
+    public AttachmentMetaInfoBuilder withCreationDate(Instant creationDate) {
       this.creationDate = creationDate;
       return this;
     }

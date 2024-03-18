@@ -21,7 +21,7 @@ import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConst
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.time.Instant;
 import javax.persistence.Column;
 
 /**
@@ -44,7 +44,7 @@ public abstract class AbstractLaunchStatisticsContent implements Serializable {
 
   @Column(name = "start_time")
   @JsonProperty(value = "startTime")
-  private Timestamp startTime;
+  private Instant startTime;
 
   public AbstractLaunchStatisticsContent() {
   }
@@ -73,11 +73,11 @@ public abstract class AbstractLaunchStatisticsContent implements Serializable {
     this.name = name;
   }
 
-  public Timestamp getStartTime() {
+  public Instant getStartTime() {
     return startTime;
   }
 
-  public void setStartTime(Timestamp startTime) {
+  public void setStartTime(Instant startTime) {
     this.startTime = startTime;
   }
 

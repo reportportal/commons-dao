@@ -1,6 +1,6 @@
 package com.epam.ta.reportportal.entity.materialized;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
@@ -9,7 +9,7 @@ public class StaleMaterializedView {
 
   private Long id;
   private String name;
-  private LocalDateTime creationDate;
+  private Instant creationDate;
 
   public StaleMaterializedView() {
   }
@@ -30,11 +30,11 @@ public class StaleMaterializedView {
     this.name = name;
   }
 
-  public LocalDateTime getCreationDate() {
+  public Instant getCreationDate() {
     return creationDate;
   }
 
-  public void setCreationDate(LocalDateTime creationDate) {
+  public void setCreationDate(Instant creationDate) {
     this.creationDate = creationDate;
   }
 }

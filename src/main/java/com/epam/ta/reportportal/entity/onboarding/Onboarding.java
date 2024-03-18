@@ -1,7 +1,7 @@
 package com.epam.ta.reportportal.entity.onboarding;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 /**
  * @author Antonov Maksim
@@ -11,8 +11,8 @@ public class Onboarding implements Serializable {
   private Long id;
   private String page;
   private String data;
-  private LocalDateTime availableFrom;
-  private LocalDateTime availableTo;
+  private Instant availableFrom;
+  private Instant availableTo;
 
   public Long getId() {
     return id;
@@ -38,19 +38,19 @@ public class Onboarding implements Serializable {
     this.data = data;
   }
 
-  public LocalDateTime getAvailableFrom() {
+  public Instant getAvailableFrom() {
     return availableFrom;
   }
 
-  public void setAvailableFrom(LocalDateTime availableFrom) {
+  public void setAvailableFrom(Instant availableFrom) {
     this.availableFrom = availableFrom;
   }
 
-  public LocalDateTime getAvailableTo() {
+  public Instant getAvailableTo() {
     return availableTo;
   }
 
-  public void setAvailableTo(LocalDateTime availableTo) {
+  public void setAvailableTo(Instant availableTo) {
     this.availableTo = availableTo;
   }
 }

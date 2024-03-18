@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.dao;
 
+import static com.epam.ta.reportportal.commons.EntityUtils.INSTANT_TO_TIMESTAMP;
 import static com.epam.ta.reportportal.commons.querygen.FilterTarget.FILTERED_ID;
 import static com.epam.ta.reportportal.commons.querygen.FilterTarget.FILTERED_QUERY;
 import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.retrieveOffsetAndApplyBoundaries;
@@ -91,9 +92,8 @@ import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
 import com.epam.ta.reportportal.ws.model.analyzer.IndexTestItem;
 import com.google.common.collect.Lists;
-import java.sql.Timestamp;
 import java.time.Duration;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -575,7 +575,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
         .findFirst();
   }
 
-  private List<Long> loadHistory(LocalDateTime startTime, Long itemId, Condition baselineCondition,
+  private List<Long> loadHistory(Instant startTime, Long itemId, Condition baselineCondition,
       int historyDepth) {
     return dsl.select(TEST_ITEM.ITEM_ID)
         .from(TEST_ITEM)
@@ -583,7 +583,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
         .on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
         .where(baselineCondition)
         .and(TEST_ITEM.ITEM_ID.notEqual(itemId))
-        .and(TEST_ITEM.START_TIME.lessOrEqual(Timestamp.valueOf(startTime)))
+        .and(TEST_ITEM.START_TIME.lessOrEqual(INSTANT_TO_TIMESTAMP.apply(startTime)))
         .and(LAUNCH.MODE.eq(JLaunchModeEnum.DEFAULT))
         .orderBy(TEST_ITEM.START_TIME.desc(), LAUNCH.START_TIME.desc(), LAUNCH.NUMBER.desc())
         .limit(historyDepth)
@@ -918,11 +918,11 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
   }
 
   @Override
-  public int updateStatusAndEndTimeById(Long itemId, JStatusEnum status, LocalDateTime endTime) {
+  public int updateStatusAndEndTimeById(Long itemId, JStatusEnum status, Instant endTime) {
 
     return dsl.update(TEST_ITEM_RESULTS)
         .set(TEST_ITEM_RESULTS.STATUS, status)
-        .set(TEST_ITEM_RESULTS.END_TIME, Timestamp.valueOf(endTime))
+        .set(TEST_ITEM_RESULTS.END_TIME, INSTANT_TO_TIMESTAMP.apply(endTime))
         .set(TEST_ITEM_RESULTS.DURATION,
             dsl.select(DSL.extract(endTime, DatePart.EPOCH)
                 .minus(DSL.extract(TEST_ITEM.START_TIME, DatePart.EPOCH))
@@ -934,10 +934,10 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
   @Override
   public int updateStatusAndEndTimeByRetryOfId(Long retryOfId, JStatusEnum from, JStatusEnum to,
-      LocalDateTime endTime) {
+      Instant endTime) {
     return dsl.update(TEST_ITEM_RESULTS)
         .set(TEST_ITEM_RESULTS.STATUS, to)
-        .set(TEST_ITEM_RESULTS.END_TIME, Timestamp.valueOf(endTime))
+        .set(TEST_ITEM_RESULTS.END_TIME, INSTANT_TO_TIMESTAMP.apply(endTime))
         .set(TEST_ITEM_RESULTS.DURATION,
             dsl.select(DSL.extract(endTime, DatePart.EPOCH)
                     .minus(DSL.extract(TEST_ITEM.START_TIME, DatePart.EPOCH))

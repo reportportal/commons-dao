@@ -24,7 +24,7 @@ import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.statistics.Statistics;
 import com.google.common.collect.Sets;
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Objects;
 import java.util.Set;
 import javax.persistence.CascadeType;
@@ -83,10 +83,10 @@ public class Launch implements Serializable {
   private String description;
 
   @Column(name = "start_time", nullable = false)
-  private LocalDateTime startTime;
+  private Instant startTime;
 
   @Column(name = "end_time")
-  private LocalDateTime endTime;
+  private Instant endTime;
 
   @Column(name = "number", nullable = false, precision = 32)
   private Long number;
@@ -99,7 +99,7 @@ public class Launch implements Serializable {
 
   @Column(name = "last_modified", nullable = false)
   @LastModifiedDate
-  private LocalDateTime lastModified;
+  private Instant lastModified;
 
   @Column(name = "mode", nullable = false)
   @Enumerated(EnumType.STRING)
@@ -198,11 +198,11 @@ public class Launch implements Serializable {
     this.description = description;
   }
 
-  public LocalDateTime getStartTime() {
+  public Instant getStartTime() {
     return startTime;
   }
 
-  public void setStartTime(LocalDateTime startTime) {
+  public void setStartTime(Instant startTime) {
     this.startTime = startTime;
   }
 
@@ -214,11 +214,11 @@ public class Launch implements Serializable {
     this.statistics = statistics;
   }
 
-  public LocalDateTime getEndTime() {
+  public Instant getEndTime() {
     return endTime;
   }
 
-  public void setEndTime(LocalDateTime endTime) {
+  public void setEndTime(Instant endTime) {
     this.endTime = endTime;
   }
 
@@ -238,11 +238,11 @@ public class Launch implements Serializable {
     this.hasRetries = hasRetries;
   }
 
-  public LocalDateTime getLastModified() {
+  public Instant getLastModified() {
     return lastModified;
   }
 
-  public void setLastModified(LocalDateTime lastModified) {
+  public void setLastModified(Instant lastModified) {
     this.lastModified = lastModified;
   }
 

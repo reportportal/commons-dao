@@ -16,14 +16,14 @@
 
 package com.epam.ta.reportportal.dao;
 
+import static com.epam.ta.reportportal.commons.EntityUtils.INSTANT_TO_TIMESTAMP;
 import static com.epam.ta.reportportal.jooq.Tables.LOG;
 import static com.epam.ta.reportportal.jooq.Tables.TEST_ITEM;
 import static com.epam.ta.reportportal.jooq.tables.JAttachment.ATTACHMENT;
 
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.entity.attachment.Attachment;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import org.jooq.DSLContext;
@@ -142,7 +142,7 @@ public class AttachmentRepositoryCustomImpl implements AttachmentRepositoryCusto
 
   @Override
   public List<Attachment> findByItemIdsAndLogTimeBefore(Collection<Long> itemIds,
-      LocalDateTime before) {
+      Instant before) {
     return dsl.select(ATTACHMENT.ID,
             ATTACHMENT.THUMBNAIL_ID,
             ATTACHMENT.FILE_ID,
@@ -159,14 +159,14 @@ public class AttachmentRepositoryCustomImpl implements AttachmentRepositoryCusto
         .join(TEST_ITEM)
         .on(ATTACHMENT.ITEM_ID.eq(TEST_ITEM.ITEM_ID))
         .where(TEST_ITEM.ITEM_ID.in(itemIds))
-        .and(LOG.LOG_TIME.lt(Timestamp.valueOf(before)))
+        .and(LOG.LOG_TIME.lt(INSTANT_TO_TIMESTAMP.apply(before)))
         .and(ATTACHMENT.FILE_ID.isNotNull().or(ATTACHMENT.THUMBNAIL_ID.isNotNull()))
         .fetchInto(Attachment.class);
   }
 
   @Override
   public List<Attachment> findByLaunchIdsAndLogTimeBefore(Collection<Long> launchIds,
-      LocalDateTime before) {
+      Instant before) {
     return dsl.select(ATTACHMENT.ID,
             ATTACHMENT.THUMBNAIL_ID,
             ATTACHMENT.FILE_ID,
@@ -181,13 +181,13 @@ public class AttachmentRepositoryCustomImpl implements AttachmentRepositoryCusto
         .join(LOG)
         .on(LOG.ATTACHMENT_ID.eq(ATTACHMENT.ID))
         .where(LOG.LAUNCH_ID.in(launchIds))
-        .and(LOG.LOG_TIME.lt(Timestamp.valueOf(before)))
+        .and(LOG.LOG_TIME.lt(INSTANT_TO_TIMESTAMP.apply(before)))
         .and(ATTACHMENT.FILE_ID.isNotNull().or(ATTACHMENT.THUMBNAIL_ID.isNotNull()))
         .fetchInto(Attachment.class);
   }
 
   @Override
-  public List<Attachment> findByProjectIdsAndLogTimeBefore(Long projectId, LocalDateTime before,
+  public List<Attachment> findByProjectIdsAndLogTimeBefore(Long projectId, Instant before,
       int limit, long offset) {
     return dsl.select(ATTACHMENT.ID,
             ATTACHMENT.THUMBNAIL_ID,
@@ -203,7 +203,7 @@ public class AttachmentRepositoryCustomImpl implements AttachmentRepositoryCusto
         .join(LOG)
         .on(LOG.ATTACHMENT_ID.eq(ATTACHMENT.ID))
         .where(ATTACHMENT.PROJECT_ID.eq(projectId))
-        .and(LOG.LOG_TIME.lt(Timestamp.valueOf(before)))
+        .and(LOG.LOG_TIME.lt(INSTANT_TO_TIMESTAMP.apply(before)))
         .and(ATTACHMENT.FILE_ID.isNotNull().or(ATTACHMENT.THUMBNAIL_ID.isNotNull()))
         .orderBy(ATTACHMENT.ID)
         .limit(limit)

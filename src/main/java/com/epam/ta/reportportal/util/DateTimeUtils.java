@@ -16,7 +16,7 @@
 
 package com.epam.ta.reportportal.util;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -40,7 +40,7 @@ public final class DateTimeUtils {
    * @param timestamp timestamp in different formats for parsing
    * @return localDateTime
    */
-  public static LocalDateTime parseDateTimeWithOffset(String timestamp) {
+  public static Instant parseDateTimeWithOffset(String timestamp) {
     DateTimeFormatter formatter = new DateTimeFormatterBuilder()
         .appendOptional(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZ"))
         .appendOptional(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ"))
@@ -52,10 +52,9 @@ public final class DateTimeUtils {
     TemporalAccessor temporalAccessor = formatter.parse(timestamp);
     if (isParsedTimeStampHasOffset(temporalAccessor)) {
       return ZonedDateTime.from(temporalAccessor)
-          .withZoneSameInstant(ZoneId.systemDefault())
-          .toLocalDateTime();
+          .withZoneSameInstant(ZoneId.systemDefault()).toInstant();
     } else {
-      return LocalDateTime.from(temporalAccessor);
+      return Instant.from(temporalAccessor);
     }
   }
 

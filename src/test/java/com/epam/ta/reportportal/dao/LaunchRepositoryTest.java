@@ -40,7 +40,6 @@ import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
-import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
@@ -49,7 +48,8 @@ import com.epam.ta.reportportal.ws.model.analyzer.IndexLaunch;
 import com.epam.ta.reportportal.ws.reporting.Mode;
 import com.google.common.collect.Comparators;
 import java.time.Duration;
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -114,7 +114,7 @@ class LaunchRepositoryTest extends BaseTest {
   @Test
   void findIdsByProjectIdAndStartTimeBeforeLimit() {
     List<Long> ids = launchRepository.findIdsByProjectIdAndStartTimeBefore(1L,
-        LocalDateTime.now().minusSeconds(Duration.ofDays(13).getSeconds()),
+        Instant.now().minusSeconds(Duration.ofDays(13).getSeconds()),
         5
     );
     assertEquals(5, ids.size());
@@ -123,7 +123,7 @@ class LaunchRepositoryTest extends BaseTest {
   @Test
   void findIdsByProjectIdAndStartTimeBeforeLimitWithOffset() {
     List<Long> ids = launchRepository.findIdsByProjectIdAndStartTimeBefore(1L,
-        LocalDateTime.now().minusSeconds(Duration.ofDays(13).getSeconds()),
+        Instant.now().minusSeconds(Duration.ofDays(13).getSeconds()),
         3,
         10L
     );
@@ -141,7 +141,7 @@ class LaunchRepositoryTest extends BaseTest {
 
     Stream<Long> stream = launchRepository.streamIdsWithStatusAndStartTimeBefore(1L,
         StatusEnum.IN_PROGRESS,
-        LocalDateTime.now().minusSeconds(Duration.ofDays(13).getSeconds())
+        Instant.now().minusSeconds(Duration.ofDays(13).getSeconds())
     );
 
     assertNotNull(stream);
@@ -154,7 +154,7 @@ class LaunchRepositoryTest extends BaseTest {
   void streamLaunchIdsTest() {
 
     Stream<Long> stream = launchRepository.streamIdsByStartTimeBefore(1L,
-        LocalDateTime.now().minusSeconds(Duration.ofDays(13).getSeconds())
+        Instant.now().minusSeconds(Duration.ofDays(13).getSeconds())
     );
 
     assertNotNull(stream);
@@ -166,7 +166,7 @@ class LaunchRepositoryTest extends BaseTest {
   @Test
   void findByProjectIdAndStartTimeGreaterThanAndMode() {
     List<Launch> launches = launchRepository.findByProjectIdAndStartTimeGreaterThanAndMode(1L,
-        LocalDateTime.now().minusMonths(1),
+        Instant.now().minus(30, ChronoUnit.DAYS),
         LaunchModeEnum.DEFAULT
     );
     assertEquals(12, launches.size());
@@ -241,7 +241,7 @@ class LaunchRepositoryTest extends BaseTest {
   @Test
   void countLaunches() {
     final Integer count = launchRepository.countLaunches(2L, Mode.DEFAULT.name(),
-        LocalDateTime.now().minusDays(5));
+        Instant.now().minus(5, ChronoUnit.DAYS));
     assertNotNull(count);
     assertEquals(3, (int) count);
   }
@@ -250,7 +250,7 @@ class LaunchRepositoryTest extends BaseTest {
   void countLaunchesGroupedByOwner() {
     final Map<String, Integer> map = launchRepository.countLaunchesGroupedByOwner(2L,
         Mode.DEFAULT.name(),
-        LocalDateTime.now().minusDays(5)
+        Instant.now().minus(5, ChronoUnit.DAYS)
     );
     assertNotNull(map.get("default"));
     assertEquals(3, (int) map.get("default"));

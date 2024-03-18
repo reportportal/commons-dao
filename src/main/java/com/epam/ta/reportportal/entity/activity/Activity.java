@@ -17,7 +17,7 @@
 package com.epam.ta.reportportal.entity.activity;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -53,7 +53,7 @@ public class Activity implements Serializable {
   private Long id;
 
   @Column(name = "created_at", nullable = false)
-  private LocalDateTime createdAt;
+  private Instant createdAt;
 
   @Column(name = "action", nullable = false)
   @Enumerated(EnumType.STRING)

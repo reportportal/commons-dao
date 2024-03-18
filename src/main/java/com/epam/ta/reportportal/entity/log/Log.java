@@ -20,7 +20,7 @@ import com.epam.ta.reportportal.entity.attachment.Attachment;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -56,14 +56,14 @@ public class Log implements Serializable {
   private String uuid;
 
   @Column(name = "log_time", nullable = false)
-  private LocalDateTime logTime;
+  private Instant logTime;
 
   @Column(name = "log_message", nullable = false)
   private String logMessage;
 
   @LastModifiedDate
   @Column(name = "last_modified", nullable = false)
-  private LocalDateTime lastModified;
+  private Instant lastModified;
 
   @Column(name = "log_level", nullable = false, precision = 32)
   private Integer logLevel;
@@ -86,7 +86,7 @@ public class Log implements Serializable {
   @JoinColumn(name = "attachment_id")
   private Attachment attachment;
 
-  public Log(Long id, LocalDateTime logTime, String logMessage, LocalDateTime lastModified,
+  public Log(Long id, Instant logTime, String logMessage, Instant lastModified,
       Integer logLevel, TestItem testItem,
       Attachment attachment) {
     this.id = id;
@@ -133,19 +133,19 @@ public class Log implements Serializable {
     this.launch = launch;
   }
 
-  public LocalDateTime getLogTime() {
+  public Instant getLogTime() {
     return logTime;
   }
 
-  public void setLogTime(LocalDateTime logTime) {
+  public void setLogTime(Instant logTime) {
     this.logTime = logTime;
   }
 
-  public LocalDateTime getLastModified() {
+  public Instant getLastModified() {
     return lastModified;
   }
 
-  public void setLastModified(LocalDateTime lastModified) {
+  public void setLastModified(Instant lastModified) {
     this.lastModified = lastModified;
   }
 

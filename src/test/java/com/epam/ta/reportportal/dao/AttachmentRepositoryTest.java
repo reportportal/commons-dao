@@ -24,8 +24,7 @@ import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.entity.attachment.Attachment;
 import com.google.common.collect.Lists;
 import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -115,8 +114,7 @@ class AttachmentRepositoryTest extends BaseTest {
     final Long itemId = 3L;
 
     List<Attachment> attachments = attachmentRepository.findByItemIdsAndLogTimeBefore(
-        Collections.singletonList(itemId),
-        LocalDateTime.now(ZoneOffset.UTC).minus(duration)
+        Collections.singletonList(itemId), Instant.now().minus(duration)
     );
 
     assertTrue(CollectionUtils.isNotEmpty(attachments), "Attachments should not be empty");
@@ -133,7 +131,7 @@ class AttachmentRepositoryTest extends BaseTest {
 
     List<Attachment> attachments = attachmentRepository.findByLaunchIdsAndLogTimeBefore(
         Collections.singletonList(launchId),
-        LocalDateTime.now(ZoneOffset.UTC).minus(duration)
+        Instant.now().minus(duration)
     );
 
     assertTrue(CollectionUtils.isNotEmpty(attachments), "Attachments should not be empty");
@@ -150,7 +148,7 @@ class AttachmentRepositoryTest extends BaseTest {
 
     List<Attachment> attachments = attachmentRepository.findByLaunchIdsAndLogTimeBefore(
         Collections.singletonList(launchId),
-        LocalDateTime.now(ZoneOffset.UTC).minus(duration)
+        Instant.now().minus(duration)
     );
 
     assertTrue(CollectionUtils.isEmpty(attachments), "Attachments should be empty");
@@ -162,7 +160,7 @@ class AttachmentRepositoryTest extends BaseTest {
     final Long projectId = 1L;
 
     List<Attachment> attachments = attachmentRepository.findByProjectIdsAndLogTimeBefore(projectId,
-        LocalDateTime.now(ZoneOffset.UTC).minus(duration), 3, 6
+        Instant.now().minus(duration), 3, 6
     );
 
     assertTrue(CollectionUtils.isNotEmpty(attachments), "Attachments should not be empty");

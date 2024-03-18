@@ -17,7 +17,7 @@
 package com.epam.ta.reportportal.entity.project;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 /**
  * Not database object. Representation of the result of project info query
@@ -32,7 +32,7 @@ public class ProjectInfo implements Serializable {
 
   private Long id;
 
-  private LocalDateTime creationDate;
+  private Instant creationDate;
 
   private String name;
 
@@ -44,7 +44,7 @@ public class ProjectInfo implements Serializable {
 
   private int launchesQuantity;
 
-  private LocalDateTime lastRun;
+  private Instant lastRun;
 
   public Long getId() {
     return id;
@@ -54,11 +54,11 @@ public class ProjectInfo implements Serializable {
     this.id = id;
   }
 
-  public LocalDateTime getCreationDate() {
+  public Instant getCreationDate() {
     return creationDate;
   }
 
-  public void setCreationDate(LocalDateTime creationDate) {
+  public void setCreationDate(Instant creationDate) {
     this.creationDate = creationDate;
   }
 
@@ -102,11 +102,11 @@ public class ProjectInfo implements Serializable {
     this.launchesQuantity = launchesQuantity;
   }
 
-  public LocalDateTime getLastRun() {
+  public Instant getLastRun() {
     return lastRun;
   }
 
-  public void setLastRun(LocalDateTime lastRun) {
+  public void setLastRun(Instant lastRun) {
     this.lastRun = lastRun;
   }
 }
