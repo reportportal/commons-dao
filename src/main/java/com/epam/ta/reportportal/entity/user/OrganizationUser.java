@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package com.epam.ta.reportportal.entity.organization;
+package com.epam.ta.reportportal.entity.user;
 
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
-import com.epam.ta.reportportal.entity.user.User;
+import com.epam.ta.reportportal.entity.organization.Organization;
+import com.epam.ta.reportportal.entity.organization.OrganizationRole;
+import com.epam.ta.reportportal.entity.organization.OrganizationUserId;
 import java.io.Serializable;
 import java.util.Objects;
 import javax.persistence.Column;
@@ -53,13 +55,13 @@ public class OrganizationUser implements Serializable {
   private static final long serialVersionUID = 7313055792392238124L;
 
   @EmbeddedId
-  private OrganizationUserId id;
+  private OrganizationUserId id = new OrganizationUserId();
 
-  @ManyToOne(fetch = FetchType.EAGER)
+  @ManyToOne(fetch = FetchType.LAZY)
   @MapsId("organizationId")
   private Organization organization;
 
-  @ManyToOne(fetch = FetchType.EAGER)
+  @ManyToOne(fetch = FetchType.LAZY)
   @MapsId("userId")
   private User user;
 

@@ -17,8 +17,8 @@
 package com.epam.ta.reportportal.dao.organization;
 
 import com.epam.ta.reportportal.dao.ReportPortalRepository;
-import com.epam.ta.reportportal.entity.organization.OrganizationUser;
 import com.epam.ta.reportportal.entity.organization.OrganizationUserId;
+import com.epam.ta.reportportal.entity.user.OrganizationUser;
 
 /**
  * @author Siarhei Hrabko
