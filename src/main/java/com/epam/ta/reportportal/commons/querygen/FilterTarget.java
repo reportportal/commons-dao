@@ -1453,7 +1453,7 @@ public enum FilterTarget {
 
       query.addJoin(USERS,
           JoinType.LEFT_OUTER_JOIN,
-          ORGANIZATION_USER.ORGANIZATION_ID.eq(USERS.ID));
+          ORGANIZATION_USER.USER_ID.eq(USERS.ID));
     }
 
     @Override
@@ -1537,7 +1537,7 @@ public enum FilterTarget {
 
       query.addJoin(USERS,
           JoinType.LEFT_OUTER_JOIN,
-          ORGANIZATION_USER.ORGANIZATION_ID.eq(USERS.ID));
+          ORGANIZATION_USER.USER_ID.eq(USERS.ID));
 
       query.addJoin(LAUNCH,
           JoinType.LEFT_OUTER_JOIN,
