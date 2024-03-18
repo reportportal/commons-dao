@@ -1424,7 +1424,10 @@ public enum FilterTarget {
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_CREATED_DATE, ORGANIZATION.CREATION_DATE,
           Timestamp.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_TYPE, ORGANIZATION.ORGANIZATION_TYPE,
-          String.class).get()
+          String.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_USER, USERS.LOGIN, String.class)
+          .withAggregateCriteria(DSL.max(USERS.LOGIN).toString())
+          .get()
   )) {
     @Override
     protected Collection<? extends SelectField> selectFields() {
@@ -1444,7 +1447,13 @@ public enum FilterTarget {
 
     @Override
     protected void joinTables(QuerySupplier query) {
+      query.addJoin(ORGANIZATION_USER,
+          JoinType.LEFT_OUTER_JOIN,
+          ORGANIZATION_USER.ORGANIZATION_ID.eq(ORGANIZATION.ID));
 
+      query.addJoin(USERS,
+          JoinType.LEFT_OUTER_JOIN,
+          ORGANIZATION_USER.ORGANIZATION_ID.eq(USERS.ID));
     }
 
     @Override
@@ -1518,13 +1527,17 @@ public enum FilterTarget {
 
     @Override
     protected void joinTables(QuerySupplier query) {
+      query.addJoin(ORGANIZATION_USER,
+          JoinType.LEFT_OUTER_JOIN,
+          ORGANIZATION_USER.ORGANIZATION_ID.eq(ORGANIZATION.ID));
+
       query.addJoin(PROJECT,
           JoinType.LEFT_OUTER_JOIN,
           PROJECT.ORGANIZATION_ID.eq(ORGANIZATION.ID));
 
-      query.addJoin(ORGANIZATION_USER,
+      query.addJoin(USERS,
           JoinType.LEFT_OUTER_JOIN,
-          ORGANIZATION_USER.ORGANIZATION_ID.eq(PROJECT.ORGANIZATION_ID));
+          ORGANIZATION_USER.ORGANIZATION_ID.eq(USERS.ID));
 
       query.addJoin(LAUNCH,
           JoinType.LEFT_OUTER_JOIN,

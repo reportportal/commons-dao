@@ -71,25 +71,39 @@ class OrganizationRepositoryCustomTest extends BaseTest {
     assertEquals(0, orgs.size());
   }
 
-  @Test
-  void findOrganizationByFilter() {
+  @ParameterizedTest
+  @CsvSource(value = {
+      "slug|eq|my-organization|1",
+      "slug|eq|notexists|0",
+      "user|eq|superadmin|1",
+      "user|eq|notexists|0"
+
+  }, delimiter = '|')
+  void findOrganizationByFilter(String field, String condition, String value, int rows) {
     final List<Organization> orgs = organizationRepositoryCustom.findByFilter(
         new Filter(Organization.class,
-            Condition.EQUALS,
+            Condition.findByMarker(condition).get(),
             false,
-            "my-organization",
-            "slug"
+            value,
+            field
         ));
-    assertEquals(1, orgs.size());
+    assertEquals(rows, orgs.size());
   }
 
 
   @ParameterizedTest
   @CsvSource(value = {
       "slug|eq|my-organization|1",
+      "slug|eq|notexists|0",
       "usersQuantity|eq|2|1",
+      "usersQuantity|eq|845|0",
       "launchesQuantity|gt|-1|1",
-      "projectsQuantity|eq|2|1"
+      "launchesQuantity|gt|999|0",
+      "projectsQuantity|eq|2|1",
+      "projectsQuantity|eq|999|0",
+      "user|eq|superadmin|1",
+      "user|eq|notexists|0"
+
   }, delimiter = '|')
   void findOrganizationInfoByFilter(String field, String condition, String value, int rows) {
     final List<OrganizationInfo> orgsInfo = organizationRepositoryCustom.findOrganizationInfoByFilter(

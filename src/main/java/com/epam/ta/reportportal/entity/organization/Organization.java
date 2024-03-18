@@ -58,4 +58,6 @@ public class Organization implements Serializable {
   @Column(name = "slug")
   private String slug;
 
+  private String user;
+
 }

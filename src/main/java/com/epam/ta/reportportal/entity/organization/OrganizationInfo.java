@@ -41,6 +41,7 @@ public class OrganizationInfo implements Serializable {
   private Long id;
   private LocalDateTime creationDate;
   private String name;
+  private String user;
   private OrganizationType organizationType;
   private String slug;
 
