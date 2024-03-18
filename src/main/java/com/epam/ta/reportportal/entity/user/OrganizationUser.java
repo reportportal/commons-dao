@@ -31,11 +31,6 @@ import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
@@ -43,12 +38,8 @@ import org.hibernate.annotations.TypeDef;
  * @author Siarhei Hrabko
  */
 @Entity
-@Getter
-@Setter
 @TypeDef(name = "pqsql_enum", typeClass = PostgreSQLEnumType.class)
 @Table(name = "organization_user", schema = "public")
-@NoArgsConstructor
-@AllArgsConstructor
 public class OrganizationUser implements Serializable {
 
   private static final long serialVersionUID = 7313055792392238124L;
@@ -88,5 +79,38 @@ public class OrganizationUser implements Serializable {
   @Override
   public int hashCode() {
     return Objects.hash(id, organization, user, organizationRole);
+  }
+
+  public OrganizationUserId getId() {
+    return id;
+  }
+
+  public void setId(OrganizationUserId id) {
+    this.id = id;
+  }
+
+  public Organization getOrganization() {
+    return organization;
+  }
+
+  public void setOrganization(Organization organization) {
+    this.organization = organization;
+  }
+
+  public User getUser() {
+    return user;
+  }
+
+  public void setUser(User user) {
+    this.user = user;
+  }
+
+  public OrganizationRole getOrganizationRole() {
+    return organizationRole;
+  }
+
+  public void setOrganizationRole(
+      OrganizationRole organizationRole) {
+    this.organizationRole = organizationRole;
   }
 }

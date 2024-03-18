@@ -20,19 +20,11 @@ import java.io.Serializable;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /**
  * @author Siarhei Hrabko
  */
 @Embeddable
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
 public class OrganizationUserId implements Serializable {
 
   @Column(name = "organization_id")
@@ -40,6 +32,24 @@ public class OrganizationUserId implements Serializable {
 
   @Column(name = "user_id")
   private Long userId;
+
+  public OrganizationUserId() {}
+
+  public Long getOrganizationId() {
+    return organizationId;
+  }
+
+  public void setOrganizationId(Long organizationId) {
+    this.organizationId = organizationId;
+  }
+
+  public Long getUserId() {
+    return userId;
+  }
+
+  public void setUserId(Long userId) {
+    this.userId = userId;
+  }
 
   @Override
   public boolean equals(Object o) {

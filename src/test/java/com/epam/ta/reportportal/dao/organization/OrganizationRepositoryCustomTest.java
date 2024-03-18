@@ -76,8 +76,8 @@ class OrganizationRepositoryCustomTest extends BaseTest {
       "slug|eq|my-organization|1",
       "slug|eq|notexists|0",
       "user|eq|superadmin|1",
-      "user|eq|notexists|0"
-
+      "user|eq|notexists|0",
+      "organization_type|eq|INTERNAL|1",
   }, delimiter = '|')
   void findOrganizationByFilter(String field, String condition, String value, int rows) {
     final List<Organization> orgs = organizationRepositoryCustom.findByFilter(
