@@ -17,7 +17,6 @@
 
 package com.epam.ta.reportportal.dao.util;
 
-import static com.epam.ta.reportportal.commons.EntityUtils.TO_DATE;
 import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.STATISTICS_KEY;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_END_TIME;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAST_MODIFIED;
@@ -88,7 +87,7 @@ import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTab
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.ws.model.ActivityResource;
 import com.epam.ta.reportportal.ws.reporting.ErrorType;
-import com.epam.ta.reportportal.ws.model.attribute.ItemAttributeResource;
+import com.epam.ta.reportportal.ws.reporting.ItemAttributeResource;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -100,11 +99,10 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -207,7 +205,7 @@ public class WidgetContentUtil {
 				content.setName(record.get(DSL.field(LAUNCH.NAME.getQualifiedName().toString()), String.class));
 				content.setNumber(record.get(DSL.field(LAUNCH.NUMBER.getQualifiedName().toString()), Integer.class));
 
-				startTimeField.ifPresent(f -> content.setStartTime(record.get(f, Timestamp.class)));
+				startTimeField.ifPresent(f -> content.setStartTime(record.get(f, Instant.class)));
 			}
 
 			statisticsField.flatMap(sf -> ofNullable(record.get(sf, String.class)))
@@ -253,8 +251,7 @@ public class WidgetContentUtil {
 		activityResource.setActionType(r.get(ACTIVITY.EVENT_NAME));
 		activityResource.setObjectType(r.get(ACTIVITY.OBJECT_TYPE));
 		activityResource.setObjectName(r.get(ACTIVITY.OBJECT_NAME));
-		activityResource.setLastModified(
-				TO_DATE.apply(r.get(ACTIVITY.CREATED_AT, LocalDateTime.class)));
+		activityResource.setLastModified(r.get(ACTIVITY.CREATED_AT, Instant.class));
 		activityResource.setLoggedObjectId(r.get(ACTIVITY.OBJECT_ID));
 		String detailsJson = r.get(ACTIVITY.DETAILS, String.class);
 		ofNullable(detailsJson).ifPresent(s -> {
@@ -317,7 +314,7 @@ public class WidgetContentUtil {
 			}
 
 			ProductStatusStatisticsContent content = PRODUCT_STATUS_WITHOUT_ATTRIBUTES_MAPPER.apply(productStatusMapping, record);
-			startTimeField.ifPresent(f -> content.setStartTime(record.get(f, Timestamp.class)));
+			startTimeField.ifPresent(f -> content.setStartTime(record.get(f, Instant.class)));
 			statusField.ifPresent(f -> content.setStatus(record.get(f, String.class)));
 			if (attributeField.isPresent()) {
 				String attributeKey = record.get(fieldName(ATTR_TABLE, ATTRIBUTE_KEY), String.class);
@@ -347,7 +344,7 @@ public class WidgetContentUtil {
 
 		result.forEach(record -> {
 			ProductStatusStatisticsContent content = PRODUCT_STATUS_WITHOUT_ATTRIBUTES_MAPPER.apply(productStatusMapping, record);
-			startTimeField.ifPresent(f -> content.setStartTime(record.get(f, Timestamp.class)));
+			startTimeField.ifPresent(f -> content.setStartTime(record.get(f, Instant.class)));
 			statusField.ifPresent(f -> content.setStatus(record.get(f, String.class)));
 			if (attributeField.isPresent()) {
 				String attributeKey = record.get(fieldName(ATTR_TABLE, ATTRIBUTE_KEY), String.class);
@@ -378,7 +375,7 @@ public class WidgetContentUtil {
 	private static final RecordMapper<Record, UniqueBugContent> UNIQUE_BUG_CONTENT_RECORD_MAPPER = record -> {
 		UniqueBugContent uniqueBugContent = new UniqueBugContent();
 		uniqueBugContent.setUrl(record.get(TICKET.URL));
-		uniqueBugContent.setSubmitDate(record.get(TICKET.SUBMIT_DATE));
+		uniqueBugContent.setSubmitDate(record.get(TICKET.SUBMIT_DATE, Instant.class));
 		uniqueBugContent.setSubmitter(record.get(TICKET.SUBMITTER));
 		return uniqueBugContent;
 	};
@@ -486,7 +483,7 @@ public class WidgetContentUtil {
 				entry.setTotal(record.get(DSL.field(fieldName(TOTAL)), Long.class));
 				entry.setItemName(record.get(DSL.field(fieldName(ITEM_NAME)), String.class));
 				entry.setUniqueId(record.get(DSL.field(fieldName(UNIQUE_ID)), String.class));
-				entry.setStartTime(Collections.singletonList(record.get(DSL.field(fieldName(START_TIME_HISTORY)), Date.class)));
+				entry.setStartTime(Collections.singletonList(record.get(DSL.field(fieldName(START_TIME_HISTORY)), Instant.class)));
 				return entry;
 			})
 			.collect(Collectors.toList());
@@ -499,7 +496,7 @@ public class WidgetContentUtil {
 				entry.setTotal(record.get(DSL.field(fieldName(TOTAL)), Long.class));
 				entry.setName(record.get(TEST_ITEM.NAME));
 				entry.setUniqueId(record.get(TEST_ITEM.UNIQUE_ID));
-				entry.setStartTime(Collections.singletonList(record.get(DSL.field(fieldName(START_TIME_HISTORY)), Date.class)));
+				entry.setStartTime(Collections.singletonList(record.get(DSL.field(fieldName(START_TIME_HISTORY)), Instant.class)));
 				return entry;
 			})
 			.collect(Collectors.toList());

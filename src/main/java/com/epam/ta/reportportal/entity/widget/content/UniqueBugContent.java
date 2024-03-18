@@ -16,13 +16,13 @@
 
 package com.epam.ta.reportportal.entity.widget.content;
 
-import com.epam.ta.reportportal.ws.model.attribute.ItemAttributeResource;
+import com.epam.ta.reportportal.ws.reporting.ItemAttributeResource;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.List;
 import java.util.Set;
 
@@ -39,7 +39,7 @@ public class UniqueBugContent implements Serializable {
   private String url;
 
   @JsonProperty(value = "submitDate")
-  private Timestamp submitDate;
+  private Instant submitDate;
 
   @JsonProperty(value = "items")
   private List<ItemInfo> items = Lists.newArrayList();
@@ -60,11 +60,11 @@ public class UniqueBugContent implements Serializable {
     this.url = url;
   }
 
-  public Timestamp getSubmitDate() {
+  public Instant getSubmitDate() {
     return submitDate;
   }
 
-  public void setSubmitDate(Timestamp submitDate) {
+  public void setSubmitDate(Instant submitDate) {
     this.submitDate = submitDate;
   }
 

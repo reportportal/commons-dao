@@ -21,8 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.entity.user.ApiKey;
+import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,7 +41,7 @@ public class ApiKeyRepositoryTest extends BaseTest {
     final ApiKey apiKey = new ApiKey();
     apiKey.setName("ApiKey");
     apiKey.setHash("8743b52063cd84097a65d1633f5c74f5");
-    apiKey.setCreatedAt(LocalDateTime.now());
+    apiKey.setCreatedAt(Instant.now());
     apiKey.setUserId(1L);
     apiKey.setLastUsedAt(LocalDate.now());
 
@@ -57,7 +57,7 @@ public class ApiKeyRepositoryTest extends BaseTest {
     apiKey.setName("ApiKey");
     String hash = "8743b52063cd84097a65d1633f5c74f5";
     apiKey.setHash(hash);
-    apiKey.setCreatedAt(LocalDateTime.now());
+    apiKey.setCreatedAt(Instant.now());
     apiKey.setUserId(1L);
 
     LocalDate today = LocalDate.now();
