@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.epam.ta.reportportal.entity.organization;
+package com.epam.ta.reportportal.entity.user;
 
 import java.io.Serializable;
 import java.util.Objects;

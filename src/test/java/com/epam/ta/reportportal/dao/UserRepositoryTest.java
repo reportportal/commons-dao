@@ -36,6 +36,7 @@ import com.epam.ta.reportportal.commons.querygen.CompositeFilterCondition;
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
+import com.epam.ta.reportportal.dao.organization.OrganizationRepositoryCustom;
 import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
@@ -65,12 +66,13 @@ import org.springframework.test.context.jdbc.Sql;
 /**
  * @author Ivan Budaev
  */
-@Sql("/db/fill/user/user-fill.sql")
+@Sql({"/db/fill/user/user-fill.sql"})
 class UserRepositoryTest extends BaseTest {
 
   @Autowired
   private UserRepository userRepository;
-
+  @Autowired
+  OrganizationRepositoryCustom organizationRepositoryCustom;
   @Autowired
   private ProjectRepository projectRepository;
 

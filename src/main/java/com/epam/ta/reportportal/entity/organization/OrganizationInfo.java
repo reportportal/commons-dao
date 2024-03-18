@@ -17,7 +17,6 @@
 package com.epam.ta.reportportal.entity.organization;
 
 import com.epam.ta.reportportal.entity.enums.OrganizationType;
-import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -42,9 +41,6 @@ public class OrganizationInfo implements Serializable {
   private int launchesQuantity;
 
   private LocalDateTime lastRun;
-
-  @Schema(hidden = true)
-  private String user;
 
   public OrganizationInfo() {
   }
@@ -121,11 +117,4 @@ public class OrganizationInfo implements Serializable {
     this.lastRun = lastRun;
   }
 
-  public String getUser() {
-    return user;
-  }
-
-  public void setUser(String user) {
-    this.user = user;
-  }
 }

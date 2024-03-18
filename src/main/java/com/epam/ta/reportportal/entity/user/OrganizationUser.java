@@ -19,7 +19,6 @@ package com.epam.ta.reportportal.entity.user;
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.entity.organization.Organization;
 import com.epam.ta.reportportal.entity.organization.OrganizationRole;
-import com.epam.ta.reportportal.entity.organization.OrganizationUserId;
 import java.io.Serializable;
 import java.util.Objects;
 import javax.persistence.Column;
@@ -41,8 +40,6 @@ import org.hibernate.annotations.TypeDef;
 @TypeDef(name = "pqsql_enum", typeClass = PostgreSQLEnumType.class)
 @Table(name = "organization_user", schema = "public")
 public class OrganizationUser implements Serializable {
-
-  private static final long serialVersionUID = 7313055792392238124L;
 
   @EmbeddedId
   private OrganizationUserId id = new OrganizationUserId();

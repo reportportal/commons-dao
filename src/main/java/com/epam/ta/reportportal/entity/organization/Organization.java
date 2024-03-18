@@ -17,7 +17,6 @@
 package com.epam.ta.reportportal.entity.organization;
 
 import com.epam.ta.reportportal.entity.enums.OrganizationType;
-import io.swagger.v3.oas.annotations.media.Schema;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
@@ -26,16 +25,17 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * @author Siarhei Hrabko
  */
 @Entity
 @Table(name = "organization", schema = "public")
+@Getter
+@Setter
 public class Organization implements Serializable {
-
-  private static final long serialVersionUID = 6730810629133187834L;
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,76 +48,32 @@ public class Organization implements Serializable {
   @Column(name = "name")
   private String name;
 
-
   @Column(name = "organization_type")
   private OrganizationType organizationType;
 
   @Column(name = "slug")
   private String slug;
 
-  @Schema(hidden = true)
-  private String user;
-
-
   public Organization() {
   }
 
   public Organization(Long id, LocalDateTime creationDate, String name,
-      OrganizationType organizationType, String slug, String user) {
+      OrganizationType organizationType, String slug) {
     this.id = id;
     this.creationDate = creationDate;
     this.name = name;
     this.organizationType = organizationType;
     this.slug = slug;
-    this.user = user;
   }
 
-  public Long getId() {
-    return id;
+  @Override
+  public String toString() {
+    return "Organization{" +
+        "id=" + id +
+        ", creationDate=" + creationDate +
+        ", name='" + name + '\'' +
+        ", organizationType=" + organizationType +
+        ", slug='" + slug + '\'' +
+        '}';
   }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public LocalDateTime getCreationDate() {
-    return creationDate;
-  }
-
-  public void setCreationDate(LocalDateTime creationDate) {
-    this.creationDate = creationDate;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public OrganizationType getOrganizationType() {
-    return organizationType;
-  }
-
-  public void setOrganizationType(OrganizationType organizationType) {
-    this.organizationType = organizationType;
-  }
-
-  public String getSlug() {
-    return slug;
-  }
-
-  public void setSlug(String slug) {
-    this.slug = slug;
-  }
-
-  public String getUser() {
-    return user;
-  }
-
-  public void setUser(String user) {
-    this.user = user;
-  }
-
 }

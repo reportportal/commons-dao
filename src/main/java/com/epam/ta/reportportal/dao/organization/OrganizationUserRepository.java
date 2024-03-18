@@ -17,7 +17,7 @@
 package com.epam.ta.reportportal.dao.organization;
 
 import com.epam.ta.reportportal.dao.ReportPortalRepository;
-import com.epam.ta.reportportal.entity.organization.OrganizationUserId;
+import com.epam.ta.reportportal.entity.user.OrganizationUserId;
 import com.epam.ta.reportportal.entity.user.OrganizationUser;
 
 /**
