@@ -45,7 +45,6 @@ import org.hibernate.annotations.TypeDef;
 @Entity
 @Getter
 @Setter
-@ToString
 @TypeDef(name = "pqsql_enum", typeClass = PostgreSQLEnumType.class)
 @Table(name = "organization_user", schema = "public")
 @NoArgsConstructor

@@ -38,7 +38,6 @@ import lombok.ToString;
 @Table(name = "organization", schema = "public")
 @Getter
 @Setter
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 public class Organization implements Serializable {

@@ -17,19 +17,22 @@
 package com.epam.ta.reportportal.entity.organization;
 
 import java.io.Serializable;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * @author Siarhei Hrabko
  */
 @Embeddable
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 public class OrganizationUserId implements Serializable {
 
   @Column(name = "organization_id")
@@ -38,4 +41,21 @@ public class OrganizationUserId implements Serializable {
   @Column(name = "user_id")
   private Long userId;
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    OrganizationUserId that = (OrganizationUserId) o;
+    return Objects.equals(organizationId, that.organizationId)
+        && Objects.equals(userId, that.userId);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(organizationId, userId);
+  }
 }

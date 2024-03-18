@@ -32,7 +32,6 @@ import lombok.ToString;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 public class OrganizationInfo implements Serializable {
 
   public static final String USERS_QUANTITY = "usersQuantity";
