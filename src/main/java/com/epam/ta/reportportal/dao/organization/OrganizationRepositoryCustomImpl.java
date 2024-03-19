@@ -25,6 +25,7 @@ import static com.epam.ta.reportportal.jooq.Tables.USERS;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.entity.organization.Organization;
+import com.epam.ta.reportportal.entity.organization.OrganizationInfo;
 import java.util.List;
 import java.util.Optional;
 import org.jooq.DSLContext;
@@ -102,6 +103,23 @@ public class OrganizationRepositoryCustomImpl implements OrganizationRepositoryC
         .from(ORGANIZATION)
         .where(ORGANIZATION.SLUG.eq(slug))
         .fetchOptionalInto(Organization.class);
+  }
+
+  @Override
+  public List<OrganizationInfo> findOrganizationInfoByFilter(Queryable filter) {
+    return dsl.fetch(QueryBuilder.newBuilder(filter, collectJoinFields(filter))
+            .build())
+        .into(OrganizationInfo.class);
+  }
+
+  @Override
+  public Page<OrganizationInfo> findOrganizationInfoByFilter(Queryable filter, Pageable pageable) {
+    return PageableExecutionUtils.getPage(
+        dsl.fetch(QueryBuilder.newBuilder(filter).with(pageable).build())
+            .into(OrganizationInfo.class),
+        pageable,
+        () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
+    );
   }
 
 }

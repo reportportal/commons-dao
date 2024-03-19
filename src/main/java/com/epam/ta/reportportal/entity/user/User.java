@@ -17,7 +17,6 @@
 package com.epam.ta.reportportal.entity.user;
 
 import com.epam.ta.reportportal.entity.Metadata;
-import com.epam.ta.reportportal.entity.organization.OrganizationUser;
 import com.google.common.collect.Sets;
 import java.io.Serializable;
 import java.util.Objects;

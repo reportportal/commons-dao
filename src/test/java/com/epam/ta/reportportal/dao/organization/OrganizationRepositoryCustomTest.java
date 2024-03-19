@@ -16,7 +16,6 @@
 
 package com.epam.ta.reportportal.dao.organization;
 
-import static com.epam.ta.reportportal.entity.project.ProjectInfo.USERS_QUANTITY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 
@@ -24,10 +23,12 @@ import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.entity.organization.Organization;
-import com.epam.ta.reportportal.entity.project.ProjectInfo;
+import com.epam.ta.reportportal.entity.organization.OrganizationInfo;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -70,16 +71,48 @@ class OrganizationRepositoryCustomTest extends BaseTest {
     assertEquals(0, orgs.size());
   }
 
-  @Test
-  void findOrganizationByFilter() {
+  @ParameterizedTest
+  @CsvSource(value = {
+      "slug|eq|my-organization|1",
+      "slug|eq|notexists|0",
+      "user|eq|superadmin|1",
+      "user|eq|notexists|0",
+      "organization_type|eq|INTERNAL|1",
+  }, delimiter = '|')
+  void findOrganizationByFilter(String field, String condition, String value, int rows) {
     final List<Organization> orgs = organizationRepositoryCustom.findByFilter(
         new Filter(Organization.class,
-            Condition.EQUALS,
+            Condition.findByMarker(condition).get(),
             false,
-            "my-organization",
-            "slug"
+            value,
+            field
         ));
-    assertEquals(1, orgs.size());
+    assertEquals(rows, orgs.size());
   }
 
+
+  @ParameterizedTest
+  @CsvSource(value = {
+      "slug|eq|my-organization|1",
+      "slug|eq|notexists|0",
+      "usersQuantity|eq|2|1",
+      "usersQuantity|eq|845|0",
+      "launchesQuantity|gt|-1|1",
+      "launchesQuantity|gt|999|0",
+      "projectsQuantity|eq|2|1",
+      "projectsQuantity|eq|999|0",
+      "user|eq|superadmin|1",
+      "user|eq|notexists|0"
+
+  }, delimiter = '|')
+  void findOrganizationInfoByFilter(String field, String condition, String value, int rows) {
+    final List<OrganizationInfo> orgsInfo = organizationRepositoryCustom.findOrganizationInfoByFilter(
+        new Filter(OrganizationInfo.class,
+            Condition.findByMarker(condition).get(),
+            false,
+            value,
+            field
+        ));
+    assertEquals(rows, orgsInfo.size());
+  }
 }

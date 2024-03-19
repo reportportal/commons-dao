@@ -25,21 +25,17 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * @author Siarhei Hrabko
  */
 @Entity
 @Table(name = "organization", schema = "public")
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+@Getter
+@Setter
 public class Organization implements Serializable {
-
-  private static final long serialVersionUID = 6730810629133187834L;
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -58,4 +54,26 @@ public class Organization implements Serializable {
   @Column(name = "slug")
   private String slug;
 
+  public Organization() {
+  }
+
+  public Organization(Long id, LocalDateTime creationDate, String name,
+      OrganizationType organizationType, String slug) {
+    this.id = id;
+    this.creationDate = creationDate;
+    this.name = name;
+    this.organizationType = organizationType;
+    this.slug = slug;
+  }
+
+  @Override
+  public String toString() {
+    return "Organization{" +
+        "id=" + id +
+        ", creationDate=" + creationDate +
+        ", name='" + name + '\'' +
+        ", organizationType=" + organizationType +
+        ", slug='" + slug + '\'' +
+        '}';
+  }
 }

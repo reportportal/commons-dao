@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package com.epam.ta.reportportal.entity.organization;
+package com.epam.ta.reportportal.entity.user;
 
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
-import com.epam.ta.reportportal.entity.user.User;
-
+import com.epam.ta.reportportal.entity.organization.Organization;
+import com.epam.ta.reportportal.entity.organization.OrganizationRole;
+import java.io.Serializable;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -28,11 +30,6 @@ import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 import javax.persistence.Table;
-import java.io.Serializable;
-import java.util.Objects;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
@@ -40,23 +37,18 @@ import org.hibernate.annotations.TypeDef;
  * @author Siarhei Hrabko
  */
 @Entity
-@Data
 @TypeDef(name = "pqsql_enum", typeClass = PostgreSQLEnumType.class)
 @Table(name = "organization_user", schema = "public")
-@NoArgsConstructor
-@AllArgsConstructor
 public class OrganizationUser implements Serializable {
 
-  private static final long serialVersionUID = 7313055792392238124L;
-
   @EmbeddedId
-  private OrganizationUserId id;
+  private OrganizationUserId id = new OrganizationUserId();
 
-  @ManyToOne(fetch = FetchType.EAGER)
+  @ManyToOne(fetch = FetchType.LAZY)
   @MapsId("organizationId")
   private Organization organization;
 
-  @ManyToOne(fetch = FetchType.EAGER)
+  @ManyToOne(fetch = FetchType.LAZY)
   @MapsId("userId")
   private User user;
 
@@ -84,5 +76,38 @@ public class OrganizationUser implements Serializable {
   @Override
   public int hashCode() {
     return Objects.hash(id, organization, user, organizationRole);
+  }
+
+  public OrganizationUserId getId() {
+    return id;
+  }
+
+  public void setId(OrganizationUserId id) {
+    this.id = id;
+  }
+
+  public Organization getOrganization() {
+    return organization;
+  }
+
+  public void setOrganization(Organization organization) {
+    this.organization = organization;
+  }
+
+  public User getUser() {
+    return user;
+  }
+
+  public void setUser(User user) {
+    this.user = user;
+  }
+
+  public OrganizationRole getOrganizationRole() {
+    return organizationRole;
+  }
+
+  public void setOrganizationRole(
+      OrganizationRole organizationRole) {
+    this.organizationRole = organizationRole;
   }
 }
