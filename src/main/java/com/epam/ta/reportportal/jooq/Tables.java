@@ -17,6 +17,7 @@ import com.epam.ta.reportportal.jooq.tables.JDashboardWidget;
 import com.epam.ta.reportportal.jooq.tables.JFilter;
 import com.epam.ta.reportportal.jooq.tables.JFilterCondition;
 import com.epam.ta.reportportal.jooq.tables.JFilterSort;
+import com.epam.ta.reportportal.jooq.tables.JImportantLaunch;
 import com.epam.ta.reportportal.jooq.tables.JIntegration;
 import com.epam.ta.reportportal.jooq.tables.JIntegrationType;
 import com.epam.ta.reportportal.jooq.tables.JIssue;
@@ -144,6 +145,11 @@ public class Tables {
      * The table <code>public.filter_sort</code>.
      */
     public static final JFilterSort FILTER_SORT = JFilterSort.FILTER_SORT;
+
+    /**
+     * The table <code>public.important_launch</code>.
+     */
+    public static final JImportantLaunch IMPORTANT_LAUNCH = JImportantLaunch.IMPORTANT_LAUNCH;
 
     /**
      * The table <code>public.integration</code>.

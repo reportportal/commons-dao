@@ -17,6 +17,7 @@ import com.epam.ta.reportportal.jooq.tables.JDashboardWidget;
 import com.epam.ta.reportportal.jooq.tables.JFilter;
 import com.epam.ta.reportportal.jooq.tables.JFilterCondition;
 import com.epam.ta.reportportal.jooq.tables.JFilterSort;
+import com.epam.ta.reportportal.jooq.tables.JImportantLaunch;
 import com.epam.ta.reportportal.jooq.tables.JIntegration;
 import com.epam.ta.reportportal.jooq.tables.JIntegrationType;
 import com.epam.ta.reportportal.jooq.tables.JIssue;
@@ -70,6 +71,7 @@ import com.epam.ta.reportportal.jooq.tables.records.JDashboardWidgetRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JFilterConditionRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JFilterRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JFilterSortRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JImportantLaunchRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JIntegrationRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JIntegrationTypeRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JIssueGroupRecord;
@@ -189,6 +191,7 @@ public class Keys {
     public static final UniqueKey<JFilterRecord> FILTER_PKEY = UniqueKeys0.FILTER_PKEY;
     public static final UniqueKey<JFilterConditionRecord> FILTER_CONDITION_PK = UniqueKeys0.FILTER_CONDITION_PK;
     public static final UniqueKey<JFilterSortRecord> FILTER_SORT_PK = UniqueKeys0.FILTER_SORT_PK;
+    public static final UniqueKey<JImportantLaunchRecord> IMPORTANT_LAUNCH_PKEY = UniqueKeys0.IMPORTANT_LAUNCH_PKEY;
     public static final UniqueKey<JIntegrationRecord> INTEGRATION_PK = UniqueKeys0.INTEGRATION_PK;
     public static final UniqueKey<JIntegrationTypeRecord> INTEGRATION_TYPE_PK = UniqueKeys0.INTEGRATION_TYPE_PK;
     public static final UniqueKey<JIntegrationTypeRecord> INTEGRATION_TYPE_NAME_KEY = UniqueKeys0.INTEGRATION_TYPE_NAME_KEY;
@@ -260,6 +263,7 @@ public class Keys {
     public static final ForeignKey<JFilterRecord, JOwnedEntityRecord> FILTER__FILTER_ID_FK = ForeignKeys0.FILTER__FILTER_ID_FK;
     public static final ForeignKey<JFilterConditionRecord, JFilterRecord> FILTER_CONDITION__FILTER_CONDITION_FILTER_ID_FKEY = ForeignKeys0.FILTER_CONDITION__FILTER_CONDITION_FILTER_ID_FKEY;
     public static final ForeignKey<JFilterSortRecord, JFilterRecord> FILTER_SORT__FILTER_SORT_FILTER_ID_FKEY = ForeignKeys0.FILTER_SORT__FILTER_SORT_FILTER_ID_FKEY;
+    public static final ForeignKey<JImportantLaunchRecord, JLaunchRecord> IMPORTANT_LAUNCH__IMPORTANT_LAUNCH_LAUNCH_ID_FKEY = ForeignKeys0.IMPORTANT_LAUNCH__IMPORTANT_LAUNCH_LAUNCH_ID_FKEY;
     public static final ForeignKey<JIntegrationRecord, JProjectRecord> INTEGRATION__INTEGRATION_PROJECT_ID_FKEY = ForeignKeys0.INTEGRATION__INTEGRATION_PROJECT_ID_FKEY;
     public static final ForeignKey<JIntegrationRecord, JIntegrationTypeRecord> INTEGRATION__INTEGRATION_TYPE_FKEY = ForeignKeys0.INTEGRATION__INTEGRATION_TYPE_FKEY;
     public static final ForeignKey<JIssueRecord, JTestItemResultsRecord> ISSUE__ISSUE_ISSUE_ID_FKEY = ForeignKeys0.ISSUE__ISSUE_ISSUE_ID_FKEY;
@@ -362,6 +366,7 @@ public class Keys {
         public static final UniqueKey<JFilterRecord> FILTER_PKEY = Internal.createUniqueKey(JFilter.FILTER, "filter_pkey", JFilter.FILTER.ID);
         public static final UniqueKey<JFilterConditionRecord> FILTER_CONDITION_PK = Internal.createUniqueKey(JFilterCondition.FILTER_CONDITION, "filter_condition_pk", JFilterCondition.FILTER_CONDITION.ID);
         public static final UniqueKey<JFilterSortRecord> FILTER_SORT_PK = Internal.createUniqueKey(JFilterSort.FILTER_SORT, "filter_sort_pk", JFilterSort.FILTER_SORT.ID);
+        public static final UniqueKey<JImportantLaunchRecord> IMPORTANT_LAUNCH_PKEY = Internal.createUniqueKey(JImportantLaunch.IMPORTANT_LAUNCH, "important_launch_pkey", JImportantLaunch.IMPORTANT_LAUNCH.LAUNCH_ID);
         public static final UniqueKey<JIntegrationRecord> INTEGRATION_PK = Internal.createUniqueKey(JIntegration.INTEGRATION, "integration_pk", JIntegration.INTEGRATION.ID);
         public static final UniqueKey<JIntegrationTypeRecord> INTEGRATION_TYPE_PK = Internal.createUniqueKey(JIntegrationType.INTEGRATION_TYPE, "integration_type_pk", JIntegrationType.INTEGRATION_TYPE.ID);
         public static final UniqueKey<JIntegrationTypeRecord> INTEGRATION_TYPE_NAME_KEY = Internal.createUniqueKey(JIntegrationType.INTEGRATION_TYPE, "integration_type_name_key", JIntegrationType.INTEGRATION_TYPE.NAME);
@@ -431,6 +436,7 @@ public class Keys {
         public static final ForeignKey<JFilterRecord, JOwnedEntityRecord> FILTER__FILTER_ID_FK = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.SHAREABLE_PK, JFilter.FILTER, "filter__filter_id_fk", JFilter.FILTER.ID);
         public static final ForeignKey<JFilterConditionRecord, JFilterRecord> FILTER_CONDITION__FILTER_CONDITION_FILTER_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.FILTER_PKEY, JFilterCondition.FILTER_CONDITION, "filter_condition__filter_condition_filter_id_fkey", JFilterCondition.FILTER_CONDITION.FILTER_ID);
         public static final ForeignKey<JFilterSortRecord, JFilterRecord> FILTER_SORT__FILTER_SORT_FILTER_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.FILTER_PKEY, JFilterSort.FILTER_SORT, "filter_sort__filter_sort_filter_id_fkey", JFilterSort.FILTER_SORT.FILTER_ID);
+        public static final ForeignKey<JImportantLaunchRecord, JLaunchRecord> IMPORTANT_LAUNCH__IMPORTANT_LAUNCH_LAUNCH_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.LAUNCH_PK, JImportantLaunch.IMPORTANT_LAUNCH, "important_launch__important_launch_launch_id_fkey", JImportantLaunch.IMPORTANT_LAUNCH.LAUNCH_ID);
         public static final ForeignKey<JIntegrationRecord, JProjectRecord> INTEGRATION__INTEGRATION_PROJECT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JIntegration.INTEGRATION, "integration__integration_project_id_fkey", JIntegration.INTEGRATION.PROJECT_ID);
         public static final ForeignKey<JIntegrationRecord, JIntegrationTypeRecord> INTEGRATION__INTEGRATION_TYPE_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.INTEGRATION_TYPE_PK, JIntegration.INTEGRATION, "integration__integration_type_fkey", JIntegration.INTEGRATION.TYPE);
         public static final ForeignKey<JIssueRecord, JTestItemResultsRecord> ISSUE__ISSUE_ISSUE_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.TEST_ITEM_RESULTS_PK, JIssue.ISSUE, "issue__issue_issue_id_fkey", JIssue.ISSUE.ISSUE_ID);

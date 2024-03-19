@@ -17,6 +17,7 @@ import com.epam.ta.reportportal.jooq.tables.JDashboardWidget;
 import com.epam.ta.reportportal.jooq.tables.JFilter;
 import com.epam.ta.reportportal.jooq.tables.JFilterCondition;
 import com.epam.ta.reportportal.jooq.tables.JFilterSort;
+import com.epam.ta.reportportal.jooq.tables.JImportantLaunch;
 import com.epam.ta.reportportal.jooq.tables.JIntegration;
 import com.epam.ta.reportportal.jooq.tables.JIntegrationType;
 import com.epam.ta.reportportal.jooq.tables.JIssue;
@@ -114,6 +115,7 @@ public class Indexes {
     public static final Index FILTER_CONDITION_PK = Indexes0.FILTER_CONDITION_PK;
     public static final Index FILTER_SORT_FILTER_IDX = Indexes0.FILTER_SORT_FILTER_IDX;
     public static final Index FILTER_SORT_PK = Indexes0.FILTER_SORT_PK;
+    public static final Index IMPORTANT_LAUNCH_PKEY = Indexes0.IMPORTANT_LAUNCH_PKEY;
     public static final Index INTEGR_PROJECT_IDX = Indexes0.INTEGR_PROJECT_IDX;
     public static final Index INTEGRATION_PK = Indexes0.INTEGRATION_PK;
     public static final Index UNIQUE_GLOBAL_INTEGRATION_NAME = Indexes0.UNIQUE_GLOBAL_INTEGRATION_NAME;
@@ -144,7 +146,6 @@ public class Indexes {
     public static final Index LOG_ATTACH_ID_IDX = Indexes0.LOG_ATTACH_ID_IDX;
     public static final Index LOG_CLUSTER_IDX = Indexes0.LOG_CLUSTER_IDX;
     public static final Index LOG_LAUNCH_ID_IDX = Indexes0.LOG_LAUNCH_ID_IDX;
-    public static final Index LOG_MESSAGE_TRGM_IDX = Indexes0.LOG_MESSAGE_TRGM_IDX;
     public static final Index LOG_PK = Indexes0.LOG_PK;
     public static final Index LOG_PROJECT_ID_LOG_TIME_IDX = Indexes0.LOG_PROJECT_ID_LOG_TIME_IDX;
     public static final Index LOG_PROJECT_IDX = Indexes0.LOG_PROJECT_IDX;
@@ -246,6 +247,7 @@ public class Indexes {
         public static Index FILTER_CONDITION_PK = Internal.createIndex("filter_condition_pk", JFilterCondition.FILTER_CONDITION, new OrderField[] { JFilterCondition.FILTER_CONDITION.ID }, true);
         public static Index FILTER_SORT_FILTER_IDX = Internal.createIndex("filter_sort_filter_idx", JFilterSort.FILTER_SORT, new OrderField[] { JFilterSort.FILTER_SORT.FILTER_ID }, false);
         public static Index FILTER_SORT_PK = Internal.createIndex("filter_sort_pk", JFilterSort.FILTER_SORT, new OrderField[] { JFilterSort.FILTER_SORT.ID }, true);
+        public static Index IMPORTANT_LAUNCH_PKEY = Internal.createIndex("important_launch_pkey", JImportantLaunch.IMPORTANT_LAUNCH, new OrderField[] { JImportantLaunch.IMPORTANT_LAUNCH.LAUNCH_ID }, true);
         public static Index INTEGR_PROJECT_IDX = Internal.createIndex("integr_project_idx", JIntegration.INTEGRATION, new OrderField[] { JIntegration.INTEGRATION.PROJECT_ID }, false);
         public static Index INTEGRATION_PK = Internal.createIndex("integration_pk", JIntegration.INTEGRATION, new OrderField[] { JIntegration.INTEGRATION.ID }, true);
         public static Index UNIQUE_GLOBAL_INTEGRATION_NAME = Internal.createIndex("unique_global_integration_name", JIntegration.INTEGRATION, new OrderField[] { JIntegration.INTEGRATION.NAME, JIntegration.INTEGRATION.TYPE }, true);

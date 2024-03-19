@@ -17,6 +17,7 @@ import com.epam.ta.reportportal.jooq.tables.JDashboardWidget;
 import com.epam.ta.reportportal.jooq.tables.JFilter;
 import com.epam.ta.reportportal.jooq.tables.JFilterCondition;
 import com.epam.ta.reportportal.jooq.tables.JFilterSort;
+import com.epam.ta.reportportal.jooq.tables.JImportantLaunch;
 import com.epam.ta.reportportal.jooq.tables.JIntegration;
 import com.epam.ta.reportportal.jooq.tables.JIntegrationType;
 import com.epam.ta.reportportal.jooq.tables.JIssue;
@@ -88,7 +89,7 @@ import org.jooq.impl.SchemaImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JPublic extends SchemaImpl {
 
-    private static final long serialVersionUID = -1176761935;
+    private static final long serialVersionUID = 1356247619;
 
     /**
      * The reference instance of <code>public</code>
@@ -159,6 +160,11 @@ public class JPublic extends SchemaImpl {
      * The table <code>public.filter_sort</code>.
      */
     public final JFilterSort FILTER_SORT = com.epam.ta.reportportal.jooq.tables.JFilterSort.FILTER_SORT;
+
+    /**
+     * The table <code>public.important_launch</code>.
+     */
+    public final JImportantLaunch IMPORTANT_LAUNCH = com.epam.ta.reportportal.jooq.tables.JImportantLaunch.IMPORTANT_LAUNCH;
 
     /**
      * The table <code>public.integration</code>.
@@ -466,6 +472,7 @@ public class JPublic extends SchemaImpl {
             JFilter.FILTER,
             JFilterCondition.FILTER_CONDITION,
             JFilterSort.FILTER_SORT,
+            JImportantLaunch.IMPORTANT_LAUNCH,
             JIntegration.INTEGRATION,
             JIntegrationType.INTEGRATION_TYPE,
             JIssue.ISSUE,
