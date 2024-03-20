@@ -88,7 +88,7 @@ import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTab
 import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.ws.model.ActivityResource;
 import com.epam.ta.reportportal.ws.reporting.ErrorType;
-import com.epam.ta.reportportal.ws.model.attribute.ItemAttributeResource;
+import com.epam.ta.reportportal.ws.reporting.ItemAttributeResource;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
