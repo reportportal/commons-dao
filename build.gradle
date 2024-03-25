@@ -55,7 +55,7 @@ dependencies {
         compile 'com.github.reportportal:commons:07566b8e'
         compile 'com.github.reportportal:commons-rules:1f6bfed'
         compile 'com.github.reportportal:commons-model:11a2665'
-        implementation 'com.github.reportportal:commons-reporting:c324bab'
+        compile 'com.github.reportportal:commons-reporting:5c74bb2'
     }
 
     //https://nvd.nist.gov/vuln/detail/CVE-2020-10683 (dom4j 2.1.3 version dependency) AND https://nvd.nist.gov/vuln/detail/CVE-2019-14900
