@@ -158,6 +158,15 @@ class ProjectRepositoryTest extends BaseTest {
             USERS_QUANTITY
         ));
     assertEquals(2, projectInfos.size());
+    var keyNotNull = projectInfos
+        .stream()
+        .allMatch(prInfo -> prInfo.getKey() != null);
+    assertTrue(keyNotNull);
+
+    var slugNotNull = projectInfos
+        .stream()
+        .allMatch(prInfo -> prInfo.getSlug() != null);
+    assertTrue(slugNotNull);
   }
 
   @Test
