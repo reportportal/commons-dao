@@ -167,7 +167,7 @@ class UserRepositoryTest extends BaseTest {
         .get("millennium_falcon");
     assertThat(project.getProjectId(), Matchers.equalTo(3L));
     assertThat(project.getProjectName(), Matchers.equalTo("millennium_falcon"));
-    assertThat(project.getProjectRole(), Matchers.equalTo(ProjectRole.MEMBER));
+    assertThat(project.getProjectRole(), Matchers.equalTo(ProjectRole.VIEWER));
   }
 
   @Test
@@ -357,7 +357,7 @@ class UserRepositoryTest extends BaseTest {
     Project defaultProject = projectRepository.findByName("superadmin_personal").get();
     Set<ProjectUser> projectUsers = defaultProject.getUsers();
 
-    projectUsers.add(new ProjectUser().withProjectRole(ProjectRole.CUSTOMER).withUser(reg)
+    projectUsers.add(new ProjectUser().withProjectRole(ProjectRole.EDITOR).withUser(reg)
         .withProject(defaultProject));
     defaultProject.setUsers(projectUsers);
 
@@ -382,13 +382,13 @@ class UserRepositoryTest extends BaseTest {
 
   @Test
   void findAllMembersByProjectManagerRole() {
-    List<String> emails = userRepository.findEmailsByProjectAndRole(1L, ProjectRole.PROJECT_MANAGER);
+    List<String> emails = userRepository.findEmailsByProjectAndRole(1L, ProjectRole.EDITOR);
 
     assertFalse(emails.isEmpty());
 
     emails.forEach(e -> {
       User user = userRepository.findByEmail(e).get();
-      assertEquals(ProjectRole.PROJECT_MANAGER,
+      assertEquals(ProjectRole.EDITOR,
           user.getProjects()
               .stream()
               .filter(it -> it.getId().getProjectId().equals(1L))
@@ -400,8 +400,8 @@ class UserRepositoryTest extends BaseTest {
   }
 
   @Test
-  void findAllMembersByMemberRole() {
-    List<String> emails = userRepository.findEmailsByProjectAndRole(1L, ProjectRole.MEMBER);
+  void findAllMembersByViewerRole() {
+    List<String> emails = userRepository.findEmailsByProjectAndRole(1L, ProjectRole.VIEWER);
 
     assertTrue(emails.isEmpty());
   }

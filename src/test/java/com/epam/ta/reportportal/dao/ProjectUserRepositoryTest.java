@@ -27,7 +27,7 @@ class ProjectUserRepositoryTest extends BaseTest {
 
     Assertions.assertEquals(projectKey, projectDetails.get().getProjectName());
     Assertions.assertEquals(1L, projectDetails.get().getProjectId());
-    Assertions.assertEquals(ProjectRole.PROJECT_MANAGER, projectDetails.get().getProjectRole());
+    Assertions.assertEquals(ProjectRole.EDITOR, projectDetails.get().getProjectRole());
   }
 
   @Test

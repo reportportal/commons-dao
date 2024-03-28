@@ -91,7 +91,7 @@ public final class PersonalProjectService {
     project.setProjectType(ProjectType.PERSONAL);
 
     ProjectUser projectUser = new ProjectUser().withUser(user)
-        .withProjectRole(ProjectRole.PROJECT_MANAGER).withProject(project);
+        .withProjectRole(ProjectRole.EDITOR).withProject(project);
     project.setUsers(Sets.newHashSet(projectUser));
 
     project.setMetadata(new Metadata(Collections.singletonMap("additional_info",
