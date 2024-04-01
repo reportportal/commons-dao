@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.epam.ta.reportportal.exception;
+package com.epam.reportportal.rules.exception;
 
 /**
  * Exceptions related to data storage
