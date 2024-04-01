@@ -105,6 +105,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import java.io.IOException;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -258,7 +259,7 @@ public class RecordMappers {
       indexLog.setLogId(r.get(LOG.ID, Long.class));
       indexLog.setMessage(r.get(LOG.LOG_MESSAGE, String.class));
       indexLog.setLogLevel(r.get(JLog.LOG.LOG_LEVEL, Integer.class));
-      indexLog.setLogTime(r.get(LOG.LOG_TIME, Instant.class));
+      indexLog.setLogTime(r.get(LOG.LOG_TIME, LocalDateTime.class));
       indexLog.setClusterId(r.get(CLUSTERS.INDEX_ID));
 
       ofNullable(indexLogMapping.get(itemId)).ifPresentOrElse(indexLogs -> indexLogs.add(indexLog),
@@ -301,7 +302,7 @@ public class RecordMappers {
     final IndexTestItem indexTestItem = new IndexTestItem();
     indexTestItem.setTestItemId(record.get(TEST_ITEM.ITEM_ID));
     indexTestItem.setTestItemName(record.get(TEST_ITEM.NAME));
-    indexTestItem.setStartTime(record.get(TEST_ITEM.START_TIME).toInstant());
+    indexTestItem.setStartTime(record.get(TEST_ITEM.START_TIME, LocalDateTime.class));
     indexTestItem.setUniqueId(record.get(TEST_ITEM.UNIQUE_ID));
     indexTestItem.setTestCaseHash(record.get(TEST_ITEM.TEST_CASE_HASH));
     indexTestItem.setAutoAnalyzed(record.get(ISSUE.AUTO_ANALYZED));
@@ -350,7 +351,7 @@ public class RecordMappers {
     final IndexLaunch indexLaunch = new IndexLaunch();
     indexLaunch.setLaunchId(record.get(LAUNCH.ID));
     indexLaunch.setLaunchName(record.get(LAUNCH.NAME));
-    indexLaunch.setLaunchStartTime(record.get(LAUNCH.START_TIME).toInstant());
+    indexLaunch.setLaunchStartTime(record.get(LAUNCH.START_TIME, LocalDateTime.class ));
     indexLaunch.setProjectId(record.get(LAUNCH.PROJECT_ID));
     indexLaunch.setLaunchNumber(
         (record.get(LAUNCH.NUMBER) != null) ? record.get(LAUNCH.NUMBER).longValue() : null);
