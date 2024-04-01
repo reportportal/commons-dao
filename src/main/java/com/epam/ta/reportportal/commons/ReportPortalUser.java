@@ -88,12 +88,17 @@ public class ReportPortalUser extends User {
     @JsonProperty("role")
     private ProjectRole projectRole;
 
+    @JsonProperty("organization_id")
+    private Long organizationId;
+
+
     public ProjectDetails(Long projectId, String projectName, ProjectRole projectRole,
-        String projectKey) {
+        String projectKey, Long organizationId) {
       this.projectId = projectId;
       this.projectName = projectName;
       this.projectRole = projectRole;
       this.projectKey = projectKey;
+      this.organizationId = organizationId;
     }
 
     public static ProjectDetailsBuilder builder() {
@@ -106,6 +111,8 @@ public class ReportPortalUser extends User {
       private String projectName;
       private String projectKey;
       private ProjectRole projectRole;
+      private Long organizationId;
+
 
       private ProjectDetailsBuilder() {
       }
@@ -125,6 +132,11 @@ public class ReportPortalUser extends User {
         return this;
       }
 
+      public ProjectDetailsBuilder withOrgId(Long orgId) {
+        this.organizationId = orgId;
+        return this;
+      }
+
       public ProjectDetailsBuilder withProjectRole(String projectRole) {
         this.projectRole = ProjectRole.forName(projectRole)
             .orElseThrow(() -> new ReportPortalException(ErrorType.ROLE_NOT_FOUND, projectRole));
@@ -132,7 +144,7 @@ public class ReportPortalUser extends User {
       }
 
       public ProjectDetails build() {
-        return new ProjectDetails(projectId, projectName, projectRole, projectKey);
+        return new ProjectDetails(projectId, projectName, projectRole, projectKey, organizationId);
       }
     }
   }

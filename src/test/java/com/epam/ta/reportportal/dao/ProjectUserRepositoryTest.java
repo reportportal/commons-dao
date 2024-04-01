@@ -24,6 +24,7 @@ class ProjectUserRepositoryTest extends BaseTest {
     );
 
     Assertions.assertTrue(projectDetails.isPresent());
+    Assertions.assertNotNull(projectDetails.get().getOrganizationId());
 
     Assertions.assertEquals(projectKey, projectDetails.get().getProjectName());
     Assertions.assertEquals(1L, projectDetails.get().getProjectId());

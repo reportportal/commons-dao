@@ -428,7 +428,8 @@ public class RecordMappers {
     final String projectName = r.get(PROJECT.NAME);
     final ProjectRole projectRole = r.into(PROJECT_USER.PROJECT_ROLE).into(ProjectRole.class);
     final String projectKey = r.get(PROJECT.KEY);
-    return new ReportPortalUser.ProjectDetails(projectId, projectName, projectRole, projectKey);
+    final Long organizationId = r.get(PROJECT.ORGANIZATION_ID);
+    return new ReportPortalUser.ProjectDetails(projectId, projectName, projectRole, projectKey, organizationId);
   };
 
   public static final RecordMapper<? super Record, Activity> ACTIVITY_MAPPER = r -> {
