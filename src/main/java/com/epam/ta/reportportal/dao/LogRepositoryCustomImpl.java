@@ -48,7 +48,7 @@ import static java.util.stream.Collectors.toList;
 import static org.jooq.impl.DSL.field;
 
 import com.epam.reportportal.model.analyzer.IndexLog;
-import com.epam.ta.reportportal.ws.reporting.ErrorType;
+import com.epam.reportportal.rules.exception.ErrorType;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;

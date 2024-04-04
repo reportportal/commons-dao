@@ -16,7 +16,7 @@
 
 package com.epam.ta.reportportal.binary.impl;
 
-import com.epam.ta.reportportal.ws.reporting.ErrorType;
+import com.epam.reportportal.rules.exception.ErrorType;
 import com.epam.reportportal.rules.exception.ReportPortalException;
 import com.epam.ta.reportportal.binary.DataStoreService;
 import com.epam.ta.reportportal.binary.UserBinaryDataService;

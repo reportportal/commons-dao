@@ -16,9 +16,10 @@
 
 package com.epam.ta.reportportal.commons.querygen;
 
-import static com.epam.reportportal.rules.commons.validation.BusinessRule.expect;
+import static com.epam.reportportal.rules.commons.validation .BusinessRule.expect;
 import static com.epam.reportportal.rules.commons.validation.BusinessRule.fail;
 import static com.epam.reportportal.rules.commons.validation.Suppliers.formattedSupplier;
+import static com.epam.reportportal.rules.exception.ErrorType.INCORRECT_FILTER_PARAMETERS;
 import static com.epam.ta.reportportal.commons.Predicates.or;
 import static com.epam.ta.reportportal.commons.querygen.FilterRules.countOfValues;
 import static com.epam.ta.reportportal.commons.querygen.FilterRules.filterForArrayAggregation;
@@ -29,7 +30,6 @@ import static com.epam.ta.reportportal.commons.querygen.FilterRules.filterForNum
 import static com.epam.ta.reportportal.commons.querygen.FilterRules.filterForString;
 import static com.epam.ta.reportportal.commons.querygen.FilterRules.timeStamp;
 import static com.epam.ta.reportportal.commons.querygen.FilterRules.zoneOffset;
-import static com.epam.ta.reportportal.ws.reporting.ErrorType.INCORRECT_FILTER_PARAMETERS;
 import static java.lang.Long.parseLong;
 import static java.util.Date.from;
 import static org.jooq.impl.DSL.any;
@@ -38,7 +38,7 @@ import static org.jooq.impl.DSL.function;
 import static org.jooq.util.postgres.PostgresDSL.arrayLength;
 import static org.jooq.util.postgres.PostgresDSL.arrayRemove;
 
-import com.epam.ta.reportportal.ws.reporting.ErrorType;
+import com.epam.reportportal.rules.exception.ErrorType;
 import com.epam.ta.reportportal.commons.Predicates;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;

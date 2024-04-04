@@ -50,7 +50,7 @@ import static java.util.Optional.ofNullable;
 import com.epam.reportportal.model.analyzer.IndexLaunch;
 import com.epam.reportportal.model.analyzer.IndexLog;
 import com.epam.reportportal.model.analyzer.IndexTestItem;
-import com.epam.ta.reportportal.ws.reporting.ErrorType;
+import com.epam.reportportal.rules.exception.ErrorType;
 import com.epam.reportportal.rules.exception.ReportPortalException;
 import com.epam.ta.reportportal.commons.ReportPortalUser;
 import com.epam.ta.reportportal.entity.ItemAttribute;

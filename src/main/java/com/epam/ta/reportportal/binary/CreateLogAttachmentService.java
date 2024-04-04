@@ -16,7 +16,7 @@
 
 package com.epam.ta.reportportal.binary;
 
-import com.epam.ta.reportportal.ws.reporting.ErrorType;
+import com.epam.reportportal.rules.exception.ErrorType;
 import com.epam.reportportal.rules.exception.ReportPortalException;
 import com.epam.ta.reportportal.dao.LogRepository;
 import com.epam.ta.reportportal.entity.attachment.Attachment;

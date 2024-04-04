@@ -17,7 +17,7 @@
 package com.epam.ta.reportportal.binary.impl;
 
 import com.epam.reportportal.commons.ContentTypeResolver;
-import com.epam.ta.reportportal.ws.reporting.ErrorType;
+import com.epam.reportportal.rules.exception.ErrorType;
 import com.epam.reportportal.rules.exception.ReportPortalException;
 import com.epam.ta.reportportal.binary.AttachmentBinaryDataService;
 import com.epam.ta.reportportal.binary.CreateLogAttachmentService;
