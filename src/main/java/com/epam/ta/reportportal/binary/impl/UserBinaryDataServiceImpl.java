@@ -16,28 +16,16 @@
 
 package com.epam.ta.reportportal.binary.impl;
 
-import static com.epam.ta.reportportal.binary.impl.DataStoreUtils.ATTACHMENT_CONTENT_TYPE;
-import static com.epam.ta.reportportal.binary.impl.DataStoreUtils.PHOTOS_PATH;
-import static com.epam.ta.reportportal.binary.impl.DataStoreUtils.ROOT_USER_PHOTO_DIR;
-import static com.epam.ta.reportportal.binary.impl.DataStoreUtils.USER_DATA_PATH;
-import static com.epam.ta.reportportal.binary.impl.DataStoreUtils.buildThumbnailFileName;
-import static java.util.Optional.ofNullable;
-
+import com.epam.reportportal.rules.exception.ErrorType;
+import com.epam.reportportal.rules.exception.ReportPortalException;
 import com.epam.ta.reportportal.binary.DataStoreService;
 import com.epam.ta.reportportal.binary.UserBinaryDataService;
 import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.attachment.BinaryData;
 import com.epam.ta.reportportal.entity.enums.FeatureFlag;
 import com.epam.ta.reportportal.entity.user.User;
-import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.util.FeatureFlagHandler;
-import com.epam.ta.reportportal.ws.reporting.ErrorType;
 import com.google.common.collect.Maps;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Paths;
-import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +35,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Paths;
+import java.util.Optional;
+
+import static com.epam.ta.reportportal.binary.impl.DataStoreUtils.*;
+import static java.util.Optional.ofNullable;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>

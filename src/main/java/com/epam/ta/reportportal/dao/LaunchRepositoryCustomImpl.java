@@ -42,6 +42,7 @@ import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.name;
 import static org.jooq.impl.DSL.val;
 
+import com.epam.reportportal.model.analyzer.IndexLaunch;
 import com.epam.ta.reportportal.commons.querygen.ConvertibleCondition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
@@ -55,7 +56,6 @@ import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.epam.ta.reportportal.util.SortUtils;
-import com.epam.ta.reportportal.ws.model.analyzer.IndexLaunch;
 import com.google.common.collect.Lists;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;

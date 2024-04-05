@@ -19,11 +19,11 @@ package com.epam.ta.reportportal.commons;
 import static com.epam.ta.reportportal.commons.EntityUtils.TO_LOCAL_DATE_TIME;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.CRITERIA_LAUNCH_MODE;
 
+import com.epam.reportportal.rules.exception.ErrorType;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
+import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
-import com.epam.ta.reportportal.ws.reporting.ErrorType;
-import com.epam.ta.reportportal.ws.reporting.Mode;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Date;
@@ -66,10 +66,9 @@ public class Preconditions {
     return input -> ArrayUtils.contains(statuses, input);
   }
 
-  public static Predicate<FilterCondition> hasMode(final Mode mode) {
+  public static Predicate<FilterCondition> hasMode(final LaunchModeEnum mode) {
     return condition -> (CRITERIA_LAUNCH_MODE.equalsIgnoreCase(condition.getSearchCriteria())) && (
-        mode == null || mode.name()
-            .equalsIgnoreCase(condition.getValue()));
+        mode == null || mode.name().equalsIgnoreCase(condition.getValue()));
   }
 
   /**

@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.dao;
 
+import com.epam.reportportal.model.analyzer.IndexTestItem;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
@@ -33,8 +34,6 @@ import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.statistics.Statistics;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
-import com.epam.ta.reportportal.ws.model.analyzer.IndexTestItem;
-import com.epam.ta.reportportal.ws.reporting.Issue;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -473,5 +472,5 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
       boolean excludePassedLogs);
 
   List<IndexTestItem> findIndexTestItemByLaunchId(Long launchId,
-      Collection<JTestItemTypeEnum> itemTypes);
+                                                  Collection<JTestItemTypeEnum> itemTypes);
 }
