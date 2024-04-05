@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
-import com.epam.ta.reportportal.ws.reporting.Mode;
+import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
@@ -36,7 +36,7 @@ class PreconditionsTest {
   @Test
   void hasModePositive() {
 
-    Mode mode = Mode.DEFAULT;
+    LaunchModeEnum mode = LaunchModeEnum.DEFAULT;
 
     Assertions.assertTrue(Preconditions.hasMode(mode).test(filterConditionWithMode(mode)));
   }
@@ -44,8 +44,8 @@ class PreconditionsTest {
   @Test
   void hasModeNegative() {
 
-    Mode mode = Mode.DEFAULT;
-    Mode anotherMode = Mode.DEBUG;
+    LaunchModeEnum mode = LaunchModeEnum.DEFAULT;
+    LaunchModeEnum anotherMode = LaunchModeEnum.DEBUG;
 
     Assertions.assertFalse(Preconditions.hasMode(mode).test(filterConditionWithMode(anotherMode)));
   }
@@ -89,7 +89,7 @@ class PreconditionsTest {
         () -> Preconditions.sameTimeOrLater(null).test(new Date()));
   }
 
-  private FilterCondition filterConditionWithMode(Mode mode) {
+  private FilterCondition filterConditionWithMode(LaunchModeEnum mode) {
 
     return new FilterCondition(Condition.EQUALS, false, mode.name(), CRITERIA_LAUNCH_MODE);
   }

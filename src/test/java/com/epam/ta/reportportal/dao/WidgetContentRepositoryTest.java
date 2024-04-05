@@ -75,7 +75,7 @@ import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTab
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableInitParams;
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.LevelEntry;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
-import com.epam.ta.reportportal.ws.reporting.Mode;
+import com.fasterxml.jackson.annotation.JsonCreator.Mode;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import java.math.BigDecimal;
