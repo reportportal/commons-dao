@@ -19,7 +19,6 @@ package com.epam.ta.reportportal.entity.project;
 import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.integration.Integration;
-import com.epam.ta.reportportal.entity.organization.Organization;
 import com.epam.ta.reportportal.entity.pattern.PatternTemplate;
 import com.epam.ta.reportportal.entity.project.email.SenderCase;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
@@ -36,8 +35,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
@@ -127,11 +124,12 @@ public class Project implements Serializable {
       return false;
     }
     Project project = (Project) o;
-    return Objects.equals(name, project.name) && Objects.equals(allocatedStorage,
-        project.allocatedStorage) && Objects.equals(
-        creationDate,
-        project.creationDate
-    ) && Objects.equals(metadata, project.metadata);
+    return Objects.equals(name, project.name)
+        && Objects.equals(key, project.key)
+        && Objects.equals(organizationId, project.organizationId)
+        && Objects.equals(allocatedStorage, project.allocatedStorage)
+        && Objects.equals(creationDate, project.creationDate)
+        && Objects.equals(metadata, project.metadata);
   }
 
   @Override
