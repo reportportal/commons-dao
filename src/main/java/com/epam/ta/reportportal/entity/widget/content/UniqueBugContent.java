@@ -16,7 +16,7 @@
 
 package com.epam.ta.reportportal.entity.widget.content;
 
-import com.epam.ta.reportportal.ws.reporting.ItemAttributeResource;
+import com.epam.ta.reportportal.entity.item.ItemAttributePojo;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Lists;
@@ -91,7 +91,7 @@ public class UniqueBugContent implements Serializable {
     private String path;
 
     @JsonProperty(value = "attributes")
-    private Set<ItemAttributeResource> itemAttributeResources = Sets.newHashSet();
+    private Set<ItemAttributePojo> itemAttributeResources = Sets.newHashSet();
 
     public Long getTestItemId() {
       return testItemId;
@@ -125,11 +125,11 @@ public class UniqueBugContent implements Serializable {
       this.path = path;
     }
 
-    public Set<ItemAttributeResource> getItemAttributeResources() {
+    public Set<ItemAttributePojo> getItemAttributeResources() {
       return itemAttributeResources;
     }
 
-    public void setItemAttributeResources(Set<ItemAttributeResource> itemAttributeResources) {
+    public void setItemAttributeResources(Set<ItemAttributePojo> itemAttributeResources) {
       this.itemAttributeResources = itemAttributeResources;
     }
   }

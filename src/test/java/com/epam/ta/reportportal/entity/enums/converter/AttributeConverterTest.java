@@ -19,7 +19,7 @@ package com.epam.ta.reportportal.entity.enums.converter;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.epam.ta.reportportal.exception.ReportPortalException;
+import com.epam.reportportal.rules.exception.ReportPortalException;
 import java.util.List;
 import java.util.Map;
 import javax.persistence.AttributeConverter;

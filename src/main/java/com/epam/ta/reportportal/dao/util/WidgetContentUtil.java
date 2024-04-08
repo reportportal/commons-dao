@@ -65,9 +65,11 @@ import static com.epam.ta.reportportal.jooq.tables.JTicket.TICKET;
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
 import static java.util.Optional.ofNullable;
 
+import com.epam.reportportal.model.ActivityResource;
 import com.epam.ta.reportportal.commons.querygen.CriteriaHolder;
 import com.epam.ta.reportportal.commons.querygen.FilterTarget;
 import com.epam.ta.reportportal.entity.activity.ActivityDetails;
+import com.epam.ta.reportportal.entity.item.ItemAttributePojo;
 import com.epam.ta.reportportal.entity.widget.content.ChartStatisticsContent;
 import com.epam.ta.reportportal.entity.widget.content.CriteriaHistoryItem;
 import com.epam.ta.reportportal.entity.widget.content.CumulativeTrendChartContent;
@@ -84,10 +86,9 @@ import com.epam.ta.reportportal.entity.widget.content.UniqueBugContent;
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.ComponentHealthCheckContent;
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableGetParams;
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableStatisticsContent;
-import com.epam.ta.reportportal.exception.ReportPortalException;
-import com.epam.ta.reportportal.ws.model.ActivityResource;
-import com.epam.ta.reportportal.ws.reporting.ErrorType;
-import com.epam.ta.reportportal.ws.reporting.ItemAttributeResource;
+import com.epam.reportportal.rules.exception.ReportPortalException;
+
+import com.epam.reportportal.rules.exception.ErrorType;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -223,13 +224,13 @@ public class WidgetContentUtil {
 			});
 
 			itemAttributeIdField.flatMap(f -> ofNullable(record.get(f))).ifPresent(id -> {
-				Set<ItemAttributeResource> attributes = ofNullable(content.getAttributes()).orElseGet(Sets::newLinkedHashSet);
+				Set<ItemAttributePojo> attributes = ofNullable(content.getAttributes()).orElseGet(Sets::newLinkedHashSet);
 
-				ItemAttributeResource attributeResource = new ItemAttributeResource();
-				attributeResource.setKey(record.get(ITEM_ATTRIBUTE.KEY));
-				attributeResource.setValue(record.get(ITEM_ATTRIBUTE.VALUE));
+				ItemAttributePojo itemAttribute = new ItemAttributePojo();
+				itemAttribute.setKey(record.get(ITEM_ATTRIBUTE.KEY));
+				itemAttribute.setValue(record.get(ITEM_ATTRIBUTE.VALUE));
 
-				attributes.add(attributeResource);
+				attributes.add(itemAttribute);
 
 				content.setAttributes(attributes);
 			});
@@ -360,13 +361,13 @@ public class WidgetContentUtil {
 		return new ArrayList<>(productStatusMapping.values());
 	};
 
-	public static final RecordMapper<Record, Optional<ItemAttributeResource>> ITEM_ATTRIBUTE_RESOURCE_MAPPER = record -> {
+	public static final RecordMapper<Record, Optional<ItemAttributePojo>> ITEM_ATTRIBUTE_RESOURCE_MAPPER = record -> {
 
 		String key = record.get(fieldName(ITEM_ATTRIBUTES, KEY), String.class);
 		String value = record.get(fieldName(ITEM_ATTRIBUTES, VALUE), String.class);
 
 		if (key != null || value != null) {
-			return Optional.of(new ItemAttributeResource(key, value));
+			return Optional.of(new ItemAttributePojo(key, value));
 		} else {
 			return Optional.empty();
 		}

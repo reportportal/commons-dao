@@ -16,7 +16,7 @@
 
 package com.epam.ta.reportportal.entity.widget.content;
 
-import com.epam.ta.reportportal.ws.reporting.ItemAttributeResource;
+import com.epam.ta.reportportal.entity.item.ItemAttributePojo;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.LinkedHashMap;
@@ -30,16 +30,16 @@ import java.util.Set;
 public class LaunchesTableContent extends AbstractLaunchStatisticsContent {
 
   @JsonProperty(value = "attributes")
-  private Set<ItemAttributeResource> attributes;
+  private Set<ItemAttributePojo> attributes;
 
   @JsonProperty(value = "values")
   private Map<String, Object> values = new LinkedHashMap<>();
 
-  public Set<ItemAttributeResource> getAttributes() {
+  public Set<ItemAttributePojo> getAttributes() {
     return attributes;
   }
 
-  public void setAttributes(Set<ItemAttributeResource> attributes) {
+  public void setAttributes(Set<ItemAttributePojo> attributes) {
     this.attributes = attributes;
   }
 
