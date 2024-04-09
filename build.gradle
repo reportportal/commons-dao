@@ -46,6 +46,7 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-data-jpa') {
         exclude group: 'org.hibernate', module: 'hibernate-core'
     }
+    implementation 'org.springframework:spring-jdbc:6.1.5'
     implementation 'org.hibernate.orm:hibernate-core:6.4.4.Final'
     //
 
