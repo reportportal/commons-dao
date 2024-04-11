@@ -79,4 +79,10 @@ class IssueTypeRepositoryTest extends BaseTest {
     assertEquals(DEFAULT_ISSUE_TYPES_COUNT, defaultIssueTypes.size());
     defaultIssueTypes.forEach(Assertions::assertNotNull);
   }
+
+  @Test
+  void getIssueTypeIdsByLocators() {
+    final List<Long> types = repository.getIssueTypeIdsByLocators(List.of("pb_ajf7d5d"));
+    assertEquals(List.of(100L), types);
+  }
 }

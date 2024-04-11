@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 import javax.persistence.PersistenceException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
@@ -38,6 +39,7 @@ class PatternTemplateRepositoryTest extends BaseTest {
   private PatternTemplateRepository patternTemplateRepository;
 
   @Test
+  @DisplayName("Should find PatternTemplate by id and project id")
   void findByIdAndProjectId() {
 
     Optional<PatternTemplate> patternTemplate = patternTemplateRepository.findByIdAndProjectId(5L,
@@ -47,6 +49,7 @@ class PatternTemplateRepositoryTest extends BaseTest {
   }
 
   @Test
+  @DisplayName("Should find all PatternTemplates by project id and enabled status")
   void findAllByProjectIdAndEnabled() {
 
     List<PatternTemplate> allByProjectIdAndEnabled = patternTemplateRepository.findAllByProjectIdAndEnabled(
@@ -57,6 +60,7 @@ class PatternTemplateRepositoryTest extends BaseTest {
   }
 
   @Test
+  @DisplayName("Should check existence of PatternTemplate by project id and name ignoring case (Positive scenario)")
   void existsByProjectIdAndNameIgnoreCasePositive() {
 
     boolean exists = patternTemplateRepository.existsByProjectIdAndNameIgnoreCase(1L, "nAmE1");
@@ -65,6 +69,7 @@ class PatternTemplateRepositoryTest extends BaseTest {
   }
 
   @Test
+  @DisplayName("Should check existence of PatternTemplate by project id and name ignoring case (Negative scenario)")
   void existsByProjectIdAndNameIgnoreCaseNagative() {
 
     boolean exists = patternTemplateRepository.existsByProjectIdAndNameIgnoreCase(1L, "name1 ");
@@ -73,6 +78,7 @@ class PatternTemplateRepositoryTest extends BaseTest {
   }
 
   @Test
+  @DisplayName("Should validate wrong regex for PatternTemplate")
   void validateWrongRegex() {
 
     assertThrows(PersistenceException.class, () -> patternTemplateRepository.validateRegex("{1,}"));

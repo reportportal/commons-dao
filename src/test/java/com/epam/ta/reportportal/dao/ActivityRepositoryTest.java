@@ -50,6 +50,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import org.apache.commons.compress.utils.Lists;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -68,6 +69,7 @@ class ActivityRepositoryTest extends BaseTest {
 	//	JPA
 
 	@Test
+	@DisplayName("Should find Activity by id")
 	void findByIdTest() {
 		final Optional<Activity> activityOptional = repository.findById(1L);
 
@@ -76,6 +78,7 @@ class ActivityRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	@DisplayName("Should find all Activities")
 	void findAllTest() {
 		final List<Activity> activities = repository.findAll();
 
@@ -84,6 +87,7 @@ class ActivityRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	@DisplayName("Should create Activity")
 	void createTest() {
 		final Activity entity = generateActivity();
 		final Activity saved = repository.save(entity);
@@ -97,6 +101,7 @@ class ActivityRepositoryTest extends BaseTest {
 
 	@SuppressWarnings("OptionalGetWithoutIsPresent")
 	@Test
+	@DisplayName("Should update Activity")
 	void updateTest() {
 		Activity activity = repository.findById(1L).get();
 		final LocalDateTime now = LocalDateTime.now();
@@ -116,6 +121,7 @@ class ActivityRepositoryTest extends BaseTest {
 
 	@SuppressWarnings("OptionalGetWithoutIsPresent")
 	@Test
+	@DisplayName("Should delete Activity")
 	void deleteTest() {
 		final Activity activity = repository.findById(1L).get();
 		repository.delete(activity);
@@ -124,12 +130,14 @@ class ActivityRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	@DisplayName("Should delete Activity by id")
 	void deleteById() {
 		repository.deleteById(1L);
 		assertEquals(ACTIVITIES_COUNT - 1, repository.findAll().size());
 	}
 
 	@Test
+	@DisplayName("Should check existence of Activity")
 	void existsTest() {
 		assertTrue(repository.existsById(1L));
 		assertFalse(repository.existsById(100L));
@@ -164,6 +172,7 @@ class ActivityRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	@DisplayName("Should find Activities by filter")
 	void findByFilter() {
 		List<Activity> activities = repository.findByFilter(filterById(1));
 

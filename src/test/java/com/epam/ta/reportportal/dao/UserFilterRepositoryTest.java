@@ -16,20 +16,28 @@
 
 package com.epam.ta.reportportal.dao;
 
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_NAME;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
+import com.epam.ta.reportportal.entity.dashboard.Dashboard;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
 import com.google.common.collect.Lists;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.jdbc.Sql;
 import java.util.List;
 import java.util.Optional;
-
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_ID;
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.test.context.jdbc.Sql;
 
 /**
  * @author Ivan Nikitsenka
@@ -110,7 +118,23 @@ class UserFilterRepositoryTest extends BaseTest {
   private Filter buildDefaultFilter() {
     return Filter.builder()
         .withTarget(UserFilter.class)
-        .withCondition(new FilterCondition(Condition.LOWER_THAN, false, "1000", CRITERIA_ID))
+        .withCondition(
+            new FilterCondition(Condition.EQUALS, false, "Default Filter", CRITERIA_NAME))
         .build();
+  }
+
+  @Test
+  void shouldFindByFilterAndPage() {
+    Filter filter = buildDefaultFilter();
+    Pageable pageable = PageRequest.of(1, 50, Sort.sort(Dashboard.class));
+    Page<UserFilter> page = userFilterRepository.findByFilter(filter, pageable);
+    assertEquals(1, page.getTotalElements());
+  }
+
+  @Test
+  void shouldFindByFilter() {
+    Filter filter = buildDefaultFilter();
+    List<UserFilter> byFilter = userFilterRepository.findByFilter(filter);
+    assertEquals(1, byFilter.size());
   }
 }

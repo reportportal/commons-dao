@@ -23,6 +23,7 @@ import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.entity.user.ApiKey;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +38,7 @@ public class ApiKeyRepositoryTest extends BaseTest {
 
   @Test
   @Transactional
+  @DisplayName("Should insert and set id for ApiKey")
   void shouldInsertAndSetId() {
     final ApiKey apiKey = new ApiKey();
     apiKey.setName("ApiKey");
@@ -52,6 +54,7 @@ public class ApiKeyRepositoryTest extends BaseTest {
 
   @Test
   @Transactional
+  @DisplayName("Should update last used date for ApiKey")
   void shouldUpdateLastUsedAt() {
     final ApiKey apiKey = new ApiKey();
     apiKey.setName("ApiKey");
