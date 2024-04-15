@@ -1,6 +1,17 @@
 package com.epam.ta.reportportal.dao.custom;
 
 import com.epam.ta.reportportal.entity.log.LogMessage;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.apache.commons.collections.MapUtils;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -243,9 +254,10 @@ public class ElasticSearchClient {
     } else {
       timestampString += "." + "0".repeat(6);
     }
-
-    return new LogMessage(((Integer) source.get("id")).longValue(),
-        LocalDateTime.parse(timestampString, DateTimeFormatter.ofPattern(ELASTIC_DATETIME_FORMAT)),
+    var dateTime = LocalDateTime.parse(timestampString,
+            DateTimeFormatter.ofPattern(ELASTIC_DATETIME_FORMAT))
+        .toInstant(ZoneOffset.UTC);
+    return new LogMessage(((Integer) source.get("id")).longValue(), dateTime,
         (String) source.get("message"), ((Integer) source.get("itemId")).longValue(),
         ((Integer) source.get("launchId")).longValue(), projectId
     );

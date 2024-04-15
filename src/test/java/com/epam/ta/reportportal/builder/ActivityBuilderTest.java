@@ -25,7 +25,9 @@ import com.epam.ta.reportportal.entity.activity.EventAction;
 import com.epam.ta.reportportal.entity.activity.EventObject;
 import com.epam.ta.reportportal.entity.activity.EventSubject;
 import com.epam.ta.reportportal.entity.activity.HistoryField;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -41,7 +43,8 @@ class ActivityBuilderTest {
     final Long projectId = 1L;
     final Long userId = 2L;
     final String username = "username";
-    final LocalDateTime localDateTime = LocalDateTime.of(2019, 2, 6, 18, 25);
+    final Instant dateTime = LocalDateTime.of(2019, 2, 6, 18, 25)
+        .toInstant(ZoneOffset.UTC);
     final Long objectId = 3L;
     Activity activity = new ActivityBuilder()
         .addAction(action)
@@ -53,7 +56,7 @@ class ActivityBuilderTest {
         .addSubjectId(userId)
         .addSubjectName(username)
         .addSubjectType(EventSubject.USER)
-        .addCreatedAt(localDateTime)
+        .addCreatedAt(dateTime)
         .addHistoryField("field", "before", "after")
         .get();
 
@@ -64,7 +67,7 @@ class ActivityBuilderTest {
     assertEquals(userId, activity.getSubjectId());
     assertEquals(objectId, activity.getObjectId());
     assertEquals(username, activity.getSubjectName());
-    assertEquals(localDateTime, activity.getCreatedAt());
+    assertEquals(dateTime, activity.getCreatedAt());
   }
 
   @Test

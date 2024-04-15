@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.util;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import org.springframework.stereotype.Component;
 
@@ -29,5 +30,9 @@ public class DateTimeProvider {
 
   public LocalDateTime localDateTimeNow() {
     return LocalDateTime.now();
+  }
+
+  public Instant instantNow() {
+    return Instant.now();
   }
 }
