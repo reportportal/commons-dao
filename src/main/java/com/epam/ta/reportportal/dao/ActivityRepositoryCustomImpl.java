@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.dao;
 
+import static com.epam.ta.reportportal.commons.EntityUtils.INSTANT_TO_TIMESTAMP;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.ACTIVITY_MAPPER;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.ACTIVITY_FETCHER;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
@@ -23,9 +24,8 @@ import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.entity.activity.Activity;
-import java.sql.Timestamp;
 import java.time.Duration;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,9 +50,9 @@ public class ActivityRepositoryCustomImpl implements ActivityRepositoryCustom {
 
   @Override
   public void deleteModifiedLaterAgo(Long projectId, Duration period) {
-    LocalDateTime bound = LocalDateTime.now().minus(period);
+    Instant bound = Instant.now().minus(period);
     dsl.delete(ACTIVITY).where(ACTIVITY.PROJECT_ID.eq(projectId))
-        .and(ACTIVITY.CREATED_AT.lt(Timestamp.valueOf(bound))).execute();
+        .and(ACTIVITY.CREATED_AT.lt(INSTANT_TO_TIMESTAMP.apply(bound))).execute();
   }
 
   @Override

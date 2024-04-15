@@ -18,11 +18,17 @@ package com.epam.ta.reportportal.entity.organization;
 
 import com.epam.ta.reportportal.entity.enums.OrganizationType;
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.Instant;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * @author Siarhei Hrabko
  */
+@Getter
+@Setter
+@NoArgsConstructor
 public class OrganizationInfo implements Serializable {
 
   public static final String USERS_QUANTITY = "usersQuantity";
@@ -31,7 +37,7 @@ public class OrganizationInfo implements Serializable {
   public static final String LAST_RUN = "lastRun";
 
   private Long id;
-  private LocalDateTime creationDate;
+  private Instant creationDate;
   private String name;
   private OrganizationType organizationType;
   private String slug;
@@ -40,81 +46,6 @@ public class OrganizationInfo implements Serializable {
   private int projectsQuantity;
   private int launchesQuantity;
 
-  private LocalDateTime lastRun;
-
-  public OrganizationInfo() {
-  }
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public LocalDateTime getCreationDate() {
-    return creationDate;
-  }
-
-  public void setCreationDate(LocalDateTime creationDate) {
-    this.creationDate = creationDate;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public OrganizationType getOrganizationType() {
-    return organizationType;
-  }
-
-  public void setOrganizationType(OrganizationType organizationType) {
-    this.organizationType = organizationType;
-  }
-
-  public String getSlug() {
-    return slug;
-  }
-
-  public void setSlug(String slug) {
-    this.slug = slug;
-  }
-
-  public int getUsersQuantity() {
-    return usersQuantity;
-  }
-
-  public void setUsersQuantity(int usersQuantity) {
-    this.usersQuantity = usersQuantity;
-  }
-
-  public int getProjectsQuantity() {
-    return projectsQuantity;
-  }
-
-  public void setProjectsQuantity(int projectsQuantity) {
-    this.projectsQuantity = projectsQuantity;
-  }
-
-  public int getLaunchesQuantity() {
-    return launchesQuantity;
-  }
-
-  public void setLaunchesQuantity(int launchesQuantity) {
-    this.launchesQuantity = launchesQuantity;
-  }
-
-  public LocalDateTime getLastRun() {
-    return lastRun;
-  }
-
-  public void setLastRun(LocalDateTime lastRun) {
-    this.lastRun = lastRun;
-  }
+  private Instant lastRun;
 
 }
