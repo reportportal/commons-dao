@@ -23,6 +23,7 @@ import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.entity.user.ApiKey;
 import java.time.Instant;
 import java.time.LocalDate;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
