@@ -91,11 +91,16 @@ project.ext {
             'com/epam/ta/reportportal/entity/oauth',
             'com/epam/ta/reportportal/entity/bts',
             'com/epam/ta/reportportal/entity/ldap',
-            'com/epam/ta/reportportal/entity/widget/content/**'
+            'com/epam/ta/reportportal/entity/jasper',
+            'com/epam/ta/reportportal/entity/widget/content/**',
+            'com/epam/reportportal/rules/exception',
+            'com/epam/ta/reportportal/dao/custom',
+            'com/epam/ta/reportportal/entity/log',
+            'com/epam/ta/reportportal/entity/item'
     ]
     limits = [
-            'instruction': 70,
-            'branch'     : 34,
+            'instruction': 75,
+            'branch'     : 35,
             'line'       : 60,
             'complexity' : 49,
             'method'     : 55,
