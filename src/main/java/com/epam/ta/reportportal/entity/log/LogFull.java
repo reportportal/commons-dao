@@ -20,16 +20,16 @@ import com.epam.ta.reportportal.entity.attachment.Attachment;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Objects;
 
 public class LogFull implements Serializable {
 
   private Long id;
   private String uuid;
-  private LocalDateTime logTime;
+  private Instant logTime;
   private String logMessage;
-  private LocalDateTime lastModified;
+  private Instant lastModified;
   private Integer logLevel;
   private TestItem testItem;
   private Launch launch;
@@ -38,7 +38,7 @@ public class LogFull implements Serializable {
 
   private Attachment attachment;
 
-  public LogFull(Long id, LocalDateTime logTime, String logMessage, LocalDateTime lastModified,
+  public LogFull(Long id, Instant logTime, String logMessage, Instant lastModified,
       Integer logLevel, TestItem testItem,
       Attachment attachment) {
     this.id = id;
@@ -85,19 +85,19 @@ public class LogFull implements Serializable {
     this.testItem = testItem;
   }
 
-  public LocalDateTime getLogTime() {
+  public Instant getLogTime() {
     return logTime;
   }
 
-  public void setLogTime(LocalDateTime logTime) {
+  public void setLogTime(Instant logTime) {
     this.logTime = logTime;
   }
 
-  public LocalDateTime getLastModified() {
+  public Instant getLastModified() {
     return lastModified;
   }
 
-  public void setLastModified(LocalDateTime lastModified) {
+  public void setLastModified(Instant lastModified) {
     this.lastModified = lastModified;
   }
 

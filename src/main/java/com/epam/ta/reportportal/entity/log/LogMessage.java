@@ -1,19 +1,19 @@
 package com.epam.ta.reportportal.entity.log;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Objects;
 
 public class LogMessage implements Serializable {
 
   private Long id;
-  private LocalDateTime logTime;
+  private Instant logTime;
   private String logMessage;
   private Long itemId;
   private Long launchId;
   private Long projectId;
 
-  public LogMessage(Long id, LocalDateTime logTime, String logMessage, Long itemId, Long launchId,
+  public LogMessage(Long id, Instant logTime, String logMessage, Long itemId, Long launchId,
       Long projectId) {
     this.id = id;
     this.logTime = logTime;
@@ -31,11 +31,11 @@ public class LogMessage implements Serializable {
     this.id = id;
   }
 
-  public LocalDateTime getLogTime() {
+  public Instant getLogTime() {
     return logTime;
   }
 
-  public void setLogTime(LocalDateTime logTime) {
+  public void setLogTime(Instant logTime) {
     this.logTime = logTime;
   }
 

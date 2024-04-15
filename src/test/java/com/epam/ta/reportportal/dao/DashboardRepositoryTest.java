@@ -16,7 +16,7 @@
 
 package com.epam.ta.reportportal.dao;
 
-import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_NAME;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -31,6 +31,10 @@ import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.jdbc.Sql;
 
 /**
@@ -90,7 +94,23 @@ class DashboardRepositoryTest extends BaseTest {
   private Filter buildDefaultFilter() {
     return Filter.builder()
         .withTarget(Dashboard.class)
-        .withCondition(new FilterCondition(Condition.LOWER_THAN, false, "100", CRITERIA_ID))
+        .withCondition(
+            new FilterCondition(Condition.EQUALS, false, "test admin dashboard", CRITERIA_NAME))
         .build();
+  }
+
+  @Test
+  void shouldFindByFilterAndPage() {
+    Filter filter = buildDefaultFilter();
+    Pageable pageable = PageRequest.of(1, 50, Sort.sort(Dashboard.class));
+    Page<Dashboard> page = repository.findByFilter(filter, pageable);
+    assertEquals(1, page.getTotalElements());
+  }
+
+  @Test
+  void shouldFindByFilter() {
+    Filter filter = buildDefaultFilter();
+    List<Dashboard> byFilter = repository.findByFilter(filter);
+    assertEquals(1, byFilter.size());
   }
 }

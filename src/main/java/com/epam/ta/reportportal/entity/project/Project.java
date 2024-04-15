@@ -24,7 +24,7 @@ import com.epam.ta.reportportal.entity.project.email.SenderCase;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.google.common.collect.Sets;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.Instant;
 import java.util.Objects;
 import java.util.Set;
 import javax.persistence.CascadeType;
@@ -38,6 +38,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -53,6 +54,7 @@ import org.hibernate.annotations.TypeDef;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Project implements Serializable {
 
   private static final long serialVersionUID = -263516611;
@@ -85,7 +87,7 @@ public class Project implements Serializable {
   private Set<SenderCase> senderCases = Sets.newHashSet();
 
   @Column(name = "creation_date")
-  private Date creationDate;
+  private Instant creationDate;
 
   @Type(type = "json")
   @Column(name = "metadata")
@@ -114,6 +116,12 @@ public class Project implements Serializable {
   @JoinColumn(name = "project_id", updatable = false)
   @OrderBy
   private Set<PatternTemplate> patternTemplates = Sets.newHashSet();
+
+  public Project(Long id, String name) {
+    this.id = id;
+    this.name = name;
+  }
+
 
   @Override
   public boolean equals(Object o) {

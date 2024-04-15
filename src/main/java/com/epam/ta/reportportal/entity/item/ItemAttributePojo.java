@@ -35,6 +35,11 @@ public class ItemAttributePojo implements Serializable {
   public ItemAttributePojo() {
   }
 
+  public ItemAttributePojo(String key, String value) {
+    this.key = key;
+    this.value = value;
+  }
+
   public ItemAttributePojo(Long itemId, String key, String value, boolean isSystem) {
     this.itemId = itemId;
     this.key = key;

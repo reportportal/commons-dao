@@ -17,7 +17,7 @@
 package com.epam.ta.reportportal.entity.attachment;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -53,7 +53,7 @@ public class Attachment implements Serializable {
   private long fileSize;
 
   @Column(name = "creation_date")
-  private LocalDateTime creationDate;
+  private Instant creationDate;
 
   @Column(name = "project_id")
   private Long projectId;
@@ -107,11 +107,11 @@ public class Attachment implements Serializable {
     this.fileSize = fileSize;
   }
 
-  public LocalDateTime getCreationDate() {
+  public Instant getCreationDate() {
     return creationDate;
   }
 
-  public void setCreationDate(LocalDateTime creationDate) {
+  public void setCreationDate(Instant creationDate) {
     this.creationDate = creationDate;
   }
 

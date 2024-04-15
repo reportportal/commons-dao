@@ -22,7 +22,7 @@ import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
 import com.epam.ta.reportportal.entity.statistics.Statistics;
 import com.google.common.collect.Sets;
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Objects;
 import java.util.Set;
 import javax.persistence.CascadeType;
@@ -60,7 +60,7 @@ public class TestItemResults implements Serializable {
   private StatusEnum status;
 
   @Column(name = "end_time")
-  private LocalDateTime endTime;
+  private Instant endTime;
 
   @Column(name = "duration")
   private Double duration;
@@ -99,11 +99,11 @@ public class TestItemResults implements Serializable {
     this.status = status;
   }
 
-  public LocalDateTime getEndTime() {
+  public Instant getEndTime() {
     return endTime;
   }
 
-  public void setEndTime(LocalDateTime endTime) {
+  public void setEndTime(Instant endTime) {
     this.endTime = endTime;
   }
 
