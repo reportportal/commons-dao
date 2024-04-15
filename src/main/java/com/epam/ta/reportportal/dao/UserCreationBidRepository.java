@@ -17,7 +17,7 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.user.UserCreationBid;
-import java.util.Date;
+import java.time.Instant;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -35,7 +35,7 @@ public interface UserCreationBidRepository extends ReportPortalRepository<UserCr
 
   @Modifying
   @Query(value = "DELETE FROM UserCreationBid u WHERE  u.lastModified < :date")
-  int expireBidsOlderThan(@Param("date") Date date);
+  int expireBidsOlderThan(@Param("date") Instant date);
 
   Optional<UserCreationBid> findFirstByEmailOrderByLastModifiedDesc(String email);
 }

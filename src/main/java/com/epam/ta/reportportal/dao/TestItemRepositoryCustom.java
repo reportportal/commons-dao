@@ -35,7 +35,7 @@ import com.epam.ta.reportportal.entity.statistics.Statistics;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import java.time.Duration;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -350,7 +350,7 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
    * @param endTime {@link com.epam.ta.reportportal.entity.item.TestItemResults#endTime}
    * @return 1 if updated, otherwise 0
    */
-  int updateStatusAndEndTimeById(Long itemId, JStatusEnum status, LocalDateTime endTime);
+  int updateStatusAndEndTimeById(Long itemId, JStatusEnum status, Instant endTime);
 
   /**
    * @param retryOfId {@link TestItem#getRetryOf()}
@@ -360,7 +360,7 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
    * @return amount of updated items
    */
   int updateStatusAndEndTimeByRetryOfId(Long retryOfId, JStatusEnum from, JStatusEnum to,
-      LocalDateTime endTime);
+      Instant endTime);
 
   /**
    * @param itemId {@link TestItem#itemId}

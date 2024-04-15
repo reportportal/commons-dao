@@ -1,9 +1,9 @@
 package com.epam.ta.reportportal.dao;
 
+import static com.epam.ta.reportportal.commons.EntityUtils.INSTANT_TO_TIMESTAMP;
 import static com.epam.ta.reportportal.jooq.tables.JStaleMaterializedView.STALE_MATERIALIZED_VIEW;
 
 import com.epam.ta.reportportal.entity.materialized.StaleMaterializedView;
-import java.sql.Timestamp;
 import java.util.Optional;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ public class StaleMaterializedViewRepositoryImpl implements StaleMaterializedVie
   public StaleMaterializedView insert(StaleMaterializedView view) {
     Long id = dsl.insertInto(STALE_MATERIALIZED_VIEW)
         .columns(STALE_MATERIALIZED_VIEW.NAME, STALE_MATERIALIZED_VIEW.CREATION_DATE)
-        .values(view.getName(), Timestamp.valueOf(view.getCreationDate()))
+        .values(view.getName(), INSTANT_TO_TIMESTAMP.apply(view.getCreationDate()))
         .returningResult(STALE_MATERIALIZED_VIEW.ID)
         .fetchOne()
         .into(Long.class);

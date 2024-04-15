@@ -19,7 +19,7 @@ package com.epam.ta.reportportal.entity.dashboard;
 import com.epam.ta.reportportal.entity.OwnedEntity;
 import com.google.common.collect.Sets;
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -46,7 +46,7 @@ public class Dashboard extends OwnedEntity implements Serializable {
 
   @CreatedDate
   @Column(name = "creation_date")
-  private LocalDateTime creationDate;
+  private Instant creationDate;
 
   @OneToMany(fetch = FetchType.EAGER, mappedBy = "dashboard")
   @Fetch(value = FetchMode.JOIN)
@@ -68,11 +68,11 @@ public class Dashboard extends OwnedEntity implements Serializable {
     this.description = description;
   }
 
-  public LocalDateTime getCreationDate() {
+  public Instant getCreationDate() {
     return creationDate;
   }
 
-  public void setCreationDate(LocalDateTime creationDate) {
+  public void setCreationDate(Instant creationDate) {
     this.creationDate = creationDate;
   }
 

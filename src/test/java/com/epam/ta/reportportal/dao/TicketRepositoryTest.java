@@ -23,7 +23,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.entity.bts.Ticket;
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -75,9 +76,9 @@ class TicketRepositoryTest extends BaseTest {
 
   @Test
   void findUniqueTicketsCountBefore() {
-    assertEquals(1,
-        repository.findUniqueCountByProjectBefore(1L, LocalDateTime.now().minusDays(2)));
-    assertEquals(0,
-        repository.findUniqueCountByProjectBefore(2L, LocalDateTime.now().minusDays(2)));
+    assertEquals(1, repository.findUniqueCountByProjectBefore(1L,
+        Instant.now().minus(2, ChronoUnit.DAYS)));
+    assertEquals(0, repository.findUniqueCountByProjectBefore(2L,
+        Instant.now().minus(2, ChronoUnit.DAYS)));
   }
 }

@@ -35,8 +35,6 @@ import com.epam.ta.reportportal.util.DateTimeUtils;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeParseException;
 import java.util.Collection;
 import java.util.Date;
@@ -160,9 +158,7 @@ public class CriteriaHolder {
     } else if (Date.class.isAssignableFrom(getDataType())) {
 
       if (FilterRules.dateInMillis().test(oneValue)) {
-
-        castedValue = LocalDateTime.ofInstant(Instant.ofEpochMilli(Long.parseLong(oneValue)),
-            ZoneId.systemDefault());
+        castedValue = Instant.ofEpochMilli(Long.parseLong(oneValue));
       } else {
 
         try {

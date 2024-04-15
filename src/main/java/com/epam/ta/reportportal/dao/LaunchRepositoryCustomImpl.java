@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.dao;
 
+import static com.epam.ta.reportportal.commons.EntityUtils.INSTANT_TO_TIMESTAMP;
 import static com.epam.ta.reportportal.commons.querygen.FilterTarget.ATTRIBUTE_ALIAS;
 import static com.epam.ta.reportportal.commons.querygen.FilterTarget.FILTERED_QUERY;
 import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.KEY_VALUE_SEPARATOR;
@@ -57,8 +58,7 @@ import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.epam.ta.reportportal.util.SortUtils;
 import com.google.common.collect.Lists;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -68,9 +68,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.jooq.DSLContext;
 import org.jooq.Field;
-import org.jooq.Record;
-import org.jooq.Record1;
-import org.jooq.SelectSeekStep1;
 import org.jooq.SortField;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -294,12 +291,12 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
   }
 
   @Override
-  public Integer countLaunches(Long projectId, String mode, LocalDateTime from) {
+  public Integer countLaunches(Long projectId, String mode, Instant from) {
     return dsl.fetchCount(LAUNCH,
         LAUNCH.PROJECT_ID.eq(projectId)
             .and(LAUNCH.MODE.eq(JLaunchModeEnum.valueOf(mode)))
             .and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS)
-                .and(LAUNCH.START_TIME.greaterThan(Timestamp.valueOf(from))))
+                .and(LAUNCH.START_TIME.greaterThan(INSTANT_TO_TIMESTAMP.apply(from))))
     );
   }
 
@@ -314,7 +311,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
 
   @Override
   public Map<String, Integer> countLaunchesGroupedByOwner(Long projectId, String mode,
-      LocalDateTime from) {
+      Instant from) {
     return dsl.select(USERS.LOGIN, DSL.count().as("count"))
         .from(LAUNCH)
         .join(USERS)
@@ -322,7 +319,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
         .where(LAUNCH.PROJECT_ID.eq(projectId)
             .and(LAUNCH.MODE.eq(JLaunchModeEnum.valueOf(mode))
                 .and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS))
-                .and(LAUNCH.START_TIME.greaterThan(Timestamp.valueOf(from)))))
+                .and(LAUNCH.START_TIME.greaterThan(INSTANT_TO_TIMESTAMP.apply(from)))))
         .groupBy(USERS.LOGIN)
         .fetchMap(USERS.LOGIN, field("count", Integer.class));
   }

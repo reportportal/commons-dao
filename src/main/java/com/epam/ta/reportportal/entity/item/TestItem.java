@@ -23,7 +23,7 @@ import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.pattern.PatternTemplateTestItem;
 import com.google.common.collect.Sets;
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Objects;
 import java.util.Set;
 import javax.persistence.CascadeType;
@@ -79,7 +79,7 @@ public class TestItem implements Serializable {
   private TestItemTypeEnum type;
 
   @Column(name = "start_time", nullable = false)
-  private LocalDateTime startTime;
+  private Instant startTime;
 
   @Column(name = "description")
   private String description;
@@ -89,7 +89,7 @@ public class TestItem implements Serializable {
 
   @LastModifiedDate
   @Column(name = "last_modified", nullable = false)
-  private LocalDateTime lastModified;
+  private Instant lastModified;
 
   @ElementCollection(fetch = FetchType.EAGER)
   @CollectionTable(name = "parameter", joinColumns = @JoinColumn(name = "item_id"))
@@ -147,9 +147,9 @@ public class TestItem implements Serializable {
     this.itemId = id;
   }
 
-  public TestItem(Long itemId, String name, TestItemTypeEnum type, LocalDateTime startTime,
+  public TestItem(Long itemId, String name, TestItemTypeEnum type, Instant startTime,
       String description,
-      LocalDateTime lastModified, String uniqueId, boolean hasChildren, boolean hasRetries,
+      Instant lastModified, String uniqueId, boolean hasChildren, boolean hasRetries,
       boolean hasStats) {
     this.itemId = itemId;
     this.name = name;
@@ -224,19 +224,19 @@ public class TestItem implements Serializable {
     this.type = type;
   }
 
-  public LocalDateTime getStartTime() {
+  public Instant getStartTime() {
     return startTime;
   }
 
-  public void setStartTime(LocalDateTime startTime) {
+  public void setStartTime(Instant startTime) {
     this.startTime = startTime;
   }
 
-  public LocalDateTime getLastModified() {
+  public Instant getLastModified() {
     return lastModified;
   }
 
-  public void setLastModified(LocalDateTime lastModified) {
+  public void setLastModified(Instant lastModified) {
     this.lastModified = lastModified;
   }
 

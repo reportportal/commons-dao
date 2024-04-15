@@ -28,7 +28,7 @@ import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.reportportal.rules.exception.ReportPortalException;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -79,7 +79,7 @@ class CreateLogAttachmentServiceTest {
     log.setTestItem(new TestItem(3L));
     log.setLogLevel(4000);
     log.setLogMessage("message");
-    log.setLogTime(LocalDateTime.now());
+    log.setLogTime(Instant.now());
     return log;
   }
 

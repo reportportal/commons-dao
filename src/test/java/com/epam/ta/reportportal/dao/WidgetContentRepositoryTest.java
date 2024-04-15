@@ -80,7 +80,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -422,11 +422,11 @@ class WidgetContentRepositoryTest extends BaseTest {
     assertEquals(4, launchesDurationContents.size());
 
     launchesDurationContents.forEach(content -> {
-      Timestamp endTime = content.getEndTime();
-      Timestamp startTime = content.getStartTime();
-      if (startTime.before(endTime)) {
+      Instant endTime = content.getEndTime();
+      Instant startTime = content.getStartTime();
+      if (startTime.isBefore(endTime)) {
         long duration = content.getDuration();
-        assertTrue(duration > 0 && duration == endTime.getTime() - startTime.getTime());
+        assertTrue(duration > 0 && duration == endTime.toEpochMilli() - startTime.toEpochMilli());
       }
     });
 
