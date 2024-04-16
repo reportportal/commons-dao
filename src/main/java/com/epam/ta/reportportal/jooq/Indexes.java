@@ -172,7 +172,6 @@ public class Indexes {
     public static final Index PATTERN_ITEM_UNQ = Indexes0.PATTERN_ITEM_UNQ;
     public static final Index PROJECT_KEY_IDX = Indexes0.PROJECT_KEY_IDX;
     public static final Index PROJECT_KEY_KEY = Indexes0.PROJECT_KEY_KEY;
-    public static final Index PROJECT_NAME_KEY = Indexes0.PROJECT_NAME_KEY;
     public static final Index PROJECT_PK = Indexes0.PROJECT_PK;
     public static final Index PROJECT_SLUG_KEY = Indexes0.PROJECT_SLUG_KEY;
     public static final Index UNIQUE_ATTRIBUTE_PER_PROJECT = Indexes0.UNIQUE_ATTRIBUTE_PER_PROJECT;
@@ -311,7 +310,6 @@ public class Indexes {
         public static Index PATTERN_ITEM_UNQ = Internal.createIndex("pattern_item_unq", JPatternTemplateTestItem.PATTERN_TEMPLATE_TEST_ITEM, new OrderField[] { JPatternTemplateTestItem.PATTERN_TEMPLATE_TEST_ITEM.PATTERN_ID, JPatternTemplateTestItem.PATTERN_TEMPLATE_TEST_ITEM.ITEM_ID }, true);
         public static Index PROJECT_KEY_IDX = Internal.createIndex("project_key_idx", JProject.PROJECT, new OrderField[] { JProject.PROJECT.KEY }, false);
         public static Index PROJECT_KEY_KEY = Internal.createIndex("project_key_key", JProject.PROJECT, new OrderField[] { JProject.PROJECT.KEY }, true);
-        public static Index PROJECT_NAME_KEY = Internal.createIndex("project_name_key", JProject.PROJECT, new OrderField[] { JProject.PROJECT.NAME }, true);
         public static Index PROJECT_PK = Internal.createIndex("project_pk", JProject.PROJECT, new OrderField[] { JProject.PROJECT.ID }, true);
         public static Index PROJECT_SLUG_KEY = Internal.createIndex("project_slug_key", JProject.PROJECT, new OrderField[] { JProject.PROJECT.SLUG }, true);
         public static Index UNIQUE_ATTRIBUTE_PER_PROJECT = Internal.createIndex("unique_attribute_per_project", JProjectAttribute.PROJECT_ATTRIBUTE, new OrderField[] { JProjectAttribute.PROJECT_ATTRIBUTE.ATTRIBUTE_ID, JProjectAttribute.PROJECT_ATTRIBUTE.PROJECT_ID }, true);
