@@ -13,7 +13,7 @@ public interface SenderCaseRepository extends ReportPortalRepository<SenderCase,
   @Query(value = "SELECT sc FROM SenderCase sc WHERE sc.project.id = :projectId ORDER BY sc.id")
   List<SenderCase> findAllByProjectId(@Param(value = "projectId") Long projectId);
 
-  Optional<SenderCase> findByProjectIdAndRuleNameIgnoreCase(Long projectId, String ruleName);
+  Optional<SenderCase> findByProjectIdAndRuleTypeAndRuleNameIgnoreCase(Long projectId, String ruleType, String ruleName);
 
   @Modifying
   @Query(value = "DELETE FROM recipients WHERE sender_case_id = :id AND recipient IN (:recipients)", nativeQuery = true)
