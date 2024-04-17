@@ -41,15 +41,16 @@ import com.epam.ta.reportportal.entity.activity.EventPriority;
 import com.epam.ta.reportportal.entity.activity.EventSubject;
 import com.epam.ta.reportportal.entity.activity.HistoryField;
 import com.google.common.collect.Comparators;
-import java.sql.Timestamp;
 import java.time.Duration;
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import org.apache.commons.compress.utils.Lists;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -68,6 +69,7 @@ class ActivityRepositoryTest extends BaseTest {
 	//	JPA
 
 	@Test
+	@DisplayName("Should find Activity by id")
 	void findByIdTest() {
 		final Optional<Activity> activityOptional = repository.findById(1L);
 
@@ -76,6 +78,7 @@ class ActivityRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	@DisplayName("Should find all Activities")
 	void findAllTest() {
 		final List<Activity> activities = repository.findAll();
 
@@ -84,6 +87,7 @@ class ActivityRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	@DisplayName("Should create Activity")
 	void createTest() {
 		final Activity entity = generateActivity();
 		final Activity saved = repository.save(entity);
@@ -97,9 +101,10 @@ class ActivityRepositoryTest extends BaseTest {
 
 	@SuppressWarnings("OptionalGetWithoutIsPresent")
 	@Test
+	@DisplayName("Should update Activity")
 	void updateTest() {
 		Activity activity = repository.findById(1L).get();
-		final LocalDateTime now = LocalDateTime.now();
+		final Instant now = Instant.now();
 		final ActivityDetails details = generateDetails();
 		final EventAction action = EventAction.CREATE;
 
@@ -116,6 +121,7 @@ class ActivityRepositoryTest extends BaseTest {
 
 	@SuppressWarnings("OptionalGetWithoutIsPresent")
 	@Test
+	@DisplayName("Should delete Activity")
 	void deleteTest() {
 		final Activity activity = repository.findById(1L).get();
 		repository.delete(activity);
@@ -124,12 +130,14 @@ class ActivityRepositoryTest extends BaseTest {
 	}
 
 	@Test
+	@DisplayName("Should delete Activity by id")
 	void deleteById() {
 		repository.deleteById(1L);
 		assertEquals(ACTIVITIES_COUNT - 1, repository.findAll().size());
 	}
 
 	@Test
+	@DisplayName("Should check existence of Activity")
 	void existsTest() {
 		assertTrue(repository.existsById(1L));
 		assertFalse(repository.existsById(100L));
@@ -141,7 +149,7 @@ class ActivityRepositoryTest extends BaseTest {
 	@Test
 	void deleteModifiedLaterAgo() {
 		Duration period = Duration.ofDays(10);
-		LocalDateTime bound = LocalDateTime.now().minus(period);
+    Instant bound = Instant.now().minus(period);
 
 		repository.deleteModifiedLaterAgo(1L, period);
 		List<Activity> all = repository.findAll();
@@ -149,7 +157,6 @@ class ActivityRepositoryTest extends BaseTest {
 				.forEach(a -> assertTrue(a.getCreatedAt().isAfter(bound)));
 	}
 
-	@SuppressWarnings("OptionalGetWithoutIsPresent")
 	@Test
 	void findByFilterWithSortingAndLimit() {
 		List<Activity> activities = repository.findByFilterWithSortingAndLimit(defaultFilter(),
@@ -158,12 +165,13 @@ class ActivityRepositoryTest extends BaseTest {
 		);
 
 		assertEquals(2, activities.size());
-		final LocalDateTime first = activities.get(0).getCreatedAt();
-		final LocalDateTime second = activities.get(1).getCreatedAt();
-		assertTrue(first.isBefore(second) || first.isEqual(second));
+		final Instant first = activities.get(0).getCreatedAt();
+		final Instant second = activities.get(1).getCreatedAt();
+		assertTrue(first.isBefore(second) || first.equals(second));
 	}
 
 	@Test
+	@DisplayName("Should find Activities by filter")
 	void findByFilter() {
 		List<Activity> activities = repository.findByFilter(filterById(1));
 
@@ -210,12 +218,12 @@ class ActivityRepositoryTest extends BaseTest {
 
 	@Test
 	void findByCreationDate() {
-		LocalDateTime to = LocalDateTime.now();
-		LocalDateTime from = to.minusDays(7);
+    Instant to = Instant.now();
+    Instant from = to.minus(7, ChronoUnit.DAYS);
 		final List<Activity> activities = repository.findByFilter(new Filter(Activity.class,
 				Condition.BETWEEN,
 				false,
-				Timestamp.valueOf(from).getTime() + "," + Timestamp.valueOf(to).getTime(),
+				from + "," + to,
 				CRITERIA_CREATED_AT
 		));
 		assertNotNull(activities);
@@ -271,7 +279,7 @@ class ActivityRepositoryTest extends BaseTest {
 		Activity activity = new Activity();
 		activity.setAction(EventAction.CREATE);
 		activity.setEventName("createDefect");
-		activity.setCreatedAt(LocalDateTime.now());
+		activity.setCreatedAt(Instant.now());
 		activity.setDetails(new ActivityDetails());
 		activity.setObjectId(11L);
 		activity.setObjectName("test defect name");

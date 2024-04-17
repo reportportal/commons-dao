@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.dao;
 
+import com.epam.reportportal.model.ActivityResource;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.launch.Launch;
@@ -37,7 +38,6 @@ import com.epam.ta.reportportal.entity.widget.content.healthcheck.ComponentHealt
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableContent;
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableGetParams;
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableInitParams;
-import com.epam.ta.reportportal.ws.model.ActivityResource;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Nullable;
