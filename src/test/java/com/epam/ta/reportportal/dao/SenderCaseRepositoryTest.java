@@ -27,8 +27,8 @@ public class SenderCaseRepositoryTest extends BaseTest {
 
   @Test
   void findAllByProjectIdAndRuleNameIgnoreCase() {
-    final Optional<SenderCase> senderCases = senderCaseRepository.findByProjectIdAndRuleNameIgnoreCase(
-        1L, "rule1");
+    final Optional<SenderCase> senderCases = senderCaseRepository.findByProjectIdAndTypeAndRuleNameIgnoreCase(
+        1L, "email","rule1");
     Assertions.assertTrue(senderCases.isPresent());
   }
 
@@ -44,8 +44,8 @@ public class SenderCaseRepositoryTest extends BaseTest {
 
   @Test
   void saveAttributeRules() {
-    final Optional<SenderCase> senderCases = senderCaseRepository.findByProjectIdAndRuleNameIgnoreCase(
-        1L, "rule1");
+    final Optional<SenderCase> senderCases = senderCaseRepository.findByProjectIdAndTypeAndRuleNameIgnoreCase(
+        1L, "email","rule1");
     Assertions.assertTrue(senderCases.isPresent());
 
     final SenderCase senderCaseDb = senderCases.get();
