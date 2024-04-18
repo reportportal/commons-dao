@@ -19,9 +19,10 @@ import org.jooq.Field;
 import org.jooq.ForeignKey;
 import org.jooq.Identity;
 import org.jooq.Index;
+import org.jooq.JSONB;
 import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row6;
+import org.jooq.Row8;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -43,7 +44,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JSenderCase extends TableImpl<JSenderCaseRecord> {
 
-    private static final long serialVersionUID = -592069423;
+    private static final long serialVersionUID = -1540957688;
 
     /**
      * The reference instance of <code>public.sender_case</code>
@@ -89,6 +90,16 @@ public class JSenderCase extends TableImpl<JSenderCaseRecord> {
     public final TableField<JSenderCaseRecord, String> RULE_NAME = createField(DSL.name("rule_name"), org.jooq.impl.SQLDataType.VARCHAR(55).nullable(false), this, "");
 
     /**
+     * The column <code>public.sender_case.rule_type</code>.
+     */
+    public final TableField<JSenderCaseRecord, String> RULE_TYPE = createField(DSL.name("rule_type"), org.jooq.impl.SQLDataType.VARCHAR(55).nullable(false).defaultValue(org.jooq.impl.DSL.field("'email'::character varying", org.jooq.impl.SQLDataType.VARCHAR)), this, "");
+
+    /**
+     * The column <code>public.sender_case.rule_details</code>.
+     */
+    public final TableField<JSenderCaseRecord, JSONB> RULE_DETAILS = createField(DSL.name("rule_details"), org.jooq.impl.SQLDataType.JSONB, this, "");
+
+    /**
      * Create a <code>public.sender_case</code> table reference
      */
     public JSenderCase() {
@@ -128,7 +139,7 @@ public class JSenderCase extends TableImpl<JSenderCaseRecord> {
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.SENDER_CASE_PK, Indexes.SENDER_CASE_PROJECT_IDX, Indexes.UNIQUE_RULE_NAME_PER_PROJECT);
+        return Arrays.<Index>asList(Indexes.SENDER_CASE_PK, Indexes.SENDER_CASE_PROJECT_IDX, Indexes.UNIQUE_RULE_NAME_PER_PROJECT_RULE_TYPE);
     }
 
     @Override
@@ -182,11 +193,11 @@ public class JSenderCase extends TableImpl<JSenderCaseRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row6 type methods
+    // Row8 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row6<Long, String, Long, Boolean, JLogicalOperatorEnum, String> fieldsRow() {
-        return (Row6) super.fieldsRow();
+    public Row8<Long, String, Long, Boolean, JLogicalOperatorEnum, String, String, JSONB> fieldsRow() {
+        return (Row8) super.fieldsRow();
     }
 }
