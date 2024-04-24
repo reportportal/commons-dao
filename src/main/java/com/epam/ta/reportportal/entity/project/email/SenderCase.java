@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.entity.project.email;
 import com.epam.ta.reportportal.entity.enums.LogicalOperator;
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.entity.enums.SendCase;
+import com.epam.ta.reportportal.entity.integration.IntegrationParams;
 import com.epam.ta.reportportal.entity.project.Project;
 import java.io.Serializable;
 import java.util.Set;
@@ -47,6 +48,7 @@ import org.hibernate.annotations.TypeDef;
 @Entity
 @Table(name = "sender_case")
 @TypeDef(name = "pqsql_enum", typeClass = PostgreSQLEnumType.class)
+@TypeDef(name = "ruleDetails", typeClass = SenderCaseOptions.class)
 public class SenderCase implements Serializable {
 
   @Id
@@ -83,6 +85,13 @@ public class SenderCase implements Serializable {
   @Column(name = "enabled")
   private boolean enabled;
 
+  @Column(name = "rule_type")
+  private String type;
+
+  @Type(type = "ruleDetails")
+  @Column(name = "rule_details")
+  private SenderCaseOptions ruleDetails;
+
 	@Enumerated(EnumType.STRING)
 	@Column(name = "attributes_operator")
 	@Type(type = "pqsql_enum")
@@ -91,13 +100,16 @@ public class SenderCase implements Serializable {
 	public SenderCase() {
 	}
 
-  public SenderCase(Set<String> recipients, Set<String> launchNames, Set<LaunchAttributeRule> launchAttributeRules, SendCase sendCase,
-      boolean enabled, LogicalOperator attributesOperator) {
+  public SenderCase(String ruleName, Set<String> recipients, Set<String> launchNames,
+      Set<LaunchAttributeRule> launchAttributeRules, SendCase sendCase,
+      boolean enabled, String type, LogicalOperator attributesOperator) {
+    this.ruleName = ruleName;
     this.recipients = recipients;
     this.launchNames = launchNames;
     this.launchAttributeRules = launchAttributeRules;
     this.sendCase = sendCase;
     this.enabled = enabled;
+    this.type = type;
     this.attributesOperator = attributesOperator;
   }
 
@@ -171,5 +183,21 @@ public class SenderCase implements Serializable {
 
   public void setAttributesOperator(LogicalOperator attributesOperator) {
     this.attributesOperator = attributesOperator;
+  }
+
+  public String getType() {
+    return type;
+  }
+
+  public void setType(String type) {
+    this.type = type;
+  }
+
+  public SenderCaseOptions getRuleDetails() {
+    return ruleDetails;
+  }
+
+  public void setRuleDetails(SenderCaseOptions ruleDetails) {
+    this.ruleDetails = ruleDetails;
   }
 }

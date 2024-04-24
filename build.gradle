@@ -26,7 +26,7 @@ repositories {
 
 dependencyManagement {
     imports {
-        mavenBom(releaseMode ? 'com.epam.reportportal:commons-bom:5.10.0' : 'com.epam.reportportal:commons-bom:5.10.0')
+        mavenBom(releaseMode ? 'com.epam.reportportal:commons-bom:5.11.7' : 'com.epam.reportportal:commons-bom:5.11.7')
         mavenBom('io.zonky.test.postgres:embedded-postgres-binaries-bom:16.2.0')
     }
 }
@@ -57,7 +57,7 @@ dependencies {
 
     compile 'io.minio:minio:6.0.13'
 
-    implementation group: 'org.json', name: 'json', version: '20220320'
+    implementation group: 'org.json', name: 'json', version: '20231013'
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
     compile 'org.hibernate.validator:hibernate-validator'
 
@@ -70,6 +70,8 @@ dependencies {
     compile 'org.jasypt:jasypt:1.9.3'
 
     compile 'io.zonky.test:embedded-postgres:2.0.6'
+    //Fix CVE-2024-25710, CVE-2024-26308
+    compile 'org.apache.commons:commons-compress:1.26.0'
     compile 'org.flywaydb:flyway-core:6.3.1'
 
     compile 'org.apache.jclouds.api:s3:2.5.0'
