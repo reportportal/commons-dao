@@ -228,7 +228,6 @@ public class Keys {
     public static final UniqueKey<JPatternTemplateRecord> UNQ_NAME_PROJECTID = UniqueKeys0.UNQ_NAME_PROJECTID;
     public static final UniqueKey<JPatternTemplateTestItemRecord> PATTERN_ITEM_UNQ = UniqueKeys0.PATTERN_ITEM_UNQ;
     public static final UniqueKey<JProjectRecord> PROJECT_PK = UniqueKeys0.PROJECT_PK;
-    public static final UniqueKey<JProjectRecord> PROJECT_NAME_KEY = UniqueKeys0.PROJECT_NAME_KEY;
     public static final UniqueKey<JProjectRecord> PROJECT_SLUG_KEY = UniqueKeys0.PROJECT_SLUG_KEY;
     public static final UniqueKey<JProjectRecord> PROJECT_KEY_KEY = UniqueKeys0.PROJECT_KEY_KEY;
     public static final UniqueKey<JProjectAttributeRecord> UNIQUE_ATTRIBUTE_PER_PROJECT = UniqueKeys0.UNIQUE_ATTRIBUTE_PER_PROJECT;
@@ -411,7 +410,6 @@ public class Keys {
         public static final UniqueKey<JPatternTemplateRecord> UNQ_NAME_PROJECTID = Internal.createUniqueKey(JPatternTemplate.PATTERN_TEMPLATE, "unq_name_projectid", JPatternTemplate.PATTERN_TEMPLATE.NAME, JPatternTemplate.PATTERN_TEMPLATE.PROJECT_ID);
         public static final UniqueKey<JPatternTemplateTestItemRecord> PATTERN_ITEM_UNQ = Internal.createUniqueKey(JPatternTemplateTestItem.PATTERN_TEMPLATE_TEST_ITEM, "pattern_item_unq", JPatternTemplateTestItem.PATTERN_TEMPLATE_TEST_ITEM.PATTERN_ID, JPatternTemplateTestItem.PATTERN_TEMPLATE_TEST_ITEM.ITEM_ID);
         public static final UniqueKey<JProjectRecord> PROJECT_PK = Internal.createUniqueKey(JProject.PROJECT, "project_pk", JProject.PROJECT.ID);
-        public static final UniqueKey<JProjectRecord> PROJECT_NAME_KEY = Internal.createUniqueKey(JProject.PROJECT, "project_name_key", JProject.PROJECT.NAME);
         public static final UniqueKey<JProjectRecord> PROJECT_SLUG_KEY = Internal.createUniqueKey(JProject.PROJECT, "project_slug_key", JProject.PROJECT.SLUG);
         public static final UniqueKey<JProjectRecord> PROJECT_KEY_KEY = Internal.createUniqueKey(JProject.PROJECT, "project_key_key", JProject.PROJECT.KEY);
         public static final UniqueKey<JProjectAttributeRecord> UNIQUE_ATTRIBUTE_PER_PROJECT = Internal.createUniqueKey(JProjectAttribute.PROJECT_ATTRIBUTE, "unique_attribute_per_project", JProjectAttribute.PROJECT_ATTRIBUTE.ATTRIBUTE_ID, JProjectAttribute.PROJECT_ATTRIBUTE.PROJECT_ID);

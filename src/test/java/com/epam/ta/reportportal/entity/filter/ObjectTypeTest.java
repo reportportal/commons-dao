@@ -19,7 +19,7 @@ package com.epam.ta.reportportal.entity.filter;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.epam.ta.reportportal.exception.ReportPortalException;
+import com.epam.reportportal.rules.exception.ReportPortalException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;

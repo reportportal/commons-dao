@@ -19,13 +19,12 @@ package com.epam.ta.reportportal.entity.project;
 import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.integration.Integration;
-import com.epam.ta.reportportal.entity.organization.Organization;
 import com.epam.ta.reportportal.entity.pattern.PatternTemplate;
 import com.epam.ta.reportportal.entity.project.email.SenderCase;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.google.common.collect.Sets;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.Instant;
 import java.util.Objects;
 import java.util.Set;
 import javax.persistence.CascadeType;
@@ -36,11 +35,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -56,6 +54,7 @@ import org.hibernate.annotations.TypeDef;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Project implements Serializable {
 
   private static final long serialVersionUID = -263516611;
@@ -88,7 +87,7 @@ public class Project implements Serializable {
   private Set<SenderCase> senderCases = Sets.newHashSet();
 
   @Column(name = "creation_date")
-  private Date creationDate;
+  private Instant creationDate;
 
   @Type(type = "json")
   @Column(name = "metadata")
@@ -118,6 +117,12 @@ public class Project implements Serializable {
   @OrderBy
   private Set<PatternTemplate> patternTemplates = Sets.newHashSet();
 
+  public Project(Long id, String name) {
+    this.id = id;
+    this.name = name;
+  }
+
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -127,11 +132,12 @@ public class Project implements Serializable {
       return false;
     }
     Project project = (Project) o;
-    return Objects.equals(name, project.name) && Objects.equals(allocatedStorage,
-        project.allocatedStorage) && Objects.equals(
-        creationDate,
-        project.creationDate
-    ) && Objects.equals(metadata, project.metadata);
+    return Objects.equals(name, project.name)
+        && Objects.equals(key, project.key)
+        && Objects.equals(organizationId, project.organizationId)
+        && Objects.equals(allocatedStorage, project.allocatedStorage)
+        && Objects.equals(creationDate, project.creationDate)
+        && Objects.equals(metadata, project.metadata);
   }
 
   @Override

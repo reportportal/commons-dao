@@ -23,13 +23,17 @@ import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConst
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.UNIQUE_ID;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.Instant;
 import java.util.List;
 import javax.persistence.Column;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * @author Ivan Budaev
  */
+@Getter
+@Setter
 public class CriteriaHistoryItem implements Serializable {
 
   @Column(name = UNIQUE_ID)
@@ -48,53 +52,6 @@ public class CriteriaHistoryItem implements Serializable {
   private Boolean[] status;
 
   @Column(name = START_TIME_HISTORY)
-  private List<Date> startTime;
+  private List<Instant> startTime;
 
-  public String getUniqueId() {
-    return uniqueId;
-  }
-
-  public void setUniqueId(String uniqueId) {
-    this.uniqueId = uniqueId;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public Long getTotal() {
-    return total;
-  }
-
-  public void setTotal(Long total) {
-    this.total = total;
-  }
-
-  public Long getCriteria() {
-    return criteria;
-  }
-
-  public void setCriteria(Long criteria) {
-    this.criteria = criteria;
-  }
-
-  public Boolean[] getStatus() {
-    return status;
-  }
-
-  public void setStatus(Boolean[] status) {
-    this.status = status;
-  }
-
-  public List<Date> getStartTime() {
-    return startTime;
-  }
-
-  public void setStartTime(List<Date> startTime) {
-    this.startTime = startTime;
-  }
 }

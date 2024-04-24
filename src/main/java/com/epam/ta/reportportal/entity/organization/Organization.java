@@ -18,7 +18,7 @@ package com.epam.ta.reportportal.entity.organization;
 
 import com.epam.ta.reportportal.entity.enums.OrganizationType;
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -43,7 +43,7 @@ public class Organization implements Serializable {
   private Long id;
 
   @Column(name = "creation_date", nullable = false)
-  private LocalDateTime creationDate;
+  private Instant creationDate;
 
   @Column(name = "name")
   private String name;
@@ -57,7 +57,7 @@ public class Organization implements Serializable {
   public Organization() {
   }
 
-  public Organization(Long id, LocalDateTime creationDate, String name,
+  public Organization(Long id, Instant creationDate, String name,
       OrganizationType organizationType, String slug) {
     this.id = id;
     this.creationDate = creationDate;

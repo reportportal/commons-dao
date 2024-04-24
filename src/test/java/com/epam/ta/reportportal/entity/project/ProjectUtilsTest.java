@@ -32,8 +32,8 @@ import com.epam.ta.reportportal.entity.project.email.SenderCase;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.epam.ta.reportportal.entity.user.User;
 import com.google.common.collect.Sets;
+import java.time.Instant;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -90,7 +90,7 @@ class ProjectUtilsTest {
     project.setId(1L);
     project.setName("test_project");
     project.setProjectType(ProjectType.PERSONAL);
-    project.setCreationDate(new Date());
+    project.setCreationDate(Instant.now());
     project.setUsers(Sets.newHashSet(new ProjectUser().withUser(getTestUser())
         .withProject(project)
         .withProjectRole(ProjectRole.EDITOR)));

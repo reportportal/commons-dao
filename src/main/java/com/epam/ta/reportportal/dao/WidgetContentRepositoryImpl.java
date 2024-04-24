@@ -147,10 +147,11 @@ import static org.jooq.impl.DSL.timestampDiff;
 import static org.jooq.impl.DSL.val;
 import static org.jooq.impl.DSL.when;
 
+import com.epam.reportportal.model.ActivityResource;
+import com.epam.reportportal.rules.commons.validation.Suppliers;
 import com.epam.ta.reportportal.commons.querygen.CriteriaHolder;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
-import com.epam.ta.reportportal.commons.validation.Suppliers;
 import com.epam.ta.reportportal.dao.util.QueryUtils;
 import com.epam.ta.reportportal.dao.widget.WidgetProviderChain;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
@@ -171,13 +172,13 @@ import com.epam.ta.reportportal.entity.widget.content.healthcheck.ComponentHealt
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableContent;
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableGetParams;
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableInitParams;
-import com.epam.ta.reportportal.exception.ReportPortalException;
+import com.epam.reportportal.rules.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.epam.ta.reportportal.jooq.tables.JItemAttribute;
 import com.epam.ta.reportportal.util.WidgetSortUtils;
-import com.epam.ta.reportportal.ws.model.ActivityResource;
-import com.epam.ta.reportportal.ws.reporting.ErrorType;
+
+import com.epam.reportportal.rules.exception.ErrorType;
 import com.google.common.collect.Lists;
 import java.math.BigDecimal;
 import java.math.RoundingMode;

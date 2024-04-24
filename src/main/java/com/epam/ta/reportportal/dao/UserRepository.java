@@ -20,7 +20,7 @@ import com.epam.ta.reportportal.entity.project.ProjectRole;
 import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.entity.user.UserRole;
 import com.epam.ta.reportportal.entity.user.UserType;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -59,7 +59,7 @@ public interface UserRepository extends ReportPortalRepository<User, Long>, User
 
   @Modifying(clearAutomatically = true)
   @Query(value = "UPDATE users SET expired = TRUE WHERE CAST(metadata-> 'metadata' ->> 'last_login' AS DOUBLE PRECISION) < (extract(EPOCH FROM CAST (:lastLogin AS TIMESTAMP)) * 1000);", nativeQuery = true)
-  void expireUsersLoggedOlderThan(@Param("lastLogin") LocalDateTime lastLogin);
+  void expireUsersLoggedOlderThan(@Param("lastLogin") Instant lastLogin);
 
   /**
    * Updates user's last login value
@@ -69,7 +69,7 @@ public interface UserRepository extends ReportPortalRepository<User, Long>, User
    */
   @Modifying(clearAutomatically = true)
   @Query(value = "UPDATE users SET metadata = jsonb_set(metadata, '{metadata,last_login}', to_jsonb(extract(EPOCH FROM CAST (:lastLogin AS TIMESTAMP)) * 1000), TRUE ) WHERE login = :username", nativeQuery = true)
-  void updateLastLoginDate(@Param("lastLogin") LocalDateTime lastLogin,
+  void updateLastLoginDate(@Param("lastLogin") Instant lastLogin,
       @Param("username") String username);
 
   @Query(value = "SELECT u.login FROM users u JOIN project_user pu ON u.id = pu.user_id WHERE pu.project_id = :projectId", nativeQuery = true)

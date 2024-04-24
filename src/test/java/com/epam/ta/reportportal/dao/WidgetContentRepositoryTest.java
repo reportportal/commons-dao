@@ -47,6 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.epam.reportportal.model.ActivityResource;
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.ConvertibleCondition;
@@ -74,13 +75,12 @@ import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTab
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableInitParams;
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.LevelEntry;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
-import com.epam.ta.reportportal.ws.model.ActivityResource;
-import com.epam.ta.reportportal.ws.reporting.Mode;
+import com.fasterxml.jackson.annotation.JsonCreator.Mode;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -422,11 +422,11 @@ class WidgetContentRepositoryTest extends BaseTest {
     assertEquals(4, launchesDurationContents.size());
 
     launchesDurationContents.forEach(content -> {
-      Timestamp endTime = content.getEndTime();
-      Timestamp startTime = content.getStartTime();
-      if (startTime.before(endTime)) {
+      Instant endTime = content.getEndTime();
+      Instant startTime = content.getStartTime();
+      if (startTime.isBefore(endTime)) {
         long duration = content.getDuration();
-        assertTrue(duration > 0 && duration == endTime.getTime() - startTime.getTime());
+        assertTrue(duration > 0 && duration == endTime.toEpochMilli() - startTime.toEpochMilli());
       }
     });
 

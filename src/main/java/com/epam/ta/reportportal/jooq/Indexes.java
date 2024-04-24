@@ -59,9 +59,7 @@ import com.epam.ta.reportportal.jooq.tables.JUserPreference;
 import com.epam.ta.reportportal.jooq.tables.JUsers;
 import com.epam.ta.reportportal.jooq.tables.JWidget;
 import com.epam.ta.reportportal.jooq.tables.JWidgetFilter;
-
 import javax.annotation.processing.Generated;
-
 import org.jooq.Index;
 import org.jooq.OrderField;
 import org.jooq.impl.Internal;
@@ -172,7 +170,6 @@ public class Indexes {
     public static final Index PATTERN_ITEM_UNQ = Indexes0.PATTERN_ITEM_UNQ;
     public static final Index PROJECT_KEY_IDX = Indexes0.PROJECT_KEY_IDX;
     public static final Index PROJECT_KEY_KEY = Indexes0.PROJECT_KEY_KEY;
-    public static final Index PROJECT_NAME_KEY = Indexes0.PROJECT_NAME_KEY;
     public static final Index PROJECT_PK = Indexes0.PROJECT_PK;
     public static final Index PROJECT_SLUG_KEY = Indexes0.PROJECT_SLUG_KEY;
     public static final Index UNIQUE_ATTRIBUTE_PER_PROJECT = Indexes0.UNIQUE_ATTRIBUTE_PER_PROJECT;
@@ -182,7 +179,7 @@ public class Indexes {
     public static final Index RESTORE_PASSWORD_BID_PK = Indexes0.RESTORE_PASSWORD_BID_PK;
     public static final Index SENDER_CASE_PK = Indexes0.SENDER_CASE_PK;
     public static final Index SENDER_CASE_PROJECT_IDX = Indexes0.SENDER_CASE_PROJECT_IDX;
-    public static final Index UNIQUE_RULE_NAME_PER_PROJECT = Indexes0.UNIQUE_RULE_NAME_PER_PROJECT;
+    public static final Index UNIQUE_RULE_NAME_PER_PROJECT_RULE_TYPE = Indexes0.UNIQUE_RULE_NAME_PER_PROJECT_RULE_TYPE;
     public static final Index SERVER_SETTINGS_ID = Indexes0.SERVER_SETTINGS_ID;
     public static final Index SERVER_SETTINGS_KEY_KEY = Indexes0.SERVER_SETTINGS_KEY_KEY;
     public static final Index SHEDLOCK_PKEY = Indexes0.SHEDLOCK_PKEY;
@@ -311,7 +308,6 @@ public class Indexes {
         public static Index PATTERN_ITEM_UNQ = Internal.createIndex("pattern_item_unq", JPatternTemplateTestItem.PATTERN_TEMPLATE_TEST_ITEM, new OrderField[] { JPatternTemplateTestItem.PATTERN_TEMPLATE_TEST_ITEM.PATTERN_ID, JPatternTemplateTestItem.PATTERN_TEMPLATE_TEST_ITEM.ITEM_ID }, true);
         public static Index PROJECT_KEY_IDX = Internal.createIndex("project_key_idx", JProject.PROJECT, new OrderField[] { JProject.PROJECT.KEY }, false);
         public static Index PROJECT_KEY_KEY = Internal.createIndex("project_key_key", JProject.PROJECT, new OrderField[] { JProject.PROJECT.KEY }, true);
-        public static Index PROJECT_NAME_KEY = Internal.createIndex("project_name_key", JProject.PROJECT, new OrderField[] { JProject.PROJECT.NAME }, true);
         public static Index PROJECT_PK = Internal.createIndex("project_pk", JProject.PROJECT, new OrderField[] { JProject.PROJECT.ID }, true);
         public static Index PROJECT_SLUG_KEY = Internal.createIndex("project_slug_key", JProject.PROJECT, new OrderField[] { JProject.PROJECT.SLUG }, true);
         public static Index UNIQUE_ATTRIBUTE_PER_PROJECT = Internal.createIndex("unique_attribute_per_project", JProjectAttribute.PROJECT_ATTRIBUTE, new OrderField[] { JProjectAttribute.PROJECT_ATTRIBUTE.ATTRIBUTE_ID, JProjectAttribute.PROJECT_ATTRIBUTE.PROJECT_ID }, true);
@@ -321,7 +317,7 @@ public class Indexes {
         public static Index RESTORE_PASSWORD_BID_PK = Internal.createIndex("restore_password_bid_pk", JRestorePasswordBid.RESTORE_PASSWORD_BID, new OrderField[] { JRestorePasswordBid.RESTORE_PASSWORD_BID.UUID }, true);
         public static Index SENDER_CASE_PK = Internal.createIndex("sender_case_pk", JSenderCase.SENDER_CASE, new OrderField[] { JSenderCase.SENDER_CASE.ID }, true);
         public static Index SENDER_CASE_PROJECT_IDX = Internal.createIndex("sender_case_project_idx", JSenderCase.SENDER_CASE, new OrderField[] { JSenderCase.SENDER_CASE.PROJECT_ID }, false);
-        public static Index UNIQUE_RULE_NAME_PER_PROJECT = Internal.createIndex("unique_rule_name_per_project", JSenderCase.SENDER_CASE, new OrderField[] { JSenderCase.SENDER_CASE.RULE_NAME, JSenderCase.SENDER_CASE.PROJECT_ID }, true);
+        public static Index UNIQUE_RULE_NAME_PER_PROJECT_RULE_TYPE = Internal.createIndex("unique_rule_name_per_project_rule_type", JSenderCase.SENDER_CASE, new OrderField[] { JSenderCase.SENDER_CASE.RULE_NAME, JSenderCase.SENDER_CASE.PROJECT_ID, JSenderCase.SENDER_CASE.RULE_TYPE }, true);
         public static Index SERVER_SETTINGS_ID = Internal.createIndex("server_settings_id", JServerSettings.SERVER_SETTINGS, new OrderField[] { JServerSettings.SERVER_SETTINGS.ID }, true);
         public static Index SERVER_SETTINGS_KEY_KEY = Internal.createIndex("server_settings_key_key", JServerSettings.SERVER_SETTINGS, new OrderField[] { JServerSettings.SERVER_SETTINGS.KEY }, true);
         public static Index SHEDLOCK_PKEY = Internal.createIndex("shedlock_pkey", JShedlock.SHEDLOCK, new OrderField[] { JShedlock.SHEDLOCK.NAME }, true);

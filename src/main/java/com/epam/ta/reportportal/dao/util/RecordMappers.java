@@ -48,6 +48,11 @@ import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
 import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 
+import com.epam.reportportal.model.analyzer.IndexLaunch;
+import com.epam.reportportal.model.analyzer.IndexLog;
+import com.epam.reportportal.model.analyzer.IndexTestItem;
+import com.epam.reportportal.rules.exception.ErrorType;
+import com.epam.reportportal.rules.exception.ReportPortalException;
 import com.epam.ta.reportportal.commons.ReportPortalUser;
 import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.Metadata;
@@ -92,13 +97,8 @@ import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.entity.user.UserRole;
 import com.epam.ta.reportportal.entity.widget.Widget;
 import com.epam.ta.reportportal.entity.widget.WidgetOptions;
-import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.Tables;
 import com.epam.ta.reportportal.jooq.tables.JLog;
-import com.epam.ta.reportportal.ws.model.analyzer.IndexLaunch;
-import com.epam.ta.reportportal.ws.model.analyzer.IndexLog;
-import com.epam.ta.reportportal.ws.model.analyzer.IndexTestItem;
-import com.epam.ta.reportportal.ws.reporting.ErrorType;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -106,6 +106,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import java.io.IOException;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -245,9 +246,9 @@ public class RecordMappers {
   private static final RecordMapper<? super Record, Log> COMMON_LOG_RECORD_MAPPER = result -> {
     Log log = new Log();
     log.setId(result.get(LOG.ID, Long.class));
-    log.setLogTime(result.get(LOG.LOG_TIME, LocalDateTime.class));
+    log.setLogTime(result.get(LOG.LOG_TIME, Instant.class));
     log.setLogMessage(result.get(LOG.LOG_MESSAGE, String.class));
-    log.setLastModified(result.get(LOG.LAST_MODIFIED, LocalDateTime.class));
+    log.setLastModified(result.get(LOG.LAST_MODIFIED, Instant.class));
     log.setLogLevel(result.get(JLog.LOG.LOG_LEVEL, Integer.class));
     log.setProjectId(result.get(LOG.PROJECT_ID, Long.class));
     ofNullable(result.get(LOG.LAUNCH_ID)).map(Launch::new).ifPresent(log::setLaunch);
@@ -319,7 +320,7 @@ public class RecordMappers {
     final IndexTestItem indexTestItem = new IndexTestItem();
     indexTestItem.setTestItemId(record.get(TEST_ITEM.ITEM_ID));
     indexTestItem.setTestItemName(record.get(TEST_ITEM.NAME));
-    indexTestItem.setStartTime(record.get(TEST_ITEM.START_TIME).toLocalDateTime());
+    indexTestItem.setStartTime(record.get(TEST_ITEM.START_TIME, LocalDateTime.class));
     indexTestItem.setUniqueId(record.get(TEST_ITEM.UNIQUE_ID));
     indexTestItem.setTestCaseHash(record.get(TEST_ITEM.TEST_CASE_HASH));
     indexTestItem.setAutoAnalyzed(record.get(ISSUE.AUTO_ANALYZED));
@@ -335,8 +336,8 @@ public class RecordMappers {
       r.get(HAS_CONTENT, Boolean.class),
       r.get(ATTACHMENTS_COUNT, Integer.class),
       StatusEnum.valueOf(r.get(TEST_ITEM_RESULTS.STATUS).getLiteral()),
-      r.get(TEST_ITEM.START_TIME, LocalDateTime.class),
-      r.get(TEST_ITEM_RESULTS.END_TIME, LocalDateTime.class),
+      r.get(TEST_ITEM.START_TIME, Instant.class),
+      r.get(TEST_ITEM_RESULTS.END_TIME, Instant.class),
       r.get(TEST_ITEM_RESULTS.DURATION)
   );
 
@@ -368,7 +369,7 @@ public class RecordMappers {
     final IndexLaunch indexLaunch = new IndexLaunch();
     indexLaunch.setLaunchId(record.get(LAUNCH.ID));
     indexLaunch.setLaunchName(record.get(LAUNCH.NAME));
-    indexLaunch.setLaunchStartTime(record.get(LAUNCH.START_TIME).toLocalDateTime());
+    indexLaunch.setLaunchStartTime(record.get(LAUNCH.START_TIME, LocalDateTime.class ));
     indexLaunch.setProjectId(record.get(LAUNCH.PROJECT_ID));
     indexLaunch.setLaunchNumber(
         (record.get(LAUNCH.NUMBER) != null) ? record.get(LAUNCH.NUMBER).longValue() : null);
@@ -435,7 +436,7 @@ public class RecordMappers {
   public static final RecordMapper<? super Record, Activity> ACTIVITY_MAPPER = r -> {
     Activity activity = new Activity();
     activity.setId(r.get(ACTIVITY.ID));
-    activity.setCreatedAt(r.get(ACTIVITY.CREATED_AT, LocalDateTime.class));
+    activity.setCreatedAt(r.get(ACTIVITY.CREATED_AT, Instant.class));
     activity.setAction(EventAction.valueOf(r.get(ACTIVITY.ACTION)));
     activity.setEventName(r.get(ACTIVITY.EVENT_NAME));
     activity.setPriority(EventPriority.valueOf(r.get(ACTIVITY.PRIORITY)));
@@ -593,7 +594,7 @@ public class RecordMappers {
     IntegrationType integrationType = new IntegrationType();
     integrationType.setId(r.get(INTEGRATION_TYPE.ID, Long.class));
     integrationType.setEnabled(r.get(INTEGRATION_TYPE.ENABLED));
-    integrationType.setCreationDate(r.get(INTEGRATION_TYPE.CREATION_DATE).toLocalDateTime());
+    integrationType.setCreationDate(r.get(INTEGRATION_TYPE.CREATION_DATE).toInstant());
     ofNullable(r.get(INTEGRATION_TYPE.AUTH_FLOW)).ifPresent(af -> {
       integrationType.setAuthFlow(IntegrationAuthFlowEnum.findByName(af.getLiteral())
           .orElseThrow(() -> new ReportPortalException(ErrorType.INCORRECT_AUTHENTICATION_TYPE)));
@@ -636,7 +637,7 @@ public class RecordMappers {
     integration.setName(r.get(INTEGRATION.NAME));
     integration.setType(INTEGRATION_TYPE_MAPPER.map(r));
     integration.setCreator(r.get(INTEGRATION.CREATOR));
-    integration.setCreationDate(r.get(INTEGRATION.CREATION_DATE).toLocalDateTime());
+    integration.setCreationDate(r.get(INTEGRATION.CREATION_DATE).toInstant());
     integration.setEnabled(r.get(INTEGRATION.ENABLED));
     INTEGRATION_PARAMS_MAPPER.accept(integration, r);
 

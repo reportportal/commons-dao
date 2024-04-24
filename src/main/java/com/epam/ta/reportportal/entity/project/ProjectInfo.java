@@ -17,7 +17,7 @@
 package com.epam.ta.reportportal.entity.project;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,7 +40,7 @@ public class ProjectInfo implements Serializable {
 
   private Long id;
 
-  private LocalDateTime creationDate;
+  private Instant creationDate;
 
   private String name;
 
@@ -56,6 +56,6 @@ public class ProjectInfo implements Serializable {
 
   private int launchesQuantity;
 
-  private LocalDateTime lastRun;
+  private Instant lastRun;
 
 }
