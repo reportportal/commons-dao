@@ -29,8 +29,8 @@ import java.util.Optional;
  */
 public enum ProjectAttributeEnum {
 
-  NOTIFICATIONS_ENABLED("notifications.enabled", String.valueOf(false)),
-  NOTIFICATIONS_EMAIL_ENABLED("notifications.email.enabled", String.valueOf(false)),
+  NOTIFICATIONS_ENABLED("notifications.enabled", String.valueOf(true)),
+  NOTIFICATIONS_EMAIL_ENABLED("notifications.email.enabled", String.valueOf(true)),
 
   INTERRUPT_JOB_TIME(Prefix.JOB + "interruptJobTime",
       String.valueOf(Duration.ofDays(1).toSeconds())),
