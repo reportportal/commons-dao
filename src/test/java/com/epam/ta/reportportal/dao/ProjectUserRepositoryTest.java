@@ -1,7 +1,7 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.BaseTest;
-import com.epam.ta.reportportal.commons.ReportPortalUser;
+import com.epam.ta.reportportal.commons.UserAssignmentDetails;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
@@ -18,13 +18,13 @@ class ProjectUserRepositoryTest extends BaseTest {
   void shouldFindDetailsByUserIdAndProjectKey() {
 
     final String projectKey = "superadmin_personal";
-    final Optional<ReportPortalUser.ProjectDetails> projectDetails = projectUserRepository.findDetailsByUserIdAndProjectKey(
+    final Optional<UserAssignmentDetails> projectDetails = projectUserRepository.findDetailsByUserIdAndProjectKey(
         1L,
         projectKey
     );
 
     Assertions.assertTrue(projectDetails.isPresent());
-    Assertions.assertNotNull(projectDetails.get().getOrganizationId());
+    Assertions.assertNotNull(projectDetails.get().getOrgId());
 
     Assertions.assertEquals(projectKey, projectDetails.get().getProjectName());
     Assertions.assertEquals(1L, projectDetails.get().getProjectId());
@@ -35,7 +35,7 @@ class ProjectUserRepositoryTest extends BaseTest {
   void shouldNotFindDetailsByUserIdAndProjectKeyWhenNotExists() {
 
     final String projectKey = "falcon-key";
-    final Optional<ReportPortalUser.ProjectDetails> projectDetails = projectUserRepository.findDetailsByUserIdAndProjectKey(
+    final Optional<UserAssignmentDetails> projectDetails = projectUserRepository.findDetailsByUserIdAndProjectKey(
         2L,
         projectKey
     );

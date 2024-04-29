@@ -1,11 +1,11 @@
 package com.epam.ta.reportportal.dao;
 
-import com.epam.ta.reportportal.commons.ReportPortalUser;
+import com.epam.ta.reportportal.commons.UserAssignmentDetails;
 import java.util.Optional;
 
 public interface ProjectUserRepositoryCustom {
 
-	Optional<ReportPortalUser.ProjectDetails> findDetailsByUserIdAndProjectKey(Long userId, String projectKey);
+  Optional<UserAssignmentDetails> findDetailsByUserIdAndProjectKey(Long userId, String projectKey);
 
-	Optional<ReportPortalUser.ProjectDetails> findAdminDetailsProjectKey(String projectKey);
+  Optional<UserAssignmentDetails> findAdminDetailsProjectKey(String projectKey);
 }

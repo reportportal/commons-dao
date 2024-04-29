@@ -34,6 +34,7 @@ import static com.epam.ta.reportportal.jooq.Tables.ISSUE_TYPE;
 import static com.epam.ta.reportportal.jooq.Tables.LAUNCH;
 import static com.epam.ta.reportportal.jooq.Tables.LOG;
 import static com.epam.ta.reportportal.jooq.Tables.ORGANIZATION;
+import static com.epam.ta.reportportal.jooq.Tables.ORGANIZATION_USER;
 import static com.epam.ta.reportportal.jooq.Tables.PATTERN_TEMPLATE;
 import static com.epam.ta.reportportal.jooq.Tables.PROJECT;
 import static com.epam.ta.reportportal.jooq.Tables.PROJECT_USER;
@@ -54,6 +55,7 @@ import com.epam.reportportal.model.analyzer.IndexTestItem;
 import com.epam.reportportal.rules.exception.ErrorType;
 import com.epam.reportportal.rules.exception.ReportPortalException;
 import com.epam.ta.reportportal.commons.ReportPortalUser;
+import com.epam.ta.reportportal.commons.UserAssignmentDetails;
 import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.OwnedEntity;
@@ -87,6 +89,7 @@ import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.organization.Organization;
+import com.epam.ta.reportportal.entity.organization.OrganizationRole;
 import com.epam.ta.reportportal.entity.pattern.PatternTemplate;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
@@ -365,14 +368,14 @@ public class RecordMappers {
     return launch;
   };
 
-  public static final RecordMapper<? super Record, IndexLaunch> INDEX_LAUNCH_RECORD_MAPPER = record -> {
+  public static final RecordMapper<? super Record, IndexLaunch> INDEX_LAUNCH_RECORD_MAPPER = row -> {
     final IndexLaunch indexLaunch = new IndexLaunch();
-    indexLaunch.setLaunchId(record.get(LAUNCH.ID));
-    indexLaunch.setLaunchName(record.get(LAUNCH.NAME));
-    indexLaunch.setLaunchStartTime(record.get(LAUNCH.START_TIME, LocalDateTime.class ));
-    indexLaunch.setProjectId(record.get(LAUNCH.PROJECT_ID));
+    indexLaunch.setLaunchId(row.get(LAUNCH.ID));
+    indexLaunch.setLaunchName(row.get(LAUNCH.NAME));
+    indexLaunch.setLaunchStartTime(row.get(LAUNCH.START_TIME, LocalDateTime.class ));
+    indexLaunch.setProjectId(row.get(LAUNCH.PROJECT_ID));
     indexLaunch.setLaunchNumber(
-        (record.get(LAUNCH.NUMBER) != null) ? record.get(LAUNCH.NUMBER).longValue() : null);
+        (row.get(LAUNCH.NUMBER) != null) ? row.get(LAUNCH.NUMBER).longValue() : null);
     return indexLaunch;
   };
 
@@ -424,13 +427,16 @@ public class RecordMappers {
     return projectUser;
   };
 
-  public static final RecordMapper<Record, ReportPortalUser.ProjectDetails> PROJECT_DETAILS_MAPPER = r -> {
+  public static final RecordMapper<Record, UserAssignmentDetails> ASSIGNMENT_DETAILS_MAPPER = r -> {
+    final Long organizationId = r.get(PROJECT.ORGANIZATION_ID);
+    final String orgName = r.get(ORGANIZATION.NAME, String.class);
+    final OrganizationRole orgRole = r.into(ORGANIZATION_USER.ORGANIZATION_ROLE).into(OrganizationRole.class);
     final Long projectId = r.get(PROJECT_USER.PROJECT_ID);
     final String projectName = r.get(PROJECT.NAME);
     final ProjectRole projectRole = r.into(PROJECT_USER.PROJECT_ROLE).into(ProjectRole.class);
     final String projectKey = r.get(PROJECT.KEY);
-    final Long organizationId = r.get(PROJECT.ORGANIZATION_ID);
-    return new ReportPortalUser.ProjectDetails(projectId, projectName, projectRole, projectKey, organizationId);
+
+    return new UserAssignmentDetails(organizationId, orgName, orgRole, projectId, projectName, projectKey, projectRole);
   };
 
   public static final RecordMapper<? super Record, Activity> ACTIVITY_MAPPER = r -> {

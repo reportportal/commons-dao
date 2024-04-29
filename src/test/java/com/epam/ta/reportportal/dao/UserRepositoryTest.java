@@ -162,12 +162,14 @@ class UserRepositoryTest extends BaseTest {
     assertThat(chubaka.get().getPassword(), Matchers.equalTo("601c4731aeff3b84f76672ad024bb2a0"));
     assertThat(chubaka.get().getEmail(), Matchers.equalTo("chybaka@domain.com"));
     assertThat(chubaka.get().getUserRole(), Matchers.equalTo(UserRole.USER));
-    assertThat(chubaka.get().getProjectDetails(), Matchers.hasKey("millennium_falcon"));
-    ReportPortalUser.ProjectDetails project = chubaka.get().getProjectDetails()
-        .get("millennium_falcon");
-    assertThat(project.getProjectId(), Matchers.equalTo(3L));
-    assertThat(project.getProjectName(), Matchers.equalTo("millennium_falcon"));
-    assertThat(project.getProjectRole(), Matchers.equalTo(ProjectRole.VIEWER));
+
+    var orgDetails = chubaka.get().getOrganizationDetails().get("Test organization");
+    assertNotNull(orgDetails);
+
+    var projectDetails = orgDetails.getProjectDetails().get("millennium_falcon");
+    assertThat(projectDetails.getProjectId(), Matchers.equalTo(3L));
+    assertThat(projectDetails.getProjectKey(), Matchers.equalTo("millennium_falcon"));
+    assertThat(projectDetails.getProjectRole(), Matchers.equalTo(ProjectRole.VIEWER));
   }
 
   @Test

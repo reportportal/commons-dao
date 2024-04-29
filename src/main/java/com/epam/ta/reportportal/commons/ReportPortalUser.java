@@ -16,28 +16,30 @@
 
 package com.epam.ta.reportportal.commons;
 
-import com.epam.reportportal.rules.exception.ReportPortalException;
 import static java.util.Optional.ofNullable;
 
+import com.epam.reportportal.rules.exception.ErrorType;
+import com.epam.reportportal.rules.exception.ReportPortalException;
+import com.epam.ta.reportportal.commons.ReportPortalUser.OrganizationDetails.ProjectDetails;
 import com.epam.ta.reportportal.entity.organization.OrganizationRole;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
+import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.epam.ta.reportportal.entity.user.UserRole;
-import com.epam.reportportal.rules.exception.ErrorType;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * ReportPortal user representation
@@ -50,22 +52,18 @@ import lombok.Setter;
 public class ReportPortalUser extends User {
 
   private Long userId;
-
   private UserRole userRole;
-
   private String email;
-
-  private Map<String, ProjectDetails> projectDetails;
   private Map<String, OrganizationDetails> organizationDetails;
 
 
   private ReportPortalUser(String username, String password,
       Collection<? extends GrantedAuthority> authorities, Long userId,
-      UserRole role, Map<String, ProjectDetails> projectDetails, String email) {
+      UserRole role, Map<String, OrganizationDetails> organizationDetails, String email) {
     super(username, password, authorities);
     this.userId = userId;
     this.userRole = role;
-    this.projectDetails = projectDetails;
+    this.organizationDetails = organizationDetails;
     this.email = email;
   }
 
@@ -73,82 +71,6 @@ public class ReportPortalUser extends User {
     return new ReportPortalUserBuilder();
   }
 
-  @Getter
-  @Setter
-  public static class ProjectDetails implements Serializable {
-
-    @JsonProperty(value = "id")
-    private Long projectId;
-
-    @JsonProperty(value = "name")
-    private String projectName;
-
-    @JsonProperty(value = "key")
-    private String projectKey;
-
-    @JsonProperty("role")
-    private ProjectRole projectRole;
-
-    @JsonProperty("organization_id")
-    private Long organizationId;
-
-
-    public ProjectDetails(Long projectId, String projectName, ProjectRole projectRole,
-        String projectKey, Long organizationId) {
-      this.projectId = projectId;
-      this.projectName = projectName;
-      this.projectRole = projectRole;
-      this.projectKey = projectKey;
-      this.organizationId = organizationId;
-    }
-
-    public static ProjectDetailsBuilder builder() {
-      return new ProjectDetailsBuilder();
-    }
-
-    public static class ProjectDetailsBuilder {
-
-      private Long projectId;
-      private String projectName;
-      private String projectKey;
-      private ProjectRole projectRole;
-      private Long organizationId;
-
-
-      private ProjectDetailsBuilder() {
-      }
-
-      public ProjectDetailsBuilder withProjectId(Long projectId) {
-        this.projectId = projectId;
-        return this;
-      }
-
-      public ProjectDetailsBuilder withProjectName(String projectName) {
-        this.projectName = projectName;
-        return this;
-      }
-
-      public ProjectDetailsBuilder withProjectKey(String projectKey) {
-        this.projectKey = projectKey;
-        return this;
-      }
-
-      public ProjectDetailsBuilder withOrgId(Long orgId) {
-        this.organizationId = orgId;
-        return this;
-      }
-
-      public ProjectDetailsBuilder withProjectRole(String projectRole) {
-        this.projectRole = ProjectRole.forName(projectRole)
-            .orElseThrow(() -> new ReportPortalException(ErrorType.ROLE_NOT_FOUND, projectRole));
-        return this;
-      }
-
-      public ProjectDetails build() {
-        return new ProjectDetails(projectId, projectName, projectRole, projectKey, organizationId);
-      }
-    }
-  }
 
   @Getter
   @Setter
@@ -164,6 +86,8 @@ public class ReportPortalUser extends User {
     @JsonProperty("role")
     private OrganizationRole orgRole;
 
+    private Map<String, ProjectDetails> projectDetails;
+
     public static OrganizationDetailsBuilder builder() {
       return new OrganizationDetailsBuilder();
     }
@@ -173,6 +97,8 @@ public class ReportPortalUser extends User {
       private Long orgId;
       private String orgName;
       private OrganizationRole orgRole;
+      private Map<String, ProjectDetails> projectDetails;
+
 
       private OrganizationDetailsBuilder() {
       }
@@ -187,16 +113,99 @@ public class ReportPortalUser extends User {
         return this;
       }
 
-      public OrganizationDetailsBuilder withProjectRole(String orgRole) {
+      public OrganizationDetailsBuilder withOrganizationRole(String orgRole) {
         this.orgRole = OrganizationRole.forName(orgRole)
             .orElseThrow(() -> new ReportPortalException(ErrorType.ROLE_NOT_FOUND, orgRole));
         return this;
       }
 
+      public OrganizationDetailsBuilder withProjectDetails(Map<String, ProjectDetails> projectDetails) {
+        this.projectDetails = projectDetails;
+        return this;
+      }
+
       public OrganizationDetails build() {
-        return new OrganizationDetails(orgId, orgName, orgRole);
+        return new OrganizationDetails(orgId, orgName, orgRole, projectDetails);
       }
     }
+
+    @Getter
+    @Setter
+    public static class ProjectDetails implements Serializable {
+
+      @JsonProperty(value = "id")
+      private Long projectId;
+
+      @JsonProperty(value = "name")
+      private String projectName;
+
+      @JsonProperty(value = "key")
+      private String projectKey;
+
+      @JsonProperty("role")
+      private ProjectRole projectRole;
+
+      @JsonProperty("organization_id")
+      private Long organizationId;
+
+
+      public ProjectDetails(Long projectId, String projectName, ProjectRole projectRole,
+          String projectKey, Long organizationId) {
+        this.projectId = projectId;
+        this.projectName = projectName;
+        this.projectRole = projectRole;
+        this.projectKey = projectKey;
+        this.organizationId = organizationId;
+      }
+
+      public static ProjectDetailsBuilder builder() {
+        return new ProjectDetailsBuilder();
+      }
+
+      public static class ProjectDetailsBuilder {
+
+        private Long projectId;
+        private String projectName;
+        private String projectKey;
+        private ProjectRole projectRole;
+        private Long organizationId;
+
+        private ProjectDetailsBuilder() {
+        }
+
+        public ProjectDetailsBuilder withProjectId(Long projectId) {
+          this.projectId = projectId;
+          return this;
+        }
+
+        public ProjectDetailsBuilder withProjectName(String projectName) {
+          this.projectName = projectName;
+          return this;
+        }
+
+        public ProjectDetailsBuilder withProjectKey(String projectKey) {
+          this.projectKey = projectKey;
+          return this;
+        }
+
+        public ProjectDetailsBuilder withOrgId(Long orgId) {
+          this.organizationId = orgId;
+          return this;
+        }
+
+        public ProjectDetailsBuilder withProjectRole(String projectRole) {
+          this.projectRole = ProjectRole.forName(projectRole)
+              .orElseThrow(() -> new ReportPortalException(ErrorType.ROLE_NOT_FOUND, projectRole));
+          return this;
+        }
+
+
+        public ProjectDetails build() {
+          return new ProjectDetails(projectId, projectName, projectRole, projectKey, organizationId);
+        }
+      }
+    }
+
   }
 
   public static class ReportPortalUserBuilder {
@@ -206,11 +215,10 @@ public class ReportPortalUser extends User {
     private Long userId;
     private UserRole userRole;
     private String email;
-    private Map<String, ProjectDetails> projectDetails;
+    private Map<String, OrganizationDetails> organizationDetails;
     private Collection<? extends GrantedAuthority> authorities;
 
     private ReportPortalUserBuilder() {
-
     }
 
     public ReportPortalUserBuilder withUserName(String userName) {
@@ -251,8 +259,8 @@ public class ReportPortalUser extends User {
       return this;
     }
 
-    public ReportPortalUserBuilder withProjectDetails(Map<String, ProjectDetails> projectDetails) {
-      this.projectDetails = projectDetails;
+    public ReportPortalUserBuilder withOrganizationDetails(Map<String, OrganizationDetails> organizationDetails) {
+      this.organizationDetails = organizationDetails;
       return this;
     }
 
@@ -264,20 +272,34 @@ public class ReportPortalUser extends User {
       this.password = ofNullable(user.getPassword()).orElse("");
       this.authorities = Collections.singletonList(
           new SimpleGrantedAuthority(user.getRole().getAuthority()));
-      this.projectDetails = user.getProjects().stream().collect(Collectors.toMap(
-          it -> it.getProject().getName(),
-          it -> ProjectDetails.builder()
-              .withProjectId(it.getProject().getId())
-              .withProjectRole(it.getProjectRole().name())
-              .withProjectName(it.getProject().getName())
-              .build()
-      ));
+      this.organizationDetails = user.getOrganizationUsers()
+          .stream()
+          .collect(Collectors.toMap(it -> it.getOrganization().getName(),
+              it -> OrganizationDetails.builder()
+                  .withOrgId(it.getOrganization().getId())
+                  .withOrganizationRole(it.getOrganizationRole().name())
+                  .withProjectDetails(mapProjectDetails(user.getProjects(), it.getOrganization().getId()))
+                  .withOrgName(it.getOrganization().getName())
+                  .build()
+          ));
       return build();
     }
 
+    private Map<String, ProjectDetails> mapProjectDetails (Set<ProjectUser> projects, Long orgId) {
+      return projects.stream()
+          .filter(projectUser -> projectUser.getProject().getOrganizationId().equals(orgId))
+          .collect(Collectors.toMap(projectUser -> projectUser.getProject().getKey(),
+              projectUser -> ProjectDetails.builder()
+                  .withProjectId(projectUser.getProject().getId())
+                  .withProjectRole(projectUser.getProjectRole().name())
+                  .withProjectKey(projectUser.getProject().getKey())
+                  .build())
+          );
+    }
+
     public ReportPortalUser build() {
-      return new ReportPortalUser(username, password, authorities, userId, userRole, projectDetails,
-          email);
+      return new ReportPortalUser(username, password, authorities, userId, userRole,
+          organizationDetails, email);
     }
   }
 }
