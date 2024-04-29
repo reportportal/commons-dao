@@ -55,7 +55,8 @@ import com.epam.reportportal.model.analyzer.IndexTestItem;
 import com.epam.reportportal.rules.exception.ErrorType;
 import com.epam.reportportal.rules.exception.ReportPortalException;
 import com.epam.ta.reportportal.commons.ReportPortalUser;
-import com.epam.ta.reportportal.commons.UserAssignmentDetails;
+import com.epam.ta.reportportal.commons.ReportPortalUser.OrganizationDetails;
+import com.epam.ta.reportportal.commons.ReportPortalUser.OrganizationDetails.ProjectDetails;
 import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.OwnedEntity;
@@ -427,7 +428,7 @@ public class RecordMappers {
     return projectUser;
   };
 
-  public static final RecordMapper<Record, UserAssignmentDetails> ASSIGNMENT_DETAILS_MAPPER = r -> {
+  public static final RecordMapper<Record, OrganizationDetails> ASSIGNMENT_DETAILS_MAPPER = r -> {
     final Long organizationId = r.get(PROJECT.ORGANIZATION_ID);
     final String orgName = r.get(ORGANIZATION.NAME, String.class);
     final OrganizationRole orgRole = r.into(ORGANIZATION_USER.ORGANIZATION_ROLE).into(OrganizationRole.class);
@@ -436,7 +437,11 @@ public class RecordMappers {
     final ProjectRole projectRole = r.into(PROJECT_USER.PROJECT_ROLE).into(ProjectRole.class);
     final String projectKey = r.get(PROJECT.KEY);
 
-    return new UserAssignmentDetails(organizationId, orgName, orgRole, projectId, projectName, projectKey, projectRole);
+    Map<String, ProjectDetails> projectDetails =
+        Collections.singletonMap(orgName,
+            new ProjectDetails(projectId, projectName, projectRole, projectKey, organizationId));
+
+    return new OrganizationDetails(organizationId, orgName, orgRole, projectDetails);
   };
 
   public static final RecordMapper<? super Record, Activity> ACTIVITY_MAPPER = r -> {

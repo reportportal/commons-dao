@@ -29,7 +29,8 @@ import com.epam.ta.reportportal.binary.AttachmentBinaryDataService;
 import com.epam.ta.reportportal.binary.CreateLogAttachmentService;
 import com.epam.ta.reportportal.binary.DataStoreService;
 import com.epam.ta.reportportal.commons.BinaryDataMetaInfo;
-import com.epam.ta.reportportal.commons.UserAssignmentDetails;
+import com.epam.ta.reportportal.commons.ReportPortalUser.OrganizationDetails;
+import com.epam.ta.reportportal.commons.ReportPortalUser.OrganizationDetails.ProjectDetails;
 import com.epam.ta.reportportal.dao.AttachmentRepository;
 import com.epam.ta.reportportal.entity.attachment.Attachment;
 import com.epam.ta.reportportal.entity.attachment.AttachmentMetaInfo;
@@ -174,8 +175,12 @@ public class AttachmentBinaryDataServiceImpl implements AttachmentBinaryDataServ
   }
 
   @Override
-  public BinaryData load(Long fileId, UserAssignmentDetails projectDetails) {
+  public BinaryData load(Long fileId, OrganizationDetails organizationDetails) {
     try {
+      ProjectDetails projectDetails = organizationDetails.getProjectDetails().values()
+          .stream()
+          .findFirst()
+          .get();
       Attachment attachment = attachmentRepository.findById(fileId)
           .orElseThrow(() -> new ReportPortalException(ErrorType.ATTACHMENT_NOT_FOUND, fileId));
       InputStream data = dataStoreService.load(attachment.getFileId()).orElseThrow(

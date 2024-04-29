@@ -6,7 +6,7 @@ import static com.epam.ta.reportportal.jooq.Tables.ORGANIZATION_USER;
 import static com.epam.ta.reportportal.jooq.Tables.PROJECT;
 import static com.epam.ta.reportportal.jooq.Tables.PROJECT_USER;
 
-import com.epam.ta.reportportal.commons.UserAssignmentDetails;
+import com.epam.ta.reportportal.commons.ReportPortalUser.OrganizationDetails;
 import java.util.Optional;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
@@ -24,7 +24,7 @@ public class ProjectUserRepositoryCustomImpl implements ProjectUserRepositoryCus
   }
 
   @Override
-  public Optional<UserAssignmentDetails> findDetailsByUserIdAndProjectKey(Long userId,
+  public Optional<OrganizationDetails> findDetailsByUserIdAndProjectKey(Long userId,
       String projectKey) {
     return dsl.select(
             PROJECT_USER.PROJECT_ID,
@@ -45,7 +45,7 @@ public class ProjectUserRepositoryCustomImpl implements ProjectUserRepositoryCus
   }
 
   @Override
-  public Optional<UserAssignmentDetails> findAdminDetailsProjectKey(String projectKey) {
+  public Optional<OrganizationDetails> findAdminDetailsProjectKey(String projectKey) {
     return dsl.select(
             PROJECT.ID.as(PROJECT_USER.PROJECT_ID),
             DSL.val("MANAGER").as(ORGANIZATION_USER.ORGANIZATION_ROLE),
