@@ -59,7 +59,9 @@ import com.epam.ta.reportportal.jooq.tables.JUserPreference;
 import com.epam.ta.reportportal.jooq.tables.JUsers;
 import com.epam.ta.reportportal.jooq.tables.JWidget;
 import com.epam.ta.reportportal.jooq.tables.JWidgetFilter;
+
 import javax.annotation.processing.Generated;
+
 import org.jooq.Index;
 import org.jooq.OrderField;
 import org.jooq.impl.Internal;
