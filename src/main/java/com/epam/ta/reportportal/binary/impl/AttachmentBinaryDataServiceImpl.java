@@ -38,6 +38,7 @@ import com.epam.ta.reportportal.entity.attachment.BinaryData;
 import com.epam.ta.reportportal.entity.enums.FeatureFlag;
 import com.epam.ta.reportportal.filesystem.FilePathGenerator;
 import com.epam.ta.reportportal.util.FeatureFlagHandler;
+import com.epam.ta.reportportal.util.OrganizationDetailsUtil;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -177,10 +178,7 @@ public class AttachmentBinaryDataServiceImpl implements AttachmentBinaryDataServ
   @Override
   public BinaryData load(Long fileId, OrganizationDetails organizationDetails) {
     try {
-      ProjectDetails projectDetails = organizationDetails.getProjectDetails().values()
-          .stream()
-          .findFirst()
-          .get();
+      ProjectDetails projectDetails = OrganizationDetailsUtil.extractProjectDetails(organizationDetails);
       Attachment attachment = attachmentRepository.findById(fileId)
           .orElseThrow(() -> new ReportPortalException(ErrorType.ATTACHMENT_NOT_FOUND, fileId));
       InputStream data = dataStoreService.load(attachment.getFileId()).orElseThrow(
