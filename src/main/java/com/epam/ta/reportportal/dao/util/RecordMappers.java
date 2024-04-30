@@ -55,8 +55,6 @@ import com.epam.reportportal.model.analyzer.IndexTestItem;
 import com.epam.reportportal.rules.exception.ErrorType;
 import com.epam.reportportal.rules.exception.ReportPortalException;
 import com.epam.ta.reportportal.commons.ReportPortalUser;
-import com.epam.ta.reportportal.commons.ReportPortalUser.OrganizationDetails;
-import com.epam.ta.reportportal.commons.ReportPortalUser.OrganizationDetails.ProjectDetails;
 import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.OwnedEntity;
@@ -89,6 +87,7 @@ import com.epam.ta.reportportal.entity.item.issue.IssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
+import com.epam.ta.reportportal.entity.organization.MembershipDetails;
 import com.epam.ta.reportportal.entity.organization.Organization;
 import com.epam.ta.reportportal.entity.organization.OrganizationRole;
 import com.epam.ta.reportportal.entity.pattern.PatternTemplate;
@@ -428,7 +427,7 @@ public class RecordMappers {
     return projectUser;
   };
 
-  public static final RecordMapper<Record, OrganizationDetails> ASSIGNMENT_DETAILS_MAPPER = r -> {
+  public static final RecordMapper<Record, MembershipDetails> ASSIGNMENT_DETAILS_MAPPER = r -> {
     final Long organizationId = r.get(PROJECT.ORGANIZATION_ID);
     final String orgName = r.get(ORGANIZATION.NAME, String.class);
     final OrganizationRole orgRole = r.into(ORGANIZATION_USER.ORGANIZATION_ROLE).into(OrganizationRole.class);
@@ -437,11 +436,15 @@ public class RecordMappers {
     final ProjectRole projectRole = r.into(PROJECT_USER.PROJECT_ROLE).into(ProjectRole.class);
     final String projectKey = r.get(PROJECT.KEY);
 
-    Map<String, ProjectDetails> projectDetails =
-        Collections.singletonMap(orgName,
-            new ProjectDetails(projectId, projectName, projectRole, projectKey, organizationId));
-
-    return new OrganizationDetails(organizationId, orgName, orgRole, projectDetails);
+    MembershipDetails md = new MembershipDetails();
+    md.setOrgId(organizationId);
+    md.setOrgRole(orgRole);
+    md.setOrgName(orgName);
+    md.setProjectId(projectId);
+    md.setProjectName(projectName);
+    md.setProjectKey(projectKey);
+    md.setProjectRole(projectRole);
+    return md;
   };
 
   public static final RecordMapper<? super Record, Activity> ACTIVITY_MAPPER = r -> {
