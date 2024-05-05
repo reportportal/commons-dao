@@ -1,7 +1,5 @@
 package com.epam.ta.reportportal.entity.organization;
 
-import com.epam.reportportal.rules.exception.ErrorType;
-import com.epam.reportportal.rules.exception.ReportPortalException;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -49,9 +47,8 @@ public class MembershipDetails {
       return this;
     }
 
-    public MembershipDetails.MembershipDetailsBuilder withOrgRole(String orgRole) {
-      this.orgRole = OrganizationRole.forName(orgRole)
-          .orElseThrow(() -> new ReportPortalException(ErrorType.ROLE_NOT_FOUND, orgRole));
+    public MembershipDetails.MembershipDetailsBuilder withOrgRole(OrganizationRole orgRole) {
+      this.orgRole = orgRole;
       return this;
     }
 
@@ -71,9 +68,8 @@ public class MembershipDetails {
     }
 
 
-    public MembershipDetails.MembershipDetailsBuilder withProjectRole(String projectRole) {
-      this.projectRole = ProjectRole.forName(projectRole)
-          .orElseThrow(() -> new ReportPortalException(ErrorType.ROLE_NOT_FOUND, projectRole));
+    public MembershipDetails.MembershipDetailsBuilder withProjectRole(ProjectRole projectRole) {
+      this.projectRole = projectRole;
       return this;
     }
 
