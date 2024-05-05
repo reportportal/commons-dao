@@ -36,7 +36,7 @@ public class MembershipDetails {
     private String projectKey;
     private ProjectRole projectRole;
 
-    private MembershipDetailsBuilder() {
+    public MembershipDetailsBuilder() {
     }
 
     public MembershipDetails.MembershipDetailsBuilder withOrgId(Long orgId) {
