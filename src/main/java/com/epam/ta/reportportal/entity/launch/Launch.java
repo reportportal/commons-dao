@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.entity.launch;
 import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
+import com.epam.ta.reportportal.entity.enums.RetentionPolicyEnum;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.statistics.Statistics;
@@ -57,9 +58,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 @TypeDef(name = "pqsql_enum", typeClass = PostgreSQLEnumType.class)
 @Table(name = "launch", schema = "public", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"name", "number", "project_id"})}, indexes = {
+    @UniqueConstraint(columnNames = { "name", "number", "project_id" }) }, indexes = {
     @Index(name = "launch_pk", unique = true, columnList = "id ASC"),
-    @Index(name = "unq_name_number", unique = true, columnList = "name ASC, number ASC, project_id ASC")})
+    @Index(name = "unq_name_number", unique = true, columnList = "name ASC, number ASC, project_id ASC") })
 public class Launch implements Serializable {
 
   @Id
@@ -110,6 +111,11 @@ public class Launch implements Serializable {
   @Enumerated(EnumType.STRING)
   @Type(type = "pqsql_enum")
   private StatusEnum status;
+
+  @Column(name = "retention_policy", nullable = false)
+  @Enumerated(EnumType.STRING)
+  @Type(type = "pqsql_enum")
+  private RetentionPolicyEnum retentionPolicy;
 
   @OneToMany(mappedBy = "launch", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
   @Fetch(FetchMode.JOIN)
@@ -278,6 +284,14 @@ public class Launch implements Serializable {
     this.approximateDuration = approximateDuration;
   }
 
+  public RetentionPolicyEnum getRetentionPolicy() {
+    return retentionPolicy;
+  }
+
+  public void setRetentionPolicy(RetentionPolicyEnum retentionPolicy) {
+    this.retentionPolicy = retentionPolicy;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -288,20 +302,19 @@ public class Launch implements Serializable {
     }
     Launch launch = (Launch) o;
     return hasRetries == launch.hasRetries && rerun == launch.rerun && Objects.equals(uuid,
-        launch.uuid) && Objects.equals(projectId,
-        launch.projectId
-    ) && Objects.equals(name, launch.name) && Objects.equals(description, launch.description)
-        && Objects.equals(startTime,
-        launch.startTime
-    ) && Objects.equals(endTime, launch.endTime) && Objects.equals(number, launch.number)
-        && mode == launch.mode
-        && status == launch.status;
+        launch.uuid
+    ) && Objects.equals(projectId, launch.projectId) && Objects.equals(
+        name, launch.name) && Objects.equals(description, launch.description) && Objects.equals(
+        startTime, launch.startTime) && Objects.equals(endTime, launch.endTime) && Objects.equals(
+        number, launch.number) && mode == launch.mode && status == launch.status
+        && retentionPolicy == launch.retentionPolicy;
   }
 
   @Override
   public int hashCode() {
     return Objects.hash(uuid, projectId, name, description, startTime, endTime, number, hasRetries,
-        rerun, mode, status);
+        rerun, mode, status, retentionPolicy
+    );
   }
 
   @Override
@@ -324,6 +337,7 @@ public class Launch implements Serializable {
     sb.append(", attributes=").append(attributes);
     sb.append(", statistics=").append(statistics);
     sb.append(", approximateDuration=").append(approximateDuration);
+    sb.append(", retentionPolicy=").append(retentionPolicy);
     sb.append('}');
     return sb.toString();
   }
