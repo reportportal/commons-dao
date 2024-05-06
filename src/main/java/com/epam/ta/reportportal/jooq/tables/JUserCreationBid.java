@@ -45,7 +45,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JUserCreationBid extends TableImpl<JUserCreationBidRecord> {
 
-    private static final long serialVersionUID = -85098771;
+    private static final long serialVersionUID = 1341637670;
 
     /**
      * The reference instance of <code>public.user_creation_bid</code>
@@ -76,6 +76,11 @@ public class JUserCreationBid extends TableImpl<JUserCreationBidRecord> {
     public final TableField<JUserCreationBidRecord, String> EMAIL = createField(DSL.name("email"), org.jooq.impl.SQLDataType.VARCHAR.nullable(false), this, "");
 
     /**
+     * The column <code>public.user_creation_bid.role</code>.
+     */
+    public final TableField<JUserCreationBidRecord, JProjectRoleEnum> ROLE = createField(DSL.name("role"), org.jooq.impl.SQLDataType.VARCHAR.nullable(false).asEnumDataType(com.epam.ta.reportportal.jooq.enums.JProjectRoleEnum.class), this, "");
+
+    /**
      * The column <code>public.user_creation_bid.inviting_user_id</code>.
      */
     public final TableField<JUserCreationBidRecord, Long> INVITING_USER_ID = createField(DSL.name("inviting_user_id"), org.jooq.impl.SQLDataType.BIGINT, this, "");
@@ -91,19 +96,14 @@ public class JUserCreationBid extends TableImpl<JUserCreationBidRecord> {
     public final TableField<JUserCreationBidRecord, JSONB> METADATA = createField(DSL.name("metadata"), org.jooq.impl.SQLDataType.JSONB, this, "");
 
     /**
-     * The column <code>public.user_creation_bid.role</code>.
+     * The column <code>public.user_creation_bid.organization_id</code>.
      */
-    public final TableField<JUserCreationBidRecord, JProjectRoleEnum> ROLE = createField(DSL.name("role"), org.jooq.impl.SQLDataType.VARCHAR.asEnumDataType(com.epam.ta.reportportal.jooq.enums.JProjectRoleEnum.class), this, "");
+    public final TableField<JUserCreationBidRecord, Long> ORGANIZATION_ID = createField(DSL.name("organization_id"), org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "");
 
     /**
      * The column <code>public.user_creation_bid.organization_role</code>.
      */
     public final TableField<JUserCreationBidRecord, JOrganizationRoleEnum> ORGANIZATION_ROLE = createField(DSL.name("organization_role"), org.jooq.impl.SQLDataType.VARCHAR.nullable(false).asEnumDataType(com.epam.ta.reportportal.jooq.enums.JOrganizationRoleEnum.class), this, "");
-
-    /**
-     * The column <code>public.user_creation_bid.organization_id</code>.
-     */
-    public final TableField<JUserCreationBidRecord, Long> ORGANIZATION_ID = createField(DSL.name("organization_id"), org.jooq.impl.SQLDataType.BIGINT, this, "");
 
     /**
      * Create a <code>public.user_creation_bid</code> table reference
@@ -160,11 +160,15 @@ public class JUserCreationBid extends TableImpl<JUserCreationBidRecord> {
 
     @Override
     public List<ForeignKey<JUserCreationBidRecord, ?>> getReferences() {
-        return Arrays.<ForeignKey<JUserCreationBidRecord, ?>>asList(Keys.USER_CREATION_BID__USER_CREATION_BID_INVITING_USER_ID_FKEY);
+        return Arrays.<ForeignKey<JUserCreationBidRecord, ?>>asList(Keys.USER_CREATION_BID__USER_CREATION_BID_INVITING_USER_ID_FKEY, Keys.USER_CREATION_BID__USER_CREATION_BID_ORGANIZATION_ID_FKEY);
     }
 
     public JUsers users() {
         return new JUsers(this, Keys.USER_CREATION_BID__USER_CREATION_BID_INVITING_USER_ID_FKEY);
+    }
+
+    public JOrganization organization() {
+        return new JOrganization(this, Keys.USER_CREATION_BID__USER_CREATION_BID_ORGANIZATION_ID_FKEY);
     }
 
     @Override
@@ -198,7 +202,7 @@ public class JUserCreationBid extends TableImpl<JUserCreationBidRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row9<String, Timestamp, String, Long, String, JSONB, JProjectRoleEnum, JOrganizationRoleEnum, Long> fieldsRow() {
+    public Row9<String, Timestamp, String, JProjectRoleEnum, Long, String, JSONB, Long, JOrganizationRoleEnum> fieldsRow() {
         return (Row9) super.fieldsRow();
     }
 }

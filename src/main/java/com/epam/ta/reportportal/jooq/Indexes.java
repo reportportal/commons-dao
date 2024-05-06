@@ -33,7 +33,6 @@ import com.epam.ta.reportportal.jooq.tables.JLog;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
-import com.epam.ta.reportportal.jooq.tables.JOnboarding;
 import com.epam.ta.reportportal.jooq.tables.JOrganization;
 import com.epam.ta.reportportal.jooq.tables.JOrganizationUser;
 import com.epam.ta.reportportal.jooq.tables.JOwnedEntity;
@@ -156,7 +155,6 @@ public class Indexes {
     public static final Index OAUTH_REGISTRATION_RESTRICTION_UNIQUE = Indexes0.OAUTH_REGISTRATION_RESTRICTION_UNIQUE;
     public static final Index OAUTH_REGISTRATION_SCOPE_PK = Indexes0.OAUTH_REGISTRATION_SCOPE_PK;
     public static final Index OAUTH_REGISTRATION_SCOPE_UNIQUE = Indexes0.OAUTH_REGISTRATION_SCOPE_UNIQUE;
-    public static final Index ONBOARDING_PK = Indexes0.ONBOARDING_PK;
     public static final Index ORGANIZATION_NAME_KEY = Indexes0.ORGANIZATION_NAME_KEY;
     public static final Index ORGANIZATION_PKEY = Indexes0.ORGANIZATION_PKEY;
     public static final Index ORGANIZATION_SLUG_IDX = Indexes0.ORGANIZATION_SLUG_IDX;
@@ -173,7 +171,6 @@ public class Indexes {
     public static final Index PROJECT_KEY_IDX = Indexes0.PROJECT_KEY_IDX;
     public static final Index PROJECT_KEY_KEY = Indexes0.PROJECT_KEY_KEY;
     public static final Index PROJECT_PK = Indexes0.PROJECT_PK;
-    public static final Index PROJECT_SLUG_KEY = Indexes0.PROJECT_SLUG_KEY;
     public static final Index UNIQUE_ATTRIBUTE_PER_PROJECT = Indexes0.UNIQUE_ATTRIBUTE_PER_PROJECT;
     public static final Index USERS_PROJECT_PK = Indexes0.USERS_PROJECT_PK;
     public static final Index RCPNT_SEND_CASE_IDX = Indexes0.RCPNT_SEND_CASE_IDX;
@@ -294,7 +291,6 @@ public class Indexes {
         public static Index OAUTH_REGISTRATION_RESTRICTION_UNIQUE = Internal.createIndex("oauth_registration_restriction_unique", JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION, new OrderField[] { JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION.TYPE, JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION.VALUE, JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION.OAUTH_REGISTRATION_FK }, true);
         public static Index OAUTH_REGISTRATION_SCOPE_PK = Internal.createIndex("oauth_registration_scope_pk", JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE, new OrderField[] { JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.ID }, true);
         public static Index OAUTH_REGISTRATION_SCOPE_UNIQUE = Internal.createIndex("oauth_registration_scope_unique", JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE, new OrderField[] { JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.SCOPE, JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.OAUTH_REGISTRATION_FK }, true);
-        public static Index ONBOARDING_PK = Internal.createIndex("onboarding_pk", JOnboarding.ONBOARDING, new OrderField[] { JOnboarding.ONBOARDING.ID }, true);
         public static Index ORGANIZATION_NAME_KEY = Internal.createIndex("organization_name_key", JOrganization.ORGANIZATION, new OrderField[] { JOrganization.ORGANIZATION.NAME }, true);
         public static Index ORGANIZATION_PKEY = Internal.createIndex("organization_pkey", JOrganization.ORGANIZATION, new OrderField[] { JOrganization.ORGANIZATION.ID }, true);
         public static Index ORGANIZATION_SLUG_IDX = Internal.createIndex("organization_slug_idx", JOrganization.ORGANIZATION, new OrderField[] { JOrganization.ORGANIZATION.SLUG }, false);
@@ -311,7 +307,6 @@ public class Indexes {
         public static Index PROJECT_KEY_IDX = Internal.createIndex("project_key_idx", JProject.PROJECT, new OrderField[] { JProject.PROJECT.KEY }, false);
         public static Index PROJECT_KEY_KEY = Internal.createIndex("project_key_key", JProject.PROJECT, new OrderField[] { JProject.PROJECT.KEY }, true);
         public static Index PROJECT_PK = Internal.createIndex("project_pk", JProject.PROJECT, new OrderField[] { JProject.PROJECT.ID }, true);
-        public static Index PROJECT_SLUG_KEY = Internal.createIndex("project_slug_key", JProject.PROJECT, new OrderField[] { JProject.PROJECT.SLUG }, true);
         public static Index UNIQUE_ATTRIBUTE_PER_PROJECT = Internal.createIndex("unique_attribute_per_project", JProjectAttribute.PROJECT_ATTRIBUTE, new OrderField[] { JProjectAttribute.PROJECT_ATTRIBUTE.ATTRIBUTE_ID, JProjectAttribute.PROJECT_ATTRIBUTE.PROJECT_ID }, true);
         public static Index USERS_PROJECT_PK = Internal.createIndex("users_project_pk", JProjectUser.PROJECT_USER, new OrderField[] { JProjectUser.PROJECT_USER.USER_ID, JProjectUser.PROJECT_USER.PROJECT_ID }, true);
         public static Index RCPNT_SEND_CASE_IDX = Internal.createIndex("rcpnt_send_case_idx", JRecipients.RECIPIENTS, new OrderField[] { JRecipients.RECIPIENTS.SENDER_CASE_ID }, false);
