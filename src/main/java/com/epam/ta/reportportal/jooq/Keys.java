@@ -33,7 +33,6 @@ import com.epam.ta.reportportal.jooq.tables.JLog;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
-import com.epam.ta.reportportal.jooq.tables.JOnboarding;
 import com.epam.ta.reportportal.jooq.tables.JOrganization;
 import com.epam.ta.reportportal.jooq.tables.JOrganizationUser;
 import com.epam.ta.reportportal.jooq.tables.JOwnedEntity;
@@ -88,7 +87,6 @@ import com.epam.ta.reportportal.jooq.tables.records.JLogRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JOauthRegistrationRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JOauthRegistrationRestrictionRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JOauthRegistrationScopeRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JOnboardingRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JOrganizationRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JOrganizationUserRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JOwnedEntityRecord;
@@ -159,7 +157,6 @@ public class Keys {
     public static final Identity<JLogRecord, Long> IDENTITY_LOG = Identities0.IDENTITY_LOG;
     public static final Identity<JOauthRegistrationRestrictionRecord, Integer> IDENTITY_OAUTH_REGISTRATION_RESTRICTION = Identities0.IDENTITY_OAUTH_REGISTRATION_RESTRICTION;
     public static final Identity<JOauthRegistrationScopeRecord, Integer> IDENTITY_OAUTH_REGISTRATION_SCOPE = Identities0.IDENTITY_OAUTH_REGISTRATION_SCOPE;
-    public static final Identity<JOnboardingRecord, Short> IDENTITY_ONBOARDING = Identities0.IDENTITY_ONBOARDING;
     public static final Identity<JOrganizationRecord, Long> IDENTITY_ORGANIZATION = Identities0.IDENTITY_ORGANIZATION;
     public static final Identity<JOrganizationUserRecord, Long> IDENTITY_ORGANIZATION_USER = Identities0.IDENTITY_ORGANIZATION_USER;
     public static final Identity<JOwnedEntityRecord, Long> IDENTITY_OWNED_ENTITY = Identities0.IDENTITY_OWNED_ENTITY;
@@ -218,7 +215,6 @@ public class Keys {
     public static final UniqueKey<JOauthRegistrationRestrictionRecord> OAUTH_REGISTRATION_RESTRICTION_UNIQUE = UniqueKeys0.OAUTH_REGISTRATION_RESTRICTION_UNIQUE;
     public static final UniqueKey<JOauthRegistrationScopeRecord> OAUTH_REGISTRATION_SCOPE_PK = UniqueKeys0.OAUTH_REGISTRATION_SCOPE_PK;
     public static final UniqueKey<JOauthRegistrationScopeRecord> OAUTH_REGISTRATION_SCOPE_UNIQUE = UniqueKeys0.OAUTH_REGISTRATION_SCOPE_UNIQUE;
-    public static final UniqueKey<JOnboardingRecord> ONBOARDING_PK = UniqueKeys0.ONBOARDING_PK;
     public static final UniqueKey<JOrganizationRecord> ORGANIZATION_PKEY = UniqueKeys0.ORGANIZATION_PKEY;
     public static final UniqueKey<JOrganizationRecord> ORGANIZATION_NAME_KEY = UniqueKeys0.ORGANIZATION_NAME_KEY;
     public static final UniqueKey<JOrganizationRecord> ORGANIZATION_SLUG_KEY = UniqueKeys0.ORGANIZATION_SLUG_KEY;
@@ -342,7 +338,6 @@ public class Keys {
         public static Identity<JLogRecord, Long> IDENTITY_LOG = Internal.createIdentity(JLog.LOG, JLog.LOG.ID);
         public static Identity<JOauthRegistrationRestrictionRecord, Integer> IDENTITY_OAUTH_REGISTRATION_RESTRICTION = Internal.createIdentity(JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION, JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION.ID);
         public static Identity<JOauthRegistrationScopeRecord, Integer> IDENTITY_OAUTH_REGISTRATION_SCOPE = Internal.createIdentity(JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE, JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.ID);
-        public static Identity<JOnboardingRecord, Short> IDENTITY_ONBOARDING = Internal.createIdentity(JOnboarding.ONBOARDING, JOnboarding.ONBOARDING.ID);
         public static Identity<JOrganizationRecord, Long> IDENTITY_ORGANIZATION = Internal.createIdentity(JOrganization.ORGANIZATION, JOrganization.ORGANIZATION.ID);
         public static Identity<JOrganizationUserRecord, Long> IDENTITY_ORGANIZATION_USER = Internal.createIdentity(JOrganizationUser.ORGANIZATION_USER, JOrganizationUser.ORGANIZATION_USER.USER_ID);
         public static Identity<JOwnedEntityRecord, Long> IDENTITY_OWNED_ENTITY = Internal.createIdentity(JOwnedEntity.OWNED_ENTITY, JOwnedEntity.OWNED_ENTITY.ID);
@@ -399,7 +394,6 @@ public class Keys {
         public static final UniqueKey<JOauthRegistrationRestrictionRecord> OAUTH_REGISTRATION_RESTRICTION_UNIQUE = Internal.createUniqueKey(JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION, "oauth_registration_restriction_unique", JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION.TYPE, JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION.VALUE, JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION.OAUTH_REGISTRATION_FK);
         public static final UniqueKey<JOauthRegistrationScopeRecord> OAUTH_REGISTRATION_SCOPE_PK = Internal.createUniqueKey(JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE, "oauth_registration_scope_pk", JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.ID);
         public static final UniqueKey<JOauthRegistrationScopeRecord> OAUTH_REGISTRATION_SCOPE_UNIQUE = Internal.createUniqueKey(JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE, "oauth_registration_scope_unique", JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.SCOPE, JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.OAUTH_REGISTRATION_FK);
-        public static final UniqueKey<JOnboardingRecord> ONBOARDING_PK = Internal.createUniqueKey(JOnboarding.ONBOARDING, "onboarding_pk", JOnboarding.ONBOARDING.ID);
         public static final UniqueKey<JOrganizationRecord> ORGANIZATION_PKEY = Internal.createUniqueKey(JOrganization.ORGANIZATION, "organization_pkey", JOrganization.ORGANIZATION.ID);
         public static final UniqueKey<JOrganizationRecord> ORGANIZATION_NAME_KEY = Internal.createUniqueKey(JOrganization.ORGANIZATION, "organization_name_key", JOrganization.ORGANIZATION.NAME);
         public static final UniqueKey<JOrganizationRecord> ORGANIZATION_SLUG_KEY = Internal.createUniqueKey(JOrganization.ORGANIZATION, "organization_slug_key", JOrganization.ORGANIZATION.SLUG);
