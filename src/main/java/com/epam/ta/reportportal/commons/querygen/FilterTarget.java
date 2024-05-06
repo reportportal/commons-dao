@@ -531,6 +531,7 @@ public enum FilterTarget {
           LAUNCH.HAS_RETRIES,
           LAUNCH.RERUN,
           LAUNCH.APPROXIMATE_DURATION,
+          LAUNCH.RETENTION_POLICY,
           STATISTICS.S_COUNTER,
           STATISTICS_FIELD.NAME,
           USERS.ID,
