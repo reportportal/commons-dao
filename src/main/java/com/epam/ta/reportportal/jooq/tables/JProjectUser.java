@@ -42,7 +42,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JProjectUser extends TableImpl<JProjectUserRecord> {
 
-    private static final long serialVersionUID = -1204654894;
+    private static final long serialVersionUID = -877127631;
 
     /**
      * The reference instance of <code>public.project_user</code>
@@ -70,7 +70,7 @@ public class JProjectUser extends TableImpl<JProjectUserRecord> {
     /**
      * The column <code>public.project_user.project_role</code>.
      */
-    public final TableField<JProjectUserRecord, JProjectRoleEnum> PROJECT_ROLE = createField(DSL.name("project_role"), org.jooq.impl.SQLDataType.VARCHAR.asEnumDataType(com.epam.ta.reportportal.jooq.enums.JProjectRoleEnum.class), this, "");
+    public final TableField<JProjectUserRecord, JProjectRoleEnum> PROJECT_ROLE = createField(DSL.name("project_role"), org.jooq.impl.SQLDataType.VARCHAR.nullable(false).asEnumDataType(com.epam.ta.reportportal.jooq.enums.JProjectRoleEnum.class), this, "");
 
     /**
      * Create a <code>public.project_user</code> table reference

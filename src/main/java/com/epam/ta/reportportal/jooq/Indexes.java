@@ -59,7 +59,9 @@ import com.epam.ta.reportportal.jooq.tables.JUserPreference;
 import com.epam.ta.reportportal.jooq.tables.JUsers;
 import com.epam.ta.reportportal.jooq.tables.JWidget;
 import com.epam.ta.reportportal.jooq.tables.JWidgetFilter;
+
 import javax.annotation.processing.Generated;
+
 import org.jooq.Index;
 import org.jooq.OrderField;
 import org.jooq.impl.Internal;
@@ -171,7 +173,6 @@ public class Indexes {
     public static final Index PROJECT_KEY_IDX = Indexes0.PROJECT_KEY_IDX;
     public static final Index PROJECT_KEY_KEY = Indexes0.PROJECT_KEY_KEY;
     public static final Index PROJECT_PK = Indexes0.PROJECT_PK;
-    public static final Index PROJECT_SLUG_KEY = Indexes0.PROJECT_SLUG_KEY;
     public static final Index UNIQUE_ATTRIBUTE_PER_PROJECT = Indexes0.UNIQUE_ATTRIBUTE_PER_PROJECT;
     public static final Index USERS_PROJECT_PK = Indexes0.USERS_PROJECT_PK;
     public static final Index RCPNT_SEND_CASE_IDX = Indexes0.RCPNT_SEND_CASE_IDX;
@@ -309,7 +310,6 @@ public class Indexes {
         public static Index PROJECT_KEY_IDX = Internal.createIndex("project_key_idx", JProject.PROJECT, new OrderField[] { JProject.PROJECT.KEY }, false);
         public static Index PROJECT_KEY_KEY = Internal.createIndex("project_key_key", JProject.PROJECT, new OrderField[] { JProject.PROJECT.KEY }, true);
         public static Index PROJECT_PK = Internal.createIndex("project_pk", JProject.PROJECT, new OrderField[] { JProject.PROJECT.ID }, true);
-        public static Index PROJECT_SLUG_KEY = Internal.createIndex("project_slug_key", JProject.PROJECT, new OrderField[] { JProject.PROJECT.SLUG }, true);
         public static Index UNIQUE_ATTRIBUTE_PER_PROJECT = Internal.createIndex("unique_attribute_per_project", JProjectAttribute.PROJECT_ATTRIBUTE, new OrderField[] { JProjectAttribute.PROJECT_ATTRIBUTE.ATTRIBUTE_ID, JProjectAttribute.PROJECT_ATTRIBUTE.PROJECT_ID }, true);
         public static Index USERS_PROJECT_PK = Internal.createIndex("users_project_pk", JProjectUser.PROJECT_USER, new OrderField[] { JProjectUser.PROJECT_USER.USER_ID, JProjectUser.PROJECT_USER.PROJECT_ID }, true);
         public static Index RCPNT_SEND_CASE_IDX = Internal.createIndex("rcpnt_send_case_idx", JRecipients.RECIPIENTS, new OrderField[] { JRecipients.RECIPIENTS.SENDER_CASE_ID }, false);
