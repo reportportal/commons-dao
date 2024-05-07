@@ -35,7 +35,7 @@ dependencies {
     if (releaseMode) {
         compile 'com.epam.reportportal:commons'
     } else {
-        implementation 'com.github.reportportal:commons:103367e181'
+        implementation 'com.github.reportportal:commons:67cbfaea24'
     }
 
     implementation 'org.springframework.security:spring-security-core'
