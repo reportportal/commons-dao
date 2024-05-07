@@ -39,7 +39,6 @@ public class ProjectUserRepositoryCustomImpl implements ProjectUserRepositoryCus
         .join(ORGANIZATION).on(PROJECT.ORGANIZATION_ID.eq(ORGANIZATION.ID))
         .join(ORGANIZATION_USER).on(ORGANIZATION_USER.USER_ID.eq(ORGANIZATION_USER.ORGANIZATION_ID))
         .where(PROJECT_USER.USER_ID.eq(userId))
-        .and(ORGANIZATION_USER.USER_ID.eq(userId))
         .and(PROJECT.KEY.eq(projectKey))
         .fetchOptional(ASSIGNMENT_DETAILS_MAPPER);
   }
