@@ -5,7 +5,8 @@ import java.util.Optional;
 
 public interface ProjectUserRepositoryCustom {
 
-  Optional<MembershipDetails> findDetailsByUserIdAndProjectKey(Long userId, String projectKey);
+  Optional<MembershipDetails> findDetailsByUserIdAndProjectKey(Long userId, String projectKey,
+      String organizationSlug);
 
   Optional<MembershipDetails> findAdminDetailsProjectKey(String projectKey);
 }
