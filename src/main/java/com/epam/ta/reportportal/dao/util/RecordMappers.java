@@ -428,22 +428,21 @@ public class RecordMappers {
   };
 
   public static final RecordMapper<Record, MembershipDetails> ASSIGNMENT_DETAILS_MAPPER = r -> {
-    final Long organizationId = r.get(PROJECT.ORGANIZATION_ID);
-    final String orgName = r.get(ORGANIZATION.NAME, String.class);
-    final OrganizationRole orgRole = r.into(ORGANIZATION_USER.ORGANIZATION_ROLE).into(OrganizationRole.class);
-    final Long projectId = r.get(PROJECT_USER.PROJECT_ID);
-    final String projectName = r.get(PROJECT.NAME);
-    final ProjectRole projectRole = r.into(PROJECT_USER.PROJECT_ROLE).into(ProjectRole.class);
-    final String projectKey = r.get(PROJECT.KEY);
-
     MembershipDetails md = new MembershipDetails();
-    md.setOrgId(organizationId);
-    md.setOrgRole(orgRole);
-    md.setOrgName(orgName);
-    md.setProjectId(projectId);
-    md.setProjectName(projectName);
-    md.setProjectKey(projectKey);
-    md.setProjectRole(projectRole);
+
+    ofNullable(r.get(PROJECT.ORGANIZATION_ID)).ifPresent(md::setOrgId);
+    ofNullable(r.get(ORGANIZATION.NAME)).ifPresent(md::setOrgName);
+    ofNullable(r.get(ORGANIZATION_USER.ORGANIZATION_ROLE))
+        .ifPresent(orgRole -> md.setOrgRole(r.into(ORGANIZATION_USER.ORGANIZATION_ROLE)
+            .into(OrganizationRole.class)));
+    ofNullable(r.get(PROJECT.ID))
+      .ifPresent(md::setProjectId);
+    ofNullable(r.get(PROJECT.NAME)).ifPresent(md::setProjectName);
+    ofNullable(r.into(PROJECT_USER.PROJECT_ROLE).into(ProjectRole.class))
+        .ifPresent(projectRole -> md.setProjectRole(r.into(PROJECT_USER.PROJECT_ROLE)
+            .into(ProjectRole.class)));
+    ofNullable(r.get(PROJECT.KEY)).ifPresent(md::setProjectKey);
+
     return md;
   };
 
