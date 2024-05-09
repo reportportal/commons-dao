@@ -19,7 +19,7 @@ class ProjectUserRepositoryTest extends BaseTest {
 
     final String projectKey = "superadmin_personal";
     final Optional<MembershipDetails> membershipDetails =
-        projectUserRepository.findDetailsByUserIdAndProjectKey(1L, projectKey, "my-organization");
+        projectUserRepository.findDetailsByUserIdAndProjectKey(1L, projectKey);
 
     Assertions.assertTrue(membershipDetails.isPresent());
     Assertions.assertNotNull(membershipDetails.get().getOrgId());
@@ -34,7 +34,7 @@ class ProjectUserRepositoryTest extends BaseTest {
 
     final String projectKey = "falcon-key";
     final Optional<MembershipDetails> projectDetails =
-        projectUserRepository.findDetailsByUserIdAndProjectKey(2L,projectKey, "my");
+        projectUserRepository.findDetailsByUserIdAndProjectKey(2L, projectKey);
 
     Assertions.assertFalse(projectDetails.isPresent());
   }

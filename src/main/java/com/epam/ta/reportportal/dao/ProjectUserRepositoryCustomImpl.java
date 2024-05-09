@@ -24,8 +24,8 @@ public class ProjectUserRepositoryCustomImpl implements ProjectUserRepositoryCus
   }
 
   @Override
-  public Optional<MembershipDetails> findDetailsByUserIdAndProjectKey(Long userId,
-      String projectKey, String orgSlug) {
+  public Optional<MembershipDetails> findDetailsByUserIdAndProjectKey(Long userId, String projectKey) {
+
     return dsl.select(
             PROJECT_USER.PROJECT_ID,
             PROJECT_USER.PROJECT_ROLE,
@@ -34,14 +34,15 @@ public class ProjectUserRepositoryCustomImpl implements ProjectUserRepositoryCus
             PROJECT.ORGANIZATION_ID,
             ORGANIZATION_USER.ORGANIZATION_ROLE,
             ORGANIZATION.NAME)
-        .from(PROJECT_USER)
-        .join(PROJECT).on(PROJECT_USER.PROJECT_ID.eq(PROJECT.ID))
+        .from(PROJECT)
         .join(ORGANIZATION).on(PROJECT.ORGANIZATION_ID.eq(ORGANIZATION.ID))
-        .join(ORGANIZATION_USER).on(ORGANIZATION.ID.eq(ORGANIZATION_USER.ORGANIZATION_ID))
-        .where(PROJECT_USER.USER_ID.eq(userId))
-        .and(ORGANIZATION_USER.USER_ID.eq(userId))
-        .and(PROJECT.KEY.eq(projectKey))
-        .and(ORGANIZATION.SLUG.eq(orgSlug))
+        .fullJoin(PROJECT_USER)
+          .on(PROJECT_USER.PROJECT_ID.eq(PROJECT.ID)
+              .and(PROJECT_USER.USER_ID.eq(userId)))
+        .join(ORGANIZATION_USER)
+          .on(ORGANIZATION_USER.ORGANIZATION_ID.eq(PROJECT.ORGANIZATION_ID)
+              .and(ORGANIZATION_USER.USER_ID.eq(userId)))
+        .where(PROJECT.KEY.eq(projectKey))
         .fetchOptional(ASSIGNMENT_DETAILS_MAPPER);
   }
 
