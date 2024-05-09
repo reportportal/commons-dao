@@ -7,6 +7,7 @@ import static com.epam.ta.reportportal.jooq.Tables.PROJECT;
 import static com.epam.ta.reportportal.jooq.Tables.PROJECT_USER;
 
 import com.epam.ta.reportportal.entity.organization.MembershipDetails;
+import com.epam.ta.reportportal.jooq.enums.JOrganizationRoleEnum;
 import java.util.Optional;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
@@ -50,7 +51,7 @@ public class ProjectUserRepositoryCustomImpl implements ProjectUserRepositoryCus
   public Optional<MembershipDetails> findAdminDetailsProjectKey(String projectKey) {
     return dsl.select(
             PROJECT.ID,
-            DSL.val("MANAGER").as(ORGANIZATION_USER.ORGANIZATION_ROLE),
+            DSL.val(JOrganizationRoleEnum.MANAGER).as(ORGANIZATION_USER.ORGANIZATION_ROLE),
             PROJECT.NAME,
             PROJECT.KEY,
             PROJECT.ORGANIZATION_ID,
@@ -60,6 +61,5 @@ public class ProjectUserRepositoryCustomImpl implements ProjectUserRepositoryCus
         .where(PROJECT.KEY.eq(projectKey))
         .fetchOptional(ASSIGNMENT_DETAILS_MAPPER);
   }
-
 
 }
