@@ -49,7 +49,7 @@ public class ProjectUserRepositoryCustomImpl implements ProjectUserRepositoryCus
   @Override
   public Optional<MembershipDetails> findAdminDetailsProjectKey(String projectKey) {
     return dsl.select(
-            PROJECT.ID.as(PROJECT_USER.PROJECT_ID),
+            PROJECT.ID,
             DSL.val("MANAGER").as(ORGANIZATION_USER.ORGANIZATION_ROLE),
             PROJECT.NAME,
             PROJECT.KEY,
