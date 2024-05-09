@@ -27,7 +27,7 @@ public class ProjectUserRepositoryCustomImpl implements ProjectUserRepositoryCus
   public Optional<MembershipDetails> findDetailsByUserIdAndProjectKey(Long userId, String projectKey) {
 
     return dsl.select(
-            PROJECT_USER.PROJECT_ID,
+            PROJECT.ID,
             PROJECT_USER.PROJECT_ROLE,
             PROJECT.NAME,
             PROJECT.KEY,
