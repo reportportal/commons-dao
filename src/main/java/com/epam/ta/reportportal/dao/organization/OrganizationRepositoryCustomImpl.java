@@ -57,8 +57,6 @@ public class OrganizationRepositoryCustomImpl implements OrganizationRepositoryC
         ORGANIZATION_FETCHER.apply(
             dsl.fetch(QueryBuilder.newBuilder(filter, collectJoinFields(filter, pageable.getSort()))
                 .with(pageable)
-                .wrap()
-                .withWrapperSort(pageable.getSort())
                 .build())),
         pageable,
         () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
