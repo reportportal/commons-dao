@@ -134,7 +134,7 @@ public class ResultFetchers {
       Long id = record.get(ORGANIZATION.ID);
       OrganizationProfile organization;
       if (!orgs.containsKey(id)) {
-        organization = RecordMappers.ORGANIZATION_MAPPER.map(record);
+        organization = OrganizationMapper.ORGANIZATION_MAPPER.map(record);
       } else {
         organization = orgs.get(id);
       }

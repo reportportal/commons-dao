@@ -19,13 +19,10 @@ package com.epam.ta.reportportal.dao.organization;
 import static com.epam.ta.reportportal.dao.util.QueryUtils.collectJoinFields;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.ORGANIZATION_FETCHER;
 import static com.epam.ta.reportportal.jooq.Tables.ORGANIZATION;
-import static com.epam.ta.reportportal.jooq.Tables.ORGANIZATION_USER;
-import static com.epam.ta.reportportal.jooq.Tables.USERS;
 
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.entity.organization.Organization;
-import com.epam.ta.reportportal.entity.organization.OrganizationFilter;
 import com.epam.ta.reportportal.model.OrganizationProfile;
 import java.util.List;
 import java.util.Optional;
@@ -68,25 +65,12 @@ public class OrganizationRepositoryCustomImpl implements OrganizationRepositoryC
     );
   }
 
-
-/*  @Override
-  public List<Organization> findAllByUserLogin(String login) {
-    return ORGANIZATION_FETCHER.apply(dsl.select(ORGANIZATION.fields())
-        .from(ORGANIZATION)
-        .join(ORGANIZATION_USER)
-        .on(ORGANIZATION.ID.eq(ORGANIZATION_USER.ORGANIZATION_ID))
-        .join(USERS)
-        .on(ORGANIZATION_USER.USER_ID.eq(USERS.ID))
-        .where(USERS.LOGIN.eq(login))
-        .fetch());
-  }*/
-
-/*  @Override
+  @Override
   public Optional<Organization> findById(Long orgId) {
     return dsl.select()
         .from(ORGANIZATION)
         .where(ORGANIZATION.ID.eq(orgId))
-        .fetchOptionalInto(OrganizationFilter.class);
+        .fetchOptionalInto(Organization.class);
   }
 
   @Override
@@ -94,7 +78,7 @@ public class OrganizationRepositoryCustomImpl implements OrganizationRepositoryC
     return dsl.select()
         .from(ORGANIZATION)
         .where(ORGANIZATION.NAME.eq(name))
-        .fetchOptionalInto(OrganizationFilter.class);
+        .fetchOptionalInto(Organization.class);
   }
 
   @Override
@@ -102,24 +86,7 @@ public class OrganizationRepositoryCustomImpl implements OrganizationRepositoryC
     return dsl.select()
         .from(ORGANIZATION)
         .where(ORGANIZATION.SLUG.eq(slug))
-        .fetchOptionalInto(OrganizationFilter.class);
+        .fetchOptionalInto(Organization.class);
   }
-
-  @Override
-  public List<OrganizationProfile> findOrganizationInfoByFilter(Queryable filter) {
-    return dsl.fetch(QueryBuilder.newBuilder(filter, collectJoinFields(filter))
-            .build())
-        .into(OrganizationFilter.class);
-  }*/
-
-/*  @Override
-  public Page<OrganizationProfile> findOrganizationInfoByFilter(Queryable filter, Pageable pageable) {
-    return PageableExecutionUtils.getPage(
-        dsl.fetch(QueryBuilder.newBuilder(filter).with(pageable).build())
-            .into(OrganizationProfile.class),
-        pageable,
-        () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
-    );
-  }*/
 
 }

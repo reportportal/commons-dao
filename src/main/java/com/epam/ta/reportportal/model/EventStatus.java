@@ -13,7 +13,7 @@ import org.springframework.validation.annotation.Validated;
  */
 @Schema(description = "Event status object used to represent the status of a request item in bulk operations.  The status can be one of the following:  * \"SUCCESS\" - The request item was successfully processed. * \"FAILURE\" - The request item failed to be processed. * \"PENDING\" - The request item is still pending processing.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-05-14T07:48:32.405970064+03:00[Europe/Istanbul]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-05-14T12:57:43.836661731+03:00[Europe/Istanbul]")
 
 
 public class EventStatus {

@@ -11,7 +11,7 @@ import org.springframework.validation.annotation.Validated;
  */
 @Schema(description = "Allows clients to dynamically follow the hypermedia links to quickly navigate to the relevant resources.  Uses for Hypermedia as the Engine of Application State (HATEOAS).  Represents the [JSON:API link object](https://jsonapi.org/format/#auto-id--link-objects) and accepts `Web linking` as the de-facto datamodel.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-05-14T07:48:32.405970064+03:00[Europe/Istanbul]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-05-14T12:57:43.836661731+03:00[Europe/Istanbul]")
 
 
 public class Link   {

@@ -25,7 +25,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
@@ -35,6 +37,8 @@ import lombok.Setter;
 @Table(name = "organization", schema = "public")
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Organization implements Serializable {
 
   @Id
@@ -42,8 +46,11 @@ public class Organization implements Serializable {
   @Column(name = "id", unique = true, nullable = false, precision = 64)
   private Long id;
 
-  @Column(name = "creation_date", nullable = false)
-  private Instant creationDate;
+  @Column(name = "created_at", nullable = false)
+  private Instant createdAt;
+
+  @Column(name = "updated_at", nullable = false)
+  private Instant updatedAt;
 
   @Column(name = "name")
   private String name;
@@ -54,23 +61,17 @@ public class Organization implements Serializable {
   @Column(name = "slug")
   private String slug;
 
-  public Organization() {
-  }
+  @Column(name = "external_id")
+  private String externalId;
 
-  public Organization(Long id, Instant creationDate, String name,
-      OrganizationType organizationType, String slug) {
-    this.id = id;
-    this.creationDate = creationDate;
-    this.name = name;
-    this.organizationType = organizationType;
-    this.slug = slug;
-  }
 
   @Override
   public String toString() {
     return "Organization{" +
         "id=" + id +
-        ", creationDate=" + creationDate +
+        ", creationDate=" + createdAt +
+        ", updatedAt=" + updatedAt +
+        ", externalId=" + externalId +
         ", name='" + name + '\'' +
         ", organizationType=" + organizationType +
         ", slug='" + slug + '\'' +

@@ -12,7 +12,7 @@ import org.springframework.validation.annotation.Validated;
  */
 @Schema(description = "There are the following roles:  - `EDITOR` is a full-access role for the project. By default, all users with a `MANAGER` role have the `EDITOR` role. - `VIEWER` is a base role for members. Provides a read-only permission. - `null` is a state you can use to unassign a user from the project.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-05-14T07:48:32.405970064+03:00[Europe/Istanbul]")
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-05-14T12:57:43.836661731+03:00[Europe/Istanbul]")
 
 
 public class ProjectUserDetails   {

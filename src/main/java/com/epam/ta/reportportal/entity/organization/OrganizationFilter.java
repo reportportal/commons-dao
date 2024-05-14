@@ -37,8 +37,10 @@ public class OrganizationFilter implements Serializable {
   public static final String LAST_RUN = "lastRun";
 
   private Long id;
-  private Instant creationDate;
+  private Instant createdAt;
+  private Instant updatedAt;
   private String name;
+  private String externalId;
   private OrganizationType organizationType;
   private String slug;
 
