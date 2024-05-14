@@ -217,6 +217,7 @@ public class Keys {
     public static final UniqueKey<JOauthRegistrationScopeRecord> OAUTH_REGISTRATION_SCOPE_UNIQUE = UniqueKeys0.OAUTH_REGISTRATION_SCOPE_UNIQUE;
     public static final UniqueKey<JOrganizationRecord> ORGANIZATION_PKEY = UniqueKeys0.ORGANIZATION_PKEY;
     public static final UniqueKey<JOrganizationRecord> ORGANIZATION_NAME_KEY = UniqueKeys0.ORGANIZATION_NAME_KEY;
+    public static final UniqueKey<JOrganizationRecord> ORGANIZATION_EXTERNAL_ID_KEY = UniqueKeys0.ORGANIZATION_EXTERNAL_ID_KEY;
     public static final UniqueKey<JOrganizationRecord> ORGANIZATION_SLUG_KEY = UniqueKeys0.ORGANIZATION_SLUG_KEY;
     public static final UniqueKey<JOrganizationUserRecord> ORGANIZATION_USER_PK = UniqueKeys0.ORGANIZATION_USER_PK;
     public static final UniqueKey<JOwnedEntityRecord> SHAREABLE_PK = UniqueKeys0.SHAREABLE_PK;
@@ -396,6 +397,7 @@ public class Keys {
         public static final UniqueKey<JOauthRegistrationScopeRecord> OAUTH_REGISTRATION_SCOPE_UNIQUE = Internal.createUniqueKey(JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE, "oauth_registration_scope_unique", JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.SCOPE, JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.OAUTH_REGISTRATION_FK);
         public static final UniqueKey<JOrganizationRecord> ORGANIZATION_PKEY = Internal.createUniqueKey(JOrganization.ORGANIZATION, "organization_pkey", JOrganization.ORGANIZATION.ID);
         public static final UniqueKey<JOrganizationRecord> ORGANIZATION_NAME_KEY = Internal.createUniqueKey(JOrganization.ORGANIZATION, "organization_name_key", JOrganization.ORGANIZATION.NAME);
+        public static final UniqueKey<JOrganizationRecord> ORGANIZATION_EXTERNAL_ID_KEY = Internal.createUniqueKey(JOrganization.ORGANIZATION, "organization_external_id_key", JOrganization.ORGANIZATION.EXTERNAL_ID);
         public static final UniqueKey<JOrganizationRecord> ORGANIZATION_SLUG_KEY = Internal.createUniqueKey(JOrganization.ORGANIZATION, "organization_slug_key", JOrganization.ORGANIZATION.SLUG);
         public static final UniqueKey<JOrganizationUserRecord> ORGANIZATION_USER_PK = Internal.createUniqueKey(JOrganizationUser.ORGANIZATION_USER, "organization_user_pk", JOrganizationUser.ORGANIZATION_USER.USER_ID, JOrganizationUser.ORGANIZATION_USER.ORGANIZATION_ID);
         public static final UniqueKey<JOwnedEntityRecord> SHAREABLE_PK = Internal.createUniqueKey(JOwnedEntity.OWNED_ENTITY, "shareable_pk", JOwnedEntity.OWNED_ENTITY.ID);

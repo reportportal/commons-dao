@@ -29,7 +29,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class OrganizationInfo implements Serializable {
+public class OrganizationFilter implements Serializable {
 
   public static final String USERS_QUANTITY = "usersQuantity";
   public static final String LAUNCHES_QUANTITY = "launchesQuantity";

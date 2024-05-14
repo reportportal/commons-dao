@@ -10,7 +10,7 @@ project.ext {
     releaseMode = project.hasProperty("releaseMode")
     hasDBSchema = project.hasProperty("DB_SCHEMA_POSTGRES")
     scriptsUrl = commonScriptsUrl + (releaseMode ? getProperty('scripts.version') : 'develop')
-    migrationsUrl = migrationsScriptsUrl + (releaseMode ? getProperty('migrations.version') : 'develop')
+    migrationsUrl = migrationsScriptsUrl + (releaseMode ? getProperty('migrations.version') : 'EPMRPP-90160')
     
     //TODO refactor with archive download
     testScriptsSrc = [
@@ -88,6 +88,7 @@ project.ext {
     ]
     excludeTests = [
             'com/epam/ta/reportportal/jooq/**',
+            'com/epam/ta/reportportal/model/**',
             'com/epam/ta/reportportal/config/**',
             'com/epam/ta/reportportal/commons/accessible',
             'com/epam/ta/reportportal/commons/querygen/constant',

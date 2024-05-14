@@ -21,7 +21,7 @@ import org.jooq.Index;
 import org.jooq.JSONB;
 import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row7;
+import org.jooq.Row6;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -43,7 +43,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JUserCreationBid extends TableImpl<JUserCreationBidRecord> {
 
-    private static final long serialVersionUID = 1009841154;
+    private static final long serialVersionUID = -270770808;
 
     /**
      * The reference instance of <code>public.user_creation_bid</code>
@@ -72,11 +72,6 @@ public class JUserCreationBid extends TableImpl<JUserCreationBidRecord> {
      * The column <code>public.user_creation_bid.email</code>.
      */
     public final TableField<JUserCreationBidRecord, String> EMAIL = createField(DSL.name("email"), org.jooq.impl.SQLDataType.VARCHAR.nullable(false), this, "");
-
-    /**
-     * The column <code>public.user_creation_bid.role</code>.
-     */
-    public final TableField<JUserCreationBidRecord, String> ROLE = createField(DSL.name("role"), org.jooq.impl.SQLDataType.VARCHAR.nullable(false), this, "");
 
     /**
      * The column <code>public.user_creation_bid.inviting_user_id</code>.
@@ -182,11 +177,11 @@ public class JUserCreationBid extends TableImpl<JUserCreationBidRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row7 type methods
+    // Row6 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row7<String, Timestamp, String, String, Long, String, JSONB> fieldsRow() {
-        return (Row7) super.fieldsRow();
+    public Row6<String, Timestamp, String, Long, String, JSONB> fieldsRow() {
+        return (Row6) super.fieldsRow();
     }
 }

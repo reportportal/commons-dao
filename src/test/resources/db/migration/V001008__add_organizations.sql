@@ -1,6 +1,6 @@
 -- Update 'project' table
-WITH org_id AS (INSERT INTO public.organization (name, slug, organization_type)
-VALUES ('My organization', 'my-organization', 'INTERNAL') RETURNING id)
+WITH org_id AS (INSERT INTO public.organization (name, slug, organization_type, external_id)
+VALUES ('My organization', 'my-organization', 'INTERNAL', 'ext-1') RETURNING id)
 UPDATE public.project AS prj SET
   "organization_id" = 1,
   "key" = slugify(name);

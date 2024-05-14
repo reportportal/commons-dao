@@ -107,7 +107,7 @@ import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaCon
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_SYNCHRONIZATION_DATE;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_TYPE;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER;
-import static com.epam.ta.reportportal.entity.organization.OrganizationInfo.PROJECTS_QUANTITY;
+import static com.epam.ta.reportportal.entity.organization.OrganizationFilter.PROJECTS_QUANTITY;
 import static com.epam.ta.reportportal.entity.project.ProjectInfo.LAST_RUN;
 import static com.epam.ta.reportportal.entity.project.ProjectInfo.LAUNCHES_QUANTITY;
 import static com.epam.ta.reportportal.entity.project.ProjectInfo.USERS_QUANTITY;
@@ -160,7 +160,7 @@ import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.organization.Organization;
-import com.epam.ta.reportportal.entity.organization.OrganizationInfo;
+import com.epam.ta.reportportal.entity.organization.OrganizationFilter;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectInfo;
 import com.epam.ta.reportportal.entity.user.User;
@@ -169,6 +169,7 @@ import com.epam.ta.reportportal.jooq.enums.JIntegrationGroupEnum;
 import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
+import com.epam.ta.reportportal.model.OrganizationInfo;
 import com.google.common.collect.Lists;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -1422,7 +1423,7 @@ public enum FilterTarget {
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ID, ORGANIZATION.ID, Long.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_NAME, ORGANIZATION.NAME, String.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_SLUG, ORGANIZATION.SLUG, String.class).get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_CREATED_DATE, ORGANIZATION.CREATION_DATE,
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_CREATED_DATE, ORGANIZATION.CREATED_AT,
           Timestamp.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_TYPE, ORGANIZATION.ORGANIZATION_TYPE,
           String.class).get(),
@@ -1436,7 +1437,9 @@ public enum FilterTarget {
           ORGANIZATION.ID,
           ORGANIZATION.NAME,
           ORGANIZATION.SLUG,
-          ORGANIZATION.CREATION_DATE,
+          ORGANIZATION.CREATED_AT,
+          ORGANIZATION.UPDATED_AT,
+          ORGANIZATION.EXTERNAL_ID,
           ORGANIZATION.ORGANIZATION_TYPE
       );
     }
@@ -1463,11 +1466,11 @@ public enum FilterTarget {
     }
   },
 
-  ORGANIZATION_INFO_TARGET(OrganizationInfo.class, Arrays.asList(
+  ORGANIZATION_INFO_TARGET(OrganizationFilter.class, Arrays.asList(
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ID, ORGANIZATION.ID, Long.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_NAME, ORGANIZATION.NAME, String.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_SLUG, ORGANIZATION.SLUG, String.class).get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_CREATED_DATE, ORGANIZATION.CREATION_DATE,
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_CREATED_DATE, ORGANIZATION.CREATED_AT,
           Timestamp.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_TYPE, ORGANIZATION.ORGANIZATION_TYPE,
           String.class).get()
@@ -1509,7 +1512,9 @@ public enum FilterTarget {
       return Lists.newArrayList(ORGANIZATION.ID,
           ORGANIZATION.NAME,
           ORGANIZATION.SLUG,
-          ORGANIZATION.CREATION_DATE,
+          ORGANIZATION.CREATED_AT,
+          ORGANIZATION.UPDATED_AT,
+          ORGANIZATION.EXTERNAL_ID,
           ORGANIZATION.ORGANIZATION_TYPE,
           DSL.countDistinct(ORGANIZATION_USER.USER_ID).as(USERS_QUANTITY),
           DSL.countDistinct(PROJECT.ID).as(PROJECTS_QUANTITY),
@@ -1550,7 +1555,7 @@ public enum FilterTarget {
       return ORGANIZATION.ID.cast(Long.class);
     }
 
-    @Override
+/*    @Override
     public QuerySupplier wrapQuery(SelectQuery<? extends Record> query) {
       throw new UnsupportedOperationException("Doesn't supported for Organization Info query");
     }
@@ -1558,7 +1563,7 @@ public enum FilterTarget {
     @Override
     public QuerySupplier wrapQuery(SelectQuery<? extends Record> query, String... excluding) {
       throw new UnsupportedOperationException("Doesn't supported for Organization Info query");
-    }
+    }*/
   };
 
   public static final String FILTERED_QUERY = "filtered";

@@ -68,6 +68,7 @@ import com.epam.ta.reportportal.entity.widget.Widget;
 import com.epam.reportportal.rules.exception.ReportPortalException;
 
 import com.epam.reportportal.rules.exception.ErrorType;
+import com.epam.ta.reportportal.model.OrganizationProfile;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -127,11 +128,11 @@ public class ResultFetchers {
   /**
    * Fetches records from db results into list of {@link Organization} objects.
    */
-  public static final Function<Result<? extends Record>, List<Organization>> ORGANIZATION_FETCHER = records -> {
-    Map<Long, Organization> orgs = Maps.newLinkedHashMap();
+  public static final Function<Result<? extends Record>, List<OrganizationProfile>> ORGANIZATION_FETCHER = records -> {
+    Map<Long, OrganizationProfile> orgs = Maps.newLinkedHashMap();
     records.forEach(record -> {
       Long id = record.get(ORGANIZATION.ID);
-      Organization organization;
+      OrganizationProfile organization;
       if (!orgs.containsKey(id)) {
         organization = RecordMappers.ORGANIZATION_MAPPER.map(record);
       } else {
