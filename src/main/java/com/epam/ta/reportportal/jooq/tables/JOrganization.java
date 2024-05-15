@@ -43,7 +43,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JOrganization extends TableImpl<JOrganizationRecord> {
 
-    private static final long serialVersionUID = 106486027;
+    private static final long serialVersionUID = -1316883766;
 
     /**
      * The reference instance of <code>public.organization</code>
@@ -86,7 +86,7 @@ public class JOrganization extends TableImpl<JOrganizationRecord> {
     /**
      * The column <code>public.organization.external_id</code>.
      */
-    public final TableField<JOrganizationRecord, String> EXTERNAL_ID = createField(DSL.name("external_id"), org.jooq.impl.SQLDataType.CLOB.nullable(false), this, "");
+    public final TableField<JOrganizationRecord, String> EXTERNAL_ID = createField(DSL.name("external_id"), org.jooq.impl.SQLDataType.CLOB, this, "");
 
     /**
      * The column <code>public.organization.slug</code>.
