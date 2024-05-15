@@ -33,7 +33,6 @@ import com.epam.ta.reportportal.jooq.tables.JLog;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
-import com.epam.ta.reportportal.jooq.tables.JOnboarding;
 import com.epam.ta.reportportal.jooq.tables.JOrganization;
 import com.epam.ta.reportportal.jooq.tables.JOrganizationUser;
 import com.epam.ta.reportportal.jooq.tables.JOwnedEntity;
@@ -88,7 +87,6 @@ import com.epam.ta.reportportal.jooq.tables.records.JLogRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JOauthRegistrationRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JOauthRegistrationRestrictionRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JOauthRegistrationScopeRecord;
-import com.epam.ta.reportportal.jooq.tables.records.JOnboardingRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JOrganizationRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JOrganizationUserRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JOwnedEntityRecord;
@@ -159,7 +157,6 @@ public class Keys {
     public static final Identity<JLogRecord, Long> IDENTITY_LOG = Identities0.IDENTITY_LOG;
     public static final Identity<JOauthRegistrationRestrictionRecord, Integer> IDENTITY_OAUTH_REGISTRATION_RESTRICTION = Identities0.IDENTITY_OAUTH_REGISTRATION_RESTRICTION;
     public static final Identity<JOauthRegistrationScopeRecord, Integer> IDENTITY_OAUTH_REGISTRATION_SCOPE = Identities0.IDENTITY_OAUTH_REGISTRATION_SCOPE;
-    public static final Identity<JOnboardingRecord, Short> IDENTITY_ONBOARDING = Identities0.IDENTITY_ONBOARDING;
     public static final Identity<JOrganizationRecord, Long> IDENTITY_ORGANIZATION = Identities0.IDENTITY_ORGANIZATION;
     public static final Identity<JOrganizationUserRecord, Long> IDENTITY_ORGANIZATION_USER = Identities0.IDENTITY_ORGANIZATION_USER;
     public static final Identity<JOwnedEntityRecord, Long> IDENTITY_OWNED_ENTITY = Identities0.IDENTITY_OWNED_ENTITY;
@@ -218,7 +215,6 @@ public class Keys {
     public static final UniqueKey<JOauthRegistrationRestrictionRecord> OAUTH_REGISTRATION_RESTRICTION_UNIQUE = UniqueKeys0.OAUTH_REGISTRATION_RESTRICTION_UNIQUE;
     public static final UniqueKey<JOauthRegistrationScopeRecord> OAUTH_REGISTRATION_SCOPE_PK = UniqueKeys0.OAUTH_REGISTRATION_SCOPE_PK;
     public static final UniqueKey<JOauthRegistrationScopeRecord> OAUTH_REGISTRATION_SCOPE_UNIQUE = UniqueKeys0.OAUTH_REGISTRATION_SCOPE_UNIQUE;
-    public static final UniqueKey<JOnboardingRecord> ONBOARDING_PK = UniqueKeys0.ONBOARDING_PK;
     public static final UniqueKey<JOrganizationRecord> ORGANIZATION_PKEY = UniqueKeys0.ORGANIZATION_PKEY;
     public static final UniqueKey<JOrganizationRecord> ORGANIZATION_NAME_KEY = UniqueKeys0.ORGANIZATION_NAME_KEY;
     public static final UniqueKey<JOrganizationRecord> ORGANIZATION_SLUG_KEY = UniqueKeys0.ORGANIZATION_SLUG_KEY;
@@ -228,7 +224,6 @@ public class Keys {
     public static final UniqueKey<JPatternTemplateRecord> UNQ_NAME_PROJECTID = UniqueKeys0.UNQ_NAME_PROJECTID;
     public static final UniqueKey<JPatternTemplateTestItemRecord> PATTERN_ITEM_UNQ = UniqueKeys0.PATTERN_ITEM_UNQ;
     public static final UniqueKey<JProjectRecord> PROJECT_PK = UniqueKeys0.PROJECT_PK;
-    public static final UniqueKey<JProjectRecord> PROJECT_SLUG_KEY = UniqueKeys0.PROJECT_SLUG_KEY;
     public static final UniqueKey<JProjectRecord> PROJECT_KEY_KEY = UniqueKeys0.PROJECT_KEY_KEY;
     public static final UniqueKey<JProjectAttributeRecord> UNIQUE_ATTRIBUTE_PER_PROJECT = UniqueKeys0.UNIQUE_ATTRIBUTE_PER_PROJECT;
     public static final UniqueKey<JProjectUserRecord> USERS_PROJECT_PK = UniqueKeys0.USERS_PROJECT_PK;
@@ -343,7 +338,6 @@ public class Keys {
         public static Identity<JLogRecord, Long> IDENTITY_LOG = Internal.createIdentity(JLog.LOG, JLog.LOG.ID);
         public static Identity<JOauthRegistrationRestrictionRecord, Integer> IDENTITY_OAUTH_REGISTRATION_RESTRICTION = Internal.createIdentity(JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION, JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION.ID);
         public static Identity<JOauthRegistrationScopeRecord, Integer> IDENTITY_OAUTH_REGISTRATION_SCOPE = Internal.createIdentity(JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE, JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.ID);
-        public static Identity<JOnboardingRecord, Short> IDENTITY_ONBOARDING = Internal.createIdentity(JOnboarding.ONBOARDING, JOnboarding.ONBOARDING.ID);
         public static Identity<JOrganizationRecord, Long> IDENTITY_ORGANIZATION = Internal.createIdentity(JOrganization.ORGANIZATION, JOrganization.ORGANIZATION.ID);
         public static Identity<JOrganizationUserRecord, Long> IDENTITY_ORGANIZATION_USER = Internal.createIdentity(JOrganizationUser.ORGANIZATION_USER, JOrganizationUser.ORGANIZATION_USER.USER_ID);
         public static Identity<JOwnedEntityRecord, Long> IDENTITY_OWNED_ENTITY = Internal.createIdentity(JOwnedEntity.OWNED_ENTITY, JOwnedEntity.OWNED_ENTITY.ID);
@@ -400,7 +394,6 @@ public class Keys {
         public static final UniqueKey<JOauthRegistrationRestrictionRecord> OAUTH_REGISTRATION_RESTRICTION_UNIQUE = Internal.createUniqueKey(JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION, "oauth_registration_restriction_unique", JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION.TYPE, JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION.VALUE, JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION.OAUTH_REGISTRATION_FK);
         public static final UniqueKey<JOauthRegistrationScopeRecord> OAUTH_REGISTRATION_SCOPE_PK = Internal.createUniqueKey(JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE, "oauth_registration_scope_pk", JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.ID);
         public static final UniqueKey<JOauthRegistrationScopeRecord> OAUTH_REGISTRATION_SCOPE_UNIQUE = Internal.createUniqueKey(JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE, "oauth_registration_scope_unique", JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.SCOPE, JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.OAUTH_REGISTRATION_FK);
-        public static final UniqueKey<JOnboardingRecord> ONBOARDING_PK = Internal.createUniqueKey(JOnboarding.ONBOARDING, "onboarding_pk", JOnboarding.ONBOARDING.ID);
         public static final UniqueKey<JOrganizationRecord> ORGANIZATION_PKEY = Internal.createUniqueKey(JOrganization.ORGANIZATION, "organization_pkey", JOrganization.ORGANIZATION.ID);
         public static final UniqueKey<JOrganizationRecord> ORGANIZATION_NAME_KEY = Internal.createUniqueKey(JOrganization.ORGANIZATION, "organization_name_key", JOrganization.ORGANIZATION.NAME);
         public static final UniqueKey<JOrganizationRecord> ORGANIZATION_SLUG_KEY = Internal.createUniqueKey(JOrganization.ORGANIZATION, "organization_slug_key", JOrganization.ORGANIZATION.SLUG);
@@ -410,7 +403,6 @@ public class Keys {
         public static final UniqueKey<JPatternTemplateRecord> UNQ_NAME_PROJECTID = Internal.createUniqueKey(JPatternTemplate.PATTERN_TEMPLATE, "unq_name_projectid", JPatternTemplate.PATTERN_TEMPLATE.NAME, JPatternTemplate.PATTERN_TEMPLATE.PROJECT_ID);
         public static final UniqueKey<JPatternTemplateTestItemRecord> PATTERN_ITEM_UNQ = Internal.createUniqueKey(JPatternTemplateTestItem.PATTERN_TEMPLATE_TEST_ITEM, "pattern_item_unq", JPatternTemplateTestItem.PATTERN_TEMPLATE_TEST_ITEM.PATTERN_ID, JPatternTemplateTestItem.PATTERN_TEMPLATE_TEST_ITEM.ITEM_ID);
         public static final UniqueKey<JProjectRecord> PROJECT_PK = Internal.createUniqueKey(JProject.PROJECT, "project_pk", JProject.PROJECT.ID);
-        public static final UniqueKey<JProjectRecord> PROJECT_SLUG_KEY = Internal.createUniqueKey(JProject.PROJECT, "project_slug_key", JProject.PROJECT.SLUG);
         public static final UniqueKey<JProjectRecord> PROJECT_KEY_KEY = Internal.createUniqueKey(JProject.PROJECT, "project_key_key", JProject.PROJECT.KEY);
         public static final UniqueKey<JProjectAttributeRecord> UNIQUE_ATTRIBUTE_PER_PROJECT = Internal.createUniqueKey(JProjectAttribute.PROJECT_ATTRIBUTE, "unique_attribute_per_project", JProjectAttribute.PROJECT_ATTRIBUTE.ATTRIBUTE_ID, JProjectAttribute.PROJECT_ATTRIBUTE.PROJECT_ID);
         public static final UniqueKey<JProjectUserRecord> USERS_PROJECT_PK = Internal.createUniqueKey(JProjectUser.PROJECT_USER, "users_project_pk", JProjectUser.PROJECT_USER.USER_ID, JProjectUser.PROJECT_USER.PROJECT_ID);

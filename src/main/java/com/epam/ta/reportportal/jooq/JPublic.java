@@ -33,7 +33,6 @@ import com.epam.ta.reportportal.jooq.tables.JLog;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
-import com.epam.ta.reportportal.jooq.tables.JOnboarding;
 import com.epam.ta.reportportal.jooq.tables.JOrganization;
 import com.epam.ta.reportportal.jooq.tables.JOrganizationUser;
 import com.epam.ta.reportportal.jooq.tables.JOwnedEntity;
@@ -90,7 +89,7 @@ import org.jooq.impl.SchemaImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JPublic extends SchemaImpl {
 
-    private static final long serialVersionUID = 286849201;
+    private static final long serialVersionUID = 2042314490;
 
     /**
      * The reference instance of <code>public</code>
@@ -241,11 +240,6 @@ public class JPublic extends SchemaImpl {
      * The table <code>public.oauth_registration_scope</code>.
      */
     public final JOauthRegistrationScope OAUTH_REGISTRATION_SCOPE = com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE;
-
-    /**
-     * The table <code>public.onboarding</code>.
-     */
-    public final JOnboarding ONBOARDING = com.epam.ta.reportportal.jooq.tables.JOnboarding.ONBOARDING;
 
     /**
      * The table <code>public.organization</code>.
@@ -438,7 +432,6 @@ public class JPublic extends SchemaImpl {
             Sequences.LOG_ID_SEQ,
             Sequences.OAUTH_REGISTRATION_RESTRICTION_ID_SEQ,
             Sequences.OAUTH_REGISTRATION_SCOPE_ID_SEQ,
-            Sequences.ONBOARDING_ID_SEQ,
             Sequences.ORGANIZATION_ID_SEQ,
             Sequences.ORGANIZATION_USER_USER_ID_SEQ,
             Sequences.PATTERN_TEMPLATE_ID_SEQ,
@@ -496,7 +489,6 @@ public class JPublic extends SchemaImpl {
             JOauthRegistration.OAUTH_REGISTRATION,
             JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION,
             JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE,
-            JOnboarding.ONBOARDING,
             JOrganization.ORGANIZATION,
             JOrganizationUser.ORGANIZATION_USER,
             JOwnedEntity.OWNED_ENTITY,

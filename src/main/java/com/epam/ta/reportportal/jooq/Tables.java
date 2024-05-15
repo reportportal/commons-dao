@@ -33,7 +33,6 @@ import com.epam.ta.reportportal.jooq.tables.JLog;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
-import com.epam.ta.reportportal.jooq.tables.JOnboarding;
 import com.epam.ta.reportportal.jooq.tables.JOrganization;
 import com.epam.ta.reportportal.jooq.tables.JOrganizationUser;
 import com.epam.ta.reportportal.jooq.tables.JOwnedEntity;
@@ -226,11 +225,6 @@ public class Tables {
      * The table <code>public.oauth_registration_scope</code>.
      */
     public static final JOauthRegistrationScope OAUTH_REGISTRATION_SCOPE = JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE;
-
-    /**
-     * The table <code>public.onboarding</code>.
-     */
-    public static final JOnboarding ONBOARDING = JOnboarding.ONBOARDING;
 
     /**
      * The table <code>public.organization</code>.
