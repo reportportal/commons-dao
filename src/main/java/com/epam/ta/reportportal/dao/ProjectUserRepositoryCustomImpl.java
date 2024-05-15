@@ -6,7 +6,8 @@ import static com.epam.ta.reportportal.jooq.Tables.ORGANIZATION_USER;
 import static com.epam.ta.reportportal.jooq.Tables.PROJECT;
 import static com.epam.ta.reportportal.jooq.Tables.PROJECT_USER;
 
-import com.epam.ta.reportportal.commons.ReportPortalUser.OrganizationDetails;
+import com.epam.ta.reportportal.entity.organization.MembershipDetails;
+import com.epam.ta.reportportal.jooq.enums.JOrganizationRoleEnum;
 import java.util.Optional;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
@@ -24,31 +25,33 @@ public class ProjectUserRepositoryCustomImpl implements ProjectUserRepositoryCus
   }
 
   @Override
-  public Optional<OrganizationDetails> findDetailsByUserIdAndProjectKey(Long userId,
-      String projectKey) {
+  public Optional<MembershipDetails> findDetailsByUserIdAndProjectKey(Long userId, String projectKey) {
+
     return dsl.select(
-            PROJECT_USER.PROJECT_ID,
+            PROJECT.ID,
             PROJECT_USER.PROJECT_ROLE,
             PROJECT.NAME,
             PROJECT.KEY,
             PROJECT.ORGANIZATION_ID,
             ORGANIZATION_USER.ORGANIZATION_ROLE,
             ORGANIZATION.NAME)
-        .from(PROJECT_USER)
-        .join(PROJECT).on(PROJECT_USER.PROJECT_ID.eq(PROJECT.ID))
+        .from(PROJECT)
         .join(ORGANIZATION).on(PROJECT.ORGANIZATION_ID.eq(ORGANIZATION.ID))
-        .join(ORGANIZATION_USER).on(ORGANIZATION_USER.USER_ID.eq(ORGANIZATION_USER.ORGANIZATION_ID))
-        .where(PROJECT_USER.USER_ID.eq(userId))
-        .and(ORGANIZATION_USER.USER_ID.eq(userId))
-        .and(PROJECT.KEY.eq(projectKey))
+        .fullJoin(PROJECT_USER)
+          .on(PROJECT_USER.PROJECT_ID.eq(PROJECT.ID)
+              .and(PROJECT_USER.USER_ID.eq(userId)))
+        .join(ORGANIZATION_USER)
+          .on(ORGANIZATION_USER.ORGANIZATION_ID.eq(PROJECT.ORGANIZATION_ID)
+              .and(ORGANIZATION_USER.USER_ID.eq(userId)))
+        .where(PROJECT.KEY.eq(projectKey))
         .fetchOptional(ASSIGNMENT_DETAILS_MAPPER);
   }
 
   @Override
-  public Optional<OrganizationDetails> findAdminDetailsProjectKey(String projectKey) {
+  public Optional<MembershipDetails> findAdminDetailsProjectKey(String projectKey) {
     return dsl.select(
-            PROJECT.ID.as(PROJECT_USER.PROJECT_ID),
-            DSL.val("MANAGER").as(ORGANIZATION_USER.ORGANIZATION_ROLE),
+            PROJECT.ID,
+            DSL.val(JOrganizationRoleEnum.MANAGER).as(ORGANIZATION_USER.ORGANIZATION_ROLE),
             PROJECT.NAME,
             PROJECT.KEY,
             PROJECT.ORGANIZATION_ID,
@@ -58,4 +61,5 @@ public class ProjectUserRepositoryCustomImpl implements ProjectUserRepositoryCus
         .where(PROJECT.KEY.eq(projectKey))
         .fetchOptional(ASSIGNMENT_DETAILS_MAPPER);
   }
+
 }

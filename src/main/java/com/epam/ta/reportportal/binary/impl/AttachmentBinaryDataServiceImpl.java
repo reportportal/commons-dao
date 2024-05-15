@@ -29,16 +29,14 @@ import com.epam.ta.reportportal.binary.AttachmentBinaryDataService;
 import com.epam.ta.reportportal.binary.CreateLogAttachmentService;
 import com.epam.ta.reportportal.binary.DataStoreService;
 import com.epam.ta.reportportal.commons.BinaryDataMetaInfo;
-import com.epam.ta.reportportal.commons.ReportPortalUser.OrganizationDetails;
-import com.epam.ta.reportportal.commons.ReportPortalUser.OrganizationDetails.ProjectDetails;
 import com.epam.ta.reportportal.dao.AttachmentRepository;
 import com.epam.ta.reportportal.entity.attachment.Attachment;
 import com.epam.ta.reportportal.entity.attachment.AttachmentMetaInfo;
 import com.epam.ta.reportportal.entity.attachment.BinaryData;
 import com.epam.ta.reportportal.entity.enums.FeatureFlag;
+import com.epam.ta.reportportal.entity.organization.MembershipDetails;
 import com.epam.ta.reportportal.filesystem.FilePathGenerator;
 import com.epam.ta.reportportal.util.FeatureFlagHandler;
-import com.epam.ta.reportportal.util.OrganizationDetailsUtil;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -176,16 +174,15 @@ public class AttachmentBinaryDataServiceImpl implements AttachmentBinaryDataServ
   }
 
   @Override
-  public BinaryData load(Long fileId, OrganizationDetails organizationDetails) {
+  public BinaryData load(Long fileId, MembershipDetails membershipDetails) {
     try {
-      ProjectDetails projectDetails = OrganizationDetailsUtil.extractProjectDetails(organizationDetails);
       Attachment attachment = attachmentRepository.findById(fileId)
           .orElseThrow(() -> new ReportPortalException(ErrorType.ATTACHMENT_NOT_FOUND, fileId));
       InputStream data = dataStoreService.load(attachment.getFileId()).orElseThrow(
           () -> new ReportPortalException(ErrorType.UNABLE_TO_LOAD_BINARY_DATA, fileId));
-      expect(attachment.getProjectId(), Predicate.isEqual(projectDetails.getProjectId())).verify(
+      expect(attachment.getProjectId(), Predicate.isEqual(membershipDetails.getProjectId())).verify(
           ErrorType.ACCESS_DENIED,
-          formattedSupplier("You are not assigned to project '{}'", projectDetails.getProjectName())
+          formattedSupplier("You are not assigned to project '{}'", membershipDetails.getProjectName())
       );
       return new BinaryData(
           attachment.getFileName(), attachment.getContentType(), (long) data.available(), data);

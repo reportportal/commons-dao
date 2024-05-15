@@ -203,7 +203,7 @@ public interface LogRepositoryCustom extends FilterableRepository<Log> {
       Queryable filter, Pageable pageable);
 
   /**
-   * Retrieves log message of specified test item with log level greather or equals than
+   * Retrieves log message of specified test item with log level greater or equals than
    * {@code level}
    *
    * @param launchId @link TestItem#getLaunchId()}

@@ -35,6 +35,7 @@ import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -131,6 +132,8 @@ public class ReportPortalUser extends User {
 
     @Getter
     @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class ProjectDetails implements Serializable {
 
       @JsonProperty(value = "id")
@@ -148,15 +151,6 @@ public class ReportPortalUser extends User {
       @JsonProperty("organization_id")
       private Long organizationId;
 
-
-      public ProjectDetails(Long projectId, String projectName, ProjectRole projectRole,
-          String projectKey, Long organizationId) {
-        this.projectId = projectId;
-        this.projectName = projectName;
-        this.projectRole = projectRole;
-        this.projectKey = projectKey;
-        this.organizationId = organizationId;
-      }
 
       public static ProjectDetailsBuilder builder() {
         return new ProjectDetailsBuilder();
@@ -199,9 +193,8 @@ public class ReportPortalUser extends User {
           return this;
         }
 
-
         public ProjectDetails build() {
-          return new ProjectDetails(projectId, projectName, projectRole, projectKey, organizationId);
+          return new ProjectDetails(projectId, projectName, projectKey, projectRole, organizationId);
         }
       }
     }

@@ -17,9 +17,9 @@
 package com.epam.ta.reportportal.binary;
 
 import com.epam.ta.reportportal.commons.BinaryDataMetaInfo;
-import com.epam.ta.reportportal.commons.ReportPortalUser.OrganizationDetails;
 import com.epam.ta.reportportal.entity.attachment.AttachmentMetaInfo;
 import com.epam.ta.reportportal.entity.attachment.BinaryData;
+import com.epam.ta.reportportal.entity.organization.MembershipDetails;
 import java.util.Optional;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -36,7 +36,7 @@ public interface AttachmentBinaryDataService {
 
   void attachToLog(BinaryDataMetaInfo binaryDataMetaInfo, AttachmentMetaInfo attachmentMetaInfo);
 
-  BinaryData load(Long fileId, OrganizationDetails organizationDetails);
+  BinaryData load(Long fileId, MembershipDetails membershipDetails);
 
   void delete(String fileId);
 
