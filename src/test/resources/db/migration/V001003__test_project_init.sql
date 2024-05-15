@@ -27,7 +27,7 @@ BEGIN
     han_solo := (SELECT currval(pg_get_serial_sequence('users', 'id')));
 
     INSERT INTO project_user (user_id, project_id, project_role)
-    VALUES (han_solo, falcon, 'PROJECT_MANAGER');
+    VALUES (han_solo, falcon, 'EDITOR');
 
     INSERT INTO organization_user (user_id, organization_id, organization_role)
        VALUES (han_solo, org_id, (SELECT 'MANAGER'::public."organization_role_enum"));
@@ -38,7 +38,7 @@ BEGIN
             '{"metadata": {"last_login": "1551187023768"}}');
     chubaka := (SELECT currval(pg_get_serial_sequence('users', 'id')));
 
-    INSERT INTO project_user (user_id, project_id, project_role) VALUES (chubaka, falcon, 'MEMBER');
+    INSERT INTO project_user (user_id, project_id, project_role) VALUES (chubaka, falcon, 'VIEWER');
 
     INSERT INTO organization_user (user_id, organization_id, organization_role)
         VALUES (chubaka, org_id, (SELECT 'MEMBER'::public."organization_role_enum"));
@@ -51,7 +51,7 @@ BEGIN
     fake_chubaka := (SELECT currval(pg_get_serial_sequence('users', 'id')));
 
     INSERT INTO project_user (user_id, project_id, project_role)
-    VALUES (fake_chubaka, falcon, 'MEMBER');
+    VALUES (fake_chubaka, falcon, 'VIEWER');
 
     INSERT INTO users (login, password, email, role, type, full_name, expired, metadata)
     VALUES ('ch_not_assigned', '601c4731aeff3b84f76672ad024bb2a0', 'ch_not_assigned@domain.com',

@@ -21,7 +21,7 @@ import org.jooq.Identity;
 import org.jooq.Index;
 import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row5;
+import org.jooq.Row7;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -43,7 +43,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JOrganization extends TableImpl<JOrganizationRecord> {
 
-    private static final long serialVersionUID = -816599241;
+    private static final long serialVersionUID = -1316883766;
 
     /**
      * The reference instance of <code>public.organization</code>
@@ -64,9 +64,14 @@ public class JOrganization extends TableImpl<JOrganizationRecord> {
     public final TableField<JOrganizationRecord, Long> ID = createField(DSL.name("id"), org.jooq.impl.SQLDataType.BIGINT.nullable(false).defaultValue(org.jooq.impl.DSL.field("nextval('organization_id_seq'::regclass)", org.jooq.impl.SQLDataType.BIGINT)), this, "");
 
     /**
-     * The column <code>public.organization.creation_date</code>.
+     * The column <code>public.organization.created_at</code>.
      */
-    public final TableField<JOrganizationRecord, Timestamp> CREATION_DATE = createField(DSL.name("creation_date"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "");
+    public final TableField<JOrganizationRecord, Timestamp> CREATED_AT = createField(DSL.name("created_at"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "");
+
+    /**
+     * The column <code>public.organization.updated_at</code>.
+     */
+    public final TableField<JOrganizationRecord, Timestamp> UPDATED_AT = createField(DSL.name("updated_at"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "");
 
     /**
      * The column <code>public.organization.name</code>.
@@ -77,6 +82,11 @@ public class JOrganization extends TableImpl<JOrganizationRecord> {
      * The column <code>public.organization.organization_type</code>.
      */
     public final TableField<JOrganizationRecord, String> ORGANIZATION_TYPE = createField(DSL.name("organization_type"), org.jooq.impl.SQLDataType.CLOB.nullable(false), this, "");
+
+    /**
+     * The column <code>public.organization.external_id</code>.
+     */
+    public final TableField<JOrganizationRecord, String> EXTERNAL_ID = createField(DSL.name("external_id"), org.jooq.impl.SQLDataType.CLOB, this, "");
 
     /**
      * The column <code>public.organization.slug</code>.
@@ -123,7 +133,7 @@ public class JOrganization extends TableImpl<JOrganizationRecord> {
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.ORGANIZATION_NAME_KEY, Indexes.ORGANIZATION_PKEY, Indexes.ORGANIZATION_SLUG_IDX, Indexes.ORGANIZATION_SLUG_KEY);
+        return Arrays.<Index>asList(Indexes.ORGANIZATION_EXTERNAL_ID_KEY, Indexes.ORGANIZATION_NAME_KEY, Indexes.ORGANIZATION_PKEY, Indexes.ORGANIZATION_SLUG_IDX, Indexes.ORGANIZATION_SLUG_KEY);
     }
 
     @Override
@@ -138,7 +148,7 @@ public class JOrganization extends TableImpl<JOrganizationRecord> {
 
     @Override
     public List<UniqueKey<JOrganizationRecord>> getKeys() {
-        return Arrays.<UniqueKey<JOrganizationRecord>>asList(Keys.ORGANIZATION_PKEY, Keys.ORGANIZATION_NAME_KEY, Keys.ORGANIZATION_SLUG_KEY);
+        return Arrays.<UniqueKey<JOrganizationRecord>>asList(Keys.ORGANIZATION_PKEY, Keys.ORGANIZATION_NAME_KEY, Keys.ORGANIZATION_EXTERNAL_ID_KEY, Keys.ORGANIZATION_SLUG_KEY);
     }
 
     @Override
@@ -168,11 +178,11 @@ public class JOrganization extends TableImpl<JOrganizationRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row5 type methods
+    // Row7 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row5<Long, Timestamp, String, String, String> fieldsRow() {
-        return (Row5) super.fieldsRow();
+    public Row7<Long, Timestamp, Timestamp, String, String, String, String> fieldsRow() {
+        return (Row7) super.fieldsRow();
     }
 }

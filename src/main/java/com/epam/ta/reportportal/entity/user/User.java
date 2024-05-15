@@ -94,7 +94,7 @@ public class User implements Serializable {
 
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = {CascadeType.PERSIST,
       CascadeType.MERGE, CascadeType.REFRESH})
-  private Set<OrganizationUser> organizationUser = Sets.newHashSet();
+  private Set<OrganizationUser> organizationUsers = Sets.newHashSet();
 
 
   @Override

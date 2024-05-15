@@ -93,7 +93,7 @@ class ProjectUtilsTest {
     project.setCreationDate(Instant.now());
     project.setUsers(Sets.newHashSet(new ProjectUser().withUser(getTestUser())
         .withProject(project)
-        .withProjectRole(ProjectRole.PROJECT_MANAGER)));
+        .withProjectRole(ProjectRole.EDITOR)));
     return project;
   }
 
@@ -195,7 +195,7 @@ class ProjectUtilsTest {
     assertNotNull(projectUser);
     assertEquals(getTestUser(), projectUser.getUser());
     assertEquals(project, projectUser.getProject());
-    assertEquals(ProjectRole.PROJECT_MANAGER, projectUser.getProjectRole());
+    assertEquals(ProjectRole.EDITOR, projectUser.getProjectRole());
   }
 
   @Test

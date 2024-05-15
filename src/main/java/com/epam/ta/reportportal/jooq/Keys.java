@@ -217,6 +217,7 @@ public class Keys {
     public static final UniqueKey<JOauthRegistrationScopeRecord> OAUTH_REGISTRATION_SCOPE_UNIQUE = UniqueKeys0.OAUTH_REGISTRATION_SCOPE_UNIQUE;
     public static final UniqueKey<JOrganizationRecord> ORGANIZATION_PKEY = UniqueKeys0.ORGANIZATION_PKEY;
     public static final UniqueKey<JOrganizationRecord> ORGANIZATION_NAME_KEY = UniqueKeys0.ORGANIZATION_NAME_KEY;
+    public static final UniqueKey<JOrganizationRecord> ORGANIZATION_EXTERNAL_ID_KEY = UniqueKeys0.ORGANIZATION_EXTERNAL_ID_KEY;
     public static final UniqueKey<JOrganizationRecord> ORGANIZATION_SLUG_KEY = UniqueKeys0.ORGANIZATION_SLUG_KEY;
     public static final UniqueKey<JOrganizationUserRecord> ORGANIZATION_USER_PK = UniqueKeys0.ORGANIZATION_USER_PK;
     public static final UniqueKey<JOwnedEntityRecord> SHAREABLE_PK = UniqueKeys0.SHAREABLE_PK;
@@ -308,6 +309,7 @@ public class Keys {
     public static final ForeignKey<JTestItemRecord, JLaunchRecord> TEST_ITEM__TEST_ITEM_LAUNCH_ID_FKEY = ForeignKeys0.TEST_ITEM__TEST_ITEM_LAUNCH_ID_FKEY;
     public static final ForeignKey<JTestItemResultsRecord, JTestItemRecord> TEST_ITEM_RESULTS__TEST_ITEM_RESULTS_RESULT_ID_FKEY = ForeignKeys0.TEST_ITEM_RESULTS__TEST_ITEM_RESULTS_RESULT_ID_FKEY;
     public static final ForeignKey<JUserCreationBidRecord, JUsersRecord> USER_CREATION_BID__USER_CREATION_BID_INVITING_USER_ID_FKEY = ForeignKeys0.USER_CREATION_BID__USER_CREATION_BID_INVITING_USER_ID_FKEY;
+    public static final ForeignKey<JUserCreationBidRecord, JOrganizationRecord> USER_CREATION_BID__USER_CREATION_BID_ORGANIZATION_ID_FKEY = ForeignKeys0.USER_CREATION_BID__USER_CREATION_BID_ORGANIZATION_ID_FKEY;
     public static final ForeignKey<JUserPreferenceRecord, JProjectRecord> USER_PREFERENCE__USER_PREFERENCE_PROJECT_ID_FKEY = ForeignKeys0.USER_PREFERENCE__USER_PREFERENCE_PROJECT_ID_FKEY;
     public static final ForeignKey<JUserPreferenceRecord, JUsersRecord> USER_PREFERENCE__USER_PREFERENCE_USER_ID_FKEY = ForeignKeys0.USER_PREFERENCE__USER_PREFERENCE_USER_ID_FKEY;
     public static final ForeignKey<JUserPreferenceRecord, JFilterRecord> USER_PREFERENCE__USER_PREFERENCE_FILTER_ID_FKEY = ForeignKeys0.USER_PREFERENCE__USER_PREFERENCE_FILTER_ID_FKEY;
@@ -396,6 +398,7 @@ public class Keys {
         public static final UniqueKey<JOauthRegistrationScopeRecord> OAUTH_REGISTRATION_SCOPE_UNIQUE = Internal.createUniqueKey(JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE, "oauth_registration_scope_unique", JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.SCOPE, JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.OAUTH_REGISTRATION_FK);
         public static final UniqueKey<JOrganizationRecord> ORGANIZATION_PKEY = Internal.createUniqueKey(JOrganization.ORGANIZATION, "organization_pkey", JOrganization.ORGANIZATION.ID);
         public static final UniqueKey<JOrganizationRecord> ORGANIZATION_NAME_KEY = Internal.createUniqueKey(JOrganization.ORGANIZATION, "organization_name_key", JOrganization.ORGANIZATION.NAME);
+        public static final UniqueKey<JOrganizationRecord> ORGANIZATION_EXTERNAL_ID_KEY = Internal.createUniqueKey(JOrganization.ORGANIZATION, "organization_external_id_key", JOrganization.ORGANIZATION.EXTERNAL_ID);
         public static final UniqueKey<JOrganizationRecord> ORGANIZATION_SLUG_KEY = Internal.createUniqueKey(JOrganization.ORGANIZATION, "organization_slug_key", JOrganization.ORGANIZATION.SLUG);
         public static final UniqueKey<JOrganizationUserRecord> ORGANIZATION_USER_PK = Internal.createUniqueKey(JOrganizationUser.ORGANIZATION_USER, "organization_user_pk", JOrganizationUser.ORGANIZATION_USER.USER_ID, JOrganizationUser.ORGANIZATION_USER.ORGANIZATION_ID);
         public static final UniqueKey<JOwnedEntityRecord> SHAREABLE_PK = Internal.createUniqueKey(JOwnedEntity.OWNED_ENTITY, "shareable_pk", JOwnedEntity.OWNED_ENTITY.ID);
@@ -485,6 +488,7 @@ public class Keys {
         public static final ForeignKey<JTestItemRecord, JLaunchRecord> TEST_ITEM__TEST_ITEM_LAUNCH_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.LAUNCH_PK, JTestItem.TEST_ITEM, "test_item__test_item_launch_id_fkey", JTestItem.TEST_ITEM.LAUNCH_ID);
         public static final ForeignKey<JTestItemResultsRecord, JTestItemRecord> TEST_ITEM_RESULTS__TEST_ITEM_RESULTS_RESULT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.TEST_ITEM_PK, JTestItemResults.TEST_ITEM_RESULTS, "test_item_results__test_item_results_result_id_fkey", JTestItemResults.TEST_ITEM_RESULTS.RESULT_ID);
         public static final ForeignKey<JUserCreationBidRecord, JUsersRecord> USER_CREATION_BID__USER_CREATION_BID_INVITING_USER_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.USERS_PK, JUserCreationBid.USER_CREATION_BID, "user_creation_bid__user_creation_bid_inviting_user_id_fkey", JUserCreationBid.USER_CREATION_BID.INVITING_USER_ID);
+        public static final ForeignKey<JUserCreationBidRecord, JOrganizationRecord> USER_CREATION_BID__USER_CREATION_BID_ORGANIZATION_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.ORGANIZATION_PKEY, JUserCreationBid.USER_CREATION_BID, "user_creation_bid__user_creation_bid_organization_id_fkey", JUserCreationBid.USER_CREATION_BID.ORGANIZATION_ID);
         public static final ForeignKey<JUserPreferenceRecord, JProjectRecord> USER_PREFERENCE__USER_PREFERENCE_PROJECT_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.PROJECT_PK, JUserPreference.USER_PREFERENCE, "user_preference__user_preference_project_id_fkey", JUserPreference.USER_PREFERENCE.PROJECT_ID);
         public static final ForeignKey<JUserPreferenceRecord, JUsersRecord> USER_PREFERENCE__USER_PREFERENCE_USER_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.USERS_PK, JUserPreference.USER_PREFERENCE, "user_preference__user_preference_user_id_fkey", JUserPreference.USER_PREFERENCE.USER_ID);
         public static final ForeignKey<JUserPreferenceRecord, JFilterRecord> USER_PREFERENCE__USER_PREFERENCE_FILTER_ID_FKEY = Internal.createForeignKey(com.epam.ta.reportportal.jooq.Keys.FILTER_PKEY, JUserPreference.USER_PREFERENCE, "user_preference__user_preference_filter_id_fkey", JUserPreference.USER_PREFERENCE.FILTER_ID);

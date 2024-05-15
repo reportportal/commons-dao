@@ -34,6 +34,7 @@ import static com.epam.ta.reportportal.jooq.Tables.ISSUE_TYPE;
 import static com.epam.ta.reportportal.jooq.Tables.LAUNCH;
 import static com.epam.ta.reportportal.jooq.Tables.LOG;
 import static com.epam.ta.reportportal.jooq.Tables.ORGANIZATION;
+import static com.epam.ta.reportportal.jooq.Tables.ORGANIZATION_USER;
 import static com.epam.ta.reportportal.jooq.Tables.PATTERN_TEMPLATE;
 import static com.epam.ta.reportportal.jooq.Tables.PROJECT;
 import static com.epam.ta.reportportal.jooq.Tables.PROJECT_USER;
@@ -86,7 +87,9 @@ import com.epam.ta.reportportal.entity.item.issue.IssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
+import com.epam.ta.reportportal.entity.organization.MembershipDetails;
 import com.epam.ta.reportportal.entity.organization.Organization;
+import com.epam.ta.reportportal.entity.organization.OrganizationRole;
 import com.epam.ta.reportportal.entity.pattern.PatternTemplate;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
@@ -99,6 +102,9 @@ import com.epam.ta.reportportal.entity.widget.Widget;
 import com.epam.ta.reportportal.entity.widget.WidgetOptions;
 import com.epam.ta.reportportal.jooq.Tables;
 import com.epam.ta.reportportal.jooq.tables.JLog;
+import com.epam.ta.reportportal.model.OrganizationInfo;
+import com.epam.ta.reportportal.model.OrganizationProfile;
+import com.epam.ta.reportportal.model.OrganizationRelation;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -201,8 +207,18 @@ public class RecordMappers {
   /**
    * Maps record into {@link Organization} object
    */
-  public static final RecordMapper<? super Record, Organization> ORGANIZATION_MAPPER = row -> {
-    Organization organization = row.into(Organization.class);
+  public static final RecordMapper<? super Record, OrganizationProfile> ORGANIZATION_MAPPER = row -> {
+    OrganizationProfile organization = row.into(OrganizationProfile.class);
+
+    organization.setId(row.get(ORGANIZATION.ID, Long.class));
+    organization.setCreatedAt(row.get(ORGANIZATION.CREATED_AT, Instant.class));
+    organization.setUpdatedAt(row.get(ORGANIZATION.UPDATED_AT, Instant.class));
+    organization.setName(row.get(ORGANIZATION.NAME, String.class));
+    organization.setSlug(row.get(ORGANIZATION.SLUG, String.class));
+    organization.setExternalId(row.get(ORGANIZATION.EXTERNAL_ID, String.class));
+    organization.setType(OrganizationInfo.TypeEnum.valueOf(row.get(ORGANIZATION.ORGANIZATION_TYPE)));
+    OrganizationRelation organizationRelation = new OrganizationRelation();
+
     return organization;
   };
 
@@ -365,14 +381,14 @@ public class RecordMappers {
     return launch;
   };
 
-  public static final RecordMapper<? super Record, IndexLaunch> INDEX_LAUNCH_RECORD_MAPPER = record -> {
+  public static final RecordMapper<? super Record, IndexLaunch> INDEX_LAUNCH_RECORD_MAPPER = row -> {
     final IndexLaunch indexLaunch = new IndexLaunch();
-    indexLaunch.setLaunchId(record.get(LAUNCH.ID));
-    indexLaunch.setLaunchName(record.get(LAUNCH.NAME));
-    indexLaunch.setLaunchStartTime(record.get(LAUNCH.START_TIME, LocalDateTime.class ));
-    indexLaunch.setProjectId(record.get(LAUNCH.PROJECT_ID));
+    indexLaunch.setLaunchId(row.get(LAUNCH.ID));
+    indexLaunch.setLaunchName(row.get(LAUNCH.NAME));
+    indexLaunch.setLaunchStartTime(row.get(LAUNCH.START_TIME, LocalDateTime.class ));
+    indexLaunch.setProjectId(row.get(LAUNCH.PROJECT_ID));
     indexLaunch.setLaunchNumber(
-        (record.get(LAUNCH.NUMBER) != null) ? record.get(LAUNCH.NUMBER).longValue() : null);
+        (row.get(LAUNCH.NUMBER) != null) ? row.get(LAUNCH.NUMBER).longValue() : null);
     return indexLaunch;
   };
 
@@ -424,12 +440,23 @@ public class RecordMappers {
     return projectUser;
   };
 
-  public static final RecordMapper<Record, ReportPortalUser.ProjectDetails> PROJECT_DETAILS_MAPPER = r -> {
-    final Long projectId = r.get(PROJECT_USER.PROJECT_ID);
-    final String projectName = r.get(PROJECT.NAME);
-    final ProjectRole projectRole = r.into(PROJECT_USER.PROJECT_ROLE).into(ProjectRole.class);
-    final String projectKey = r.get(PROJECT.KEY);
-    return new ReportPortalUser.ProjectDetails(projectId, projectName, projectRole, projectKey);
+  public static final RecordMapper<Record, MembershipDetails> ASSIGNMENT_DETAILS_MAPPER = r -> {
+    MembershipDetails md = new MembershipDetails();
+
+    ofNullable(r.get(PROJECT.ORGANIZATION_ID)).ifPresent(md::setOrgId);
+    ofNullable(r.get(ORGANIZATION.NAME)).ifPresent(md::setOrgName);
+    ofNullable(r.get(ORGANIZATION_USER.ORGANIZATION_ROLE))
+        .ifPresent(orgRole -> md.setOrgRole(r.into(ORGANIZATION_USER.ORGANIZATION_ROLE)
+            .into(OrganizationRole.class)));
+    ofNullable(r.get(PROJECT.ID))
+      .ifPresent(md::setProjectId);
+    ofNullable(r.get(PROJECT.NAME)).ifPresent(md::setProjectName);
+    ofNullable(r.into(PROJECT_USER.PROJECT_ROLE).into(ProjectRole.class))
+        .ifPresent(projectRole -> md.setProjectRole(r.into(PROJECT_USER.PROJECT_ROLE)
+            .into(ProjectRole.class)));
+    ofNullable(r.get(PROJECT.KEY)).ifPresent(md::setProjectKey);
+
+    return md;
   };
 
   public static final RecordMapper<? super Record, Activity> ACTIVITY_MAPPER = r -> {

@@ -35,6 +35,7 @@ import static com.epam.ta.reportportal.jooq.Tables.INTEGRATION;
 import static com.epam.ta.reportportal.jooq.Tables.LAUNCH;
 import static com.epam.ta.reportportal.jooq.Tables.LOG;
 import static com.epam.ta.reportportal.jooq.Tables.ORGANIZATION;
+import static com.epam.ta.reportportal.jooq.Tables.ORGANIZATION_USER;
 import static com.epam.ta.reportportal.jooq.Tables.OWNED_ENTITY;
 import static com.epam.ta.reportportal.jooq.Tables.PARAMETER;
 import static com.epam.ta.reportportal.jooq.Tables.PROJECT_ATTRIBUTE;
@@ -44,6 +45,8 @@ import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
 import static java.util.Optional.ofNullable;
 
+import com.epam.reportportal.rules.exception.ErrorType;
+import com.epam.reportportal.rules.exception.ReportPortalException;
 import com.epam.ta.reportportal.commons.ReportPortalUser;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.entity.activity.Activity;
@@ -65,9 +68,7 @@ import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.entity.user.UserRole;
 import com.epam.ta.reportportal.entity.widget.Widget;
-import com.epam.reportportal.rules.exception.ReportPortalException;
-
-import com.epam.reportportal.rules.exception.ErrorType;
+import com.epam.ta.reportportal.model.OrganizationProfile;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -97,25 +98,25 @@ public class ResultFetchers {
   /**
    * Fetches records from db results into list of {@link Project} objects.
    */
-  public static final Function<Result<? extends Record>, List<Project>> PROJECT_FETCHER = records -> {
+  public static final Function<Result<? extends Record>, List<Project>> PROJECT_FETCHER = rows -> {
     Map<Long, Project> projects = Maps.newLinkedHashMap();
-    records.forEach(record -> {
-      Long id = record.get(PROJECT.ID);
+    rows.forEach(row -> {
+      Long id = row.get(PROJECT.ID);
       Project project;
       if (!projects.containsKey(id)) {
-        project = RecordMappers.PROJECT_MAPPER.map(record);
+        project = RecordMappers.PROJECT_MAPPER.map(row);
       } else {
         project = projects.get(id);
       }
-      ofNullable(record.field(PROJECT_ATTRIBUTE.VALUE)).flatMap(f -> ofNullable(record.get(f)))
+      ofNullable(row.field(PROJECT_ATTRIBUTE.VALUE)).flatMap(f -> ofNullable(row.get(f)))
           .ifPresent(field -> project.getProjectAttributes()
               .add(new ProjectAttribute().withProject(project)
-                  .withAttribute(ATTRIBUTE_MAPPER.map(record)).withValue(field)));
-      ofNullable(record.field(PROJECT_USER.PROJECT_ROLE)).flatMap(f -> ofNullable(record.get(f)))
+                  .withAttribute(ATTRIBUTE_MAPPER.map(row)).withValue(field)));
+      ofNullable(row.field(PROJECT_USER.PROJECT_ROLE)).flatMap(f -> ofNullable(row.get(f)))
           .ifPresent(field -> {
             Set<ProjectUser> projectUsers = ofNullable(project.getUsers()).orElseGet(
                 Sets::newHashSet);
-            projectUsers.add(PROJECT_USER_MAPPER.map(record));
+            projectUsers.add(PROJECT_USER_MAPPER.map(row));
             project.setUsers(projectUsers);
           });
 
@@ -127,13 +128,13 @@ public class ResultFetchers {
   /**
    * Fetches records from db results into list of {@link Organization} objects.
    */
-  public static final Function<Result<? extends Record>, List<Organization>> ORGANIZATION_FETCHER = records -> {
-    Map<Long, Organization> orgs = Maps.newLinkedHashMap();
-    records.forEach(record -> {
-      Long id = record.get(ORGANIZATION.ID);
-      Organization organization;
+  public static final Function<Result<? extends Record>, List<OrganizationProfile>> ORGANIZATION_FETCHER = rows -> {
+    Map<Long, OrganizationProfile> orgs = Maps.newLinkedHashMap();
+    rows.forEach(row -> {
+      Long id = row.get(ORGANIZATION.ID);
+      OrganizationProfile organization;
       if (!orgs.containsKey(id)) {
-        organization = RecordMappers.ORGANIZATION_MAPPER.map(record);
+        organization = OrganizationMapper.ORGANIZATION_MAPPER.map(row);
       } else {
         organization = orgs.get(id);
       }
@@ -147,18 +148,18 @@ public class ResultFetchers {
   /**
    * Fetches records from db results into list of {@link Launch} objects.
    */
-  public static final Function<Result<? extends Record>, List<Launch>> LAUNCH_FETCHER = records -> {
+  public static final Function<Result<? extends Record>, List<Launch>> LAUNCH_FETCHER = rows -> {
     Map<Long, Launch> launches = Maps.newLinkedHashMap();
-    records.forEach(record -> {
-      Long id = record.get(LAUNCH.ID);
+    rows.forEach(row -> {
+      Long id = row.get(LAUNCH.ID);
       Launch launch;
       if (!launches.containsKey(id)) {
-        launch = RecordMappers.LAUNCH_RECORD_MAPPER.map(record);
+        launch = RecordMappers.LAUNCH_RECORD_MAPPER.map(row);
       } else {
         launch = launches.get(id);
       }
-      ITEM_ATTRIBUTE_MAPPER.apply(record).ifPresent(it -> launch.getAttributes().addAll(it));
-      launch.getStatistics().add(RecordMappers.STATISTICS_RECORD_MAPPER.map(record));
+      ITEM_ATTRIBUTE_MAPPER.apply(row).ifPresent(it -> launch.getAttributes().addAll(it));
+      launch.getStatistics().add(RecordMappers.STATISTICS_RECORD_MAPPER.map(row));
       launches.put(id, launch);
     });
     return new ArrayList<>(launches.values());
@@ -167,26 +168,26 @@ public class ResultFetchers {
   /**
    * Fetches records from db results into list of {@link TestItem} objects.
    */
-  public static final Function<Result<? extends Record>, List<TestItem>> TEST_ITEM_FETCHER = records -> {
+  public static final Function<Result<? extends Record>, List<TestItem>> TEST_ITEM_FETCHER = rows -> {
     Map<Long, TestItem> testItems = Maps.newLinkedHashMap();
-    records.forEach(record -> {
-      Long id = record.get(TEST_ITEM.ITEM_ID);
+    rows.forEach(row -> {
+      Long id = row.get(TEST_ITEM.ITEM_ID);
       TestItem testItem;
       if (!testItems.containsKey(id)) {
-        testItem = RecordMappers.TEST_ITEM_RECORD_MAPPER.map(record);
+        testItem = RecordMappers.TEST_ITEM_RECORD_MAPPER.map(row);
       } else {
         testItem = testItems.get(id);
       }
-      ITEM_ATTRIBUTE_MAPPER.apply(record).ifPresent(it -> testItem.getAttributes().addAll(it));
-      ofNullable(record.get(PARAMETER.ITEM_ID)).ifPresent(
-          it -> testItem.getParameters().add(record.into(Parameter.class)));
+      ITEM_ATTRIBUTE_MAPPER.apply(row).ifPresent(it -> testItem.getAttributes().addAll(it));
+      ofNullable(row.get(PARAMETER.ITEM_ID)).ifPresent(
+          it -> testItem.getParameters().add(row.into(Parameter.class)));
       testItem.getItemResults().getStatistics()
-          .add(RecordMappers.STATISTICS_RECORD_MAPPER.map(record));
-      PATTERN_TEMPLATE_NAME_RECORD_MAPPER.apply(record)
+          .add(RecordMappers.STATISTICS_RECORD_MAPPER.map(row));
+      PATTERN_TEMPLATE_NAME_RECORD_MAPPER.apply(row)
           .ifPresent(patternTemplate -> testItem.getPatternTemplateTestItems()
               .add(new PatternTemplateTestItem(patternTemplate, testItem)));
       if (testItem.getItemResults().getIssue() != null) {
-        TICKET_MAPPER.apply(record)
+        TICKET_MAPPER.apply(row)
             .ifPresent(ticket -> testItem.getItemResults().getIssue().getTickets().add(ticket));
       }
       testItems.put(id, testItem);
@@ -197,14 +198,14 @@ public class ResultFetchers {
   /**
    * Fetches records from db results into list of {@link TestItem} objects.
    */
-  public static final Function<Result<? extends Record>, List<TestItem>> TEST_ITEM_RETRY_FETCHER = records -> {
+  public static final Function<Result<? extends Record>, List<TestItem>> TEST_ITEM_RETRY_FETCHER = rows -> {
     Map<Long, TestItem> testItems = Maps.newLinkedHashMap();
-    records.forEach(record -> {
-      Long id = record.get(TEST_ITEM.ITEM_ID);
+    rows.forEach(row -> {
+      Long id = row.get(TEST_ITEM.ITEM_ID);
       TestItem testItem = testItems.computeIfAbsent(id,
-          key -> RecordMappers.TEST_ITEM_RECORD_MAPPER.map(record));
-      ofNullable(record.get(PARAMETER.ITEM_ID)).ifPresent(
-          it -> testItem.getParameters().add(record.into(Parameter.class)));
+          key -> RecordMappers.TEST_ITEM_RECORD_MAPPER.map(row));
+      ofNullable(row.get(PARAMETER.ITEM_ID)).ifPresent(
+          it -> testItem.getParameters().add(row.into(Parameter.class)));
       testItems.put(id, testItem);
     });
     return new ArrayList<>(testItems.values());
@@ -214,12 +215,12 @@ public class ResultFetchers {
    * Fetches records from db results into list of {@link com.epam.ta.reportportal.entity.log.Log}
    * objects.
    */
-  public static final Function<Result<? extends Record>, List<Log>> LOG_FETCHER = records -> {
+  public static final Function<Result<? extends Record>, List<Log>> LOG_FETCHER = rows -> {
     Map<Long, Log> logs = Maps.newLinkedHashMap();
-    records.forEach(record -> {
-      Long id = record.get(LOG.ID);
+    rows.forEach(row -> {
+      Long id = row.get(LOG.ID);
       if (!logs.containsKey(id)) {
-        logs.put(id, LOG_MAPPER.apply(record, ATTACHMENT_MAPPER));
+        logs.put(id, LOG_MAPPER.apply(row, ATTACHMENT_MAPPER));
       }
     });
     return new ArrayList<>(logs.values());
@@ -228,13 +229,13 @@ public class ResultFetchers {
   /**
    * Fetches records from db results into list of {@link Activity} objects.
    */
-  public static final Function<Result<? extends Record>, List<Activity>> ACTIVITY_FETCHER = records -> {
+  public static final Function<Result<? extends Record>, List<Activity>> ACTIVITY_FETCHER = rows -> {
     Map<Long, Activity> activities = Maps.newLinkedHashMap();
-    records.forEach(record -> {
-      Long id = record.get(ACTIVITY.ID);
+    rows.forEach(row -> {
+      Long id = row.get(ACTIVITY.ID);
       Activity activity;
       if (!activities.containsKey(id)) {
-        activity = RecordMappers.ACTIVITY_MAPPER.map(record);
+        activity = RecordMappers.ACTIVITY_MAPPER.map(row);
       } else {
         activity = activities.get(id);
       }
@@ -247,13 +248,13 @@ public class ResultFetchers {
    * Fetches records from db results into list of
    * {@link com.epam.ta.reportportal.entity.integration.Integration} objects.
    */
-  public static final Function<Result<? extends Record>, List<Integration>> INTEGRATION_FETCHER = records -> {
+  public static final Function<Result<? extends Record>, List<Integration>> INTEGRATION_FETCHER = rows -> {
     Map<Integer, Integration> integrations = Maps.newLinkedHashMap();
-    records.forEach(record -> {
-      Integer id = record.get(INTEGRATION.ID);
+    rows.forEach(row -> {
+      Integer id = row.get(INTEGRATION.ID);
       Integration integration;
       if (!integrations.containsKey(id)) {
-        integration = record.into(Integration.class);
+        integration = row.into(Integration.class);
       } else {
         integration = integrations.get(id);
       }
@@ -262,18 +263,18 @@ public class ResultFetchers {
     return new ArrayList<>(integrations.values());
   };
 
-  public static final Function<Result<? extends Record>, List<User>> USER_FETCHER = records -> {
+  public static final Function<Result<? extends Record>, List<User>> USER_FETCHER = rows -> {
     Map<Long, User> users = Maps.newLinkedHashMap();
-    records.forEach(record -> {
-      Long id = record.get(USERS.ID);
+    rows.forEach(row -> {
+      Long id = row.get(USERS.ID);
       User user;
       if (!users.containsKey(id)) {
-        user = record.map(USER_MAPPER);
+        user = row.map(USER_MAPPER);
       } else {
         user = users.get(id);
       }
-      if (ofNullable(record.get(PROJECT_USER.PROJECT_ROLE)).isPresent()) {
-        user.getProjects().add(PROJECT_USER_MAPPER.map(record));
+      if (ofNullable(row.get(PROJECT_USER.PROJECT_ROLE)).isPresent()) {
+        user.getProjects().add(PROJECT_USER_MAPPER.map(row));
       }
 
       users.put(id, user);
@@ -281,10 +282,10 @@ public class ResultFetchers {
     return new ArrayList<>(users.values());
   };
 
-  public static final Function<Result<? extends Record>, List<User>> USER_WITHOUT_PROJECT_FETCHER = records -> {
+  public static final Function<Result<? extends Record>, List<User>> USER_WITHOUT_PROJECT_FETCHER = rows -> {
     Map<Long, User> users = Maps.newLinkedHashMap();
-    records.forEach(
-        record -> users.computeIfAbsent(record.get(USERS.ID), key -> record.map(USER_MAPPER)));
+    rows.forEach(
+        row -> users.computeIfAbsent(row.get(USERS.ID), key -> row.map(USER_MAPPER)));
     return new ArrayList<>(users.values());
   };
 
@@ -354,48 +355,73 @@ public class ResultFetchers {
 
   public static final Function<Result<? extends Record>, List<NestedItem>> NESTED_ITEM_FETCHER = result -> {
     List<NestedItem> nestedItems = Lists.newArrayListWithExpectedSize(result.size());
-    result.forEach(record -> nestedItems.add(new NestedItem(
-        record.get(ID, Long.class),
-        record.get(TYPE, String.class),
-        record.get(LOG_LEVEL, Integer.class)
+    result.forEach(row -> nestedItems.add(new NestedItem(
+        row.get(ID, Long.class),
+        row.get(TYPE, String.class),
+        row.get(LOG_LEVEL, Integer.class)
     )));
     return nestedItems;
   };
 
   public static final Function<Result<? extends Record>, List<NestedItemPage>> NESTED_ITEM_LOCATED_FETCHER = result -> {
     List<NestedItemPage> itemWithLocation = Lists.newArrayListWithExpectedSize(result.size());
-    result.forEach(record -> itemWithLocation.add(new NestedItemPage(record.get(ID, Long.class),
-        record.get(TYPE, String.class),
-        record.get(LOG_LEVEL, Integer.class),
-        record.get(PAGE_NUMBER, Integer.class)
+    result.forEach(row -> itemWithLocation.add(new NestedItemPage(row.get(ID, Long.class),
+        row.get(TYPE, String.class),
+        row.get(LOG_LEVEL, Integer.class),
+        row.get(PAGE_NUMBER, Integer.class)
     )));
     return itemWithLocation;
   };
 
-  public static final Function<Result<? extends Record>, ReportPortalUser> REPORTPORTAL_USER_FETCHER = records -> {
-    if (!CollectionUtils.isEmpty(records)) {
+  public static final Function<Result<? extends Record>, ReportPortalUser> REPORTPORTAL_USER_FETCHER = rows -> {
+    if (!CollectionUtils.isEmpty(rows)) {
       ReportPortalUser user = ReportPortalUser.userBuilder()
-          .withUserName(records.get(0).get(USERS.LOGIN))
-          .withPassword(ofNullable(records.get(0).get(USERS.PASSWORD)).orElse(""))
+          .withUserName(rows.get(0).get(USERS.LOGIN))
+          .withPassword(ofNullable(rows.get(0).get(USERS.PASSWORD)).orElse(""))
           .withAuthorities(Collections.emptyList())
-          .withUserId(records.get(0).get(USERS.ID))
-          .withUserRole(UserRole.findByName(records.get(0).get(USERS.ROLE))
+          .withUserId(rows.get(0).get(USERS.ID))
+          .withUserRole(UserRole.findByName(rows.get(0).get(USERS.ROLE))
               .orElseThrow(
                   () -> new ReportPortalException(ErrorType.UNCLASSIFIED_REPORT_PORTAL_ERROR)))
-          .withProjectDetails(new HashMap<>(records.size()))
-          .withEmail(records.get(0).get(USERS.EMAIL))
+          .withOrganizationDetails(new HashMap<>())
+          .withEmail(rows.get(0).get(USERS.EMAIL))
           .build();
-      records.forEach(
-          record -> ofNullable(record.get(PROJECT_USER.PROJECT_ID, Long.class)).ifPresent(
-              projectId -> {
-                String projectName = record.get(PROJECT.NAME, String.class);
-                ReportPortalUser.ProjectDetails projectDetails = ReportPortalUser.ProjectDetails.builder()
-                    .withProjectId(projectId)
-                    .withProjectName(projectName)
-                    .withProjectRole(record.get(PROJECT_USER.PROJECT_ROLE, String.class))
-                    .build();
-                user.getProjectDetails().put(projectName, projectDetails);
-              }));
+
+      rows.forEach(
+          row ->
+              ofNullable(row.get(ORGANIZATION_USER.ORGANIZATION_ID, Long.class))
+                  .ifPresent(orgId -> {
+                    String orgName = row.get(ORGANIZATION.NAME, String.class);
+
+                    if (!user.getOrganizationDetails().containsKey(orgName)) {
+                      ReportPortalUser.OrganizationDetails organizationDetails =
+                          ReportPortalUser.OrganizationDetails.builder()
+                              .withOrgId(row.get(ORGANIZATION_USER.ORGANIZATION_ID, Long.class))
+                              .withOrgName(orgName)
+                              .withOrganizationRole(
+                                  row.get(ORGANIZATION_USER.ORGANIZATION_ROLE, String.class))
+                              .withProjectDetails(new HashMap<>())
+                              .build();
+                      user.getOrganizationDetails().put(orgName, organizationDetails);
+                    }
+
+                    ofNullable(row.get(PROJECT_USER.PROJECT_ID, Long.class))
+                        .ifPresent(projectId -> {
+                          String projectKey = row.get(PROJECT.KEY, String.class);
+                          ReportPortalUser.OrganizationDetails.ProjectDetails projectDetails =
+                              ReportPortalUser.OrganizationDetails.ProjectDetails.builder()
+                                  .withProjectId(projectId)
+                                  .withProjectKey(projectKey)
+                                  .withProjectRole(row.get(PROJECT_USER.PROJECT_ROLE, String.class))
+                                  .build();
+
+                          user.getOrganizationDetails().get(orgName)
+                              .getProjectDetails()
+                              .put(projectKey, projectDetails);
+
+                        });
+                  }));
+
       return user;
     }
     return null;

@@ -18,18 +18,46 @@ package com.epam.ta.reportportal.entity.organization;
 
 import java.util.Arrays;
 import java.util.Optional;
+import lombok.Getter;
 
 /**
  * @author Siarhei Hrabko
  */
-public enum OrganizationRole {
+@Getter
+public enum OrganizationRole implements Comparable<OrganizationRole> {
 
-  MANAGER,
-  MEMBER;
+  MEMBER(0, "Member"),
+  MANAGER(1, "Manager");
+
+
+  private final int roleLevel;
+  private final String roleName;
+
+  OrganizationRole(int level, String roleName) {
+    this.roleLevel = level;
+    this.roleName = roleName;
+  }
+
+  public boolean higherThan(OrganizationRole other) {
+    return this.roleLevel > other.roleLevel;
+  }
+
+  public boolean lowerThan(OrganizationRole other) {
+    return this.roleLevel < other.roleLevel;
+  }
+
+  public boolean sameOrHigherThan(OrganizationRole other) {
+    return this.roleLevel >= other.roleLevel;
+  }
+
+  public boolean sameOrLowerThan(OrganizationRole other) {
+    return this.roleLevel <= other.roleLevel;
+  }
 
   public static Optional<OrganizationRole> forName(final String name) {
     return Arrays.stream(OrganizationRole.values())
         .filter(role -> role.name().equalsIgnoreCase(name))
         .findAny();
   }
+
 }
