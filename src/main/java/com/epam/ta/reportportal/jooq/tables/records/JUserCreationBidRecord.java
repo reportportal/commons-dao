@@ -95,42 +95,42 @@ public class JUserCreationBidRecord extends UpdatableRecordImpl<JUserCreationBid
      * Setter for <code>public.user_creation_bid.inviting_user_id</code>.
      */
     public void setInvitingUserId(Long value) {
-        set(4, value);
+        set(3, value);
     }
 
     /**
      * Getter for <code>public.user_creation_bid.inviting_user_id</code>.
      */
     public Long getInvitingUserId() {
-        return (Long) get(4);
+        return (Long) get(3);
     }
 
     /**
      * Setter for <code>public.user_creation_bid.project_name</code>.
      */
     public void setProjectName(String value) {
-        set(5, value);
+        set(4, value);
     }
 
     /**
      * Getter for <code>public.user_creation_bid.project_name</code>.
      */
     public String getProjectName() {
-        return (String) get(5);
+        return (String) get(4);
     }
 
     /**
      * Setter for <code>public.user_creation_bid.metadata</code>.
      */
     public void setMetadata(JSONB value) {
-        set(6, value);
+        set(5, value);
     }
 
     /**
      * Getter for <code>public.user_creation_bid.metadata</code>.
      */
     public JSONB getMetadata() {
-        return (JSONB) get(6);
+        return (JSONB) get(5);
     }
 
     /**
@@ -210,12 +210,12 @@ public class JUserCreationBidRecord extends UpdatableRecordImpl<JUserCreationBid
     }
 
     @Override
-    public Field<String> field6() {
+    public Field<String> field5() {
         return JUserCreationBid.USER_CREATION_BID.PROJECT_NAME;
     }
 
     @Override
-    public Field<JSONB> field7() {
+    public Field<JSONB> field6() {
         return JUserCreationBid.USER_CREATION_BID.METADATA;
     }
 
@@ -255,12 +255,12 @@ public class JUserCreationBidRecord extends UpdatableRecordImpl<JUserCreationBid
     }
 
     @Override
-    public String component6() {
+    public String component5() {
         return getProjectName();
     }
 
     @Override
-    public JSONB component7() {
+    public JSONB component6() {
         return getMetadata();
     }
 
@@ -300,12 +300,12 @@ public class JUserCreationBidRecord extends UpdatableRecordImpl<JUserCreationBid
     }
 
     @Override
-    public String value6() {
+    public String value5() {
         return getProjectName();
     }
 
     @Override
-    public JSONB value7() {
+    public JSONB value6() {
         return getMetadata();
     }
 
@@ -350,13 +350,13 @@ public class JUserCreationBidRecord extends UpdatableRecordImpl<JUserCreationBid
     }
 
     @Override
-    public JUserCreationBidRecord value6(String value) {
+    public JUserCreationBidRecord value5(String value) {
         setProjectName(value);
         return this;
     }
 
     @Override
-    public JUserCreationBidRecord value7(JSONB value) {
+    public JUserCreationBidRecord value6(JSONB value) {
         setMetadata(value);
         return this;
     }
@@ -407,10 +407,9 @@ public class JUserCreationBidRecord extends UpdatableRecordImpl<JUserCreationBid
         set(0, uuid);
         set(1, lastModified);
         set(2, email);
-        set(3, role);
-        set(4, invitingUserId);
-        set(5, projectName);
-        set(6, metadata);
+        set(3, invitingUserId);
+        set(4, projectName);
+        set(5, metadata);
         set(7, organizationId);
         set(8, organizationRole);
     }

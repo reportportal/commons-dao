@@ -127,13 +127,13 @@ public class ResultFetchers {
   /**
    * Fetches records from db results into list of {@link Organization} objects.
    */
-  public static final Function<Result<? extends Record>, List<Organization>> ORGANIZATION_FETCHER = rows -> {
-    Map<Long, Organization> orgs = Maps.newLinkedHashMap();
+  public static final Function<Result<? extends Record>, List<OrganizationProfile>> ORGANIZATION_FETCHER = rows -> {
+    Map<Long, OrganizationProfile> orgs = Maps.newLinkedHashMap();
     rows.forEach(row -> {
       Long id = row.get(ORGANIZATION.ID);
-      Organization organization;
+      OrganizationProfile organization;
       if (!orgs.containsKey(id)) {
-        organization = RecordMappers.ORGANIZATION_MAPPER.map(row);
+        organization = OrganizationMapper.ORGANIZATION_MAPPER.map(row);
       } else {
         organization = orgs.get(id);
       }

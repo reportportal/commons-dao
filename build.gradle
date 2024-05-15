@@ -38,6 +38,7 @@ dependencies {
         implementation 'com.github.reportportal:commons:b6926df'
     }
 
+    implementation 'io.swagger.core.v3:swagger-annotations:2.2.9'
     implementation 'org.springframework.security:spring-security-core'
     implementation 'org.springframework:spring-webmvc'
     implementation 'org.apache.tika:tika-core'
