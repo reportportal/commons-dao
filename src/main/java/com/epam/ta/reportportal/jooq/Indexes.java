@@ -33,6 +33,7 @@ import com.epam.ta.reportportal.jooq.tables.JLog;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
+import com.epam.ta.reportportal.jooq.tables.JOnboarding;
 import com.epam.ta.reportportal.jooq.tables.JOwnedEntity;
 import com.epam.ta.reportportal.jooq.tables.JParameter;
 import com.epam.ta.reportportal.jooq.tables.JPatternTemplate;
@@ -152,6 +153,7 @@ public class Indexes {
     public static final Index OAUTH_REGISTRATION_RESTRICTION_UNIQUE = Indexes0.OAUTH_REGISTRATION_RESTRICTION_UNIQUE;
     public static final Index OAUTH_REGISTRATION_SCOPE_PK = Indexes0.OAUTH_REGISTRATION_SCOPE_PK;
     public static final Index OAUTH_REGISTRATION_SCOPE_UNIQUE = Indexes0.OAUTH_REGISTRATION_SCOPE_UNIQUE;
+    public static final Index ONBOARDING_PK = Indexes0.ONBOARDING_PK;
     public static final Index SHAREABLE_PK = Indexes0.SHAREABLE_PK;
     public static final Index SHARED_ENTITY_OWNERX = Indexes0.SHARED_ENTITY_OWNERX;
     public static final Index SHARED_ENTITY_PROJECT_IDX = Indexes0.SHARED_ENTITY_PROJECT_IDX;
@@ -283,6 +285,7 @@ public class Indexes {
         public static Index OAUTH_REGISTRATION_RESTRICTION_UNIQUE = Internal.createIndex("oauth_registration_restriction_unique", JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION, new OrderField[] { JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION.TYPE, JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION.VALUE, JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION.OAUTH_REGISTRATION_FK }, true);
         public static Index OAUTH_REGISTRATION_SCOPE_PK = Internal.createIndex("oauth_registration_scope_pk", JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE, new OrderField[] { JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.ID }, true);
         public static Index OAUTH_REGISTRATION_SCOPE_UNIQUE = Internal.createIndex("oauth_registration_scope_unique", JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE, new OrderField[] { JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.SCOPE, JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.OAUTH_REGISTRATION_FK }, true);
+        public static Index ONBOARDING_PK = Internal.createIndex("onboarding_pk", JOnboarding.ONBOARDING, new OrderField[] { JOnboarding.ONBOARDING.ID }, true);
         public static Index SHAREABLE_PK = Internal.createIndex("shareable_pk", JOwnedEntity.OWNED_ENTITY, new OrderField[] { JOwnedEntity.OWNED_ENTITY.ID }, true);
         public static Index SHARED_ENTITY_OWNERX = Internal.createIndex("shared_entity_ownerx", JOwnedEntity.OWNED_ENTITY, new OrderField[] { JOwnedEntity.OWNED_ENTITY.OWNER }, false);
         public static Index SHARED_ENTITY_PROJECT_IDX = Internal.createIndex("shared_entity_project_idx", JOwnedEntity.OWNED_ENTITY, new OrderField[] { JOwnedEntity.OWNED_ENTITY.PROJECT_ID }, false);
