@@ -43,7 +43,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JUserCreationBid extends TableImpl<JUserCreationBidRecord> {
 
-    private static final long serialVersionUID = 1009841154;
+    private static final long serialVersionUID = -600823528;
 
     /**
      * The reference instance of <code>public.user_creation_bid</code>
@@ -74,11 +74,6 @@ public class JUserCreationBid extends TableImpl<JUserCreationBidRecord> {
     public final TableField<JUserCreationBidRecord, String> EMAIL = createField(DSL.name("email"), org.jooq.impl.SQLDataType.VARCHAR.nullable(false), this, "");
 
     /**
-     * The column <code>public.user_creation_bid.role</code>.
-     */
-    public final TableField<JUserCreationBidRecord, String> ROLE = createField(DSL.name("role"), org.jooq.impl.SQLDataType.VARCHAR.nullable(false), this, "");
-
-    /**
      * The column <code>public.user_creation_bid.inviting_user_id</code>.
      */
     public final TableField<JUserCreationBidRecord, Long> INVITING_USER_ID = createField(DSL.name("inviting_user_id"), org.jooq.impl.SQLDataType.BIGINT, this, "");
@@ -92,6 +87,11 @@ public class JUserCreationBid extends TableImpl<JUserCreationBidRecord> {
      * The column <code>public.user_creation_bid.metadata</code>.
      */
     public final TableField<JUserCreationBidRecord, JSONB> METADATA = createField(DSL.name("metadata"), org.jooq.impl.SQLDataType.JSONB, this, "");
+
+    /**
+     * The column <code>public.user_creation_bid.role</code>.
+     */
+    public final TableField<JUserCreationBidRecord, String> ROLE = createField(DSL.name("role"), org.jooq.impl.SQLDataType.VARCHAR.nullable(false), this, "");
 
     /**
      * Create a <code>public.user_creation_bid</code> table reference
@@ -186,7 +186,7 @@ public class JUserCreationBid extends TableImpl<JUserCreationBidRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row7<String, Timestamp, String, String, Long, String, JSONB> fieldsRow() {
+    public Row7<String, Timestamp, String, Long, String, JSONB, String> fieldsRow() {
         return (Row7) super.fieldsRow();
     }
 }
