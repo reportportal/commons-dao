@@ -22,7 +22,7 @@ import org.jooq.Index;
 import org.jooq.JSONB;
 import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row7;
+import org.jooq.Row10;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -44,7 +44,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JProject extends TableImpl<JProjectRecord> {
 
-    private static final long serialVersionUID = 1584335243;
+    private static final long serialVersionUID = 1291621622;
 
     /**
      * The reference instance of <code>public.project</code>
@@ -95,6 +95,21 @@ public class JProject extends TableImpl<JProjectRecord> {
     public final TableField<JProjectRecord, Long> ALLOCATED_STORAGE = createField(DSL.name("allocated_storage"), org.jooq.impl.SQLDataType.BIGINT.nullable(false).defaultValue(org.jooq.impl.DSL.field("0", org.jooq.impl.SQLDataType.BIGINT)), this, "");
 
     /**
+     * The column <code>public.project.organization_id</code>.
+     */
+    public final TableField<JProjectRecord, Long> ORGANIZATION_ID = createField(DSL.name("organization_id"), org.jooq.impl.SQLDataType.BIGINT, this, "");
+
+    /**
+     * The column <code>public.project.slug</code>.
+     */
+    public final TableField<JProjectRecord, String> SLUG = createField(DSL.name("slug"), org.jooq.impl.SQLDataType.CLOB, this, "");
+
+    /**
+     * The column <code>public.project.key</code>.
+     */
+    public final TableField<JProjectRecord, String> KEY = createField(DSL.name("key"), org.jooq.impl.SQLDataType.CLOB, this, "");
+
+    /**
      * Create a <code>public.project</code> table reference
      */
     public JProject() {
@@ -134,7 +149,7 @@ public class JProject extends TableImpl<JProjectRecord> {
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.PROJECT_NAME_KEY, Indexes.PROJECT_PK);
+        return Arrays.<Index>asList(Indexes.PROJECT_KEY_IDX, Indexes.PROJECT_KEY_KEY, Indexes.PROJECT_NAME_KEY, Indexes.PROJECT_PK);
     }
 
     @Override
@@ -149,7 +164,7 @@ public class JProject extends TableImpl<JProjectRecord> {
 
     @Override
     public List<UniqueKey<JProjectRecord>> getKeys() {
-        return Arrays.<UniqueKey<JProjectRecord>>asList(Keys.PROJECT_PK, Keys.PROJECT_NAME_KEY);
+        return Arrays.<UniqueKey<JProjectRecord>>asList(Keys.PROJECT_PK, Keys.PROJECT_NAME_KEY, Keys.PROJECT_KEY_KEY);
     }
 
     @Override
@@ -179,11 +194,11 @@ public class JProject extends TableImpl<JProjectRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row7 type methods
+    // Row10 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row7<Long, String, String, String, Timestamp, JSONB, Long> fieldsRow() {
-        return (Row7) super.fieldsRow();
+    public Row10<Long, String, String, String, Timestamp, JSONB, Long, Long, String, String> fieldsRow() {
+        return (Row10) super.fieldsRow();
     }
 }
