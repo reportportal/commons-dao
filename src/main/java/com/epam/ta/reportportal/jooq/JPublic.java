@@ -89,7 +89,7 @@ import org.jooq.impl.SchemaImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JPublic extends SchemaImpl {
 
-    private static final long serialVersionUID = 2042314490;
+    private static final long serialVersionUID = 1294370065;
 
     /**
      * The reference instance of <code>public</code>
@@ -433,7 +433,6 @@ public class JPublic extends SchemaImpl {
             Sequences.OAUTH_REGISTRATION_RESTRICTION_ID_SEQ,
             Sequences.OAUTH_REGISTRATION_SCOPE_ID_SEQ,
             Sequences.ORGANIZATION_ID_SEQ,
-            Sequences.ORGANIZATION_USER_USER_ID_SEQ,
             Sequences.PATTERN_TEMPLATE_ID_SEQ,
             Sequences.PROJECT_ATTRIBUTE_ATTRIBUTE_ID_SEQ,
             Sequences.PROJECT_ATTRIBUTE_PROJECT_ID_SEQ,

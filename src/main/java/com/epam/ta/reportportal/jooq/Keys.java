@@ -158,7 +158,6 @@ public class Keys {
     public static final Identity<JOauthRegistrationRestrictionRecord, Integer> IDENTITY_OAUTH_REGISTRATION_RESTRICTION = Identities0.IDENTITY_OAUTH_REGISTRATION_RESTRICTION;
     public static final Identity<JOauthRegistrationScopeRecord, Integer> IDENTITY_OAUTH_REGISTRATION_SCOPE = Identities0.IDENTITY_OAUTH_REGISTRATION_SCOPE;
     public static final Identity<JOrganizationRecord, Long> IDENTITY_ORGANIZATION = Identities0.IDENTITY_ORGANIZATION;
-    public static final Identity<JOrganizationUserRecord, Long> IDENTITY_ORGANIZATION_USER = Identities0.IDENTITY_ORGANIZATION_USER;
     public static final Identity<JOwnedEntityRecord, Long> IDENTITY_OWNED_ENTITY = Identities0.IDENTITY_OWNED_ENTITY;
     public static final Identity<JPatternTemplateRecord, Long> IDENTITY_PATTERN_TEMPLATE = Identities0.IDENTITY_PATTERN_TEMPLATE;
     public static final Identity<JProjectRecord, Long> IDENTITY_PROJECT = Identities0.IDENTITY_PROJECT;
@@ -217,8 +216,8 @@ public class Keys {
     public static final UniqueKey<JOauthRegistrationScopeRecord> OAUTH_REGISTRATION_SCOPE_UNIQUE = UniqueKeys0.OAUTH_REGISTRATION_SCOPE_UNIQUE;
     public static final UniqueKey<JOrganizationRecord> ORGANIZATION_PKEY = UniqueKeys0.ORGANIZATION_PKEY;
     public static final UniqueKey<JOrganizationRecord> ORGANIZATION_NAME_KEY = UniqueKeys0.ORGANIZATION_NAME_KEY;
-    public static final UniqueKey<JOrganizationRecord> ORGANIZATION_EXTERNAL_ID_KEY = UniqueKeys0.ORGANIZATION_EXTERNAL_ID_KEY;
     public static final UniqueKey<JOrganizationRecord> ORGANIZATION_SLUG_KEY = UniqueKeys0.ORGANIZATION_SLUG_KEY;
+    public static final UniqueKey<JOrganizationRecord> ORGANIZATION_EXTERNAL_ID_KEY = UniqueKeys0.ORGANIZATION_EXTERNAL_ID_KEY;
     public static final UniqueKey<JOrganizationUserRecord> ORGANIZATION_USER_PK = UniqueKeys0.ORGANIZATION_USER_PK;
     public static final UniqueKey<JOwnedEntityRecord> SHAREABLE_PK = UniqueKeys0.SHAREABLE_PK;
     public static final UniqueKey<JPatternTemplateRecord> PATTERN_TEMPLATE_PK = UniqueKeys0.PATTERN_TEMPLATE_PK;
@@ -341,7 +340,6 @@ public class Keys {
         public static Identity<JOauthRegistrationRestrictionRecord, Integer> IDENTITY_OAUTH_REGISTRATION_RESTRICTION = Internal.createIdentity(JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION, JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION.ID);
         public static Identity<JOauthRegistrationScopeRecord, Integer> IDENTITY_OAUTH_REGISTRATION_SCOPE = Internal.createIdentity(JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE, JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.ID);
         public static Identity<JOrganizationRecord, Long> IDENTITY_ORGANIZATION = Internal.createIdentity(JOrganization.ORGANIZATION, JOrganization.ORGANIZATION.ID);
-        public static Identity<JOrganizationUserRecord, Long> IDENTITY_ORGANIZATION_USER = Internal.createIdentity(JOrganizationUser.ORGANIZATION_USER, JOrganizationUser.ORGANIZATION_USER.USER_ID);
         public static Identity<JOwnedEntityRecord, Long> IDENTITY_OWNED_ENTITY = Internal.createIdentity(JOwnedEntity.OWNED_ENTITY, JOwnedEntity.OWNED_ENTITY.ID);
         public static Identity<JPatternTemplateRecord, Long> IDENTITY_PATTERN_TEMPLATE = Internal.createIdentity(JPatternTemplate.PATTERN_TEMPLATE, JPatternTemplate.PATTERN_TEMPLATE.ID);
         public static Identity<JProjectRecord, Long> IDENTITY_PROJECT = Internal.createIdentity(JProject.PROJECT, JProject.PROJECT.ID);
@@ -398,8 +396,8 @@ public class Keys {
         public static final UniqueKey<JOauthRegistrationScopeRecord> OAUTH_REGISTRATION_SCOPE_UNIQUE = Internal.createUniqueKey(JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE, "oauth_registration_scope_unique", JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.SCOPE, JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE.OAUTH_REGISTRATION_FK);
         public static final UniqueKey<JOrganizationRecord> ORGANIZATION_PKEY = Internal.createUniqueKey(JOrganization.ORGANIZATION, "organization_pkey", JOrganization.ORGANIZATION.ID);
         public static final UniqueKey<JOrganizationRecord> ORGANIZATION_NAME_KEY = Internal.createUniqueKey(JOrganization.ORGANIZATION, "organization_name_key", JOrganization.ORGANIZATION.NAME);
-        public static final UniqueKey<JOrganizationRecord> ORGANIZATION_EXTERNAL_ID_KEY = Internal.createUniqueKey(JOrganization.ORGANIZATION, "organization_external_id_key", JOrganization.ORGANIZATION.EXTERNAL_ID);
         public static final UniqueKey<JOrganizationRecord> ORGANIZATION_SLUG_KEY = Internal.createUniqueKey(JOrganization.ORGANIZATION, "organization_slug_key", JOrganization.ORGANIZATION.SLUG);
+        public static final UniqueKey<JOrganizationRecord> ORGANIZATION_EXTERNAL_ID_KEY = Internal.createUniqueKey(JOrganization.ORGANIZATION, "organization_external_id_key", JOrganization.ORGANIZATION.EXTERNAL_ID);
         public static final UniqueKey<JOrganizationUserRecord> ORGANIZATION_USER_PK = Internal.createUniqueKey(JOrganizationUser.ORGANIZATION_USER, "organization_user_pk", JOrganizationUser.ORGANIZATION_USER.USER_ID, JOrganizationUser.ORGANIZATION_USER.ORGANIZATION_ID);
         public static final UniqueKey<JOwnedEntityRecord> SHAREABLE_PK = Internal.createUniqueKey(JOwnedEntity.OWNED_ENTITY, "shareable_pk", JOwnedEntity.OWNED_ENTITY.ID);
         public static final UniqueKey<JPatternTemplateRecord> PATTERN_TEMPLATE_PK = Internal.createUniqueKey(JPatternTemplate.PATTERN_TEMPLATE, "pattern_template_pk", JPatternTemplate.PATTERN_TEMPLATE.ID);

@@ -43,7 +43,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JOrganization extends TableImpl<JOrganizationRecord> {
 
-    private static final long serialVersionUID = -1316883766;
+    private static final long serialVersionUID = 116167718;
 
     /**
      * The reference instance of <code>public.organization</code>
@@ -69,11 +69,6 @@ public class JOrganization extends TableImpl<JOrganizationRecord> {
     public final TableField<JOrganizationRecord, Timestamp> CREATED_AT = createField(DSL.name("created_at"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "");
 
     /**
-     * The column <code>public.organization.updated_at</code>.
-     */
-    public final TableField<JOrganizationRecord, Timestamp> UPDATED_AT = createField(DSL.name("updated_at"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "");
-
-    /**
      * The column <code>public.organization.name</code>.
      */
     public final TableField<JOrganizationRecord, String> NAME = createField(DSL.name("name"), org.jooq.impl.SQLDataType.CLOB.nullable(false), this, "");
@@ -84,14 +79,19 @@ public class JOrganization extends TableImpl<JOrganizationRecord> {
     public final TableField<JOrganizationRecord, String> ORGANIZATION_TYPE = createField(DSL.name("organization_type"), org.jooq.impl.SQLDataType.CLOB.nullable(false), this, "");
 
     /**
-     * The column <code>public.organization.external_id</code>.
-     */
-    public final TableField<JOrganizationRecord, String> EXTERNAL_ID = createField(DSL.name("external_id"), org.jooq.impl.SQLDataType.CLOB, this, "");
-
-    /**
      * The column <code>public.organization.slug</code>.
      */
     public final TableField<JOrganizationRecord, String> SLUG = createField(DSL.name("slug"), org.jooq.impl.SQLDataType.CLOB.nullable(false), this, "");
+
+    /**
+     * The column <code>public.organization.updated_at</code>.
+     */
+    public final TableField<JOrganizationRecord, Timestamp> UPDATED_AT = createField(DSL.name("updated_at"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "");
+
+    /**
+     * The column <code>public.organization.external_id</code>.
+     */
+    public final TableField<JOrganizationRecord, String> EXTERNAL_ID = createField(DSL.name("external_id"), org.jooq.impl.SQLDataType.CLOB, this, "");
 
     /**
      * Create a <code>public.organization</code> table reference
@@ -148,7 +148,7 @@ public class JOrganization extends TableImpl<JOrganizationRecord> {
 
     @Override
     public List<UniqueKey<JOrganizationRecord>> getKeys() {
-        return Arrays.<UniqueKey<JOrganizationRecord>>asList(Keys.ORGANIZATION_PKEY, Keys.ORGANIZATION_NAME_KEY, Keys.ORGANIZATION_EXTERNAL_ID_KEY, Keys.ORGANIZATION_SLUG_KEY);
+        return Arrays.<UniqueKey<JOrganizationRecord>>asList(Keys.ORGANIZATION_PKEY, Keys.ORGANIZATION_NAME_KEY, Keys.ORGANIZATION_SLUG_KEY, Keys.ORGANIZATION_EXTERNAL_ID_KEY);
     }
 
     @Override
@@ -182,7 +182,7 @@ public class JOrganization extends TableImpl<JOrganizationRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row7<Long, Timestamp, Timestamp, String, String, String, String> fieldsRow() {
+    public Row7<Long, Timestamp, String, String, String, Timestamp, String> fieldsRow() {
         return (Row7) super.fieldsRow();
     }
 }

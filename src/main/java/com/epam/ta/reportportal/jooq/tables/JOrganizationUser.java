@@ -17,7 +17,6 @@ import javax.annotation.processing.Generated;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
-import org.jooq.Identity;
 import org.jooq.Index;
 import org.jooq.Name;
 import org.jooq.Record;
@@ -43,7 +42,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JOrganizationUser extends TableImpl<JOrganizationUserRecord> {
 
-    private static final long serialVersionUID = -453434879;
+    private static final long serialVersionUID = -1246047188;
 
     /**
      * The reference instance of <code>public.organization_user</code>
@@ -61,7 +60,7 @@ public class JOrganizationUser extends TableImpl<JOrganizationUserRecord> {
     /**
      * The column <code>public.organization_user.user_id</code>.
      */
-    public final TableField<JOrganizationUserRecord, Long> USER_ID = createField(DSL.name("user_id"), org.jooq.impl.SQLDataType.BIGINT.nullable(false).defaultValue(org.jooq.impl.DSL.field("nextval('organization_user_user_id_seq'::regclass)", org.jooq.impl.SQLDataType.BIGINT)), this, "");
+    public final TableField<JOrganizationUserRecord, Long> USER_ID = createField(DSL.name("user_id"), org.jooq.impl.SQLDataType.BIGINT.nullable(false), this, "");
 
     /**
      * The column <code>public.organization_user.organization_id</code>.
@@ -114,11 +113,6 @@ public class JOrganizationUser extends TableImpl<JOrganizationUserRecord> {
     @Override
     public List<Index> getIndexes() {
         return Arrays.<Index>asList(Indexes.ORGANIZATION_USER_PK);
-    }
-
-    @Override
-    public Identity<JOrganizationUserRecord, Long> getIdentity() {
-        return Keys.IDENTITY_ORGANIZATION_USER;
     }
 
     @Override
