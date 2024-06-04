@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.dao.organization;
 import com.epam.ta.reportportal.dao.ReportPortalRepository;
 import com.epam.ta.reportportal.entity.user.OrganizationUser;
 import com.epam.ta.reportportal.entity.user.OrganizationUserId;
+import java.util.Optional;
 
 /**
  * This interface represents a repository for the OrganizationUser entity.
@@ -37,5 +38,5 @@ public interface OrganizationUserRepository extends
    * @param orgId  The ID of the organization.
    * @return A list of OrganizationUser entities that match the given user ID and organization ID.
    */
-  OrganizationUser findByUserIdAndOrganization_Id(Long userId, Long orgId);
+  Optional<OrganizationUser> findByUserIdAndOrganization_Id(Long userId, Long orgId);
 }
