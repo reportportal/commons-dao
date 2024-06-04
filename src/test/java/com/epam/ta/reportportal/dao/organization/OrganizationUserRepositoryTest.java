@@ -18,7 +18,7 @@ package com.epam.ta.reportportal.dao.organization;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.epam.ta.reportportal.BaseTest;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -39,7 +39,7 @@ class OrganizationUserRepositoryTest extends BaseTest {
       "2|1|Member",
   }, delimiter = '|')
   void organizationUser(Long userId, Long orgId, String role) {
-    var orgUser = organizationUserRepository.findByUserIdAndOrganization_Id(userId, orgId);
+    var orgUser = organizationUserRepository.findByUserIdAndOrganization_Id(userId, orgId).get();
     assertNotNull(orgUser);
     assertEquals(role, orgUser.getOrganizationRole().getRoleName());
   }
@@ -51,8 +51,8 @@ class OrganizationUserRepositoryTest extends BaseTest {
       "456|654",
   }, delimiter = '|')
   void organizationUserNotFound(Long userId, Long orgId) {
-    var orgUser = organizationUserRepository.findByUserIdAndOrganization_Id(userId, orgId);
-    assertNull(orgUser);
+    var orgUserOptional = organizationUserRepository.findByUserIdAndOrganization_Id(userId, orgId);
+    assertTrue(orgUserOptional.isEmpty());
   }
 
 }
