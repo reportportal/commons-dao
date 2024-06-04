@@ -5,18 +5,23 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.Instant;
 import java.util.Objects;
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import org.springframework.validation.annotation.Validated;
 
 /**
  * ProjectRelationLaunchesMeta
  */
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-05-14T12:57:43.836661731+03:00[Europe/Istanbul]")
+
 
 
 public class ProjectRelationLaunchesMeta   {
   @JsonProperty("last_occurred_at")
   private Instant lastOccurredAt = null;
+
+  @JsonProperty("count")
+  private Integer count = null;
 
   public ProjectRelationLaunchesMeta lastOccurredAt(Instant lastOccurredAt) {
     this.lastOccurredAt = lastOccurredAt;
@@ -28,7 +33,8 @@ public class ProjectRelationLaunchesMeta   {
    * @return lastOccurredAt
    **/
   @Schema(description = "The date and time of the last launch occurred in the project.")
-  
+      @NotNull
+
     @Valid
     public Instant getLastOccurredAt() {
     return lastOccurredAt;
@@ -36,6 +42,27 @@ public class ProjectRelationLaunchesMeta   {
 
   public void setLastOccurredAt(Instant lastOccurredAt) {
     this.lastOccurredAt = lastOccurredAt;
+  }
+
+  public ProjectRelationLaunchesMeta count(Integer count) {
+    this.count = count;
+    return this;
+  }
+
+  /**
+   * Total number of launches in the project.
+   * minimum: 0
+   * @return count
+   **/
+  @Schema(description = "Total number of launches in the project.")
+      @NotNull
+
+  @Min(0)  public Integer getCount() {
+    return count;
+  }
+
+  public void setCount(Integer count) {
+    this.count = count;
   }
 
 
@@ -48,12 +75,13 @@ public class ProjectRelationLaunchesMeta   {
       return false;
     }
     ProjectRelationLaunchesMeta projectRelationLaunchesMeta = (ProjectRelationLaunchesMeta) o;
-    return Objects.equals(this.lastOccurredAt, projectRelationLaunchesMeta.lastOccurredAt);
+    return Objects.equals(this.lastOccurredAt, projectRelationLaunchesMeta.lastOccurredAt) &&
+        Objects.equals(this.count, projectRelationLaunchesMeta.count);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(lastOccurredAt);
+    return Objects.hash(lastOccurredAt, count);
   }
 
   @Override
@@ -62,6 +90,7 @@ public class ProjectRelationLaunchesMeta   {
     sb.append("class ProjectRelationLaunchesMeta {\n");
     
     sb.append("    lastOccurredAt: ").append(toIndentedString(lastOccurredAt)).append("\n");
+    sb.append("    count: ").append(toIndentedString(count)).append("\n");
     sb.append("}");
     return sb.toString();
   }

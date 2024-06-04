@@ -169,7 +169,7 @@ import com.epam.ta.reportportal.jooq.enums.JIntegrationGroupEnum;
 import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
-import com.epam.ta.reportportal.model.OrganizationInfo;
+import com.epam.ta.reportportal.model.ProjectProfile;
 import com.google.common.collect.Lists;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -1555,16 +1555,73 @@ public enum FilterTarget {
       return ORGANIZATION.ID.cast(Long.class);
     }
 
-/*    @Override
+  },
+
+  PROJECT_PROFILE(ProjectProfile.class,
+      Arrays.asList(
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_ID, PROJECT.ORGANIZATION_ID, Long.class)
+              .get(),
+          new CriteriaHolderBuilder().newBuilder(PROJECT_USER.USER_ID.getName(), PROJECT_USER.USER_ID, Long.class)
+              .get(),
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_NAME, PROJECT.NAME, String.class).get()
+      )
+  ) {
+    @Override
+    public QuerySupplier getQuery() {
+      SelectQuery<? extends Record> query = DSL.select(selectFields()).getQuery();
+      addFrom(query);
+      query.addGroupBy(PROJECT.ID, PROJECT.CREATION_DATE, PROJECT.KEY, PROJECT.PROJECT_TYPE);
+      QuerySupplier querySupplier = new QuerySupplier(query);
+      joinTables(querySupplier);
+      return querySupplier;
+    }
+
+    @Override
+    protected Collection<? extends SelectField> selectFields() {
+      return Lists.newArrayList(DSL.countDistinct(PROJECT_USER.USER_ID).as(USERS_QUANTITY),
+          DSL.countDistinct(choose().when(LAUNCH.MODE.eq(JLaunchModeEnum.DEFAULT)
+                  .and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS)),
+              LAUNCH.ID
+          )).as(LAUNCHES_QUANTITY),
+          DSL.max(LAUNCH.START_TIME).as(LAST_RUN),
+          PROJECT.ID,
+          PROJECT.CREATION_DATE,
+          PROJECT.UPDATED_AT,
+          PROJECT.KEY,
+          PROJECT.SLUG,
+          PROJECT.NAME,
+          PROJECT.PROJECT_TYPE,
+          PROJECT.ORGANIZATION_ID
+      );
+    }
+
+    @Override
+    protected void addFrom(SelectQuery<? extends Record> query) {
+      query.addFrom(PROJECT);
+    }
+
+    @Override
+    protected void joinTables(QuerySupplier query) {
+      query.addJoin(PROJECT_USER, JoinType.LEFT_OUTER_JOIN, PROJECT.ID.eq(PROJECT_USER.PROJECT_ID));
+      query.addJoin(LAUNCH, JoinType.LEFT_OUTER_JOIN, PROJECT.ID.eq(LAUNCH.PROJECT_ID));
+    }
+
+    @Override
     public QuerySupplier wrapQuery(SelectQuery<? extends Record> query) {
-      throw new UnsupportedOperationException("Doesn't supported for Organization Info query");
+      throw new UnsupportedOperationException("Operation not supported for ProjectProfile query");
     }
 
     @Override
     public QuerySupplier wrapQuery(SelectQuery<? extends Record> query, String... excluding) {
-      throw new UnsupportedOperationException("Doesn't supported for Organization Info query");
-    }*/
+      throw new UnsupportedOperationException("Operation not supported for ProjectProfile query");
+    }
+
+    @Override
+    protected Field<Long> idField() {
+      return PROJECT.ID;
+    }
   };
+
 
   public static final String FILTERED_QUERY = "filtered";
   public static final String ATTRIBUTE_ALIAS = "attribute";

@@ -61,6 +61,7 @@ import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.organization.Organization;
+import com.epam.ta.reportportal.entity.organization.OrganizationFilter;
 import com.epam.ta.reportportal.entity.pattern.PatternTemplateTestItem;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectAttribute;
@@ -69,9 +70,16 @@ import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.entity.user.UserRole;
 import com.epam.ta.reportportal.entity.widget.Widget;
 import com.epam.ta.reportportal.model.OrganizationProfile;
+import com.epam.ta.reportportal.model.ProjectProfile;
+import com.epam.ta.reportportal.model.ProjectRelation;
+import com.epam.ta.reportportal.model.ProjectRelationLaunches;
+import com.epam.ta.reportportal.model.ProjectRelationLaunchesMeta;
+import com.epam.ta.reportportal.model.ProjectRelationUsers;
+import com.epam.ta.reportportal.model.ProjectRelationUsersMeta;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -426,5 +434,45 @@ public class ResultFetchers {
     }
     return null;
   };
+
+  public static final Function<Result<? extends Record>, List<ProjectProfile>> ORGANIZATION_PROJECT_LIST_FETCHER = rows -> {
+    List<ProjectProfile> projectProfiles = new ArrayList<>(rows.size());
+
+    rows.forEach(row -> {
+      ProjectProfile projectProfile = new ProjectProfile();
+
+      projectProfile.setId(row.get(PROJECT.ID));
+      projectProfile.setName(row.get(PROJECT.NAME));
+      projectProfile.setOrganizationId(row.get(PROJECT.ORGANIZATION_ID));
+      projectProfile.setCreatedAt(row.get(PROJECT.CREATION_DATE, Instant.class));
+      projectProfile.setUpdatedAt(row.get(PROJECT.UPDATED_AT, Instant.class));
+      projectProfile.setName(row.get(PROJECT.NAME));
+      projectProfile.setKey(row.get(PROJECT.KEY));
+      projectProfile.setSlug(row.get(PROJECT.SLUG));
+
+      ProjectRelationLaunches prl = new ProjectRelationLaunches();
+      // set launches
+      prl.meta(new ProjectRelationLaunchesMeta()
+          .count(row.get(OrganizationFilter.LAUNCHES_QUANTITY, Integer.class))
+          .lastOccurredAt(row.get(OrganizationFilter.LAST_RUN, Instant.class)));
+
+      // set users
+      ProjectRelationUsersMeta usersMeta = new ProjectRelationUsersMeta()
+          .count(row.get(OrganizationFilter.USERS_QUANTITY, Integer.class));
+      ProjectRelationUsers oru = new ProjectRelationUsers()
+          .meta(usersMeta);
+
+      ProjectRelation projectRelation = new ProjectRelation()
+          .launches(prl)
+          .users(oru);
+
+      projectProfile.setRelationships(projectRelation);
+
+      projectProfiles.add(projectProfile);
+
+    });
+
+    return projectProfiles;
+  };  
 
 }

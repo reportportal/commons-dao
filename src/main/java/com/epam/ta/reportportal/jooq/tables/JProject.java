@@ -22,7 +22,7 @@ import org.jooq.Index;
 import org.jooq.JSONB;
 import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row10;
+import org.jooq.Row11;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -44,7 +44,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JProject extends TableImpl<JProjectRecord> {
 
-    private static final long serialVersionUID = -1640494078;
+    private static final long serialVersionUID = -1307600510;
 
     /**
      * The reference instance of <code>public.project</code>
@@ -108,6 +108,11 @@ public class JProject extends TableImpl<JProjectRecord> {
      * The column <code>public.project.key</code>.
      */
     public final TableField<JProjectRecord, String> KEY = createField(DSL.name("key"), org.jooq.impl.SQLDataType.CLOB, this, "");
+
+    /**
+     * The column <code>public.project.updated_at</code>.
+     */
+    public final TableField<JProjectRecord, Timestamp> UPDATED_AT = createField(DSL.name("updated_at"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "");
 
     /**
      * Create a <code>public.project</code> table reference
@@ -194,11 +199,11 @@ public class JProject extends TableImpl<JProjectRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row10 type methods
+    // Row11 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row10<Long, String, String, String, Timestamp, JSONB, Long, Long, String, String> fieldsRow() {
-        return (Row10) super.fieldsRow();
+    public Row11<Long, String, String, String, Timestamp, JSONB, Long, Long, String, String, Timestamp> fieldsRow() {
+        return (Row11) super.fieldsRow();
     }
 }
