@@ -12,22 +12,20 @@ public class OffsetUtils {
   private OffsetUtils() {
   }
 
-  public static Offset withOffsetData(Offset offsetObject, Page page) {
-    return offsetObject
+  public static <T extends Offset> T withOffsetData(T offsetObject, Page page) {
+    return (T) offsetObject
         .offset((int) page.getPageable().getOffset())
         .limit(page.getPageable().getPageSize())
         .totalCount((int) page.getTotalElements())
         .sort(getSortFields(page.getPageable()))
         .order(getOrderEnum(page.getPageable()));
-
-
   }
 
   private static String getSortFields(Pageable pageable) {
     return pageable.getSort().stream()
-            .map(Order::getProperty)
-            .reduce((s1, s2) -> s1 + ", " + s2)
-            .orElse("");
+        .map(Order::getProperty)
+        .reduce((s1, s2) -> s1 + ", " + s2)
+        .orElse("");
   }
 
   private static OrderEnum getOrderEnum(Pageable pageable) {

@@ -1563,7 +1563,8 @@ public enum FilterTarget {
               .get(),
           new CriteriaHolderBuilder().newBuilder(PROJECT_USER.USER_ID.getName(), PROJECT_USER.USER_ID, Long.class)
               .get(),
-          new CriteriaHolderBuilder().newBuilder(CRITERIA_NAME, PROJECT.NAME, String.class).get()
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_NAME, PROJECT.NAME, String.class).get(),
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_NAME, PROJECT.SLUG, String.class).get()
       )
   ) {
     @Override
