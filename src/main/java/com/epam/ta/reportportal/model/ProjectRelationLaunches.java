@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Objects;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import org.springframework.validation.annotation.Validated;
 
 /**
@@ -11,7 +12,7 @@ import org.springframework.validation.annotation.Validated;
  */
 @Schema(description = "Launches associated with the project.")
 @Validated
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-05-14T12:57:43.836661731+03:00[Europe/Istanbul]")
+
 
 
 public class ProjectRelationLaunches   {
@@ -28,7 +29,8 @@ public class ProjectRelationLaunches   {
    * @return meta
    **/
   @Schema(description = "")
-  
+      @NotNull
+
     @Valid
     public ProjectRelationLaunchesMeta getMeta() {
     return meta;
