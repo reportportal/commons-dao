@@ -43,6 +43,8 @@ public enum ActivityAction {
   START_LAUNCH("startLaunch"),
   FINISH_LAUNCH("finishLaunch"),
   DELETE_LAUNCH("deleteLaunch"),
+  MARK_LAUNCH_AS_IMPORTANT("markLaunchAsImportant"),
+  UNMARK_LAUNCH_AS_IMPORTANT("unmarkLaunchAsImportant"),
   UPDATE_PROJECT("updateProject"),
   UPDATE_ANALYZER("updateAnalyzer"),
   POST_ISSUE("postIssue"),
