@@ -22,11 +22,16 @@ import static com.epam.ta.reportportal.jooq.Tables.ORGANIZATION;
 
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
+import com.epam.ta.reportportal.dao.custom.ElasticSearchClient;
 import com.epam.ta.reportportal.entity.organization.Organization;
 import com.epam.ta.reportportal.model.OrganizationProfile;
 import java.util.List;
 import java.util.Optional;
 import org.jooq.DSLContext;
+import org.jooq.Record;
+import org.jooq.SelectQuery;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -41,23 +46,35 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class OrganizationRepositoryCustomImpl implements OrganizationRepositoryCustom {
 
+  protected final Logger LOGGER = LoggerFactory.getLogger(ElasticSearchClient.class);
+
   @Autowired
   private DSLContext dsl;
 
   @Override
   public List<OrganizationProfile> findByFilter(Queryable filter) {
-    return ORGANIZATION_FETCHER.apply(
-        dsl.fetch(QueryBuilder.newBuilder(filter, collectJoinFields(filter))
-            .build()));
+
+    SelectQuery<? extends Record> query = QueryBuilder
+        .newBuilder(filter, collectJoinFields(filter))
+        .build();
+    if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug("Find organizations query: {}", query);
+    }
+    return ORGANIZATION_FETCHER
+        .apply(dsl.fetch(query));
   }
 
   @Override
   public Page<OrganizationProfile> findByFilter(Queryable filter, Pageable pageable) {
-    return PageableExecutionUtils.getPage(
-        ORGANIZATION_FETCHER.apply(
-            dsl.fetch(QueryBuilder.newBuilder(filter, collectJoinFields(filter, pageable.getSort()))
-                .with(pageable)
-                .build())),
+    SelectQuery<? extends Record> query = QueryBuilder.newBuilder(filter,
+            collectJoinFields(filter, pageable.getSort()))
+        .with(pageable)
+        .build();
+    if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug("Find organizations with pagination query: {}", query);
+    }
+    return PageableExecutionUtils.getPage(ORGANIZATION_FETCHER
+            .apply(dsl.fetch(query)),
         pageable,
         () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build())
     );
