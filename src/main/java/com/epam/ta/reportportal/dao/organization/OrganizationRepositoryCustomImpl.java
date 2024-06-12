@@ -46,7 +46,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class OrganizationRepositoryCustomImpl implements OrganizationRepositoryCustom {
 
-  protected final Logger LOGGER = LoggerFactory.getLogger(ElasticSearchClient.class);
+  protected final Logger LOGGER = LoggerFactory.getLogger(OrganizationRepositoryCustomImpl.class);
 
   @Autowired
   private DSLContext dsl;
