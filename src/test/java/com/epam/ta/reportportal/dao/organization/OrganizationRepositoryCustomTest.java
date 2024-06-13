@@ -22,9 +22,9 @@ import static org.springframework.test.util.AssertionErrors.assertTrue;
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
+import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.entity.organization.Organization;
 import com.epam.ta.reportportal.entity.organization.OrganizationFilter;
-import com.epam.ta.reportportal.model.OrganizationInfo;
 import com.epam.ta.reportportal.model.OrganizationProfile;
 import java.util.List;
 import java.util.Optional;
@@ -41,7 +41,7 @@ class OrganizationRepositoryCustomTest extends BaseTest {
   @Autowired
   private OrganizationRepositoryCustom organizationRepositoryCustom;
 
-/*  @Test
+  @Test
   void findByNameTest() {
     String name = "My organization";
     Optional<Organization> organization = organizationRepositoryCustom.findOrganizationByName(name);
@@ -59,7 +59,7 @@ class OrganizationRepositoryCustomTest extends BaseTest {
   void findByIdTest() {
     Optional<Organization> organization = organizationRepositoryCustom.findById(1L);
     assertTrue("Organization not found", organization.isPresent());
-  }*/
+  }
 
   @Test
   void organizationByFilterNotFound() {
@@ -77,18 +77,23 @@ class OrganizationRepositoryCustomTest extends BaseTest {
   @CsvSource(value = {
       "slug|eq|my-organization|1",
       "slug|eq|notexists|0",
-      "user|eq|superadmin|1",
-      "user|eq|notexists|0",
-      "organization_type|eq|INTERNAL|1",
+      "usersQuantity|eq|1|1",
+      "usersQuantity|eq|845|0",
+      "launchesQuantity|gt|-1|1",
+      "launchesQuantity|gt|999|0",
+      "projectsQuantity|eq|2|1",
+      "projectsQuantity|eq|999|0"
   }, delimiter = '|')
-  void findOrganizationByFilter(String field, String condition, String value, int rows) {
-    final List<OrganizationProfile> orgs = organizationRepositoryCustom.findByFilter(
-        new Filter(OrganizationFilter.class,
-            Condition.findByMarker(condition).get(),
-            false,
-            value,
-            field
-        ));
+  void findOrganizationByFilterWithUser(String field, String condition, String value, int rows) {
+    Filter filter = new Filter(OrganizationFilter.class,
+        Condition.findByMarker(condition).get(),
+        false,
+        value,
+        field);
+
+    filter.withCondition(new FilterCondition(Condition.EQUALS, false, "default", "user"));
+
+    final List<OrganizationProfile> orgs = organizationRepositoryCustom.findByFilter(filter);
     assertEquals(rows, orgs.size());
   }
 
@@ -106,14 +111,14 @@ class OrganizationRepositoryCustomTest extends BaseTest {
       "user|eq|superadmin|1",
       "user|eq|notexists|0"
   }, delimiter = '|')
-  void findOrganizationInfoByFilter(String field, String condition, String value, int rows) {
-    final List<OrganizationProfile> orgsInfo = organizationRepositoryCustom.findByFilter(
+  void findOrganizationByFilter(String field, String condition, String value, int rows) {
+    final List<OrganizationProfile> orgs = organizationRepositoryCustom.findByFilter(
         new Filter(OrganizationFilter.class,
             Condition.findByMarker(condition).get(),
             false,
             value,
             field
         ));
-    assertEquals(rows, orgsInfo.size());
+    assertEquals(rows, orgs.size());
   }
 }

@@ -159,7 +159,6 @@ import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
-import com.epam.ta.reportportal.entity.organization.Organization;
 import com.epam.ta.reportportal.entity.organization.OrganizationFilter;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectInfo;
@@ -1419,54 +1418,7 @@ public enum FilterTarget {
     }
   },
 
-  ORGANIZATION_TARGET(Organization.class, Arrays.asList(
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_ID, ORGANIZATION.ID, Long.class).get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_NAME, ORGANIZATION.NAME, String.class).get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_SLUG, ORGANIZATION.SLUG, String.class).get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_CREATED_DATE, ORGANIZATION.CREATED_AT,
-          Timestamp.class).get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_TYPE, ORGANIZATION.ORGANIZATION_TYPE,
-          String.class).get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_USER, USERS.LOGIN, String.class)
-          .withAggregateCriteria(DSL.max(USERS.LOGIN).toString())
-          .get()
-  )) {
-    @Override
-    protected Collection<? extends SelectField> selectFields() {
-      return Lists.newArrayList(ORGANIZATION.ID,
-          ORGANIZATION.ID,
-          ORGANIZATION.NAME,
-          ORGANIZATION.SLUG,
-          ORGANIZATION.CREATED_AT,
-          ORGANIZATION.UPDATED_AT,
-          ORGANIZATION.EXTERNAL_ID,
-          ORGANIZATION.ORGANIZATION_TYPE
-      );
-    }
-
-    @Override
-    protected void addFrom(SelectQuery<? extends Record> query) {
-      query.addFrom(ORGANIZATION);
-    }
-
-    @Override
-    protected void joinTables(QuerySupplier query) {
-      query.addJoin(ORGANIZATION_USER,
-          JoinType.LEFT_OUTER_JOIN,
-          ORGANIZATION_USER.ORGANIZATION_ID.eq(ORGANIZATION.ID));
-
-      query.addJoin(USERS,
-          JoinType.LEFT_OUTER_JOIN,
-          ORGANIZATION_USER.USER_ID.eq(USERS.ID));
-    }
-
-    @Override
-    protected Field<Long> idField() {
-      return ORGANIZATION.ID.cast(Long.class);
-    }
-  },
-
-  ORGANIZATION_INFO_TARGET(OrganizationFilter.class, Arrays.asList(
+  ORGANIZATION_TARGET(OrganizationFilter.class, Arrays.asList(
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ID, ORGANIZATION.ID, Long.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_NAME, ORGANIZATION.NAME, String.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_SLUG, ORGANIZATION.SLUG, String.class).get(),
@@ -1493,7 +1445,6 @@ public enum FilterTarget {
                   .and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS)), LAUNCH.ID)).toString())
           .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_USER, USERS.LOGIN, String.class)
-          .withAggregateCriteria(DSL.max(USERS.LOGIN).toString())
           .get()
 
   )) {
