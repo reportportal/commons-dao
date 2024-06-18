@@ -25,6 +25,7 @@ import static com.epam.ta.reportportal.dao.util.RecordMappers.ATTRIBUTE_MAPPER;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.DASHBOARD_WIDGET_MAPPER;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.ITEM_ATTRIBUTE_MAPPER;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.LOG_MAPPER;
+import static com.epam.ta.reportportal.dao.util.RecordMappers.ORGANIZATION_USER_MAPPER;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.PATTERN_TEMPLATE_NAME_RECORD_MAPPER;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.PROJECT_USER_MAPPER;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.TICKET_MAPPER;
@@ -65,6 +66,7 @@ import com.epam.ta.reportportal.entity.organization.OrganizationFilter;
 import com.epam.ta.reportportal.entity.pattern.PatternTemplateTestItem;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectAttribute;
+import com.epam.ta.reportportal.entity.user.OrganizationUser;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.entity.user.UserRole;
@@ -212,7 +214,7 @@ public class ResultFetchers {
       Long id = row.get(TEST_ITEM.ITEM_ID);
       TestItem testItem = testItems.computeIfAbsent(id,
           key -> RecordMappers.TEST_ITEM_RECORD_MAPPER.map(row));
-      ofNullable(row.get(PARAMETER.ITEM_ID)).ifPresent(
+      ofNullable(row.field(PARAMETER.ITEM_ID)).ifPresent(
           it -> testItem.getParameters().add(row.into(Parameter.class)));
       testItems.put(id, testItem);
     });
@@ -281,8 +283,25 @@ public class ResultFetchers {
       } else {
         user = users.get(id);
       }
-      if (ofNullable(row.get(PROJECT_USER.PROJECT_ROLE)).isPresent()) {
-        user.getProjects().add(PROJECT_USER_MAPPER.map(row));
+      if (ofNullable(row.field(PROJECT_USER.PROJECT_ROLE)).isPresent()) {
+        boolean isProjectAdded = user.getProjects().stream()
+            .map(ProjectUser::getProject)
+            .map(Project::getKey)
+            .anyMatch(prjKey -> prjKey.equals(row.get(PROJECT.KEY)));
+        if (!isProjectAdded) {
+          user.getProjects().add(PROJECT_USER_MAPPER.map(row));
+        }
+      }
+
+      if (ofNullable(row.field(ORGANIZATION_USER.ORGANIZATION_ROLE)).isPresent()) {
+        boolean isOrgAdded = user.getOrganizationUsers().stream()
+            .map(OrganizationUser::getOrganization)
+            .map(Organization::getId)
+            .anyMatch(orgId -> orgId.equals(row.get(ORGANIZATION.ID)));
+        if (!isOrgAdded) {
+          user.getOrganizationUsers()
+              .add(ORGANIZATION_USER_MAPPER.map(row));
+        }
       }
 
       users.put(id, user);
@@ -397,7 +416,7 @@ public class ResultFetchers {
 
       rows.forEach(
           row ->
-              ofNullable(row.get(ORGANIZATION_USER.ORGANIZATION_ID, Long.class))
+              ofNullable(row.field(ORGANIZATION_USER.ORGANIZATION_ID))
                   .ifPresent(orgId -> {
                     String orgName = row.get(ORGANIZATION.NAME, String.class);
 
