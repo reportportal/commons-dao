@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.dao;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PROJECT;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PROJECT_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_KEY;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_EMAIL;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_FULL_NAME;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_LAST_LOGIN;
@@ -51,6 +52,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import org.assertj.core.util.Lists;
 import org.assertj.core.util.Sets;
 import org.hamcrest.Matchers;
 import org.jooq.Operator;
@@ -415,6 +417,28 @@ class UserRepositoryTest extends BaseTest {
     assertFalse(emails.isEmpty());
     assertEquals(1, emails.size());
   }
+
+
+  @Test
+  void findProjectUsers() {
+    PageRequest pageRequest = PageRequest.of(0, 300);
+    Filter filter = new Filter(User.class, Lists.newArrayList());
+    filter.withCondition(
+        new FilterCondition(Condition.EQUALS, false, "millennium_falcon", CRITERIA_PROJECT_KEY));
+    Page<User> result = userRepository.findProjectUsersByFilterExcluding("millennium_falcon",
+        filter, pageRequest, "email");
+    assertEquals(3, result.getTotalElements());
+
+    result.getContent().forEach(user -> assertFalse(user.getOrganizationUsers().isEmpty()));
+
+    result.getContent().stream().flatMap(user -> user.getOrganizationUsers().stream())
+        .forEach(orgUser -> {
+          assertNotNull(orgUser.getOrganizationRole());
+        });
+
+    result.getContent().forEach(user -> assertNull(user.getEmail()));
+  }
+
 
   private Filter buildDefaultUserFilter() {
     return Filter.builder()

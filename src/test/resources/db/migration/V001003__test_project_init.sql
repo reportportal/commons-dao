@@ -50,6 +50,9 @@ BEGIN
             '{"metadata": {"last_login": "1551187023768"}}');
     fake_chubaka := (SELECT currval(pg_get_serial_sequence('users', 'id')));
 
+    INSERT INTO organization_user (user_id, organization_id, organization_role)
+        VALUES (fake_chubaka, org_id, (SELECT 'MEMBER'::public."organization_role_enum"));
+
     INSERT INTO project_user (user_id, project_id, project_role)
     VALUES (fake_chubaka, falcon, 'VIEWER');
 

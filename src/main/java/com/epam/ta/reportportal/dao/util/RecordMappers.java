@@ -71,6 +71,7 @@ import com.epam.ta.reportportal.entity.dashboard.DashboardWidget;
 import com.epam.ta.reportportal.entity.dashboard.DashboardWidgetId;
 import com.epam.ta.reportportal.entity.enums.IntegrationAuthFlowEnum;
 import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
+import com.epam.ta.reportportal.entity.enums.OrganizationType;
 import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
@@ -95,6 +96,8 @@ import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
 import com.epam.ta.reportportal.entity.statistics.Statistics;
 import com.epam.ta.reportportal.entity.statistics.StatisticsField;
+import com.epam.ta.reportportal.entity.user.OrganizationUser;
+import com.epam.ta.reportportal.entity.user.OrganizationUserId;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.entity.user.UserRole;
@@ -438,6 +441,24 @@ public class RecordMappers {
     projectUser.setProject(project);
     projectUser.setUser(user);
     return projectUser;
+  };
+
+  public static final RecordMapper<Record, OrganizationUser> ORGANIZATION_USER_MAPPER = r -> {
+    OrganizationUser orgUser = new OrganizationUser();
+
+    OrganizationUserId organizationUserId = new OrganizationUserId();
+    organizationUserId.setOrganizationId(r.get(ORGANIZATION.ID));
+    organizationUserId.setUserId(r.get(USERS.ID));
+
+    Organization organization = new Organization();
+    organization.setId(r.get(ORGANIZATION.ID));
+    organization.setSlug(r.get(ORGANIZATION.SLUG));
+    organization.setName(r.get(ORGANIZATION.NAME));
+
+    orgUser.setId(organizationUserId);
+    orgUser.setOrganizationRole(r.into(ORGANIZATION_USER.ORGANIZATION_ROLE).into(OrganizationRole.class));
+    orgUser.setOrganization(organization);
+    return orgUser;
   };
 
   public static final RecordMapper<Record, MembershipDetails> ASSIGNMENT_DETAILS_MAPPER = r -> {

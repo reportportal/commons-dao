@@ -383,10 +383,8 @@ public enum FilterTarget {
       new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT, PROJECT.NAME, List.class)
           .withAggregateCriteria(DSL.arrayAgg(PROJECT.NAME).toString())
           .get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT, PROJECT.KEY, List.class)
-          .withAggregateCriteria(DSL.arrayAgg(PROJECT.KEY).toString())
-          .get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT, PROJECT.ORGANIZATION_ID, List.class)
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_KEY, PROJECT.KEY, String.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ORGANIZATION_ID, PROJECT.ORGANIZATION_ID, List.class)
           .withAggregateCriteria(DSL.arrayAgg(PROJECT.ORGANIZATION_ID).toString())
           .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_LAST_LOGIN,
@@ -422,7 +420,8 @@ public enum FilterTarget {
           PROJECT_USER.USER_ID,
           ORGANIZATION.ID,
           ORGANIZATION.SLUG,
-          ORGANIZATION.NAME
+          ORGANIZATION.NAME,
+          ORGANIZATION_USER.ORGANIZATION_ROLE
       );
     }
 
@@ -436,6 +435,8 @@ public enum FilterTarget {
       query.addJoin(PROJECT_USER, JoinType.LEFT_OUTER_JOIN, USERS.ID.eq(PROJECT_USER.USER_ID));
       query.addJoin(PROJECT, JoinType.LEFT_OUTER_JOIN, PROJECT_USER.PROJECT_ID.eq(PROJECT.ID));
       query.addJoin(ORGANIZATION, JoinType.LEFT_OUTER_JOIN, ORGANIZATION.ID.eq(PROJECT.ORGANIZATION_ID));
+      query.addJoin(ORGANIZATION_USER, JoinType.LEFT_OUTER_JOIN,
+          ORGANIZATION_USER.ORGANIZATION_ID.eq(PROJECT.ORGANIZATION_ID).and(USERS.ID.eq(ORGANIZATION_USER.USER_ID)));
     }
 
     @Override
