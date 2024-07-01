@@ -33,7 +33,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JUserCreationBidRecord extends UpdatableRecordImpl<JUserCreationBidRecord> implements Record9<String, Timestamp, String, JProjectRoleEnum, Long, String, JSONB, Long, JOrganizationRoleEnum> {
 
-    private static final long serialVersionUID = 936967212;
+    private static final long serialVersionUID = 1624132004;
 
     /**
      * Setter for <code>public.user_creation_bid.uuid</code>.
@@ -106,16 +106,16 @@ public class JUserCreationBidRecord extends UpdatableRecordImpl<JUserCreationBid
     }
 
     /**
-     * Setter for <code>public.user_creation_bid.project_name</code>.
+     * Setter for <code>public.user_creation_bid.project_key</code>.
      */
-    public void setProjectName(String value) {
+    public void setProjectKey(String value) {
         set(5, value);
     }
 
     /**
-     * Getter for <code>public.user_creation_bid.project_name</code>.
+     * Getter for <code>public.user_creation_bid.project_key</code>.
      */
-    public String getProjectName() {
+    public String getProjectKey() {
         return (String) get(5);
     }
 
@@ -211,7 +211,7 @@ public class JUserCreationBidRecord extends UpdatableRecordImpl<JUserCreationBid
 
     @Override
     public Field<String> field6() {
-        return JUserCreationBid.USER_CREATION_BID.PROJECT_NAME;
+        return JUserCreationBid.USER_CREATION_BID.PROJECT_KEY;
     }
 
     @Override
@@ -256,7 +256,7 @@ public class JUserCreationBidRecord extends UpdatableRecordImpl<JUserCreationBid
 
     @Override
     public String component6() {
-        return getProjectName();
+        return getProjectKey();
     }
 
     @Override
@@ -301,7 +301,7 @@ public class JUserCreationBidRecord extends UpdatableRecordImpl<JUserCreationBid
 
     @Override
     public String value6() {
-        return getProjectName();
+        return getProjectKey();
     }
 
     @Override
@@ -351,7 +351,7 @@ public class JUserCreationBidRecord extends UpdatableRecordImpl<JUserCreationBid
 
     @Override
     public JUserCreationBidRecord value6(String value) {
-        setProjectName(value);
+        setProjectKey(value);
         return this;
     }
 
@@ -401,7 +401,7 @@ public class JUserCreationBidRecord extends UpdatableRecordImpl<JUserCreationBid
     /**
      * Create a detached, initialised JUserCreationBidRecord
      */
-    public JUserCreationBidRecord(String uuid, Timestamp lastModified, String email, JProjectRoleEnum role, Long invitingUserId, String projectName, JSONB metadata, Long organizationId, JOrganizationRoleEnum organizationRole) {
+    public JUserCreationBidRecord(String uuid, Timestamp lastModified, String email, JProjectRoleEnum role, Long invitingUserId, String projectKey, JSONB metadata, Long organizationId, JOrganizationRoleEnum organizationRole) {
         super(JUserCreationBid.USER_CREATION_BID);
 
         set(0, uuid);
@@ -409,7 +409,7 @@ public class JUserCreationBidRecord extends UpdatableRecordImpl<JUserCreationBid
         set(2, email);
         set(3, role);
         set(4, invitingUserId);
-        set(5, projectName);
+        set(5, projectKey);
         set(6, metadata);
         set(7, organizationId);
         set(8, organizationRole);

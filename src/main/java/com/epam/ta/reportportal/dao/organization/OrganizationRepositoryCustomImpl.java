@@ -22,9 +22,8 @@ import static com.epam.ta.reportportal.jooq.Tables.ORGANIZATION;
 
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
-import com.epam.ta.reportportal.dao.custom.ElasticSearchClient;
 import com.epam.ta.reportportal.entity.organization.Organization;
-import com.epam.ta.reportportal.model.OrganizationProfile;
+import com.epam.reportportal.api.model.OrganizationProfile;
 import java.util.List;
 import java.util.Optional;
 import org.jooq.DSLContext;

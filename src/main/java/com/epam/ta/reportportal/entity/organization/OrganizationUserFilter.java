@@ -14,24 +14,26 @@
  * limitations under the License.
  */
 
-package com.epam.ta.reportportal.dao.organization;
+package com.epam.ta.reportportal.entity.organization;
 
-import com.epam.ta.reportportal.dao.FilterableRepository;
-import com.epam.ta.reportportal.entity.organization.Organization;
-import com.epam.reportportal.api.model.OrganizationProfile;
-import java.util.Optional;
+import java.io.Serializable;
+import java.time.Instant;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
- * Repository interface for searching and filtering organization records.
- *
  * @author Siarhei Hrabko
  */
-public interface OrganizationRepositoryCustom extends FilterableRepository<OrganizationProfile> {
+@Getter
+@Setter
+@NoArgsConstructor
+public class OrganizationUserFilter implements Serializable {
 
-  Optional<Organization> findById(Long orgId);
-
-  Optional<Organization> findOrganizationByName(String name);
-
-  Optional<Organization> findOrganizationBySlug(String slug);
+  private String fullName;
+  private String email;
+  private int projectsQuantity;
+  private Instant lastLogin;
+  private String organizationId;
 
 }
