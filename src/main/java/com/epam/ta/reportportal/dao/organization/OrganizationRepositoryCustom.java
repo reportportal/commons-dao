@@ -18,7 +18,7 @@ package com.epam.ta.reportportal.dao.organization;
 
 import com.epam.ta.reportportal.dao.FilterableRepository;
 import com.epam.ta.reportportal.entity.organization.Organization;
-import com.epam.ta.reportportal.model.OrganizationProfile;
+import com.epam.ta.reportportal.api.model.OrganizationProfile;
 import java.util.Optional;
 
 /**

@@ -168,7 +168,7 @@ import com.epam.ta.reportportal.jooq.enums.JIntegrationGroupEnum;
 import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
-import com.epam.ta.reportportal.model.ProjectProfile;
+import com.epam.ta.reportportal.api.model.ProjectProfile;
 import com.google.common.collect.Lists;
 import java.sql.Timestamp;
 import java.util.ArrayList;

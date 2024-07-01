@@ -1,0 +1,91 @@
+package com.epam.ta.reportportal.api.model;
+
+import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.ArrayList;
+import java.util.List;
+import org.springframework.validation.annotation.Validated;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
+
+/**
+ * OrganizationNotifyRulesList
+ */
+@Validated
+
+
+
+public class OrganizationNotifyRulesList extends Offset  {
+  @JsonProperty("items")
+  @Valid
+  private List<OrganizationNotifyRule> organizationNotifyRulesListItems = null;
+
+  public OrganizationNotifyRulesList organizationNotifyRulesListItems(List<OrganizationNotifyRule> organizationNotifyRulesListItems) {
+    this.organizationNotifyRulesListItems = organizationNotifyRulesListItems;
+    return this;
+  }
+
+  public OrganizationNotifyRulesList addOrganizationNotifyRulesListItemsItem(OrganizationNotifyRule organizationNotifyRulesListItemsItem) {
+    if (this.organizationNotifyRulesListItems == null) {
+      this.organizationNotifyRulesListItems = new ArrayList<>();
+    }
+    this.organizationNotifyRulesListItems.add(organizationNotifyRulesListItemsItem);
+    return this;
+  }
+
+  /**
+   * Get organizationNotifyRulesListItems
+   * @return organizationNotifyRulesListItems
+   **/
+  @Schema(description = "")
+      @NotNull
+    @Valid
+    public List<OrganizationNotifyRule> getOrganizationNotifyRulesListItems() {
+    return organizationNotifyRulesListItems;
+  }
+
+  public void setOrganizationNotifyRulesListItems(List<OrganizationNotifyRule> organizationNotifyRulesListItems) {
+    this.organizationNotifyRulesListItems = organizationNotifyRulesListItems;
+  }
+
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    OrganizationNotifyRulesList organizationNotifyRulesList = (OrganizationNotifyRulesList) o;
+    return Objects.equals(this.organizationNotifyRulesListItems, organizationNotifyRulesList.organizationNotifyRulesListItems) &&
+        super.equals(o);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(organizationNotifyRulesListItems, super.hashCode());
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("class OrganizationNotifyRulesList {\n");
+    sb.append("    ").append(toIndentedString(super.toString())).append("\n");
+    sb.append("    organizationNotifyRulesListItems: ").append(toIndentedString(organizationNotifyRulesListItems)).append("\n");
+    sb.append("}");
+    return sb.toString();
+  }
+
+  /**
+   * Convert the given object to string with each line indented by 4 spaces
+   * (except the first line).
+   */
+  private String toIndentedString(Object o) {
+    if (o == null) {
+      return "null";
+    }
+    return o.toString().replace("\n", "\n    ");
+  }
+}

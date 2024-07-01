@@ -92,7 +92,7 @@ project.ext {
     ]
     excludeTests = [
             'com/epam/ta/reportportal/jooq/**',
-            'com/epam/ta/reportportal/model/**',
+            'com/epam/ta/reportportal/api/**',
             'com/epam/ta/reportportal/config/**',
             'com/epam/ta/reportportal/commons/accessible',
             'com/epam/ta/reportportal/commons/querygen/constant',
