@@ -1,12 +1,12 @@
 package com.epam.ta.reportportal.api.model;
 
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.Objects;
+import javax.validation.constraints.NotNull;
 import org.springframework.validation.annotation.Validated;
-import javax.validation.constraints.*;
 
 /**
  * Basic information about a user in the organization.
@@ -20,14 +20,14 @@ public class OrganizationUserDetails   {
   /**
    * Organization user role.
    */
-  public enum RoleEnum {
+  public enum OrganizationRoleEnum {
     MEMBER("MEMBER"),
     
     MANAGER("MANAGER");
 
     private String value;
 
-    RoleEnum(String value) {
+    OrganizationRoleEnum(String value) {
       this.value = value;
     }
 
@@ -38,8 +38,8 @@ public class OrganizationUserDetails   {
     }
 
     @JsonCreator
-    public static RoleEnum fromValue(String text) {
-      for (RoleEnum b : RoleEnum.values()) {
+    public static OrganizationRoleEnum fromValue(String text) {
+      for (OrganizationRoleEnum b : OrganizationRoleEnum.values()) {
         if (String.valueOf(b.value).equals(text)) {
           return b;
         }
@@ -47,27 +47,27 @@ public class OrganizationUserDetails   {
       return null;
     }
   }
-  @JsonProperty("role")
-  private RoleEnum role = null;
+  @JsonProperty("organization_role")
+  private OrganizationRoleEnum organizationRole = null;
 
-  public OrganizationUserDetails role(RoleEnum role) {
-    this.role = role;
+  public OrganizationUserDetails organizationRole(OrganizationRoleEnum organizationRole) {
+    this.organizationRole = organizationRole;
     return this;
   }
 
   /**
    * Organization user role.
-   * @return role
+   * @return organizationRole
    **/
   @Schema(required = true, description = "Organization user role.")
       @NotNull
 
-    public RoleEnum getRole() {
-    return role;
+    public OrganizationRoleEnum getOrganizationRole() {
+    return organizationRole;
   }
 
-  public void setRole(RoleEnum role) {
-    this.role = role;
+  public void setOrganizationRole(OrganizationRoleEnum organizationRole) {
+    this.organizationRole = organizationRole;
   }
 
 
@@ -80,12 +80,12 @@ public class OrganizationUserDetails   {
       return false;
     }
     OrganizationUserDetails organizationUserDetails = (OrganizationUserDetails) o;
-    return Objects.equals(this.role, organizationUserDetails.role);
+    return Objects.equals(this.organizationRole, organizationUserDetails.organizationRole);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(role);
+    return Objects.hash(organizationRole);
   }
 
   @Override
@@ -93,7 +93,7 @@ public class OrganizationUserDetails   {
     StringBuilder sb = new StringBuilder();
     sb.append("class OrganizationUserDetails {\n");
     
-    sb.append("    role: ").append(toIndentedString(role)).append("\n");
+    sb.append("    organizationRole: ").append(toIndentedString(organizationRole)).append("\n");
     sb.append("}");
     return sb.toString();
   }

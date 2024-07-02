@@ -1,10 +1,10 @@
 package com.epam.ta.reportportal.api.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.Objects;
+import javax.validation.constraints.NotNull;
 import org.springframework.validation.annotation.Validated;
-import javax.validation.constraints.*;
 
 /**
  * Allows clients to dynamically follow the hypermedia links to quickly navigate to the relevant resources.  Uses for Hypermedia as the Engine of Application State (HATEOAS).  Represents the [JSON:API link object](https://jsonapi.org/format/#auto-id--link-objects) and accepts &#x60;Web linking&#x60; as the de-facto datamodel.

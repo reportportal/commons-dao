@@ -1,10 +1,12 @@
 package com.epam.ta.reportportal.api.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.Objects;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import org.springframework.validation.annotation.Validated;
-import javax.validation.constraints.*;
 
 /**
  * Basic information provided by the client.  A &#x60;slug&#x60; is a unique identifying part of an organization. Generated according to the organization name if not specified by the user. 

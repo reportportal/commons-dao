@@ -1,10 +1,10 @@
 package com.epam.ta.reportportal.api.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.Objects;
+import javax.validation.constraints.NotNull;
 import org.springframework.validation.annotation.Validated;
-import javax.validation.constraints.*;
 
 /**
  * #TODO
@@ -14,7 +14,7 @@ import javax.validation.constraints.*;
 
 
 
-public class OrganizationRetentionPolicy  implements InlineResponse2006, SettingsSettingNameBody, SettingsSettingNameBody1, SettingsSettingNameBody2 {
+public class OrganizationRetentionPolicy  implements InlineResponse2005, SettingsSettingNameBody, SettingsSettingNameBody1, SettingsSettingNameBody2 {
   @JsonProperty("log_retention_period")
   private String logRetentionPeriod = null;
 

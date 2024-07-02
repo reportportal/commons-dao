@@ -1,12 +1,16 @@
 package com.epam.ta.reportportal.api.model;
 
-import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.Instant;
-import org.springframework.validation.annotation.Validated;
+import java.util.Objects;
+import java.util.UUID;
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import org.springframework.validation.annotation.Validated;
 
 /**
  * UserAccountInfo
@@ -19,6 +23,9 @@ public class UserAccountInfo extends UserDetails  {
   @JsonProperty("id")
   private Long id = null;
 
+  @JsonProperty("uuid")
+  private UUID uuid = null;
+
   @JsonProperty("created_at")
   private Instant createdAt = null;
 
@@ -27,6 +34,47 @@ public class UserAccountInfo extends UserDetails  {
 
   @JsonProperty("last_login_at")
   private Instant lastLoginAt = null;
+
+  /**
+   * Indicates through which service or authentication method the user account was created.
+   */
+  public enum AuthProviderEnum {
+    INTERNAL("INTERNAL"),
+    
+    UPSA("UPSA"),
+    
+    GITHUB("GITHUB"),
+    
+    LDAP("LDAP"),
+    
+    SAML("SAML"),
+    
+    SCIM("SCIM");
+
+    private String value;
+
+    AuthProviderEnum(String value) {
+      this.value = value;
+    }
+
+    @Override
+    @JsonValue
+    public String toString() {
+      return String.valueOf(value);
+    }
+
+    @JsonCreator
+    public static AuthProviderEnum fromValue(String text) {
+      for (AuthProviderEnum b : AuthProviderEnum.values()) {
+        if (String.valueOf(b.value).equals(text)) {
+          return b;
+        }
+      }
+      return null;
+    }
+  }
+  @JsonProperty("auth_provider")
+  private AuthProviderEnum authProvider = AuthProviderEnum.INTERNAL;
 
   public UserAccountInfo id(Long id) {
     this.id = id;
@@ -47,6 +95,27 @@ public class UserAccountInfo extends UserDetails  {
 
   public void setId(Long id) {
     this.id = id;
+  }
+
+  public UserAccountInfo uuid(UUID uuid) {
+    this.uuid = uuid;
+    return this;
+  }
+
+  /**
+   * User ID for external systems.
+   * @return uuid
+   **/
+  @Schema(description = "User ID for external systems.")
+      @NotNull
+
+    @Valid
+    public UUID getUuid() {
+    return uuid;
+  }
+
+  public void setUuid(UUID uuid) {
+    this.uuid = uuid;
   }
 
   public UserAccountInfo createdAt(Instant createdAt) {
@@ -112,6 +181,26 @@ public class UserAccountInfo extends UserDetails  {
     this.lastLoginAt = lastLoginAt;
   }
 
+  public UserAccountInfo authProvider(AuthProviderEnum authProvider) {
+    this.authProvider = authProvider;
+    return this;
+  }
+
+  /**
+   * Indicates through which service or authentication method the user account was created.
+   * @return authProvider
+   **/
+  @Schema(description = "Indicates through which service or authentication method the user account was created.")
+      @NotNull
+
+    public AuthProviderEnum getAuthProvider() {
+    return authProvider;
+  }
+
+  public void setAuthProvider(AuthProviderEnum authProvider) {
+    this.authProvider = authProvider;
+  }
+
 
   @Override
   public boolean equals(Object o) {
@@ -123,15 +212,17 @@ public class UserAccountInfo extends UserDetails  {
     }
     UserAccountInfo userAccountInfo = (UserAccountInfo) o;
     return Objects.equals(this.id, userAccountInfo.id) &&
+        Objects.equals(this.uuid, userAccountInfo.uuid) &&
         Objects.equals(this.createdAt, userAccountInfo.createdAt) &&
         Objects.equals(this.updatedAt, userAccountInfo.updatedAt) &&
         Objects.equals(this.lastLoginAt, userAccountInfo.lastLoginAt) &&
+        Objects.equals(this.authProvider, userAccountInfo.authProvider) &&
         super.equals(o);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, createdAt, updatedAt, lastLoginAt, super.hashCode());
+    return Objects.hash(id, uuid, createdAt, updatedAt, lastLoginAt, authProvider, super.hashCode());
   }
 
   @Override
@@ -140,9 +231,11 @@ public class UserAccountInfo extends UserDetails  {
     sb.append("class UserAccountInfo {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
+    sb.append("    uuid: ").append(toIndentedString(uuid)).append("\n");
     sb.append("    createdAt: ").append(toIndentedString(createdAt)).append("\n");
     sb.append("    updatedAt: ").append(toIndentedString(updatedAt)).append("\n");
     sb.append("    lastLoginAt: ").append(toIndentedString(lastLoginAt)).append("\n");
+    sb.append("    authProvider: ").append(toIndentedString(authProvider)).append("\n");
     sb.append("}");
     return sb.toString();
   }

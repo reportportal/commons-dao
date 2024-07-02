@@ -10,6 +10,7 @@ import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.enums.JOrganizationRoleEnum;
 import com.epam.ta.reportportal.jooq.tables.records.JOrganizationUserRecord;
 
+import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
 
@@ -20,7 +21,7 @@ import org.jooq.ForeignKey;
 import org.jooq.Index;
 import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row3;
+import org.jooq.Row4;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -42,7 +43,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JOrganizationUser extends TableImpl<JOrganizationUserRecord> {
 
-    private static final long serialVersionUID = -1246047188;
+    private static final long serialVersionUID = 363900676;
 
     /**
      * The reference instance of <code>public.organization_user</code>
@@ -71,6 +72,11 @@ public class JOrganizationUser extends TableImpl<JOrganizationUserRecord> {
      * The column <code>public.organization_user.organization_role</code>.
      */
     public final TableField<JOrganizationUserRecord, JOrganizationRoleEnum> ORGANIZATION_ROLE = createField(DSL.name("organization_role"), org.jooq.impl.SQLDataType.VARCHAR.nullable(false).asEnumDataType(com.epam.ta.reportportal.jooq.enums.JOrganizationRoleEnum.class), this, "");
+
+    /**
+     * The column <code>public.organization_user.assigned_at</code>.
+     */
+    public final TableField<JOrganizationUserRecord, Timestamp> ASSIGNED_AT = createField(DSL.name("assigned_at"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "");
 
     /**
      * Create a <code>public.organization_user</code> table reference
@@ -165,11 +171,11 @@ public class JOrganizationUser extends TableImpl<JOrganizationUserRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row3 type methods
+    // Row4 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row3<Long, Long, JOrganizationRoleEnum> fieldsRow() {
-        return (Row3) super.fieldsRow();
+    public Row4<Long, Long, JOrganizationRoleEnum, Timestamp> fieldsRow() {
+        return (Row4) super.fieldsRow();
     }
 }

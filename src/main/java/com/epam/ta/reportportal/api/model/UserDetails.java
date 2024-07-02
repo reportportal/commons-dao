@@ -1,12 +1,12 @@
 package com.epam.ta.reportportal.api.model;
 
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.Objects;
+import javax.validation.constraints.NotNull;
 import org.springframework.validation.annotation.Validated;
-import javax.validation.constraints.*;
 
 /**
  * Contains details associated with a user account.  User has a unique email address, full name, and account type.  Account type can be either &#x60;ADMIN&#x60; or &#x60;USER&#x60;. Only &#x60;ADMIN&#x60; users have access to change account type.
@@ -24,16 +24,16 @@ public class UserDetails   {
   private String fullName = null;
 
   /**
-   * Instance account type.
+   * Instance account role.
    */
-  public enum TypeEnum {
+  public enum InstanceRoleEnum {
     ADMIN("ADMIN"),
     
     USER("USER");
 
     private String value;
 
-    TypeEnum(String value) {
+    InstanceRoleEnum(String value) {
       this.value = value;
     }
 
@@ -44,8 +44,8 @@ public class UserDetails   {
     }
 
     @JsonCreator
-    public static TypeEnum fromValue(String text) {
-      for (TypeEnum b : TypeEnum.values()) {
+    public static InstanceRoleEnum fromValue(String text) {
+      for (InstanceRoleEnum b : InstanceRoleEnum.values()) {
         if (String.valueOf(b.value).equals(text)) {
           return b;
         }
@@ -53,8 +53,11 @@ public class UserDetails   {
       return null;
     }
   }
-  @JsonProperty("type")
-  private TypeEnum type = null;
+  @JsonProperty("instance_role")
+  private InstanceRoleEnum instanceRole = null;
+
+  @JsonProperty("external_id")
+  private String externalId = null;
 
   public UserDetails email(String email) {
     this.email = email;
@@ -96,24 +99,44 @@ public class UserDetails   {
     this.fullName = fullName;
   }
 
-  public UserDetails type(TypeEnum type) {
-    this.type = type;
+  public UserDetails instanceRole(InstanceRoleEnum instanceRole) {
+    this.instanceRole = instanceRole;
     return this;
   }
 
   /**
-   * Instance account type.
-   * @return type
+   * Instance account role.
+   * @return instanceRole
    **/
-  @Schema(description = "Instance account type.")
+  @Schema(description = "Instance account role.")
       @NotNull
 
-    public TypeEnum getType() {
-    return type;
+    public InstanceRoleEnum getInstanceRole() {
+    return instanceRole;
   }
 
-  public void setType(TypeEnum type) {
-    this.type = type;
+  public void setInstanceRole(InstanceRoleEnum instanceRole) {
+    this.instanceRole = instanceRole;
+  }
+
+  public UserDetails externalId(String externalId) {
+    this.externalId = externalId;
+    return this;
+  }
+
+  /**
+   * User external identifier. Provided by external systems.
+   * @return externalId
+   **/
+  @Schema(description = "User external identifier. Provided by external systems.")
+      @NotNull
+
+    public String getExternalId() {
+    return externalId;
+  }
+
+  public void setExternalId(String externalId) {
+    this.externalId = externalId;
   }
 
 
@@ -128,12 +151,13 @@ public class UserDetails   {
     UserDetails userDetails = (UserDetails) o;
     return Objects.equals(this.email, userDetails.email) &&
         Objects.equals(this.fullName, userDetails.fullName) &&
-        Objects.equals(this.type, userDetails.type);
+        Objects.equals(this.instanceRole, userDetails.instanceRole) &&
+        Objects.equals(this.externalId, userDetails.externalId);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(email, fullName, type);
+    return Objects.hash(email, fullName, instanceRole, externalId);
   }
 
   @Override
@@ -143,7 +167,8 @@ public class UserDetails   {
     
     sb.append("    email: ").append(toIndentedString(email)).append("\n");
     sb.append("    fullName: ").append(toIndentedString(fullName)).append("\n");
-    sb.append("    type: ").append(toIndentedString(type)).append("\n");
+    sb.append("    instanceRole: ").append(toIndentedString(instanceRole)).append("\n");
+    sb.append("    externalId: ").append(toIndentedString(externalId)).append("\n");
     sb.append("}");
     return sb.toString();
   }

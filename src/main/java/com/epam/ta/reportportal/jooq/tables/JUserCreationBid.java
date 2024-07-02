@@ -45,7 +45,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JUserCreationBid extends TableImpl<JUserCreationBidRecord> {
 
-    private static final long serialVersionUID = 1341637670;
+    private static final long serialVersionUID = 957519504;
 
     /**
      * The reference instance of <code>public.user_creation_bid</code>
@@ -86,9 +86,9 @@ public class JUserCreationBid extends TableImpl<JUserCreationBidRecord> {
     public final TableField<JUserCreationBidRecord, Long> INVITING_USER_ID = createField(DSL.name("inviting_user_id"), org.jooq.impl.SQLDataType.BIGINT, this, "");
 
     /**
-     * The column <code>public.user_creation_bid.project_name</code>.
+     * The column <code>public.user_creation_bid.project_key</code>.
      */
-    public final TableField<JUserCreationBidRecord, String> PROJECT_NAME = createField(DSL.name("project_name"), org.jooq.impl.SQLDataType.VARCHAR.nullable(false), this, "");
+    public final TableField<JUserCreationBidRecord, String> PROJECT_KEY = createField(DSL.name("project_key"), org.jooq.impl.SQLDataType.VARCHAR.nullable(false), this, "");
 
     /**
      * The column <code>public.user_creation_bid.metadata</code>.

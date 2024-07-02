@@ -1,12 +1,13 @@
 package com.epam.ta.reportportal.api.model;
 
-import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.time.Instant;
-import org.springframework.validation.annotation.Validated;
+import java.util.Objects;
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
+import org.springframework.validation.annotation.Validated;
 
 /**
  * A comprehensive set of user information related to a user&#x27;s organization.
@@ -16,104 +17,61 @@ import javax.validation.constraints.*;
 
 
 
-public class OrganizationUserProfile extends OrganizationUserInfo implements InlineResponse2002 {
-  @JsonProperty("id")
-  private Long id = null;
+public class OrganizationUserProfile extends UserAccountInfo  {
+  /**
+   * Organization user role.
+   */
+  public enum OrganizationRoleEnum {
+    MEMBER("MEMBER"),
+    
+    MANAGER("MANAGER");
 
-  @JsonProperty("created_at")
-  private Instant createdAt = null;
+    private String value;
 
-  @JsonProperty("updated_at")
-  private Instant updatedAt = null;
+    OrganizationRoleEnum(String value) {
+      this.value = value;
+    }
 
-  @JsonProperty("last_login_at")
-  private Instant lastLoginAt = null;
+    @Override
+    @JsonValue
+    public String toString() {
+      return String.valueOf(value);
+    }
+
+    @JsonCreator
+    public static OrganizationRoleEnum fromValue(String text) {
+      for (OrganizationRoleEnum b : OrganizationRoleEnum.values()) {
+        if (String.valueOf(b.value).equals(text)) {
+          return b;
+        }
+      }
+      return null;
+    }
+  }
+  @JsonProperty("organization_role")
+  private OrganizationRoleEnum organizationRole = null;
 
   @JsonProperty("relationships")
   private OrganizationUserRelation relationships = null;
 
-  public OrganizationUserProfile id(Long id) {
-    this.id = id;
+  public OrganizationUserProfile organizationRole(OrganizationRoleEnum organizationRole) {
+    this.organizationRole = organizationRole;
     return this;
   }
 
   /**
-   * User internal identifier.
-   * minimum: 0
-   * @return id
+   * Organization user role.
+   * @return organizationRole
    **/
-  @Schema(description = "User internal identifier.")
+  @Schema(required = true, description = "Organization user role.")
       @NotNull
 
-  @Min(0L)  public Long getId() {
-    return id;
+    public OrganizationRoleEnum getOrganizationRole() {
+    return organizationRole;
   }
 
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public OrganizationUserProfile createdAt(Instant createdAt) {
-    this.createdAt = createdAt;
-    return this;
-  }
-
-  /**
-   * When user's account was created.
-   * @return createdAt
-   **/
-  @Schema(description = "When user's account was created.")
-      @NotNull
-
-    @Valid
-    public Instant getCreatedAt() {
-    return createdAt;
-  }
-
-  public void setCreatedAt(Instant createdAt) {
-    this.createdAt = createdAt;
-  }
-
-  public OrganizationUserProfile updatedAt(Instant updatedAt) {
-    this.updatedAt = updatedAt;
-    return this;
-  }
-
-  /**
-   * When user's data was modifed.
-   * @return updatedAt
-   **/
-  @Schema(description = "When user's data was modifed.")
-      @NotNull
-
-    @Valid
-    public Instant getUpdatedAt() {
-    return updatedAt;
-  }
-
-  public void setUpdatedAt(Instant updatedAt) {
-    this.updatedAt = updatedAt;
-  }
-
-  public OrganizationUserProfile lastLoginAt(Instant lastLoginAt) {
-    this.lastLoginAt = lastLoginAt;
-    return this;
-  }
-
-  /**
-   * When user last logged in.
-   * @return lastLoginAt
-   **/
-  @Schema(description = "When user last logged in.")
-      @NotNull
-
-    @Valid
-    public Instant getLastLoginAt() {
-    return lastLoginAt;
-  }
-
-  public void setLastLoginAt(Instant lastLoginAt) {
-    this.lastLoginAt = lastLoginAt;
+  public void setOrganizationRole(OrganizationRoleEnum organizationRole) {
+    this.organizationRole = organizationRole;
   }
 
   public OrganizationUserProfile relationships(OrganizationUserRelation relationships) {
@@ -147,17 +105,14 @@ public class OrganizationUserProfile extends OrganizationUserInfo implements Inl
       return false;
     }
     OrganizationUserProfile organizationUserProfile = (OrganizationUserProfile) o;
-    return Objects.equals(this.id, organizationUserProfile.id) &&
-        Objects.equals(this.createdAt, organizationUserProfile.createdAt) &&
-        Objects.equals(this.updatedAt, organizationUserProfile.updatedAt) &&
-        Objects.equals(this.lastLoginAt, organizationUserProfile.lastLoginAt) &&
+    return Objects.equals(this.organizationRole, organizationUserProfile.organizationRole) &&
         Objects.equals(this.relationships, organizationUserProfile.relationships) &&
         super.equals(o);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, createdAt, updatedAt, lastLoginAt, relationships, super.hashCode());
+    return Objects.hash(organizationRole, relationships, super.hashCode());
   }
 
   @Override
@@ -165,10 +120,7 @@ public class OrganizationUserProfile extends OrganizationUserInfo implements Inl
     StringBuilder sb = new StringBuilder();
     sb.append("class OrganizationUserProfile {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-    sb.append("    id: ").append(toIndentedString(id)).append("\n");
-    sb.append("    createdAt: ").append(toIndentedString(createdAt)).append("\n");
-    sb.append("    updatedAt: ").append(toIndentedString(updatedAt)).append("\n");
-    sb.append("    lastLoginAt: ").append(toIndentedString(lastLoginAt)).append("\n");
+    sb.append("    organizationRole: ").append(toIndentedString(organizationRole)).append("\n");
     sb.append("    relationships: ").append(toIndentedString(relationships)).append("\n");
     sb.append("}");
     return sb.toString();

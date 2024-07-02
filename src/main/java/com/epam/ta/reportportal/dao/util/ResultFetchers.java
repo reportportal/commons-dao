@@ -461,11 +461,9 @@ public class ResultFetchers {
       ProjectProfile projectProfile = new ProjectProfile();
 
       projectProfile.setId(row.get(PROJECT.ID));
-      projectProfile.setName(row.get(PROJECT.NAME));
       projectProfile.setOrganizationId(row.get(PROJECT.ORGANIZATION_ID));
       projectProfile.setCreatedAt(row.get(PROJECT.CREATION_DATE, Instant.class));
       projectProfile.setUpdatedAt(row.get(PROJECT.UPDATED_AT, Instant.class));
-      projectProfile.setName(row.get(PROJECT.NAME));
       projectProfile.setKey(row.get(PROJECT.KEY));
       projectProfile.setSlug(row.get(PROJECT.SLUG));
 

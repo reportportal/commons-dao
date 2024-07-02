@@ -1,16 +1,16 @@
 package com.epam.ta.reportportal.api.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.springframework.validation.annotation.Validated;
+import java.util.Objects;
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
+import org.springframework.validation.annotation.Validated;
 
 /**
- * A relationship object contains members that represent a relationship of the organization. Provided only for &#x60;Administrator&#x60; and &#x60;Manager&#x60;.  Represents [JSON:API relationships object](https://jsonapi.org/format/#document-resource-object-relationships). We use only &#x60;links&#x60; and &#x60;meta&#x60; objects.
+ * A relationship object contains members that represent a relationship of the organization.  Represents [JSON:API relationships object](https://jsonapi.org/format/#document-resource-object-relationships). We use only &#x60;links&#x60; and &#x60;meta&#x60; objects.
  */
-@Schema(description = "A relationship object contains members that represent a relationship of the organization. Provided only for `Administrator` and `Manager`.  Represents [JSON:API relationships object](https://jsonapi.org/format/#document-resource-object-relationships). We use only `links` and `meta` objects.")
+@Schema(description = "A relationship object contains members that represent a relationship of the organization.  Represents [JSON:API relationships object](https://jsonapi.org/format/#document-resource-object-relationships). We use only `links` and `meta` objects.")
 @Validated
 
 

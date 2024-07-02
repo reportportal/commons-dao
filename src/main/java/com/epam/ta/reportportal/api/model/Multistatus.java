@@ -1,40 +1,42 @@
 package com.epam.ta.reportportal.api.model;
 
-import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.Objects;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import org.springframework.validation.annotation.Validated;
-import javax.validation.constraints.*;
 
 /**
- * InlineResponse20010
+ * Multistatus
  */
 @Validated
 
 
 
-public class InlineResponse20010   {
-  @JsonProperty("message")
-  private String message = null;
+public class Multistatus   {
+  @JsonProperty("multistatus")
+  private MultistatusMultistatus multistatus = null;
 
-  public InlineResponse20010 message(String message) {
-    this.message = message;
+  public Multistatus multistatus(MultistatusMultistatus multistatus) {
+    this.multistatus = multistatus;
     return this;
   }
 
   /**
-   * Get message
-   * @return message
+   * Get multistatus
+   * @return multistatus
    **/
   @Schema(description = "")
       @NotNull
 
-    public String getMessage() {
-    return message;
+    @Valid
+    public MultistatusMultistatus getMultistatus() {
+    return multistatus;
   }
 
-  public void setMessage(String message) {
-    this.message = message;
+  public void setMultistatus(MultistatusMultistatus multistatus) {
+    this.multistatus = multistatus;
   }
 
 
@@ -46,21 +48,21 @@ public class InlineResponse20010   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    InlineResponse20010 inlineResponse20010 = (InlineResponse20010) o;
-    return Objects.equals(this.message, inlineResponse20010.message);
+    Multistatus multistatus = (Multistatus) o;
+    return Objects.equals(this.multistatus, multistatus.multistatus);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(message);
+    return Objects.hash(multistatus);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class InlineResponse20010 {\n");
+    sb.append("class Multistatus {\n");
     
-    sb.append("    message: ").append(toIndentedString(message)).append("\n");
+    sb.append("    multistatus: ").append(toIndentedString(multistatus)).append("\n");
     sb.append("}");
     return sb.toString();
   }

@@ -9,6 +9,7 @@ import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.records.JUsersRecord;
 
+import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,7 +22,7 @@ import org.jooq.Index;
 import org.jooq.JSONB;
 import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row11;
+import org.jooq.Row13;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -43,7 +44,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JUsers extends TableImpl<JUsersRecord> {
 
-    private static final long serialVersionUID = 2058736098;
+    private static final long serialVersionUID = -679507963;
 
     /**
      * The reference instance of <code>public.users</code>
@@ -112,6 +113,16 @@ public class JUsers extends TableImpl<JUsersRecord> {
      * The column <code>public.users.metadata</code>.
      */
     public final TableField<JUsersRecord, JSONB> METADATA = createField(DSL.name("metadata"), org.jooq.impl.SQLDataType.JSONB, this, "");
+
+    /**
+     * The column <code>public.users.created_at</code>.
+     */
+    public final TableField<JUsersRecord, Timestamp> CREATED_AT = createField(DSL.name("created_at"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "");
+
+    /**
+     * The column <code>public.users.updated_at</code>.
+     */
+    public final TableField<JUsersRecord, Timestamp> UPDATED_AT = createField(DSL.name("updated_at"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "");
 
     /**
      * Create a <code>public.users</code> table reference
@@ -198,11 +209,11 @@ public class JUsers extends TableImpl<JUsersRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row11 type methods
+    // Row13 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row11<Long, String, String, String, String, String, String, String, Boolean, String, JSONB> fieldsRow() {
-        return (Row11) super.fieldsRow();
+    public Row13<Long, String, String, String, String, String, String, String, Boolean, String, JSONB, Timestamp, Timestamp> fieldsRow() {
+        return (Row13) super.fieldsRow();
     }
 }
