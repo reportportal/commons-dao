@@ -1605,10 +1605,7 @@ public enum FilterTarget {
 
     @Override
     protected Collection<? extends SelectField> selectFields() {
-      return Lists.newArrayList(
-          DSL.countDistinct(choose()
-              .when(ORGANIZATION_USER.ORGANIZATION_ID.eq(PROJECT_USER.PROJECT_ID), PROJECT.ID))
-              .as(PROJECTS_QUANTITY),
+      return Lists.newArrayList(DSL.countDistinct(PROJECT.ID).as(PROJECTS_QUANTITY),
           ORGANIZATION_USER.USER_ID,
           USERS.METADATA,
           USERS.EMAIL,
@@ -1630,7 +1627,7 @@ public enum FilterTarget {
     protected void joinTables(QuerySupplier query) {
       query.addJoin(USERS, JoinType.LEFT_OUTER_JOIN, USERS.ID.eq(ORGANIZATION_USER.USER_ID));
       query.addJoin(PROJECT_USER, JoinType.LEFT_OUTER_JOIN, PROJECT_USER.USER_ID.eq(ORGANIZATION_USER.USER_ID));
-      query.addJoin(PROJECT, JoinType.LEFT_OUTER_JOIN, PROJECT.ID.eq(PROJECT_USER.USER_ID)
+      query.addJoin(PROJECT, JoinType.LEFT_OUTER_JOIN, PROJECT.ID.eq(PROJECT_USER.PROJECT_ID)
           .and(PROJECT.ORGANIZATION_ID.eq(ORGANIZATION_USER.ORGANIZATION_ID)));
     }
 
