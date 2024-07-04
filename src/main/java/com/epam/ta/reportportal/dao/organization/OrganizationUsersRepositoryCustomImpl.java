@@ -58,8 +58,8 @@ public class OrganizationUsersRepositoryCustomImpl implements OrganizationUsersR
   @Override
   public Page<OrganizationUserProfile> findByFilter(Queryable filter, Pageable pageable) {
     SelectQuery<? extends Record> query = QueryBuilder.newBuilder(filter).with(pageable).build();
-    if (LOGGER.isInfoEnabled()) {
-      LOGGER.info("Find organization users query: {}", query);
+    if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug("Find organization users query: {}", query);
     }
     return PageableExecutionUtils.getPage(
         ORGANIZATION_USERS_LIST_FETCHER.apply(dsl.fetch(query)),
