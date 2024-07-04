@@ -16,7 +16,6 @@
 
 package com.epam.ta.reportportal.entity.organization;
 
-import com.epam.ta.reportportal.entity.enums.OrganizationType;
 import java.io.Serializable;
 import java.time.Instant;
 import lombok.Getter;
@@ -31,15 +30,10 @@ import lombok.Setter;
 @NoArgsConstructor
 public class OrganizationUserFilter implements Serializable {
 
-  public static final String PROJECTS_QUANTITY = "projectsQuantity";
-  public static final String LAST_LOGIN = "lastLogin";
-  public static final String ORGANIZATION_ID = "organization_id";
-
   private String fullName;
   private String email;
   private int projectsQuantity;
   private Instant lastLogin;
   private String organizationId;
-
 
 }

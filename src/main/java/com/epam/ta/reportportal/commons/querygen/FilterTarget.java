@@ -1581,14 +1581,23 @@ public enum FilterTarget {
       Arrays.asList(
           new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_ID, ORGANIZATION_USER.ORGANIZATION_ID,
               Long.class).get(),
-          new CriteriaHolderBuilder().newBuilder(CRITERIA_NAME, PROJECT.SLUG, String.class).get()
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_FULL_NAME, USERS.FULL_NAME, String.class).get()
       )
   ) {
     @Override
     public QuerySupplier getQuery() {
       SelectQuery<? extends Record> query = DSL.select(selectFields()).getQuery();
       addFrom(query);
-     // query.addGroupBy(ORGANIZATION_USER.ORGANIZATION_ID, USERS.METADATA, USERS.EMAIL, USERS.TYPE);
+      query.addGroupBy(
+          ORGANIZATION_USER.USER_ID,
+          USERS.METADATA,
+          USERS.EMAIL,
+          USERS.TYPE,
+          USERS.ROLE,
+          USERS.CREATED_AT,
+          USERS.UPDATED_AT,
+          USERS.FULL_NAME,
+          ORGANIZATION_USER.ORGANIZATION_ROLE);
       QuerySupplier querySupplier = new QuerySupplier(query);
       joinTables(querySupplier);
       return querySupplier;
@@ -1597,7 +1606,7 @@ public enum FilterTarget {
     @Override
     protected Collection<? extends SelectField> selectFields() {
       return Lists.newArrayList(
-         // DSL.countDistinct(PROJECT_USER.PROJECT_ID).as(PROJECTS_QUANTITY),
+          DSL.countDistinct(PROJECT_USER.PROJECT_ID).as(PROJECTS_QUANTITY),
           ORGANIZATION_USER.USER_ID,
           USERS.METADATA,
           USERS.EMAIL,

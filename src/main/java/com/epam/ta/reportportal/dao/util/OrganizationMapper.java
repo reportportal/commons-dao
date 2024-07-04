@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.dao.util;
 
+import static com.epam.ta.reportportal.entity.organization.OrganizationFilter.PROJECTS_QUANTITY;
 import static com.epam.ta.reportportal.jooq.Tables.ORGANIZATION;
 import static com.epam.ta.reportportal.jooq.Tables.ORGANIZATION_USER;
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
@@ -38,7 +39,6 @@ import com.epam.ta.reportportal.api.model.UserAccountInfo.AuthProviderEnum;
 import com.epam.ta.reportportal.api.model.UserDetails.InstanceRoleEnum;
 import com.epam.ta.reportportal.entity.organization.Organization;
 import com.epam.ta.reportportal.entity.organization.OrganizationFilter;
-import com.epam.ta.reportportal.entity.organization.OrganizationUserFilter;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -47,7 +47,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
-import org.jooq.JSONB;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
 import org.jooq.Result;
@@ -94,7 +93,7 @@ public class OrganizationMapper {
     // set projects
     OrganizationRelationProjects rp = new OrganizationRelationProjects();
     rp.meta(new OrganizationRelationProjectsMeta()
-        .count(row.get(OrganizationFilter.PROJECTS_QUANTITY, Integer.class)));
+        .count(row.get(PROJECTS_QUANTITY, Integer.class)));
 
     // set users
     OrganizationRelationUsersMeta usersMeta = new OrganizationRelationUsersMeta()
@@ -123,7 +122,7 @@ public class OrganizationMapper {
       organizationUserProfile.setFullName(row.get(USERS.FULL_NAME));
       organizationUserProfile.setCreatedAt(row.get(USERS.CREATED_AT, Instant.class));
       organizationUserProfile.setUpdatedAt(row.get(USERS.UPDATED_AT, Instant.class));
-      organizationUserProfile.setInstanceRole(InstanceRoleEnum.fromValue(row.get(USERS.ROLE))); // TODO: check ADMINISTRATOR value not null
+      organizationUserProfile.setInstanceRole(InstanceRoleEnum.fromValue(row.get(USERS.ROLE)));
       organizationUserProfile.setOrganizationRole(
           OrganizationRoleEnum.fromValue(
               row.get(ORGANIZATION_USER.ORGANIZATION_ROLE.getName(), String.class)));
@@ -134,7 +133,7 @@ public class OrganizationMapper {
           .ifPresent(meta -> {
             // TODO: refactor after switching to jooq 3.19 with jsonb processing support
             JSONObject json = new JSONObject(row.get(USERS.METADATA).data());
-            Long millis = json.getJSONObject("metadata").optLong("last_login");
+            Long millis = json.optJSONObject("metadata", new JSONObject()).optLong("last_login");
             organizationUserProfile.setLastLoginAt(Instant.ofEpochMilli(millis));
 
           });
@@ -147,7 +146,7 @@ public class OrganizationMapper {
 
       OrganizationUserRelationProjects projects = new OrganizationUserRelationProjects()
           .meta(new OrganizationUserRelationProjectsMeta()
-              //.count(row.get(OrganizationUserFilter.PROJECTS_QUANTITY, Integer.class))
+              .count(row.get(PROJECTS_QUANTITY, Integer.class))
           );
 
       OrganizationUserRelation organizationUserRelation = new OrganizationUserRelation()
