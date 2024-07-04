@@ -1629,6 +1629,8 @@ public enum FilterTarget {
     protected void joinTables(QuerySupplier query) {
       query.addJoin(USERS, JoinType.LEFT_OUTER_JOIN, USERS.ID.eq(ORGANIZATION_USER.USER_ID));
       query.addJoin(PROJECT_USER, JoinType.LEFT_OUTER_JOIN, PROJECT_USER.USER_ID.eq(ORGANIZATION_USER.USER_ID));
+      query.addJoin(PROJECT, JoinType.LEFT_OUTER_JOIN, PROJECT.ID.eq(PROJECT_USER.USER_ID)
+          .and(PROJECT.ORGANIZATION_ID.eq(ORGANIZATION_USER.ORGANIZATION_ID)));
     }
 
     @Override
