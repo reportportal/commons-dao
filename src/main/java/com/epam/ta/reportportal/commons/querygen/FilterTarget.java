@@ -1606,8 +1606,9 @@ public enum FilterTarget {
     @Override
     protected Collection<? extends SelectField> selectFields() {
       return Lists.newArrayList(
-          DSL.countDistinct(choose().when(ORGANIZATION_USER.ORGANIZATION_ID.eq(PROJECT_USER.PROJECT_ID),
-                  PROJECT_USER.PROJECT_ID)).as(PROJECTS_QUANTITY),
+          DSL.countDistinct(choose()
+              .when(ORGANIZATION_USER.ORGANIZATION_ID.eq(PROJECT_USER.PROJECT_ID), PROJECT.ID))
+              .as(PROJECTS_QUANTITY),
           ORGANIZATION_USER.USER_ID,
           USERS.METADATA,
           USERS.EMAIL,
