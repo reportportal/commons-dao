@@ -5,6 +5,7 @@ package com.epam.ta.reportportal.jooq;
 
 
 import com.epam.ta.reportportal.jooq.tables.JActivity;
+import com.epam.ta.reportportal.jooq.tables.JAnalyticsData;
 import com.epam.ta.reportportal.jooq.tables.JApiKeys;
 import com.epam.ta.reportportal.jooq.tables.JAttachment;
 import com.epam.ta.reportportal.jooq.tables.JAttachmentDeletion;
@@ -87,6 +88,7 @@ public class Indexes {
     public static final Index ACTIVITY_OBJECT_IDX = Indexes0.ACTIVITY_OBJECT_IDX;
     public static final Index ACTIVITY_PK = Indexes0.ACTIVITY_PK;
     public static final Index ACTIVITY_PROJECT_IDX = Indexes0.ACTIVITY_PROJECT_IDX;
+    public static final Index ANALYTICS_DATA_PKEY = Indexes0.ANALYTICS_DATA_PKEY;
     public static final Index API_KEYS_PKEY = Indexes0.API_KEYS_PKEY;
     public static final Index HASH_API_KEYS_IDX = Indexes0.HASH_API_KEYS_IDX;
     public static final Index USERS_API_KEYS_UNIQUE = Indexes0.USERS_API_KEYS_UNIQUE;
@@ -224,6 +226,7 @@ public class Indexes {
         public static Index ACTIVITY_OBJECT_IDX = Internal.createIndex("activity_object_idx", JActivity.ACTIVITY, new OrderField[] { JActivity.ACTIVITY.OBJECT_ID }, false);
         public static Index ACTIVITY_PK = Internal.createIndex("activity_pk", JActivity.ACTIVITY, new OrderField[] { JActivity.ACTIVITY.ID }, true);
         public static Index ACTIVITY_PROJECT_IDX = Internal.createIndex("activity_project_idx", JActivity.ACTIVITY, new OrderField[] { JActivity.ACTIVITY.PROJECT_ID }, false);
+        public static Index ANALYTICS_DATA_PKEY = Internal.createIndex("analytics_data_pkey", JAnalyticsData.ANALYTICS_DATA, new OrderField[] { JAnalyticsData.ANALYTICS_DATA.ID }, true);
         public static Index API_KEYS_PKEY = Internal.createIndex("api_keys_pkey", JApiKeys.API_KEYS, new OrderField[] { JApiKeys.API_KEYS.ID }, true);
         public static Index HASH_API_KEYS_IDX = Internal.createIndex("hash_api_keys_idx", JApiKeys.API_KEYS, new OrderField[] { JApiKeys.API_KEYS.HASH }, false);
         public static Index USERS_API_KEYS_UNIQUE = Internal.createIndex("users_api_keys_unique", JApiKeys.API_KEYS, new OrderField[] { JApiKeys.API_KEYS.NAME, JApiKeys.API_KEYS.USER_ID }, true);
