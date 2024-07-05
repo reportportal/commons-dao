@@ -2,6 +2,8 @@ package com.epam.ta.reportportal.api.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -17,11 +19,35 @@ import org.springframework.validation.annotation.Validated;
 
 
 public class ProjectProfile extends ProjectMetadata  {
+  @JsonProperty("name")
+  private String name = null;
+
   @JsonProperty("slug")
   private String slug = null;
 
   @JsonProperty("relationships")
-  private ProjectRelation relationships = null;
+  @Valid
+  private List<ProjectRelation> relationships = null;
+
+  public ProjectProfile name(String name) {
+    this.name = name;
+    return this;
+  }
+
+  /**
+   * Display project name.
+   * @return name
+   **/
+  @Schema(required = true, description = "Display project name.")
+      @NotNull
+
+    public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
 
   public ProjectProfile slug(String slug) {
     this.slug = slug;
@@ -29,10 +55,10 @@ public class ProjectProfile extends ProjectMetadata  {
   }
 
   /**
-   * A slug is used to identify a resource. It should be unique and contain only lowercase letters, numbers, and hyphens. It should not start or end with a hyphen.
+   * Get slug
    * @return slug
    **/
-  @Schema(description = "A slug is used to identify a resource. It should be unique and contain only lowercase letters, numbers, and hyphens. It should not start or end with a hyphen.")
+  @Schema(description = "")
       @NotNull
 
   @Pattern(regexp="^[a-z0-9]+(?:-[a-z0-9]+)*$")   public String getSlug() {
@@ -43,8 +69,16 @@ public class ProjectProfile extends ProjectMetadata  {
     this.slug = slug;
   }
 
-  public ProjectProfile relationships(ProjectRelation relationships) {
+  public ProjectProfile relationships(List<ProjectRelation> relationships) {
     this.relationships = relationships;
+    return this;
+  }
+
+  public ProjectProfile addRelationshipsItem(ProjectRelation relationshipsItem) {
+    if (this.relationships == null) {
+      this.relationships = new ArrayList<>();
+    }
+    this.relationships.add(relationshipsItem);
     return this;
   }
 
@@ -54,13 +88,12 @@ public class ProjectProfile extends ProjectMetadata  {
    **/
   @Schema(description = "")
       @NotNull
-
     @Valid
-    public ProjectRelation getRelationships() {
+    public List<ProjectRelation> getRelationships() {
     return relationships;
   }
 
-  public void setRelationships(ProjectRelation relationships) {
+  public void setRelationships(List<ProjectRelation> relationships) {
     this.relationships = relationships;
   }
 
@@ -74,14 +107,15 @@ public class ProjectProfile extends ProjectMetadata  {
       return false;
     }
     ProjectProfile projectProfile = (ProjectProfile) o;
-    return Objects.equals(this.slug, projectProfile.slug) &&
+    return Objects.equals(this.name, projectProfile.name) &&
+        Objects.equals(this.slug, projectProfile.slug) &&
         Objects.equals(this.relationships, projectProfile.relationships) &&
         super.equals(o);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(slug, relationships, super.hashCode());
+    return Objects.hash(name, slug, relationships, super.hashCode());
   }
 
   @Override
@@ -89,6 +123,7 @@ public class ProjectProfile extends ProjectMetadata  {
     StringBuilder sb = new StringBuilder();
     sb.append("class ProjectProfile {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
+    sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("    slug: ").append(toIndentedString(slug)).append("\n");
     sb.append("    relationships: ").append(toIndentedString(relationships)).append("\n");
     sb.append("}");

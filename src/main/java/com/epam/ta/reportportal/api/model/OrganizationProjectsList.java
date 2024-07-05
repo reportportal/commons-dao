@@ -16,37 +16,34 @@ import org.springframework.validation.annotation.Validated;
 
 
 
-public class OrganizationProjectsList extends Offset  {
+public class OrganizationProjectsList   {
   @JsonProperty("items")
   @Valid
-  private List<ProjectProfile> organizationProjectsListItems = null;
+  private List<ProjectProfile> items = new ArrayList<>();
 
-  public OrganizationProjectsList organizationProjectsListItems(List<ProjectProfile> organizationProjectsListItems) {
-    this.organizationProjectsListItems = organizationProjectsListItems;
+  public OrganizationProjectsList items(List<ProjectProfile> items) {
+    this.items = items;
     return this;
   }
 
-  public OrganizationProjectsList addOrganizationProjectsListItemsItem(ProjectProfile organizationProjectsListItemsItem) {
-    if (this.organizationProjectsListItems == null) {
-      this.organizationProjectsListItems = new ArrayList<>();
-    }
-    this.organizationProjectsListItems.add(organizationProjectsListItemsItem);
+  public OrganizationProjectsList addItemsItem(ProjectProfile itemsItem) {
+    this.items.add(itemsItem);
     return this;
   }
 
   /**
-   * Get organizationProjectsListItems
-   * @return organizationProjectsListItems
+   * Get items
+   * @return items
    **/
-  @Schema(description = "")
+  @Schema(required = true, description = "")
       @NotNull
     @Valid
-    public List<ProjectProfile> getOrganizationProjectsListItems() {
-    return organizationProjectsListItems;
+    public List<ProjectProfile> getItems() {
+    return items;
   }
 
-  public void setOrganizationProjectsListItems(List<ProjectProfile> organizationProjectsListItems) {
-    this.organizationProjectsListItems = organizationProjectsListItems;
+  public void setItems(List<ProjectProfile> items) {
+    this.items = items;
   }
 
 
@@ -59,21 +56,20 @@ public class OrganizationProjectsList extends Offset  {
       return false;
     }
     OrganizationProjectsList organizationProjectsList = (OrganizationProjectsList) o;
-    return Objects.equals(this.organizationProjectsListItems, organizationProjectsList.organizationProjectsListItems) &&
-        super.equals(o);
+    return Objects.equals(this.items, organizationProjectsList.items);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(organizationProjectsListItems, super.hashCode());
+    return Objects.hash(items);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class OrganizationProjectsList {\n");
-    sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-    sb.append("    organizationProjectsListItems: ").append(toIndentedString(organizationProjectsListItems)).append("\n");
+    
+    sb.append("    items: ").append(toIndentedString(items)).append("\n");
     sb.append("}");
     return sb.toString();
   }

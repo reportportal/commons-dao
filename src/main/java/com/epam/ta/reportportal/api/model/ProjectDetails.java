@@ -47,10 +47,10 @@ public class ProjectDetails   {
   }
 
   /**
-   * A slug is used to identify a resource. It should be unique and contain only lowercase letters, numbers, and hyphens. It should not start or end with a hyphen.
+   * Get slug
    * @return slug
    **/
-  @Schema(description = "A slug is used to identify a resource. It should be unique and contain only lowercase letters, numbers, and hyphens. It should not start or end with a hyphen.")
+  @Schema(description = "")
       @NotNull
 
   @Pattern(regexp="^[a-z0-9]+(?:-[a-z0-9]+)*$")   public String getSlug() {

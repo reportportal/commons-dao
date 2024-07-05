@@ -15,8 +15,31 @@ import org.springframework.validation.annotation.Validated;
 
 
 public class OrganizationProjectInfo extends ProjectMetadata  {
+  @JsonProperty("name")
+  private String name = null;
+
   @JsonProperty("slug")
   private String slug = null;
+
+  public OrganizationProjectInfo name(String name) {
+    this.name = name;
+    return this;
+  }
+
+  /**
+   * Display project name.
+   * @return name
+   **/
+  @Schema(required = true, description = "Display project name.")
+      @NotNull
+
+    public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
 
   public OrganizationProjectInfo slug(String slug) {
     this.slug = slug;
@@ -24,10 +47,10 @@ public class OrganizationProjectInfo extends ProjectMetadata  {
   }
 
   /**
-   * A slug is used to identify a resource. It should be unique and contain only lowercase letters, numbers, and hyphens. It should not start or end with a hyphen.
+   * Get slug
    * @return slug
    **/
-  @Schema(description = "A slug is used to identify a resource. It should be unique and contain only lowercase letters, numbers, and hyphens. It should not start or end with a hyphen.")
+  @Schema(description = "")
       @NotNull
 
   @Pattern(regexp="^[a-z0-9]+(?:-[a-z0-9]+)*$")   public String getSlug() {
@@ -48,13 +71,14 @@ public class OrganizationProjectInfo extends ProjectMetadata  {
       return false;
     }
     OrganizationProjectInfo organizationProjectInfo = (OrganizationProjectInfo) o;
-    return Objects.equals(this.slug, organizationProjectInfo.slug) &&
+    return Objects.equals(this.name, organizationProjectInfo.name) &&
+        Objects.equals(this.slug, organizationProjectInfo.slug) &&
         super.equals(o);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(slug, super.hashCode());
+    return Objects.hash(name, slug, super.hashCode());
   }
 
   @Override
@@ -62,6 +86,7 @@ public class OrganizationProjectInfo extends ProjectMetadata  {
     StringBuilder sb = new StringBuilder();
     sb.append("class OrganizationProjectInfo {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
+    sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("    slug: ").append(toIndentedString(slug)).append("\n");
     sb.append("}");
     return sb.toString();

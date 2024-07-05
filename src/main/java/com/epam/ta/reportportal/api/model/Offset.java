@@ -4,10 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
-import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import org.springframework.validation.annotation.Validated;
@@ -65,10 +62,6 @@ public class Offset   {
   }
   @JsonProperty("order")
   private OrderEnum order = null;
-
-  @JsonProperty("items")
-  @Valid
-  private List<Object> items = new ArrayList<>();
 
   public Offset offset(Integer offset) {
     this.offset = offset;
@@ -173,31 +166,6 @@ public class Offset   {
     this.order = order;
   }
 
-  public Offset items(List<Object> items) {
-    this.items = items;
-    return this;
-  }
-
-  public Offset addItemsItem(Object itemsItem) {
-    this.items.add(itemsItem);
-    return this;
-  }
-
-  /**
-   * Get items
-   * @return items
-   **/
-  @Schema(required = true, description = "")
-      @NotNull
-
-    public List<Object> getItems() {
-    return items;
-  }
-
-  public void setItems(List<Object> items) {
-    this.items = items;
-  }
-
 
   @Override
   public boolean equals(Object o) {
@@ -212,13 +180,12 @@ public class Offset   {
         Objects.equals(this.limit, offset.limit) &&
         Objects.equals(this.totalCount, offset.totalCount) &&
         Objects.equals(this.sort, offset.sort) &&
-        Objects.equals(this.order, offset.order) &&
-        Objects.equals(this.items, offset.items);
+        Objects.equals(this.order, offset.order);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(offset, limit, totalCount, sort, order, items);
+    return Objects.hash(offset, limit, totalCount, sort, order);
   }
 
   @Override
@@ -231,7 +198,6 @@ public class Offset   {
     sb.append("    totalCount: ").append(toIndentedString(totalCount)).append("\n");
     sb.append("    sort: ").append(toIndentedString(sort)).append("\n");
     sb.append("    order: ").append(toIndentedString(order)).append("\n");
-    sb.append("    items: ").append(toIndentedString(items)).append("\n");
     sb.append("}");
     return sb.toString();
   }

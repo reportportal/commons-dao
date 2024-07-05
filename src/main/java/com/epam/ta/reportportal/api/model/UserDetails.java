@@ -27,7 +27,7 @@ public class UserDetails   {
    * Instance account role.
    */
   public enum InstanceRoleEnum {
-    ADMIN("ADMIN"),
+    ADMINISTRATOR("ADMINISTRATOR"),
     
     USER("USER");
 

@@ -10,40 +10,43 @@ import javax.validation.constraints.NotNull;
 import org.springframework.validation.annotation.Validated;
 
 /**
- * OrganizationUsersList
+ * ProjectRelationships
  */
 @Validated
 
 
 
-public class OrganizationUsersList   {
-  @JsonProperty("items")
+public class ProjectRelationships   {
+  @JsonProperty("relationships")
   @Valid
-  private List<OrganizationUserProfile> items = new ArrayList<>();
+  private List<ProjectRelation> relationships = null;
 
-  public OrganizationUsersList items(List<OrganizationUserProfile> items) {
-    this.items = items;
+  public ProjectRelationships relationships(List<ProjectRelation> relationships) {
+    this.relationships = relationships;
     return this;
   }
 
-  public OrganizationUsersList addItemsItem(OrganizationUserProfile itemsItem) {
-    this.items.add(itemsItem);
+  public ProjectRelationships addRelationshipsItem(ProjectRelation relationshipsItem) {
+    if (this.relationships == null) {
+      this.relationships = new ArrayList<>();
+    }
+    this.relationships.add(relationshipsItem);
     return this;
   }
 
   /**
-   * Get items
-   * @return items
+   * Get relationships
+   * @return relationships
    **/
-  @Schema(required = true, description = "")
+  @Schema(description = "")
       @NotNull
     @Valid
-    public List<OrganizationUserProfile> getItems() {
-    return items;
+    public List<ProjectRelation> getRelationships() {
+    return relationships;
   }
 
-  public void setItems(List<OrganizationUserProfile> items) {
-    this.items = items;
+  public void setRelationships(List<ProjectRelation> relationships) {
+    this.relationships = relationships;
   }
 
 
@@ -55,21 +58,21 @@ public class OrganizationUsersList   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    OrganizationUsersList organizationUsersList = (OrganizationUsersList) o;
-    return Objects.equals(this.items, organizationUsersList.items);
+    ProjectRelationships projectRelationships = (ProjectRelationships) o;
+    return Objects.equals(this.relationships, projectRelationships.relationships);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(items);
+    return Objects.hash(relationships);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class OrganizationUsersList {\n");
+    sb.append("class ProjectRelationships {\n");
     
-    sb.append("    items: ").append(toIndentedString(items)).append("\n");
+    sb.append("    relationships: ").append(toIndentedString(relationships)).append("\n");
     sb.append("}");
     return sb.toString();
   }

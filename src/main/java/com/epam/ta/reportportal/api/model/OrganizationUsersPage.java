@@ -10,23 +10,23 @@ import javax.validation.constraints.NotNull;
 import org.springframework.validation.annotation.Validated;
 
 /**
- * OrganizationUsersList
+ * OrganizationUsersPage
  */
 @Validated
 
 
 
-public class OrganizationUsersList   {
+public class OrganizationUsersPage extends Offset  {
   @JsonProperty("items")
   @Valid
   private List<OrganizationUserProfile> items = new ArrayList<>();
 
-  public OrganizationUsersList items(List<OrganizationUserProfile> items) {
+  public OrganizationUsersPage items(List<OrganizationUserProfile> items) {
     this.items = items;
     return this;
   }
 
-  public OrganizationUsersList addItemsItem(OrganizationUserProfile itemsItem) {
+  public OrganizationUsersPage addItemsItem(OrganizationUserProfile itemsItem) {
     this.items.add(itemsItem);
     return this;
   }
@@ -55,20 +55,21 @@ public class OrganizationUsersList   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    OrganizationUsersList organizationUsersList = (OrganizationUsersList) o;
-    return Objects.equals(this.items, organizationUsersList.items);
+    OrganizationUsersPage organizationUsersPage = (OrganizationUsersPage) o;
+    return Objects.equals(this.items, organizationUsersPage.items) &&
+        super.equals(o);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(items);
+    return Objects.hash(items, super.hashCode());
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class OrganizationUsersList {\n");
-    
+    sb.append("class OrganizationUsersPage {\n");
+    sb.append("    ").append(toIndentedString(super.toString())).append("\n");
     sb.append("    items: ").append(toIndentedString(items)).append("\n");
     sb.append("}");
     return sb.toString();

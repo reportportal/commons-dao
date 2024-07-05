@@ -19,34 +19,34 @@ import org.springframework.validation.annotation.Validated;
 public class OrganizationNotifyRulesList extends Offset  {
   @JsonProperty("items")
   @Valid
-  private List<OrganizationNotifyRule> organizationNotifyRulesListItems = null;
+  private List<OrganizationNotifyRule> items = null;
 
-  public OrganizationNotifyRulesList organizationNotifyRulesListItems(List<OrganizationNotifyRule> organizationNotifyRulesListItems) {
-    this.organizationNotifyRulesListItems = organizationNotifyRulesListItems;
+  public OrganizationNotifyRulesList items(List<OrganizationNotifyRule> items) {
+    this.items = items;
     return this;
   }
 
-  public OrganizationNotifyRulesList addOrganizationNotifyRulesListItemsItem(OrganizationNotifyRule organizationNotifyRulesListItemsItem) {
-    if (this.organizationNotifyRulesListItems == null) {
-      this.organizationNotifyRulesListItems = new ArrayList<>();
+  public OrganizationNotifyRulesList addItemsItem(OrganizationNotifyRule itemsItem) {
+    if (this.items == null) {
+      this.items = new ArrayList<>();
     }
-    this.organizationNotifyRulesListItems.add(organizationNotifyRulesListItemsItem);
+    this.items.add(itemsItem);
     return this;
   }
 
   /**
-   * Get organizationNotifyRulesListItems
-   * @return organizationNotifyRulesListItems
+   * Get items
+   * @return items
    **/
   @Schema(description = "")
       @NotNull
     @Valid
-    public List<OrganizationNotifyRule> getOrganizationNotifyRulesListItems() {
-    return organizationNotifyRulesListItems;
+    public List<OrganizationNotifyRule> getItems() {
+    return items;
   }
 
-  public void setOrganizationNotifyRulesListItems(List<OrganizationNotifyRule> organizationNotifyRulesListItems) {
-    this.organizationNotifyRulesListItems = organizationNotifyRulesListItems;
+  public void setItems(List<OrganizationNotifyRule> items) {
+    this.items = items;
   }
 
 
@@ -59,13 +59,13 @@ public class OrganizationNotifyRulesList extends Offset  {
       return false;
     }
     OrganizationNotifyRulesList organizationNotifyRulesList = (OrganizationNotifyRulesList) o;
-    return Objects.equals(this.organizationNotifyRulesListItems, organizationNotifyRulesList.organizationNotifyRulesListItems) &&
+    return Objects.equals(this.items, organizationNotifyRulesList.items) &&
         super.equals(o);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(organizationNotifyRulesListItems, super.hashCode());
+    return Objects.hash(items, super.hashCode());
   }
 
   @Override
@@ -73,7 +73,7 @@ public class OrganizationNotifyRulesList extends Offset  {
     StringBuilder sb = new StringBuilder();
     sb.append("class OrganizationNotifyRulesList {\n");
     sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-    sb.append("    organizationNotifyRulesListItems: ").append(toIndentedString(organizationNotifyRulesListItems)).append("\n");
+    sb.append("    items: ").append(toIndentedString(items)).append("\n");
     sb.append("}");
     return sb.toString();
   }
