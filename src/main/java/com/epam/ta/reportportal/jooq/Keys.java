@@ -5,6 +5,7 @@ package com.epam.ta.reportportal.jooq;
 
 
 import com.epam.ta.reportportal.jooq.tables.JActivity;
+import com.epam.ta.reportportal.jooq.tables.JAnalyticsData;
 import com.epam.ta.reportportal.jooq.tables.JApiKeys;
 import com.epam.ta.reportportal.jooq.tables.JAttachment;
 import com.epam.ta.reportportal.jooq.tables.JAttachmentDeletion;
@@ -59,6 +60,7 @@ import com.epam.ta.reportportal.jooq.tables.JUsers;
 import com.epam.ta.reportportal.jooq.tables.JWidget;
 import com.epam.ta.reportportal.jooq.tables.JWidgetFilter;
 import com.epam.ta.reportportal.jooq.tables.records.JActivityRecord;
+import com.epam.ta.reportportal.jooq.tables.records.JAnalyticsDataRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JApiKeysRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JAttachmentDeletionRecord;
 import com.epam.ta.reportportal.jooq.tables.records.JAttachmentRecord;
@@ -140,6 +142,7 @@ public class Keys {
     // -------------------------------------------------------------------------
 
     public static final Identity<JActivityRecord, Long> IDENTITY_ACTIVITY = Identities0.IDENTITY_ACTIVITY;
+    public static final Identity<JAnalyticsDataRecord, Long> IDENTITY_ANALYTICS_DATA = Identities0.IDENTITY_ANALYTICS_DATA;
     public static final Identity<JApiKeysRecord, Long> IDENTITY_API_KEYS = Identities0.IDENTITY_API_KEYS;
     public static final Identity<JAttachmentRecord, Long> IDENTITY_ATTACHMENT = Identities0.IDENTITY_ATTACHMENT;
     public static final Identity<JAttributeRecord, Long> IDENTITY_ATTRIBUTE = Identities0.IDENTITY_ATTRIBUTE;
@@ -177,6 +180,7 @@ public class Keys {
     // -------------------------------------------------------------------------
 
     public static final UniqueKey<JActivityRecord> ACTIVITY_PK = UniqueKeys0.ACTIVITY_PK;
+    public static final UniqueKey<JAnalyticsDataRecord> ANALYTICS_DATA_PKEY = UniqueKeys0.ANALYTICS_DATA_PKEY;
     public static final UniqueKey<JApiKeysRecord> API_KEYS_PKEY = UniqueKeys0.API_KEYS_PKEY;
     public static final UniqueKey<JApiKeysRecord> USERS_API_KEYS_UNIQUE = UniqueKeys0.USERS_API_KEYS_UNIQUE;
     public static final UniqueKey<JAttachmentRecord> ATTACHMENT_PK = UniqueKeys0.ATTACHMENT_PK;
@@ -322,6 +326,7 @@ public class Keys {
 
     private static class Identities0 {
         public static Identity<JActivityRecord, Long> IDENTITY_ACTIVITY = Internal.createIdentity(JActivity.ACTIVITY, JActivity.ACTIVITY.ID);
+        public static Identity<JAnalyticsDataRecord, Long> IDENTITY_ANALYTICS_DATA = Internal.createIdentity(JAnalyticsData.ANALYTICS_DATA, JAnalyticsData.ANALYTICS_DATA.ID);
         public static Identity<JApiKeysRecord, Long> IDENTITY_API_KEYS = Internal.createIdentity(JApiKeys.API_KEYS, JApiKeys.API_KEYS.ID);
         public static Identity<JAttachmentRecord, Long> IDENTITY_ATTACHMENT = Internal.createIdentity(JAttachment.ATTACHMENT, JAttachment.ATTACHMENT.ID);
         public static Identity<JAttributeRecord, Long> IDENTITY_ATTRIBUTE = Internal.createIdentity(JAttribute.ATTRIBUTE, JAttribute.ATTRIBUTE.ID);
@@ -357,6 +362,7 @@ public class Keys {
 
     private static class UniqueKeys0 {
         public static final UniqueKey<JActivityRecord> ACTIVITY_PK = Internal.createUniqueKey(JActivity.ACTIVITY, "activity_pk", JActivity.ACTIVITY.ID);
+        public static final UniqueKey<JAnalyticsDataRecord> ANALYTICS_DATA_PKEY = Internal.createUniqueKey(JAnalyticsData.ANALYTICS_DATA, "analytics_data_pkey", JAnalyticsData.ANALYTICS_DATA.ID);
         public static final UniqueKey<JApiKeysRecord> API_KEYS_PKEY = Internal.createUniqueKey(JApiKeys.API_KEYS, "api_keys_pkey", JApiKeys.API_KEYS.ID);
         public static final UniqueKey<JApiKeysRecord> USERS_API_KEYS_UNIQUE = Internal.createUniqueKey(JApiKeys.API_KEYS, "users_api_keys_unique", JApiKeys.API_KEYS.NAME, JApiKeys.API_KEYS.USER_ID);
         public static final UniqueKey<JAttachmentRecord> ATTACHMENT_PK = Internal.createUniqueKey(JAttachment.ATTACHMENT, "attachment_pk", JAttachment.ATTACHMENT.ID);
