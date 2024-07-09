@@ -1,7 +1,7 @@
 package com.epam.ta.reportportal.util;
 
-import com.epam.ta.reportportal.model.Offset;
-import com.epam.ta.reportportal.model.Offset.OrderEnum;
+import com.epam.reportportal.api.model.Offset;
+import com.epam.reportportal.api.model.Offset.OrderEnum;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;

@@ -25,7 +25,7 @@ import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.entity.organization.Organization;
 import com.epam.ta.reportportal.entity.organization.OrganizationFilter;
-import com.epam.ta.reportportal.model.OrganizationProfile;
+import com.epam.reportportal.api.model.OrganizationProfile;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;

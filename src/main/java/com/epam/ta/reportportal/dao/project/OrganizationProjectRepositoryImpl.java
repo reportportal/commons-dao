@@ -5,7 +5,7 @@ import static com.epam.ta.reportportal.dao.util.ResultFetchers.ORGANIZATION_PROJ
 import com.epam.ta.reportportal.commons.querygen.FilterTarget;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
-import com.epam.ta.reportportal.model.ProjectProfile;
+import com.epam.reportportal.api.model.ProjectProfile;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
