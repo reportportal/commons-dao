@@ -1,2 +1,6 @@
 jdk:
   - openjdk11
+before_install:
+  - gradle -v
+install:
+  - gradle build -x test
