@@ -766,7 +766,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
         .from(TEST_ITEM)
         .join(TEST_ITEM_RESULTS)
         .on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
-        .join(ISSUE)
+        .leftJoin(ISSUE)
         .on(ISSUE.ISSUE_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
         .leftJoin(STATISTICS)
         .on(TEST_ITEM.ITEM_ID.eq(STATISTICS.ITEM_ID))
