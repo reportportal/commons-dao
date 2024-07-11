@@ -257,7 +257,7 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 
   List<TestItem> findItemsForAnalyze(Long launchId);
 
-  List<TestItem> findItemsWithStatisticsProjection(Long launchId);
+  List<TestItem> selectTestItemsProjection(Long launchId);
 
   /**
    * Select all {@link TestItem#getItemId()} of {@link TestItem} with attached {@link Issue} and

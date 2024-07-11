@@ -40,6 +40,7 @@ import static com.epam.ta.reportportal.dao.util.RecordMappers.INDEX_TEST_ITEM_RE
 import static com.epam.ta.reportportal.dao.util.RecordMappers.ISSUE_TYPE_RECORD_MAPPER;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.NESTED_STEP_RECORD_MAPPER;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.TEST_ITEM_RECORD_MAPPER;
+import static com.epam.ta.reportportal.dao.util.ResultFetchers.TEST_ITEM_CLIPPED_FETCHER;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.TEST_ITEM_FETCHER;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.TEST_ITEM_RETRY_FETCHER;
 import static com.epam.ta.reportportal.jooq.Tables.ATTACHMENT;
@@ -760,8 +761,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
   }
 
   @Override
-  public List<TestItem> findItemsWithStatisticsProjection(Long launchId) {
-    return TEST_ITEM_FETCHER.apply(dsl.fetch(dsl.select()
+  public List<TestItem> selectTestItemsProjection(Long launchId) {
+    return TEST_ITEM_CLIPPED_FETCHER.apply(dsl.fetch(dsl.select()
         .from(TEST_ITEM)
         .join(TEST_ITEM_RESULTS)
         .on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
@@ -771,7 +772,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
         .on(TEST_ITEM.ITEM_ID.eq(STATISTICS.ITEM_ID))
         .leftJoin(STATISTICS_FIELD)
         .on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
-        .where(TEST_ITEM.LAUNCH_ID.eq(launchId)).and(TEST_ITEM.HAS_STATS.eq(true))));
+        .where(TEST_ITEM.LAUNCH_ID.eq(launchId)).and(TEST_ITEM.HAS_STATS.eq(true))
+        .orderBy(TEST_ITEM.START_TIME.asc())));
   }
 
   @Override
