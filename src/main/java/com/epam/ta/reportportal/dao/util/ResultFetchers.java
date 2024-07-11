@@ -186,10 +186,6 @@ public class ResultFetchers {
       }
       testItem.getItemResults().getStatistics()
           .add(RecordMappers.STATISTICS_RECORD_MAPPER.map(record));
-      if (testItem.getItemResults().getIssue() != null) {
-        TICKET_MAPPER.apply(record)
-            .ifPresent(ticket -> testItem.getItemResults().getIssue().getTickets().add(ticket));
-      }
       testItems.put(id, testItem);
     });
     return new ArrayList<>(testItems.values());
