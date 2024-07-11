@@ -35,7 +35,7 @@ dependencies {
     if (releaseMode) {
         compile 'com.epam.reportportal:commons'
     } else {
-        api 'com.github.reportportal:commons:a6b1156'
+        api 'com.github.reportportal:commons:c9999b9'
     }
 
     implementation 'io.swagger.core.v3:swagger-annotations:2.2.9'
