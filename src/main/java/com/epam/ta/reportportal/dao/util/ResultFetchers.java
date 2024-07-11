@@ -466,6 +466,7 @@ public class ResultFetchers {
       projectProfile.setUpdatedAt(row.get(PROJECT.UPDATED_AT, Instant.class));
       projectProfile.setKey(row.get(PROJECT.KEY));
       projectProfile.setSlug(row.get(PROJECT.SLUG));
+      projectProfile.setName(row.get(PROJECT.NAME, String.class));
 
       ProjectRelationshipsRelationshipsLaunches prl = new ProjectRelationshipsRelationshipsLaunches();
       // set launches
