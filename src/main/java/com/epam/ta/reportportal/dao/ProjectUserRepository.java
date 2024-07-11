@@ -18,6 +18,7 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.epam.ta.reportportal.entity.user.ProjectUserId;
+import java.util.List;
 
 /**
  * @author Pavel Bortnik
@@ -25,4 +26,5 @@ import com.epam.ta.reportportal.entity.user.ProjectUserId;
 public interface ProjectUserRepository extends ReportPortalRepository<ProjectUser, ProjectUserId>,
     ProjectUserRepositoryCustom {
 
+  List<ProjectUser> findProjectUsersByUser_Id(Long userId);
 }
