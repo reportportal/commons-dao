@@ -227,8 +227,9 @@ public enum FilterTarget {
                       JoinEntity.of(LAUNCH, JoinType.LEFT_OUTER_JOIN, PROJECT.ID.eq(LAUNCH.PROJECT_ID)))
               )
               .withAggregateCriteria(
-                  DSL.countDistinct(choose().when(LAUNCH.MODE.eq(JLaunchModeEnum.DEFAULT)
-                      .and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS)), LAUNCH.ID)).toString())
+                  DSL.countDistinct(
+                          choose().when(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS), LAUNCH.ID))
+                      .toString())
               .get()
       )
   ) {
@@ -308,8 +309,9 @@ public enum FilterTarget {
 
           new CriteriaHolderBuilder().newBuilder(LAUNCHES_QUANTITY, LAUNCHES_QUANTITY, Long.class)
               .withAggregateCriteria(
-                  DSL.countDistinct(choose().when(LAUNCH.MODE.eq(JLaunchModeEnum.DEFAULT)
-                      .and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS)), LAUNCH.ID)).toString())
+                  DSL.countDistinct(
+                          choose().when(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS), LAUNCH.ID))
+                      .toString())
               .get()
       )
   ) {
@@ -326,10 +328,8 @@ public enum FilterTarget {
     @Override
     protected Collection<? extends SelectField> selectFields() {
       return Lists.newArrayList(DSL.countDistinct(PROJECT_USER.USER_ID).as(USERS_QUANTITY),
-          DSL.countDistinct(choose().when(LAUNCH.MODE.eq(JLaunchModeEnum.DEFAULT)
-                  .and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS)),
-              LAUNCH.ID
-          )).as(LAUNCHES_QUANTITY),
+          DSL.countDistinct(choose().when(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS), LAUNCH.ID))
+              .as(LAUNCHES_QUANTITY),
           DSL.max(LAUNCH.START_TIME).as(LAST_RUN),
           PROJECT.ID,
           PROJECT.CREATION_DATE,
@@ -1443,8 +1443,8 @@ public enum FilterTarget {
 
       new CriteriaHolderBuilder().newBuilder(LAUNCHES_QUANTITY, LAUNCHES_QUANTITY, Long.class)
           .withAggregateCriteria(
-              DSL.countDistinct(choose().when(LAUNCH.MODE.eq(JLaunchModeEnum.DEFAULT)
-                  .and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS)), LAUNCH.ID)).toString())
+              DSL.countDistinct(choose().when(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS), LAUNCH.ID))
+                  .toString())
           .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_USER, USERS.LOGIN, String.class)
           .get()
@@ -1471,9 +1471,7 @@ public enum FilterTarget {
           ORGANIZATION.ORGANIZATION_TYPE,
           DSL.countDistinct(ORGANIZATION_USER.USER_ID).as(USERS_QUANTITY),
           DSL.countDistinct(PROJECT.ID).as(PROJECTS_QUANTITY),
-          DSL.countDistinct(choose()
-                  .when(LAUNCH.MODE.eq(JLaunchModeEnum.DEFAULT)
-                      .and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS)), LAUNCH.ID))
+          DSL.countDistinct(choose().when(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS), LAUNCH.ID))
               .as(LAUNCHES_QUANTITY),
           DSL.max(LAUNCH.START_TIME).as(LAST_RUN)
       );
@@ -1534,9 +1532,7 @@ public enum FilterTarget {
     @Override
     protected Collection<? extends SelectField> selectFields() {
       return Lists.newArrayList(DSL.countDistinct(PROJECT_USER.USER_ID).as(USERS_QUANTITY),
-          DSL.countDistinct(choose().when(LAUNCH.MODE.eq(JLaunchModeEnum.DEFAULT)
-                  .and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS)),
-              LAUNCH.ID
+          DSL.countDistinct(choose().when(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS), LAUNCH.ID
           )).as(LAUNCHES_QUANTITY),
           DSL.max(LAUNCH.START_TIME).as(LAST_RUN),
           PROJECT.ID,
