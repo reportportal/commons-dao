@@ -18,6 +18,9 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.epam.ta.reportportal.entity.user.ProjectUserId;
+import java.util.List;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 /**
  * @author Pavel Bortnik
@@ -25,4 +28,6 @@ import com.epam.ta.reportportal.entity.user.ProjectUserId;
 public interface ProjectUserRepository extends ReportPortalRepository<ProjectUser, ProjectUserId>,
     ProjectUserRepositoryCustom {
 
+  @Query(value = "SELECT pu.project_id FROM project_user pu WHERE pu.user_id = :userId", nativeQuery = true)
+  List<Long> findProjectIdsByUserId(@Param("userId") Long userId);
 }

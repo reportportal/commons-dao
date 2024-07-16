@@ -1514,6 +1514,7 @@ public enum FilterTarget {
               .get(),
           new CriteriaHolderBuilder().newBuilder(PROJECT_USER.USER_ID.getName(), PROJECT_USER.USER_ID, Long.class)
               .get(),
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ID, PROJECT.ID, Long.class).get(),
           new CriteriaHolderBuilder().newBuilder(CRITERIA_NAME, PROJECT.NAME, String.class).get(),
           new CriteriaHolderBuilder().newBuilder(CRITERIA_SLUG, PROJECT.SLUG, String.class).get()
       )
@@ -1576,7 +1577,8 @@ public enum FilterTarget {
       Arrays.asList(
           new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_ID, ORGANIZATION_USER.ORGANIZATION_ID,
               Long.class).get(),
-          new CriteriaHolderBuilder().newBuilder(CRITERIA_FULL_NAME, USERS.FULL_NAME, String.class).get()
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_FULL_NAME, USERS.FULL_NAME, String.class).get(),
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ID, PROJECT.ID, Long.class).get()
       )
   ) {
     @Override

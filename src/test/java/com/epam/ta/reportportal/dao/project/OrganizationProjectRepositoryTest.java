@@ -1,5 +1,6 @@
 package com.epam.ta.reportportal.dao.project;
 
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PROJECT_ID;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -45,6 +46,7 @@ class OrganizationProjectRepositoryTest extends BaseTest {
   void findOrganizationProjectsAssignedToUser(Long userId, Long orgId, String role) {
     Filter filter = new Filter(ProjectProfile.class, Lists.newArrayList())
         .withCondition(new FilterCondition(Condition.EQUALS, false, orgId.toString(), "organization_id"))
+        .withCondition(new FilterCondition(Condition.IN, false, "1, 2", CRITERIA_PROJECT_ID))
         .withCondition(new FilterCondition(Condition.EQUALS, false, userId.toString(), "user_id"));
     Pageable pageable = PageRequest.of(0, 10, Sort.by("name"));
 
