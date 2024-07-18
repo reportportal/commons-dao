@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.dao;
 
+import com.epam.reportportal.model.launch.cluster.ClusterInfoResource;
 import com.epam.ta.reportportal.entity.cluster.Cluster;
 import java.util.Collection;
 import java.util.List;
@@ -41,6 +42,13 @@ public interface ClusterRepository extends ReportPortalRepository<Cluster, Long>
   int deleteAllByProjectId(Long projectId);
 
   int deleteAllByLaunchId(Long launchId);
+
+  @Query(value =
+      "SELECT new com.epam.reportportal.model.launch.cluster.ClusterInfoResource(c.id, c.indexId as index, c.launchId, c.message, count(cti.itemId) as matchedTests) "
+          + "FROM Cluster c LEFT JOIN ClusterTestItem cti ON c.id = cti.clusterId "
+          + "WHERE c.launchId = :launchId "
+          + "GROUP BY c.id")
+  Page<ClusterInfoResource> findAllByLaunchIdWithCount(@Param("launchId") Long launchId, Pageable pageable);
 
   @Modifying
   @Query(value = "DELETE FROM clusters_test_item WHERE cluster_id IN (SELECT id FROM clusters WHERE project_id = :projectId)", nativeQuery = true)

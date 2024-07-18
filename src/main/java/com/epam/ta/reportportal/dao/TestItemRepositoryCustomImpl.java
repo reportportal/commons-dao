@@ -40,6 +40,7 @@ import static com.epam.ta.reportportal.dao.util.RecordMappers.INDEX_TEST_ITEM_RE
 import static com.epam.ta.reportportal.dao.util.RecordMappers.ISSUE_TYPE_RECORD_MAPPER;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.NESTED_STEP_RECORD_MAPPER;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.TEST_ITEM_RECORD_MAPPER;
+import static com.epam.ta.reportportal.dao.util.ResultFetchers.TEST_ITEM_CLIPPED_FETCHER;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.TEST_ITEM_FETCHER;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.TEST_ITEM_RETRY_FETCHER;
 import static com.epam.ta.reportportal.jooq.Tables.ATTACHMENT;
@@ -184,13 +185,13 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
       Queryable baselineFilter) {
     final QueryBuilder targetBuilder =
         QueryBuilder.newBuilder(targetFilter,
-        collectJoinFields(targetFilter));
+            collectJoinFields(targetFilter));
     final QueryBuilder baselineBuilder =
         QueryBuilder.newBuilder(baselineFilter,
-        collectJoinFields(baselineFilter));
+            collectJoinFields(baselineFilter));
     final SelectQuery<? extends Record> contentQuery =
         getQueryWithBaseline(targetBuilder,
-        baselineBuilder).build();
+            baselineBuilder).build();
 
     return dsl.fetch(DSL.with(FILTERED_QUERY)
         .as(contentQuery)
@@ -235,7 +236,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
     Set<String> joinFields =
         QueryUtils.collectJoinFields(testItemFilter,
-        testItemPageable.getSort());
+            testItemPageable.getSort());
 
     return PageableExecutionUtils.getPage(
         TEST_ITEM_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(testItemFilter, joinFields)
@@ -273,13 +274,13 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
     final QueryBuilder targetPagingBuilder =
         QueryBuilder.newBuilder(targetFilter,
-        collectJoinFields(targetFilter, pageable.getSort()));
+            collectJoinFields(targetFilter, pageable.getSort()));
     final QueryBuilder baselinePagingBuilder =
         QueryBuilder.newBuilder(baselineFilter,
-        collectJoinFields(baselineFilter));
+            collectJoinFields(baselineFilter));
     final SelectQuery<? extends Record> pagingQuery =
         getQueryWithBaseline(targetPagingBuilder,
-        baselinePagingBuilder).build();
+            baselinePagingBuilder).build();
 
     return PageableExecutionUtils.getPage(TEST_ITEM_FETCHER.apply(dsl.fetch(contentQuery)),
         pageable,
@@ -320,7 +321,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
     Field<?> historyGroupingField = usingHash ? TEST_ITEM.TEST_CASE_HASH : TEST_ITEM.UNIQUE_ID;
     Page<String> historyBaseline =
         loadHistoryBaseline(filteringQuery, historyGroupingField,
-        LAUNCH.PROJECT_ID.eq(projectId),
+            LAUNCH.PROJECT_ID.eq(projectId),
             pageable);
 
     List<TestItemHistory> itemHistories = historyBaseline.getContent().stream().map(value -> {
@@ -626,7 +627,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
   public List<TestItem> selectItemsInStatusByLaunch(Long launchId, StatusEnum... statuses) {
     List<JStatusEnum> jStatuses =
         Arrays.stream(statuses).map(it -> JStatusEnum.valueOf(it.name()))
-        .collect(toList());
+            .collect(toList());
     return commonTestItemDslSelect().where(
             TEST_ITEM.LAUNCH_ID.eq(launchId).and(TEST_ITEM_RESULTS.STATUS.in(jStatuses)))
         .fetch(TEST_ITEM_RECORD_MAPPER);
@@ -636,7 +637,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
   public List<TestItem> selectItemsInStatusByParent(Long itemId, StatusEnum... statuses) {
     List<JStatusEnum> jStatuses =
         Arrays.stream(statuses).map(it -> JStatusEnum.valueOf(it.name()))
-        .collect(toList());
+            .collect(toList());
     return commonTestItemDslSelect().where(
             TEST_ITEM.PARENT_ID.eq(itemId).and(TEST_ITEM_RESULTS.STATUS.in(jStatuses)))
         .fetch(TEST_ITEM_RECORD_MAPPER);
@@ -646,7 +647,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
   public Boolean hasItemsInStatusByLaunch(Long launchId, StatusEnum... statuses) {
     List<JStatusEnum> jStatuses =
         Arrays.stream(statuses).map(it -> JStatusEnum.valueOf(it.name()))
-        .collect(toList());
+            .collect(toList());
     return dsl.fetchExists(dsl.selectOne()
         .from(TEST_ITEM)
         .join(TEST_ITEM_RESULTS)
@@ -760,6 +761,22 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
   }
 
   @Override
+  public List<TestItem> selectTestItemsProjection(Long launchId) {
+    return TEST_ITEM_CLIPPED_FETCHER.apply(dsl.fetch(dsl.select()
+        .from(TEST_ITEM)
+        .join(TEST_ITEM_RESULTS)
+        .on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+        .leftJoin(ISSUE)
+        .on(ISSUE.ISSUE_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+        .leftJoin(STATISTICS)
+        .on(TEST_ITEM.ITEM_ID.eq(STATISTICS.ITEM_ID))
+        .leftJoin(STATISTICS_FIELD)
+        .on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
+        .where(TEST_ITEM.LAUNCH_ID.eq(launchId)).and(TEST_ITEM.HAS_STATS.eq(true))
+        .orderBy(TEST_ITEM.START_TIME.asc())));
+  }
+
+  @Override
   public List<Long> selectIdsWithIssueByLaunch(Long launchId) {
     return dsl.select(TEST_ITEM.ITEM_ID)
         .from(TEST_ITEM)
@@ -776,7 +793,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
       StatusEnum... statuses) {
     List<JStatusEnum> jStatuses =
         Arrays.stream(statuses).map(it -> JStatusEnum.valueOf(it.name()))
-        .collect(toList());
+            .collect(toList());
     return dsl.fetchExists(dsl.selectOne()
         .from(TEST_ITEM)
         .join(TEST_ITEM_RESULTS)
@@ -791,7 +808,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
   public Boolean hasLogs(Long launchId, Duration period, StatusEnum... statuses) {
     List<JStatusEnum> jStatuses =
         Arrays.stream(statuses).map(it -> JStatusEnum.valueOf(it.name()))
-        .collect(toList());
+            .collect(toList());
     return dsl.fetchExists(dsl.selectOne()
         .from(TEST_ITEM)
         .join(TEST_ITEM_RESULTS)
@@ -1099,11 +1116,11 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
     Set<String> joinFields = QueryUtils.collectJoinFields(filter, pageable.getSort());
     List<TestItem> items =
         TEST_ITEM_FETCHER.apply(
-        dsl.fetch(QueryBuilder.newBuilder(filter, joinFields)
-            .with(pageable)
-            .wrap()
-            .withWrapperSort(pageable.getSort())
-            .build()));
+            dsl.fetch(QueryBuilder.newBuilder(filter, joinFields)
+                .with(pageable)
+                .wrap()
+                .withWrapperSort(pageable.getSort())
+                .build()));
 
     return PageableExecutionUtils.getPage(items, pageable,
         () -> dsl.fetchCount(QueryBuilder.newBuilder(filter, joinFields).build()));
@@ -1113,7 +1130,6 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
   public List<NestedStep> findAllNestedStepsByIds(Collection<Long> ids, Queryable logFilter,
       boolean excludePassedLogs) {
     JTestItem nested = TEST_ITEM.as(NESTED);
-
 
     CommonTableExpression<?> logsCte = DSL.name("logsCTE")
         .as(QueryBuilder.newBuilder(logFilter, QueryUtils.collectJoinFields(logFilter)).build());
@@ -1132,7 +1148,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
                     .join(nested)
                     .on(LOG.ITEM_ID.eq(nested.ITEM_ID))
                     .join(logsCte)
-                    .on(LOG.ID.eq(logsCte.field( ID).cast(Long.class)))
+                    .on(LOG.ID.eq(logsCte.field(ID).cast(Long.class)))
                     .join(ATTACHMENT)
                     .on(LOG.ATTACHMENT_ID.eq(ATTACHMENT.ID))
                     .where(nested.HAS_STATS.isFalse()
@@ -1178,7 +1194,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
       return DSL.exists(dsl.select()
               .from(LOG)
               .join(logsCte)
-              .on(LOG.ID.eq(logsCte.field( ID).cast(Long.class)))
+              .on(LOG.ID.eq(logsCte.field(ID).cast(Long.class)))
               .join(TEST_ITEM_RESULTS)
               .on(LOG.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
               .where(LOG.ITEM_ID.eq(TEST_ITEM.ITEM_ID)))
@@ -1188,7 +1204,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
       return DSL.exists(dsl.select()
               .from(LOG)
               .join(logsCte)
-              .on(LOG.ID.eq(logsCte.field( ID).cast(Long.class)))
+              .on(LOG.ID.eq(logsCte.field(ID).cast(Long.class)))
               .where(LOG.ITEM_ID.eq(TEST_ITEM.ITEM_ID)))
           .orExists(dsl.select().from(nested)
               .where(nested.PARENT_ID.eq(TEST_ITEM.ITEM_ID).and(nested.HAS_STATS.isFalse())));

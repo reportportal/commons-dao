@@ -36,7 +36,7 @@ dependencies {
     if (releaseMode) {
         implementation 'com.epam.reportportal:commons'
     } else {
-        implementation 'com.github.reportportal:commons:67cbfaea24'
+        implementation 'com.github.reportportal:commons:9620556'
     }
     // jooq dependencies
     jooqGenerator 'jakarta.xml.bind:jakarta.xml.bind-api:3.0.1' // required for nu.studer.jooq
