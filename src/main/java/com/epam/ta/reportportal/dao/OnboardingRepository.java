@@ -15,10 +15,10 @@
  */
 package com.epam.ta.reportportal.dao;
 
+import static com.epam.ta.reportportal.commons.EntityUtils.INSTANT_TO_LDT;
 import static com.epam.ta.reportportal.jooq.tables.JOnboarding.ONBOARDING;
 
 import com.epam.ta.reportportal.entity.onboarding.Onboarding;
-import java.sql.Timestamp;
 import java.time.Instant;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
@@ -39,7 +39,7 @@ public class OnboardingRepository {
     return dsl.select(ONBOARDING.fields())
         .from(ONBOARDING)
         .where(ONBOARDING.PAGE.eq(page))
-        .and(ONBOARDING.AVAILABLE_TO.ge(Timestamp.from(Instant.now())))
+        .and(ONBOARDING.AVAILABLE_TO.ge(INSTANT_TO_LDT.apply(Instant.now())))
         .fetchOneInto(Onboarding.class);
   }
 }

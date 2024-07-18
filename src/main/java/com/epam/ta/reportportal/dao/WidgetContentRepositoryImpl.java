@@ -135,6 +135,7 @@ import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.lag;
 import static org.jooq.impl.DSL.lateral;
+import static org.jooq.impl.DSL.localDateTimeDiff;
 import static org.jooq.impl.DSL.max;
 import static org.jooq.impl.DSL.name;
 import static org.jooq.impl.DSL.nullif;
@@ -764,7 +765,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
             LAUNCH.STATUS,
             LAUNCH.START_TIME,
             LAUNCH.END_TIME,
-            timestampDiff(LAUNCH.END_TIME, LAUNCH.START_TIME).as(DURATION)
+            localDateTimeDiff(LAUNCH.END_TIME, LAUNCH.START_TIME).as(DURATION)
         )
         .from(LAUNCH)
         .join(LAUNCHES)
@@ -1457,7 +1458,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
                 .where(STATISTICS_FIELD.NAME.eq(EXECUTIONS_TOTAL)
                     .and(STATISTICS.LAUNCH_ID.eq(LAUNCH.ID)))
                 .asField(), 0)), 2).as(PASSING_RATE),
-        timestampDiff(LAUNCH.END_TIME, LAUNCH.START_TIME).as(DURATION)
+        localDateTimeDiff(LAUNCH.END_TIME, LAUNCH.START_TIME).as(DURATION)
     );
 
     return selectFields;

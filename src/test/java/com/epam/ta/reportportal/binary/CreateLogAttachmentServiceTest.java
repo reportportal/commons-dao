@@ -31,15 +31,12 @@ import com.epam.reportportal.rules.exception.ReportPortalException;
 import java.time.Instant;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
-@ExtendWith(MockitoExtension.class)
 class CreateLogAttachmentServiceTest {
 
   @Mock

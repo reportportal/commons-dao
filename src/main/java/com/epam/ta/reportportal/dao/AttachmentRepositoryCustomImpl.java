@@ -16,7 +16,7 @@
 
 package com.epam.ta.reportportal.dao;
 
-import static com.epam.ta.reportportal.commons.EntityUtils.INSTANT_TO_TIMESTAMP;
+import static com.epam.ta.reportportal.commons.EntityUtils.INSTANT_TO_LDT;
 import static com.epam.ta.reportportal.jooq.Tables.LOG;
 import static com.epam.ta.reportportal.jooq.Tables.TEST_ITEM;
 import static com.epam.ta.reportportal.jooq.tables.JAttachment.ATTACHMENT;
@@ -159,7 +159,7 @@ public class AttachmentRepositoryCustomImpl implements AttachmentRepositoryCusto
         .join(TEST_ITEM)
         .on(ATTACHMENT.ITEM_ID.eq(TEST_ITEM.ITEM_ID))
         .where(TEST_ITEM.ITEM_ID.in(itemIds))
-        .and(LOG.LOG_TIME.lt(INSTANT_TO_TIMESTAMP.apply(before)))
+        .and(LOG.LOG_TIME.lt(INSTANT_TO_LDT.apply(before)))
         .and(ATTACHMENT.FILE_ID.isNotNull().or(ATTACHMENT.THUMBNAIL_ID.isNotNull()))
         .fetchInto(Attachment.class);
   }
@@ -181,7 +181,7 @@ public class AttachmentRepositoryCustomImpl implements AttachmentRepositoryCusto
         .join(LOG)
         .on(LOG.ATTACHMENT_ID.eq(ATTACHMENT.ID))
         .where(LOG.LAUNCH_ID.in(launchIds))
-        .and(LOG.LOG_TIME.lt(INSTANT_TO_TIMESTAMP.apply(before)))
+        .and(LOG.LOG_TIME.lt(INSTANT_TO_LDT.apply(before)))
         .and(ATTACHMENT.FILE_ID.isNotNull().or(ATTACHMENT.THUMBNAIL_ID.isNotNull()))
         .fetchInto(Attachment.class);
   }
@@ -203,7 +203,7 @@ public class AttachmentRepositoryCustomImpl implements AttachmentRepositoryCusto
         .join(LOG)
         .on(LOG.ATTACHMENT_ID.eq(ATTACHMENT.ID))
         .where(ATTACHMENT.PROJECT_ID.eq(projectId))
-        .and(LOG.LOG_TIME.lt(INSTANT_TO_TIMESTAMP.apply(before)))
+        .and(LOG.LOG_TIME.lt(INSTANT_TO_LDT.apply(before)))
         .and(ATTACHMENT.FILE_ID.isNotNull().or(ATTACHMENT.THUMBNAIL_ID.isNotNull()))
         .orderBy(ATTACHMENT.ID)
         .limit(limit)

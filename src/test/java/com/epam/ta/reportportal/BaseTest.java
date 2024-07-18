@@ -23,6 +23,8 @@ import org.flywaydb.test.FlywayTestExecutionListener;
 import org.flywaydb.test.annotation.FlywayTest;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.r2dbc.R2dbcAutoConfiguration;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -33,6 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Pavel Bortnik
  */
 @ExtendWith(SpringExtension.class)
+@EnableAutoConfiguration(exclude = { R2dbcAutoConfiguration.class })
 @ContextConfiguration(classes = {DataSourceConfig.class, DatabaseConfiguration.class,
     TestConfiguration.class})
 @Transactional

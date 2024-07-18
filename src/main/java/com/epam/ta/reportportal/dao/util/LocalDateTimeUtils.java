@@ -16,20 +16,24 @@
 
 package com.epam.ta.reportportal.dao.util;
 
-import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
-public final class TimestampUtils {
+public final class LocalDateTimeUtils {
 
-  private TimestampUtils() {
+  private LocalDateTimeUtils() {
     //static only
   }
 
-  public static Timestamp getTimestampBackFromNow(Duration period) {
-    return Timestamp.from(Instant.now().minusSeconds(period.getSeconds()));
+  public static LocalDateTime getLocalDateTimeBackFromNow(Duration period) {
+    return Instant.now()
+        .minusSeconds(period.getSeconds())
+        .atOffset(ZoneOffset.UTC)
+        .toLocalDateTime();
   }
 }

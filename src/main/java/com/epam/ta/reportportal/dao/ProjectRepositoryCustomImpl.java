@@ -16,7 +16,7 @@
 
 package com.epam.ta.reportportal.dao;
 
-import static com.epam.ta.reportportal.commons.EntityUtils.INSTANT_TO_TIMESTAMP;
+import static com.epam.ta.reportportal.commons.EntityUtils.INSTANT_TO_LDT;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.dao.util.QueryUtils.collectJoinFields;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.PROJECT_MAPPER;
@@ -37,6 +37,7 @@ import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectInfo;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.jooq.DSLContext;
@@ -139,7 +140,7 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
   @Override
   public int deleteByTypeAndLastLaunchRunBefore(ProjectType projectType, Instant bound,
       int limit) {
-    Timestamp timestamp = INSTANT_TO_TIMESTAMP.apply(bound);
+    LocalDateTime localDateTime = INSTANT_TO_LDT.apply(bound);
     return dsl.deleteFrom(PROJECT)
         .where(PROJECT.ID.in(dsl.select(PROJECT.ID)
             .from(PROJECT)
@@ -147,7 +148,7 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
             .onKey()
             .where(PROJECT.PROJECT_TYPE.eq(projectType.name()))
             .groupBy(PROJECT.ID)
-            .having(DSL.max(LAUNCH.START_TIME).le(timestamp))
+            .having(DSL.max(LAUNCH.START_TIME).le(localDateTime))
             .limit(limit)))
         .execute();
   }

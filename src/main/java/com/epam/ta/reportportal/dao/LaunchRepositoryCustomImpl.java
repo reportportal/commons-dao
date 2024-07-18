@@ -16,7 +16,7 @@
 
 package com.epam.ta.reportportal.dao;
 
-import static com.epam.ta.reportportal.commons.EntityUtils.INSTANT_TO_TIMESTAMP;
+import static com.epam.ta.reportportal.commons.EntityUtils.INSTANT_TO_LDT;
 import static com.epam.ta.reportportal.commons.querygen.FilterTarget.ATTRIBUTE_ALIAS;
 import static com.epam.ta.reportportal.commons.querygen.FilterTarget.FILTERED_QUERY;
 import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.KEY_VALUE_SEPARATOR;
@@ -296,7 +296,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
         LAUNCH.PROJECT_ID.eq(projectId)
             .and(LAUNCH.MODE.eq(JLaunchModeEnum.valueOf(mode)))
             .and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS)
-                .and(LAUNCH.START_TIME.greaterThan(INSTANT_TO_TIMESTAMP.apply(from))))
+                .and(LAUNCH.START_TIME.greaterThan(INSTANT_TO_LDT.apply(from))))
     );
   }
 
@@ -319,7 +319,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
         .where(LAUNCH.PROJECT_ID.eq(projectId)
             .and(LAUNCH.MODE.eq(JLaunchModeEnum.valueOf(mode))
                 .and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS))
-                .and(LAUNCH.START_TIME.greaterThan(INSTANT_TO_TIMESTAMP.apply(from)))))
+                .and(LAUNCH.START_TIME.greaterThan(INSTANT_TO_LDT.apply(from)))))
         .groupBy(USERS.LOGIN)
         .fetchMap(USERS.LOGIN, field("count", Integer.class));
   }

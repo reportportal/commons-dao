@@ -52,7 +52,7 @@ public class ActivityRepositoryCustomImpl implements ActivityRepositoryCustom {
   public void deleteModifiedLaterAgo(Long projectId, Duration period) {
     LocalDateTime bound = LocalDateTime.now().minus(period);
     dsl.delete(ACTIVITY).where(ACTIVITY.PROJECT_ID.eq(projectId))
-        .and(ACTIVITY.CREATED_AT.lt(Timestamp.valueOf(bound))).execute();
+        .and(ACTIVITY.CREATED_AT.lt(bound)).execute();
   }
 
   @Override
