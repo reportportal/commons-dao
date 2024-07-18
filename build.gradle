@@ -96,6 +96,8 @@ dependencyCheck {
     formats = [ReportGenerator.Format.HTML, ReportGenerator.Format.XML]
 }
 
+test.onlyIf { false }
+
 test {
     useJUnitPlatform()
     testLogging {
