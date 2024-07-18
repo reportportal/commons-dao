@@ -28,6 +28,7 @@ import org.springframework.boot.autoconfigure.r2dbc.R2dbcAutoConfiguration;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +37,8 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @ExtendWith(SpringExtension.class)
 @EnableAutoConfiguration(exclude = { R2dbcAutoConfiguration.class })
+@TestPropertySource(properties=
+    {"spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.r2dbc.R2dbcAutoConfiguration"})
 @ContextConfiguration(classes = {DataSourceConfig.class, DatabaseConfiguration.class,
     TestConfiguration.class})
 @Transactional
