@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.entity.user;
 import com.epam.ta.reportportal.entity.Metadata;
 import com.google.common.collect.Sets;
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.Objects;
 import java.util.Set;
 import javax.persistence.CascadeType;
@@ -35,8 +36,10 @@ import javax.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
+import org.hibernate.annotations.UpdateTimestamp;
 
 /**
  * @author Andrei Varabyeu
@@ -71,6 +74,14 @@ public class User implements Serializable {
 
   @Column(name = "full_name")
   private String fullName;
+
+  @CreationTimestamp
+  @Column(name = "created_at")
+  private Instant createdAt;
+
+  @UpdateTimestamp
+  @Column(name = "updated_at")
+  private Instant updatedAt;
 
   @Column(name = "expired")
   private boolean isExpired;

@@ -89,6 +89,9 @@ public class Project implements Serializable {
   @Column(name = "creation_date")
   private Instant creationDate;
 
+  @Column(name = "updated_at")
+  private Instant updatedAt;
+
   @Type(type = "json")
   @Column(name = "metadata")
   private Metadata metadata;

@@ -85,8 +85,10 @@ public final class PersonalProjectService {
    */
   public Project generatePersonalProject(User user) {
     Project project = new Project();
+    Instant now = Instant.now();
     project.setName(generatePersonalProjectName(user.getLogin()));
-    project.setCreationDate(Instant.now());
+    project.setCreationDate(now);
+    project.setUpdatedAt(now);
     project.setProjectType(ProjectType.PERSONAL);
 
     ProjectUser projectUser = new ProjectUser().withUser(user)
