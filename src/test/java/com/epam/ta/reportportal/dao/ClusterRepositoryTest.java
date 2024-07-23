@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.epam.reportportal.model.launch.cluster.ClusterInfoResource;
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.entity.cluster.Cluster;
 import java.util.ArrayList;
@@ -84,6 +85,15 @@ class ClusterRepositoryTest extends BaseTest {
     assertFalse(clusters.isEmpty());
     assertEquals(3, clusters.size());
     clusters.forEach(cluster -> assertEquals(LAUNCH_ID, cluster.getLaunchId()));
+  }
+
+  @Test
+  void shouldFindAllByLaunchIdWithCount() {
+    final Pageable pageable = PageRequest.of(0, 3, Sort.by(Sort.Order.by(CRITERIA_ID)));
+    final Page<ClusterInfoResource> clusters = clusterRepository.findAllByLaunchIdWithCount(LAUNCH_ID, pageable);
+    assertFalse(clusters.isEmpty());
+    assertEquals(3, clusters.getContent().size());
+    clusters.getContent().forEach(cluster -> assertEquals(LAUNCH_ID, cluster.getLaunchId()));
   }
 
   @Test

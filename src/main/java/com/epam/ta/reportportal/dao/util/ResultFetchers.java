@@ -46,6 +46,8 @@ import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
 import static java.util.Optional.ofNullable;
 
+import com.epam.reportportal.api.model.OrganizationProfile;
+import com.epam.reportportal.api.model.ProjectProfile;
 import com.epam.reportportal.api.model.ProjectRelationshipsRelationships;
 import com.epam.reportportal.api.model.ProjectRelationshipsRelationshipsLaunches;
 import com.epam.reportportal.api.model.ProjectRelationshipsRelationshipsLaunchesMeta;
@@ -76,8 +78,6 @@ import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.entity.user.UserRole;
 import com.epam.ta.reportportal.entity.widget.Widget;
-import com.epam.reportportal.api.model.OrganizationProfile;
-import com.epam.reportportal.api.model.ProjectProfile;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -208,6 +208,26 @@ public class ResultFetchers {
   /**
    * Fetches records from db results into list of {@link TestItem} objects.
    */
+  public static final Function<Result<? extends Record>, List<TestItem>> TEST_ITEM_CLIPPED_FETCHER = records -> {
+    Map<Long, TestItem> testItems = Maps.newLinkedHashMap();
+    records.forEach(record -> {
+      Long id = record.get(TEST_ITEM.ITEM_ID);
+      TestItem testItem;
+      if (!testItems.containsKey(id)) {
+        testItem = RecordMappers.TEST_ITEM_RECORD_MAPPER.map(record);
+      } else {
+        testItem = testItems.get(id);
+      }
+      testItem.getItemResults().getStatistics()
+          .add(RecordMappers.STATISTICS_RECORD_MAPPER.map(record));
+      testItems.put(id, testItem);
+    });
+    return new ArrayList<>(testItems.values());
+  };
+
+  /**
+   * Fetches records from db results into list of {@link TestItem} objects.
+   */
   public static final Function<Result<? extends Record>, List<TestItem>> TEST_ITEM_RETRY_FETCHER = rows -> {
     Map<Long, TestItem> testItems = Maps.newLinkedHashMap();
     rows.forEach(row -> {
@@ -255,8 +275,8 @@ public class ResultFetchers {
   };
 
   /**
-   * Fetches records from db results into list of
-   * {@link com.epam.ta.reportportal.entity.integration.Integration} objects.
+   * Fetches records from db results into list of {@link com.epam.ta.reportportal.entity.integration.Integration}
+   * objects.
    */
   public static final Function<Result<? extends Record>, List<Integration>> INTEGRATION_FETCHER = rows -> {
     Map<Integer, Integration> integrations = Maps.newLinkedHashMap();
@@ -491,6 +511,6 @@ public class ResultFetchers {
     });
 
     return projectProfiles;
-  };  
+  };
 
 }
