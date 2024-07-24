@@ -168,6 +168,7 @@ import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.entity.widget.Widget;
 import com.epam.ta.reportportal.jooq.enums.JIntegrationGroupEnum;
 import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
+import com.epam.ta.reportportal.jooq.enums.JOrganizationRoleEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.google.common.collect.Lists;
@@ -422,7 +423,10 @@ public enum FilterTarget {
           ORGANIZATION.ID,
           ORGANIZATION.SLUG,
           ORGANIZATION.NAME,
-          ORGANIZATION_USER.ORGANIZATION_ROLE
+          DSL.choose()
+              .when(USERS.ROLE.eq("ADMINISTRATOR"), JOrganizationRoleEnum.MANAGER)
+              .otherwise(ORGANIZATION_USER.ORGANIZATION_ROLE)
+              .as(ORGANIZATION_USER.ORGANIZATION_ROLE)
       );
     }
 
