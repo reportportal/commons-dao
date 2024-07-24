@@ -16,7 +16,7 @@
 
 package com.epam.ta.reportportal.dao.organization;
 
-import com.epam.reportportal.api.model.OrganizationUserProfile;
+import com.epam.reportportal.api.model.OrganizationUserInfo;
 import com.epam.ta.reportportal.dao.FilterableRepository;
 
 /**
@@ -24,6 +24,7 @@ import com.epam.ta.reportportal.dao.FilterableRepository;
  *
  * @author Siarhei Hrabko
  */
-public interface OrganizationUsersRepositoryCustom extends FilterableRepository<OrganizationUserProfile> {
+public interface OrganizationUsersRepositoryCustom extends
+    FilterableRepository<OrganizationUserInfo> {
 
 }

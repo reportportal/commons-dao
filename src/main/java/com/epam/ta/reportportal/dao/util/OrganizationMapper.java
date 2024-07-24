@@ -23,18 +23,18 @@ import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
 
 import com.epam.reportportal.api.model.OrganizationInfo.TypeEnum;
 import com.epam.reportportal.api.model.OrganizationProfile;
-import com.epam.reportportal.api.model.OrganizationRelation;
-import com.epam.reportportal.api.model.OrganizationRelationLaunches;
-import com.epam.reportportal.api.model.OrganizationRelationLaunchesMeta;
-import com.epam.reportportal.api.model.OrganizationRelationProjects;
-import com.epam.reportportal.api.model.OrganizationRelationProjectsMeta;
-import com.epam.reportportal.api.model.OrganizationRelationUsers;
-import com.epam.reportportal.api.model.OrganizationRelationUsersMeta;
-import com.epam.reportportal.api.model.OrganizationUserProfile;
-import com.epam.reportportal.api.model.OrganizationUserProfile.OrganizationRoleEnum;
-import com.epam.reportportal.api.model.OrganizationUserRelation;
-import com.epam.reportportal.api.model.OrganizationUserRelationProjects;
-import com.epam.reportportal.api.model.OrganizationUserRelationProjectsMeta;
+import com.epam.reportportal.api.model.OrganizationRelationRelationships;
+import com.epam.reportportal.api.model.OrganizationRelationRelationshipsLaunches;
+import com.epam.reportportal.api.model.OrganizationRelationRelationshipsLaunchesMeta;
+import com.epam.reportportal.api.model.OrganizationRelationRelationshipsProjects;
+import com.epam.reportportal.api.model.OrganizationRelationRelationshipsProjectsMeta;
+import com.epam.reportportal.api.model.OrganizationRelationRelationshipsUsers;
+import com.epam.reportportal.api.model.OrganizationRelationRelationshipsUsersMeta;
+import com.epam.reportportal.api.model.OrganizationUserInfo;
+import com.epam.reportportal.api.model.OrganizationUserInfo.OrganizationRoleEnum;
+import com.epam.reportportal.api.model.OrganizationUserRelationRelationships;
+import com.epam.reportportal.api.model.OrganizationUserRelationRelationshipsProjects;
+import com.epam.reportportal.api.model.OrganizationUserRelationRelationshipsProjectsMeta;
 import com.epam.reportportal.api.model.UserAccountInfo.AuthProviderEnum;
 import com.epam.reportportal.api.model.UserDetails.InstanceRoleEnum;
 import com.epam.ta.reportportal.entity.organization.Organization;
@@ -85,23 +85,24 @@ public class OrganizationMapper {
     organization.setType(TypeEnum.valueOf(row.get(ORGANIZATION.ORGANIZATION_TYPE)));
 
     // set launches
-    OrganizationRelationLaunches orl = new OrganizationRelationLaunches();
-    orl.meta(new OrganizationRelationLaunchesMeta()
+    OrganizationRelationRelationshipsLaunches orl = new OrganizationRelationRelationshipsLaunches();
+    orl.meta(new OrganizationRelationRelationshipsLaunchesMeta()
         //.count(row.get(OrganizationFilter.LAUNCHES_QUANTITY, Integer.class))
         .lastOccurredAt(row.get(OrganizationFilter.LAST_RUN, Instant.class)));
 
     // set projects
-    OrganizationRelationProjects rp = new OrganizationRelationProjects();
-    rp.meta(new OrganizationRelationProjectsMeta()
+    OrganizationRelationRelationshipsProjects rp = new OrganizationRelationRelationshipsProjects();
+    rp.meta(new OrganizationRelationRelationshipsProjectsMeta()
         .count(row.get(PROJECTS_QUANTITY, Integer.class)));
 
     // set users
-    OrganizationRelationUsersMeta usersMeta = new OrganizationRelationUsersMeta()
-        .count(row.get(OrganizationFilter.USERS_QUANTITY, Integer.class));
-    OrganizationRelationUsers oru = new OrganizationRelationUsers()
+    OrganizationRelationRelationshipsUsersMeta usersMeta =
+        new OrganizationRelationRelationshipsUsersMeta()
+            .count(row.get(OrganizationFilter.USERS_QUANTITY, Integer.class));
+    OrganizationRelationRelationshipsUsers oru = new OrganizationRelationRelationshipsUsers()
         .meta(usersMeta);
 
-    OrganizationRelation organizationRelation = new OrganizationRelation()
+    OrganizationRelationRelationships organizationRelation = new OrganizationRelationRelationships()
         .launches(orl)
         .projects(rp)
         .users(oru);
@@ -112,11 +113,11 @@ public class OrganizationMapper {
   };
 
 
-  public static final Function<Result<? extends Record>, List<OrganizationUserProfile>> ORGANIZATION_USERS_LIST_FETCHER = rows -> {
-    List<OrganizationUserProfile> userProfiles = new ArrayList<>(rows.size());
+  public static final Function<Result<? extends Record>, List<OrganizationUserInfo>> ORGANIZATION_USERS_LIST_FETCHER = rows -> {
+    List<OrganizationUserInfo> userProfiles = new ArrayList<>(rows.size());
 
     rows.forEach(row -> {
-      OrganizationUserProfile organizationUserProfile = new OrganizationUserProfile();
+      OrganizationUserInfo organizationUserProfile = new OrganizationUserInfo();
 
       organizationUserProfile.setId(row.get(ORGANIZATION_USER.USER_ID));
       organizationUserProfile.setFullName(row.get(USERS.FULL_NAME));
@@ -144,12 +145,13 @@ public class OrganizationMapper {
 
       // organizationUserProfile.setUuid(row.get(USERS.EXTERNAL_ID, UUID.class));// uncomment later
 
-      OrganizationUserRelationProjects projects = new OrganizationUserRelationProjects()
-          .meta(new OrganizationUserRelationProjectsMeta()
-              .count(row.get(PROJECTS_QUANTITY, Integer.class))
-          );
+      OrganizationUserRelationRelationshipsProjects projects =
+          new OrganizationUserRelationRelationshipsProjects()
+              .meta(new OrganizationUserRelationRelationshipsProjectsMeta()
+                  .count(row.get(PROJECTS_QUANTITY, Integer.class))
+              );
 
-      OrganizationUserRelation organizationUserRelation = new OrganizationUserRelation()
+      OrganizationUserRelationRelationships organizationUserRelation = new OrganizationUserRelationRelationships()
           .projects(projects);
 
       organizationUserProfile.setRelationships(organizationUserRelation);

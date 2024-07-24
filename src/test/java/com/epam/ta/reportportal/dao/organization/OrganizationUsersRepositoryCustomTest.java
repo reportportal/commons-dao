@@ -5,8 +5,8 @@ import static com.epam.ta.reportportal.commons.querygen.constant.OrganizationCri
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+import com.epam.reportportal.api.model.OrganizationUserInfo;
 import com.epam.ta.reportportal.BaseTest;
-import com.epam.reportportal.api.model.OrganizationUserProfile;
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
@@ -33,7 +33,7 @@ class OrganizationUsersRepositoryCustomTest extends BaseTest {
         "1",
         "organization_id");
 
-    final List<OrganizationUserProfile> orgUsers = organizationUsersRepositoryCustom.findByFilter(
+    final List<OrganizationUserInfo> orgUsers = organizationUsersRepositoryCustom.findByFilter(
         filter);
     assertFalse(orgUsers.isEmpty());
   }
@@ -53,7 +53,7 @@ class OrganizationUsersRepositoryCustomTest extends BaseTest {
         new FilterCondition(Condition.IN, false, "1, 2", CRITERIA_PROJECT_ID));
     PageRequest pageRequest = PageRequest.of(offset, limit, Sort.by(Sort.Direction.DESC, sortField));
 
-    final Page<OrganizationUserProfile> orgUsers = organizationUsersRepositoryCustom.findByFilter(
+    final Page<OrganizationUserInfo> orgUsers = organizationUsersRepositoryCustom.findByFilter(
         filter, pageRequest);
     assertEquals(limit, orgUsers.getContent().size());
   }
