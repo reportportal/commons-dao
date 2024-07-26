@@ -35,8 +35,6 @@ import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
 import com.epam.ta.reportportal.jooq.tables.JOnboarding;
-import com.epam.ta.reportportal.jooq.tables.JOrganization;
-import com.epam.ta.reportportal.jooq.tables.JOrganizationUser;
 import com.epam.ta.reportportal.jooq.tables.JOwnedEntity;
 import com.epam.ta.reportportal.jooq.tables.JParameter;
 import com.epam.ta.reportportal.jooq.tables.JPatternTemplate;
@@ -91,7 +89,7 @@ import org.jooq.impl.SchemaImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JPublic extends SchemaImpl {
 
-    private static final long serialVersionUID = 846466812;
+    private static final long serialVersionUID = 259756826;
 
     /**
      * The reference instance of <code>public</code>
@@ -252,16 +250,6 @@ public class JPublic extends SchemaImpl {
      * The table <code>public.onboarding</code>.
      */
     public final JOnboarding ONBOARDING = com.epam.ta.reportportal.jooq.tables.JOnboarding.ONBOARDING;
-
-    /**
-     * The table <code>public.organization</code>.
-     */
-    public final JOrganization ORGANIZATION = com.epam.ta.reportportal.jooq.tables.JOrganization.ORGANIZATION;
-
-    /**
-     * The table <code>public.organization_user</code>.
-     */
-    public final JOrganizationUser ORGANIZATION_USER = com.epam.ta.reportportal.jooq.tables.JOrganizationUser.ORGANIZATION_USER;
 
     /**
      * The table <code>public.owned_entity</code>.
@@ -446,8 +434,6 @@ public class JPublic extends SchemaImpl {
             Sequences.OAUTH_REGISTRATION_RESTRICTION_ID_SEQ,
             Sequences.OAUTH_REGISTRATION_SCOPE_ID_SEQ,
             Sequences.ONBOARDING_ID_SEQ,
-            Sequences.ORGANIZATION_ID_SEQ,
-            Sequences.ORGANIZATION_USER_USER_ID_SEQ,
             Sequences.PATTERN_TEMPLATE_ID_SEQ,
             Sequences.PROJECT_ATTRIBUTE_ATTRIBUTE_ID_SEQ,
             Sequences.PROJECT_ATTRIBUTE_PROJECT_ID_SEQ,
@@ -505,8 +491,6 @@ public class JPublic extends SchemaImpl {
             JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION,
             JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE,
             JOnboarding.ONBOARDING,
-            JOrganization.ORGANIZATION,
-            JOrganizationUser.ORGANIZATION_USER,
             JOwnedEntity.OWNED_ENTITY,
             JParameter.PARAMETER,
             JPatternTemplate.PATTERN_TEMPLATE,

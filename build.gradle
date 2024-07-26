@@ -86,8 +86,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-cache'
     implementation 'com.github.ben-manes.caffeine:caffeine'
 
-    testCompile 'org.springframework.boot:spring-boot-starter-test'
-    testCompile 'org.flywaydb.flyway-test-extensions:flyway-spring-test:6.1.0'
+    testImplementation'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.flywaydb.flyway-test-extensions:flyway-spring-test:6.1.0'
 
 }
 
