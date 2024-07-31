@@ -312,7 +312,7 @@ public enum FilterTarget {
     public QuerySupplier getQuery() {
       SelectQuery<? extends Record> query = DSL.select(selectFields()).getQuery();
       addFrom(query);
-      query.addGroupBy(PROJECT.ID, PROJECT.CREATED_AT, PROJECT.KEY, PROJECT.CREATED_AT);
+      query.addGroupBy(PROJECT.ID, PROJECT.CREATED_AT, PROJECT.KEY);
       QuerySupplier querySupplier = new QuerySupplier(query);
       joinTables(querySupplier);
       return querySupplier;
