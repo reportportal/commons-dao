@@ -76,7 +76,6 @@ import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteria
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_NAME;
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_ORGANIZATION;
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_ORGANIZATION_ID;
-import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_TYPE;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_CLUSTER_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_DURATION;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_HAS_CHILDREN;
@@ -201,8 +200,6 @@ public enum FilterTarget {
           new CriteriaHolderBuilder().newBuilder(CRITERIA_SLUG, PROJECT.SLUG, String.class).get(),
           new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ORGANIZATION_ID,
               PROJECT.ORGANIZATION_ID, Long.class).get(),
-          new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_TYPE, PROJECT.PROJECT_TYPE,
-              String.class).get(),
           new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ATTRIBUTE_NAME,
               ATTRIBUTE.NAME,
               String.class,
@@ -241,8 +238,7 @@ public enum FilterTarget {
           PROJECT.SLUG,
           PROJECT.ORGANIZATION,
           PROJECT.ORGANIZATION_ID,
-          PROJECT.PROJECT_TYPE,
-          PROJECT.CREATION_DATE,
+          PROJECT.CREATED_AT,
           PROJECT.METADATA,
           PROJECT_ATTRIBUTE.VALUE,
           ATTRIBUTE.NAME,
@@ -287,14 +283,11 @@ public enum FilterTarget {
               .get(),
           new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_KEY, PROJECT.KEY, String.class)
               .get(),
-          new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_TYPE, PROJECT.PROJECT_TYPE,
-              String.class).get(),
-
           new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ORGANIZATION,
               PROJECT.ORGANIZATION, String.class).get(),
 
           new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_CREATION_DATE,
-              PROJECT.CREATION_DATE, Timestamp.class).get(),
+              PROJECT.CREATED_AT, Timestamp.class).get(),
 
           new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_ID,
               PROJECT.ORGANIZATION_ID, Long.class).get(),
@@ -319,7 +312,7 @@ public enum FilterTarget {
     public QuerySupplier getQuery() {
       SelectQuery<? extends Record> query = DSL.select(selectFields()).getQuery();
       addFrom(query);
-      query.addGroupBy(PROJECT.ID, PROJECT.CREATION_DATE, PROJECT.KEY, PROJECT.PROJECT_TYPE);
+      query.addGroupBy(PROJECT.ID, PROJECT.CREATED_AT, PROJECT.KEY, PROJECT.CREATED_AT);
       QuerySupplier querySupplier = new QuerySupplier(query);
       joinTables(querySupplier);
       return querySupplier;
@@ -332,11 +325,10 @@ public enum FilterTarget {
               .as(LAUNCHES_QUANTITY),
           DSL.max(LAUNCH.START_TIME).as(LAST_RUN),
           PROJECT.ID,
-          PROJECT.CREATION_DATE,
+          PROJECT.CREATED_AT,
           PROJECT.KEY,
           PROJECT.SLUG,
           PROJECT.NAME,
-          PROJECT.PROJECT_TYPE,
           PROJECT.ORGANIZATION,
           PROJECT.ORGANIZATION_ID
       );
@@ -415,7 +407,6 @@ public enum FilterTarget {
           PROJECT.NAME,
           PROJECT.KEY,
           PROJECT.SLUG,
-          PROJECT.PROJECT_TYPE,
           PROJECT_USER.PROJECT_ID,
           PROJECT_USER.PROJECT_ROLE,
           PROJECT_USER.USER_ID,
@@ -1523,7 +1514,7 @@ public enum FilterTarget {
     public QuerySupplier getQuery() {
       SelectQuery<? extends Record> query = DSL.select(selectFields()).getQuery();
       addFrom(query);
-      query.addGroupBy(PROJECT.ID, PROJECT.CREATION_DATE, PROJECT.KEY, PROJECT.PROJECT_TYPE);
+      query.addGroupBy(PROJECT.ID, PROJECT.CREATED_AT, PROJECT.KEY);
       QuerySupplier querySupplier = new QuerySupplier(query);
       joinTables(querySupplier);
       return querySupplier;
@@ -1536,12 +1527,11 @@ public enum FilterTarget {
           )).as(LAUNCHES_QUANTITY),
           DSL.max(LAUNCH.START_TIME).as(LAST_RUN),
           PROJECT.ID,
-          PROJECT.CREATION_DATE,
+          PROJECT.CREATED_AT,
           PROJECT.UPDATED_AT,
           PROJECT.KEY,
           PROJECT.SLUG,
           PROJECT.NAME,
-          PROJECT.PROJECT_TYPE,
           PROJECT.ORGANIZATION_ID
       );
     }

@@ -18,11 +18,9 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.entity.attribute.Attribute;
-import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectAttribute;
 import com.epam.ta.reportportal.entity.project.ProjectInfo;
-import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -83,14 +81,4 @@ public interface ProjectRepositoryCustom extends FilterableRepository<Project> {
    */
   Page<Project> findAllIdsAndProjectAttributes(Pageable pageable);
 
-  /**
-   * Delete {@code limit} project with specified {@code projectType} and last launch run before
-   * {@code bound}
-   *
-   * @param projectType
-   * @param bound
-   * @param limit
-   * @return number of deleted projects
-   */
-  int deleteByTypeAndLastLaunchRunBefore(ProjectType projectType, Instant bound, int limit);
 }

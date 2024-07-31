@@ -71,7 +71,6 @@ import com.epam.ta.reportportal.entity.dashboard.DashboardWidget;
 import com.epam.ta.reportportal.entity.dashboard.DashboardWidgetId;
 import com.epam.ta.reportportal.entity.enums.IntegrationAuthFlowEnum;
 import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
-import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
@@ -181,8 +180,8 @@ public class RecordMappers {
    * Maps record into {@link Project} object
    */
   public static final RecordMapper<? super Record, Project> PROJECT_MAPPER = r -> {
-    Project project = r.into(PROJECT.ID, PROJECT.NAME, PROJECT.ORGANIZATION, PROJECT.CREATION_DATE,
-            PROJECT.PROJECT_TYPE, PROJECT.ORGANIZATION_ID)
+    Project project = r.into(PROJECT.ID, PROJECT.NAME, PROJECT.ORGANIZATION, PROJECT.CREATED_AT,
+            PROJECT.ORGANIZATION_ID)
         .into(Project.class);
     ofNullable(r.field(PROJECT.KEY))
         .ifPresent(f -> project.setKey(r.get(PROJECT.KEY)));
@@ -430,7 +429,6 @@ public class RecordMappers {
     project.setName(r.get(PROJECT.NAME));
     project.setKey(r.get(PROJECT.KEY));
     project.setSlug(r.get(PROJECT.SLUG));
-    project.setProjectType(ProjectType.valueOf(r.get(PROJECT.PROJECT_TYPE)));
     project.setOrganizationId(r.get(ORGANIZATION.ID));
 
     User user = new User();
