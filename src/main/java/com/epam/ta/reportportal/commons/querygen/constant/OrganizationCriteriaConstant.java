@@ -24,8 +24,16 @@ package com.epam.ta.reportportal.commons.querygen.constant;
 public final class OrganizationCriteriaConstant {
 
   public static final String CRITERIA_ORG_ID = "organization_id";
-  public static final String CRITERIA_ORG_TYPE = "organization_type";
-  public static final String CRITERIA_ORG_CREATED_DATE = "creation_date";
+  public static final String CRITERIA_ORG_NAME = "name";
+  public static final String CRITERIA_ORG_SLUG = "slug";
+  public static final String CRITERIA_ORG_TYPE = "type";
+  public static final String CRITERIA_ORG_CREATED_AT = "created_at";
+  public static final String CRITERIA_ORG_UPDATED_AT = "updated_at";
+  public static final String CRITERIA_ORG_USERS = "users";
+  public static final String CRITERIA_ORG_PROJECTS = "projects";
+  public static final String CRITERIA_ORG_LAUNCHES = "launches";
+  public static final String CRITERIA_ORG_LAST_LAUNCH_RUN = "last_launch_occurred";
+
 
 
   private OrganizationCriteriaConstant() {

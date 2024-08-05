@@ -77,12 +77,12 @@ class OrganizationRepositoryCustomTest extends BaseTest {
   @CsvSource(value = {
       "slug|eq|my-organization|1",
       "slug|eq|notexists|0",
-      "usersQuantity|eq|1|1",
-      "usersQuantity|eq|845|0",
-      "launchesQuantity|gt|-1|1",
-      "launchesQuantity|gt|999|0",
-      "projectsQuantity|eq|2|1",
-      "projectsQuantity|eq|999|0"
+      "users|eq|1|1",
+      "users|eq|845|0",
+      "launches|gt|-1|1",
+      "launches|gt|999|0",
+      "projects|eq|2|1",
+      "projects|eq|999|0"
   }, delimiter = '|')
   void findOrganizationByFilterWithUser(String field, String condition, String value, int rows) {
     Filter filter = new Filter(OrganizationFilter.class,
@@ -100,16 +100,20 @@ class OrganizationRepositoryCustomTest extends BaseTest {
 
   @ParameterizedTest
   @CsvSource(value = {
+      "name|eq|My organization|1",
       "slug|eq|my-organization|1",
       "slug|eq|notexists|0",
-      "usersQuantity|eq|2|1",
-      "usersQuantity|eq|845|0",
-      "launchesQuantity|gt|-1|1",
-      "launchesQuantity|gt|999|0",
-      "projectsQuantity|eq|2|1",
-      "projectsQuantity|eq|999|0",
+      "users|eq|2|1",
+      "users|eq|845|0",
+      "launches|gt|-1|1",
+      "launches|gt|999|0",
+      "projects|eq|2|1",
+      "projects|eq|999|0",
       "user|eq|superadmin|1",
-      "user|eq|notexists|0"
+      "user|eq|notexists|0",
+      "created_at|gt|2024-08-01T12:42:30.758055Z|1",
+      "updated_at|gt|2024-08-01T12:42:30.758055Z|1",
+      "last_launch_occurred|lt|2024-08-01T12:42:30.758055Z|0"
   }, delimiter = '|')
   void findOrganizationByFilter(String field, String condition, String value, int rows) {
     final List<OrganizationProfile> orgs = organizationRepositoryCustom.findByFilter(
