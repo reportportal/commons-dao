@@ -22,7 +22,7 @@ import org.jooq.Index;
 import org.jooq.JSONB;
 import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row11;
+import org.jooq.Row10;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -70,19 +70,14 @@ public class JProject extends TableImpl<JProjectRecord> {
     public final TableField<JProjectRecord, String> NAME = createField(DSL.name("name"), org.jooq.impl.SQLDataType.VARCHAR.nullable(false), this, "");
 
     /**
-     * The column <code>public.project.project_type</code>.
-     */
-    public final TableField<JProjectRecord, String> PROJECT_TYPE = createField(DSL.name("project_type"), org.jooq.impl.SQLDataType.VARCHAR.nullable(false), this, "");
-
-    /**
      * The column <code>public.project.organization</code>.
      */
     public final TableField<JProjectRecord, String> ORGANIZATION = createField(DSL.name("organization"), org.jooq.impl.SQLDataType.VARCHAR, this, "");
 
     /**
-     * The column <code>public.project.creation_date</code>.
+     * The column <code>public.project.created_at</code>.
      */
-    public final TableField<JProjectRecord, Timestamp> CREATION_DATE = createField(DSL.name("creation_date"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "");
+    public final TableField<JProjectRecord, Timestamp> CREATED_AT = createField(DSL.name("created_at"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "");
 
     /**
      * The column <code>public.project.metadata</code>.
@@ -199,11 +194,11 @@ public class JProject extends TableImpl<JProjectRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row11 type methods
+    // Row10 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row11<Long, String, String, String, Timestamp, JSONB, Long, Long, String, String, Timestamp> fieldsRow() {
-        return (Row11) super.fieldsRow();
+    public Row10<Long, String, String, Timestamp, JSONB, Long, Long, String, String, Timestamp> fieldsRow() {
+        return (Row10) super.fieldsRow();
     }
 }

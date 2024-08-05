@@ -28,7 +28,7 @@ public enum OrganizationType {
 
   PERSONAL,
   INTERNAL,
-  UPSA;
+  EXTERNAL;
 
   public static Optional<OrganizationType> findByName(String name) {
     return Arrays.stream(OrganizationType.values())

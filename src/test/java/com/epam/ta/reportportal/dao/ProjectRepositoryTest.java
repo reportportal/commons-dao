@@ -30,7 +30,6 @@ import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.entity.enums.ProjectAttributeEnum;
-import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectInfo;
 import java.time.Instant;
@@ -129,13 +128,6 @@ class ProjectRepositoryTest extends BaseTest {
     assertEquals(1, projects.size());
   }
 
-  @Test
-  void findUserProjectByLoginAndType() {
-    List<Project> userProjects = projectRepository.findUserProjects("superadmin", "PERSONAL");
-    assertNotNull(userProjects);
-    assertEquals(1, userProjects.size());
-    assertEquals(ProjectType.PERSONAL, userProjects.get(0).getProjectType());
-  }
 
   @Test
   void shouldFindProjectByName() {
@@ -194,12 +186,4 @@ class ProjectRepositoryTest extends BaseTest {
     assertEquals(2, projectInfoPage.getTotalElements());
   }
 
-  @Sql("/db/fill/project/expired-project-fill.sql")
-  @Test
-  void deleteOneByTypeAndLastRunBefore() {
-    int count = projectRepository.deleteByTypeAndLastLaunchRunBefore(ProjectType.UPSA,
-        Instant.now().minus(10, ChronoUnit.DAYS), 1);
-    assertEquals(1, count);
-    assertFalse(projectRepository.findById(100L).isPresent());
-  }
 }
