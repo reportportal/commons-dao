@@ -17,7 +17,6 @@
 package com.epam.ta.reportportal.entity.project;
 
 import com.epam.ta.reportportal.entity.Metadata;
-import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.pattern.PatternTemplate;
 import com.epam.ta.reportportal.entity.project.email.SenderCase;
@@ -67,9 +66,6 @@ public class Project implements Serializable {
   @Column(name = "name")
   private String name;
 
-  @Column(name = "project_type")
-  private ProjectType projectType;
-
   @OneToMany(mappedBy = "project", cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY)
   @OrderBy("creationDate desc")
   private Set<Integration> integrations = Sets.newHashSet();
@@ -86,7 +82,7 @@ public class Project implements Serializable {
       CascadeType.PERSIST}, fetch = FetchType.EAGER, orphanRemoval = true)
   private Set<SenderCase> senderCases = Sets.newHashSet();
 
-  @Column(name = "creation_date")
+  @Column(name = "created_at")
   private Instant creationDate;
 
   @Column(name = "updated_at")

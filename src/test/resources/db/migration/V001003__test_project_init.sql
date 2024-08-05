@@ -16,8 +16,8 @@ BEGIN
     org_id := (SELECT currval(pg_get_serial_sequence('organization', 'id')));
 
 
-    INSERT INTO project (name, key, slug, project_type, creation_date, organization_id)
-        VALUES ('millennium_falcon', 'millennium_falcon', 'prj_slug', 'INTERNAL', now(), org_id);
+    INSERT INTO project (name, key, slug, created_at, organization_id)
+        VALUES ('millennium_falcon', 'millennium_falcon', 'prj-slug', now(), org_id);
     falcon := (SELECT currval(pg_get_serial_sequence('project', 'id')));
 
     INSERT INTO users (login, password, email, role, type, full_name, expired, metadata)
