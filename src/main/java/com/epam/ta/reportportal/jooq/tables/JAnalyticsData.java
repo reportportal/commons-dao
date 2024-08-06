@@ -4,12 +4,13 @@
 package com.epam.ta.reportportal.jooq.tables;
 
 
+import com.epam.ta.reportportal.dao.converters.InstantConverter;
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.records.JAnalyticsDataRecord;
 
-import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
@@ -44,7 +45,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JAnalyticsData extends TableImpl<JAnalyticsDataRecord> {
 
-    private static final long serialVersionUID = 1789208330;
+    private static final long serialVersionUID = -1928480576;
 
     /**
      * The reference instance of <code>public.analytics_data</code>
@@ -72,7 +73,7 @@ public class JAnalyticsData extends TableImpl<JAnalyticsDataRecord> {
     /**
      * The column <code>public.analytics_data.created_at</code>.
      */
-    public final TableField<JAnalyticsDataRecord, Timestamp> CREATED_AT = createField(DSL.name("created_at"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "");
+    public final TableField<JAnalyticsDataRecord, Instant> CREATED_AT = createField(DSL.name("created_at"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "", new InstantConverter());
 
     /**
      * The column <code>public.analytics_data.metadata</code>.
@@ -168,7 +169,7 @@ public class JAnalyticsData extends TableImpl<JAnalyticsDataRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row4<Long, String, Timestamp, JSONB> fieldsRow() {
+    public Row4<Long, String, Instant, JSONB> fieldsRow() {
         return (Row4) super.fieldsRow();
     }
 }

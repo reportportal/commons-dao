@@ -4,12 +4,13 @@
 package com.epam.ta.reportportal.jooq.tables;
 
 
+import com.epam.ta.reportportal.dao.converters.InstantConverter;
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.records.JAttachmentRecord;
 
-import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
@@ -43,7 +44,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JAttachment extends TableImpl<JAttachmentRecord> {
 
-    private static final long serialVersionUID = -453732948;
+    private static final long serialVersionUID = -2060499086;
 
     /**
      * The reference instance of <code>public.attachment</code>
@@ -101,7 +102,7 @@ public class JAttachment extends TableImpl<JAttachmentRecord> {
     /**
      * The column <code>public.attachment.creation_date</code>.
      */
-    public final TableField<JAttachmentRecord, Timestamp> CREATION_DATE = createField(DSL.name("creation_date"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "");
+    public final TableField<JAttachmentRecord, Instant> CREATION_DATE = createField(DSL.name("creation_date"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "", new InstantConverter());
 
     /**
      * The column <code>public.attachment.file_name</code>.
@@ -197,7 +198,7 @@ public class JAttachment extends TableImpl<JAttachmentRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row10<Long, String, String, String, Long, Long, Long, Long, Timestamp, String> fieldsRow() {
+    public Row10<Long, String, String, String, Long, Long, Long, Long, Instant, String> fieldsRow() {
         return (Row10) super.fieldsRow();
     }
 }

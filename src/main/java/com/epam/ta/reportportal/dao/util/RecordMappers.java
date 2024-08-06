@@ -571,7 +571,7 @@ public class RecordMappers {
     IntegrationType integrationType = new IntegrationType();
     integrationType.setId(r.get(INTEGRATION_TYPE.ID, Long.class));
     integrationType.setEnabled(r.get(INTEGRATION_TYPE.ENABLED));
-    integrationType.setCreationDate(r.get(INTEGRATION_TYPE.CREATION_DATE).toInstant());
+    integrationType.setCreationDate(r.get(INTEGRATION_TYPE.CREATION_DATE));
     ofNullable(r.get(INTEGRATION_TYPE.AUTH_FLOW)).ifPresent(af -> {
       integrationType.setAuthFlow(IntegrationAuthFlowEnum.findByName(af.getLiteral())
           .orElseThrow(() -> new ReportPortalException(ErrorType.INCORRECT_AUTHENTICATION_TYPE)));
@@ -614,7 +614,7 @@ public class RecordMappers {
     integration.setName(r.get(INTEGRATION.NAME));
     integration.setType(INTEGRATION_TYPE_MAPPER.map(r));
     integration.setCreator(r.get(INTEGRATION.CREATOR));
-    integration.setCreationDate(r.get(INTEGRATION.CREATION_DATE).toInstant());
+    integration.setCreationDate(r.get(INTEGRATION.CREATION_DATE));
     integration.setEnabled(r.get(INTEGRATION.ENABLED));
     INTEGRATION_PARAMS_MAPPER.accept(integration, r);
 

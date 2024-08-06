@@ -4,12 +4,13 @@
 package com.epam.ta.reportportal.jooq.tables;
 
 
+import com.epam.ta.reportportal.dao.converters.InstantConverter;
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.records.JProjectRecord;
 
-import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
@@ -44,7 +45,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JProject extends TableImpl<JProjectRecord> {
 
-    private static final long serialVersionUID = 1584335243;
+    private static final long serialVersionUID = -1619671757;
 
     /**
      * The reference instance of <code>public.project</code>
@@ -82,7 +83,7 @@ public class JProject extends TableImpl<JProjectRecord> {
     /**
      * The column <code>public.project.creation_date</code>.
      */
-    public final TableField<JProjectRecord, Timestamp> CREATION_DATE = createField(DSL.name("creation_date"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "");
+    public final TableField<JProjectRecord, Instant> CREATION_DATE = createField(DSL.name("creation_date"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "", new InstantConverter());
 
     /**
      * The column <code>public.project.metadata</code>.
@@ -183,7 +184,7 @@ public class JProject extends TableImpl<JProjectRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row7<Long, String, String, String, Timestamp, JSONB, Long> fieldsRow() {
+    public Row7<Long, String, String, String, Instant, JSONB, Long> fieldsRow() {
         return (Row7) super.fieldsRow();
     }
 }

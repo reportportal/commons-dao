@@ -16,7 +16,6 @@
 
 package com.epam.ta.reportportal.dao;
 
-import static com.epam.ta.reportportal.commons.EntityUtils.INSTANT_TO_TIMESTAMP;
 import static com.epam.ta.reportportal.jooq.Tables.ISSUE;
 import static com.epam.ta.reportportal.jooq.Tables.ISSUE_TICKET;
 import static com.epam.ta.reportportal.jooq.Tables.LAUNCH;
@@ -85,6 +84,6 @@ public class TicketRepositoryCustomImpl implements TicketRepositoryCustom {
         .join(LAUNCH)
         .on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
         .where(LAUNCH.PROJECT_ID.eq(projectId))
-        .and(TICKET.SUBMIT_DATE.greaterOrEqual(INSTANT_TO_TIMESTAMP.apply(from))));
+        .and(TICKET.SUBMIT_DATE.greaterOrEqual(from)));
   }
 }

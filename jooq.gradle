@@ -18,6 +18,19 @@ jooq {
                 inputSchema = (hasDBSchema ? getProperty('DB_SCHEMA_POSTGRES') : 'public')
                 // ...
                 excludes = 'batch_.*|schema_migrations'
+                forcedTypes {
+                    forcedType {
+
+                        // Specify the Java type of your custom type. This corresponds to the Converter's <U> type.
+                        userType = "java.time.Instant"
+
+                        // Associate that custom type with your converter.
+                        converter = "com.epam.ta.reportportal.entity.converters.InstantConverter"
+
+                        // A Java regex matching fully-qualified columns, attributes, parameters. Use the pipe to separate several expressions.
+                        types = "TIMESTAMP"
+                    }
+                }
             }
             generate {
                 pojos = false
