@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 EPAM Systems
+ * Copyright 2024 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,26 +14,27 @@
  * limitations under the License.
  */
 
-package com.epam.ta.reportportal.dao.util;
+package com.epam.ta.reportportal.dao.converters;
 
 import java.sql.Timestamp;
-import java.time.Duration;
 import java.time.Instant;
+import org.jooq.impl.AbstractConverter;
 
-/**
- * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
- */
-public final class TimestampUtils {
+public class InstantConverter extends AbstractConverter<Timestamp, Instant> {
 
-  private TimestampUtils() {
-    //static only
+  public InstantConverter() {
+    super(Timestamp.class, Instant.class);
   }
 
-  public static Timestamp getTimestampBackFromNow(Duration period) {
-    return Timestamp.from(Instant.now().minusSeconds(period.getSeconds()));
+
+  @Override
+  public Instant from(Timestamp timestamp) {
+    return timestamp == null ? null : timestamp.toInstant();
   }
 
-  public static Instant getInstantBackFromNow(Duration period) {
-    return Instant.now().minusSeconds(period.getSeconds());
+  @Override
+  public Timestamp to(Instant instant) {
+    return instant == null ? null : Timestamp.from(instant);
   }
+
 }
