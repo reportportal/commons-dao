@@ -4,12 +4,13 @@
 package com.epam.ta.reportportal.jooq.tables;
 
 
+import com.epam.ta.reportportal.dao.converters.InstantConverter;
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.records.JProjectRecord;
 
-import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
@@ -44,7 +45,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JProject extends TableImpl<JProjectRecord> {
 
-    private static final long serialVersionUID = -1307600510;
+    private static final long serialVersionUID = 1618773229;
 
     /**
      * The reference instance of <code>public.project</code>
@@ -77,7 +78,7 @@ public class JProject extends TableImpl<JProjectRecord> {
     /**
      * The column <code>public.project.created_at</code>.
      */
-    public final TableField<JProjectRecord, Timestamp> CREATED_AT = createField(DSL.name("created_at"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "");
+    public final TableField<JProjectRecord, Instant> CREATED_AT = createField(DSL.name("created_at"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "", new InstantConverter());
 
     /**
      * The column <code>public.project.metadata</code>.
@@ -107,7 +108,7 @@ public class JProject extends TableImpl<JProjectRecord> {
     /**
      * The column <code>public.project.updated_at</code>.
      */
-    public final TableField<JProjectRecord, Timestamp> UPDATED_AT = createField(DSL.name("updated_at"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "");
+    public final TableField<JProjectRecord, Instant> UPDATED_AT = createField(DSL.name("updated_at"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "", new InstantConverter());
 
     /**
      * Create a <code>public.project</code> table reference
@@ -198,7 +199,7 @@ public class JProject extends TableImpl<JProjectRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row10<Long, String, String, Timestamp, JSONB, Long, Long, String, String, Timestamp> fieldsRow() {
+    public Row10<Long, String, String, Instant, JSONB, Long, Long, String, String, Instant> fieldsRow() {
         return (Row10) super.fieldsRow();
     }
 }

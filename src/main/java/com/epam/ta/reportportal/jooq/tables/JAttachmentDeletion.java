@@ -43,7 +43,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JAttachmentDeletion extends TableImpl<JAttachmentDeletionRecord> {
 
-    private static final long serialVersionUID = 466997915;
+    private static final long serialVersionUID = 2100753798;
 
     /**
      * The reference instance of <code>public.attachment_deletion</code>

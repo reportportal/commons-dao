@@ -47,7 +47,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JLaunch extends TableImpl<JLaunchRecord> {
 
-    private static final long serialVersionUID = 1239960135;
+    private static final long serialVersionUID = -860672068;
 
     /**
      * The reference instance of <code>public.launch</code>

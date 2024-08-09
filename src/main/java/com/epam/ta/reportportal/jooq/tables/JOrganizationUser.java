@@ -4,13 +4,14 @@
 package com.epam.ta.reportportal.jooq.tables;
 
 
+import com.epam.ta.reportportal.dao.converters.InstantConverter;
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.enums.JOrganizationRoleEnum;
 import com.epam.ta.reportportal.jooq.tables.records.JOrganizationUserRecord;
 
-import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
@@ -43,7 +44,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JOrganizationUser extends TableImpl<JOrganizationUserRecord> {
 
-    private static final long serialVersionUID = 363900676;
+    private static final long serialVersionUID = -1132022965;
 
     /**
      * The reference instance of <code>public.organization_user</code>
@@ -76,7 +77,7 @@ public class JOrganizationUser extends TableImpl<JOrganizationUserRecord> {
     /**
      * The column <code>public.organization_user.assigned_at</code>.
      */
-    public final TableField<JOrganizationUserRecord, Timestamp> ASSIGNED_AT = createField(DSL.name("assigned_at"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "");
+    public final TableField<JOrganizationUserRecord, Instant> ASSIGNED_AT = createField(DSL.name("assigned_at"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "", new InstantConverter());
 
     /**
      * Create a <code>public.organization_user</code> table reference
@@ -175,7 +176,7 @@ public class JOrganizationUser extends TableImpl<JOrganizationUserRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row4<Long, Long, JOrganizationRoleEnum, Timestamp> fieldsRow() {
+    public Row4<Long, Long, JOrganizationRoleEnum, Instant> fieldsRow() {
         return (Row4) super.fieldsRow();
     }
 }

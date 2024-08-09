@@ -43,7 +43,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JRestorePasswordBid extends TableImpl<JRestorePasswordBidRecord> {
 
-    private static final long serialVersionUID = 422602805;
+    private static final long serialVersionUID = -1448430102;
 
     /**
      * The reference instance of <code>public.restore_password_bid</code>

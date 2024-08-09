@@ -4,12 +4,13 @@
 package com.epam.ta.reportportal.jooq.tables;
 
 
+import com.epam.ta.reportportal.dao.converters.InstantConverter;
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.records.JUsersRecord;
 
-import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
@@ -44,7 +45,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JUsers extends TableImpl<JUsersRecord> {
 
-    private static final long serialVersionUID = -679507963;
+    private static final long serialVersionUID = -1153492256;
 
     /**
      * The reference instance of <code>public.users</code>
@@ -117,12 +118,12 @@ public class JUsers extends TableImpl<JUsersRecord> {
     /**
      * The column <code>public.users.created_at</code>.
      */
-    public final TableField<JUsersRecord, Timestamp> CREATED_AT = createField(DSL.name("created_at"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "");
+    public final TableField<JUsersRecord, Instant> CREATED_AT = createField(DSL.name("created_at"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "", new InstantConverter());
 
     /**
      * The column <code>public.users.updated_at</code>.
      */
-    public final TableField<JUsersRecord, Timestamp> UPDATED_AT = createField(DSL.name("updated_at"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "");
+    public final TableField<JUsersRecord, Instant> UPDATED_AT = createField(DSL.name("updated_at"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "", new InstantConverter());
 
     /**
      * Create a <code>public.users</code> table reference
@@ -213,7 +214,7 @@ public class JUsers extends TableImpl<JUsersRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row13<Long, String, String, String, String, String, String, String, Boolean, String, JSONB, Timestamp, Timestamp> fieldsRow() {
+    public Row13<Long, String, String, String, String, String, String, String, Boolean, String, JSONB, Instant, Instant> fieldsRow() {
         return (Row13) super.fieldsRow();
     }
 }

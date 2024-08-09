@@ -4,12 +4,13 @@
 package com.epam.ta.reportportal.jooq.tables;
 
 
+import com.epam.ta.reportportal.dao.converters.InstantConverter;
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.records.JOrganizationRecord;
 
-import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
@@ -43,7 +44,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JOrganization extends TableImpl<JOrganizationRecord> {
 
-    private static final long serialVersionUID = 116167718;
+    private static final long serialVersionUID = -2027595115;
 
     /**
      * The reference instance of <code>public.organization</code>
@@ -66,7 +67,7 @@ public class JOrganization extends TableImpl<JOrganizationRecord> {
     /**
      * The column <code>public.organization.created_at</code>.
      */
-    public final TableField<JOrganizationRecord, Timestamp> CREATED_AT = createField(DSL.name("created_at"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "");
+    public final TableField<JOrganizationRecord, Instant> CREATED_AT = createField(DSL.name("created_at"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "", new InstantConverter());
 
     /**
      * The column <code>public.organization.name</code>.
@@ -86,7 +87,7 @@ public class JOrganization extends TableImpl<JOrganizationRecord> {
     /**
      * The column <code>public.organization.updated_at</code>.
      */
-    public final TableField<JOrganizationRecord, Timestamp> UPDATED_AT = createField(DSL.name("updated_at"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "");
+    public final TableField<JOrganizationRecord, Instant> UPDATED_AT = createField(DSL.name("updated_at"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "", new InstantConverter());
 
     /**
      * The column <code>public.organization.external_id</code>.
@@ -182,7 +183,7 @@ public class JOrganization extends TableImpl<JOrganizationRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row7<Long, Timestamp, String, String, String, Timestamp, String> fieldsRow() {
+    public Row7<Long, Instant, String, String, String, Instant, String> fieldsRow() {
         return (Row7) super.fieldsRow();
     }
 }

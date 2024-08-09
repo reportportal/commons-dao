@@ -4,6 +4,7 @@
 package com.epam.ta.reportportal.jooq.tables;
 
 
+import com.epam.ta.reportportal.dao.converters.InstantConverter;
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
@@ -11,7 +12,7 @@ import com.epam.ta.reportportal.jooq.enums.JOrganizationRoleEnum;
 import com.epam.ta.reportportal.jooq.enums.JProjectRoleEnum;
 import com.epam.ta.reportportal.jooq.tables.records.JUserCreationBidRecord;
 
-import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
@@ -45,7 +46,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JUserCreationBid extends TableImpl<JUserCreationBidRecord> {
 
-    private static final long serialVersionUID = 957519504;
+    private static final long serialVersionUID = 935947735;
 
     /**
      * The reference instance of <code>public.user_creation_bid</code>
@@ -68,7 +69,7 @@ public class JUserCreationBid extends TableImpl<JUserCreationBidRecord> {
     /**
      * The column <code>public.user_creation_bid.last_modified</code>.
      */
-    public final TableField<JUserCreationBidRecord, Timestamp> LAST_MODIFIED = createField(DSL.name("last_modified"), org.jooq.impl.SQLDataType.TIMESTAMP.defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "");
+    public final TableField<JUserCreationBidRecord, Instant> LAST_MODIFIED = createField(DSL.name("last_modified"), org.jooq.impl.SQLDataType.TIMESTAMP.defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "", new InstantConverter());
 
     /**
      * The column <code>public.user_creation_bid.email</code>.
@@ -202,7 +203,7 @@ public class JUserCreationBid extends TableImpl<JUserCreationBidRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row9<String, Timestamp, String, JProjectRoleEnum, Long, String, JSONB, Long, JOrganizationRoleEnum> fieldsRow() {
+    public Row9<String, Instant, String, JProjectRoleEnum, Long, String, JSONB, Long, JOrganizationRoleEnum> fieldsRow() {
         return (Row9) super.fieldsRow();
     }
 }
