@@ -4,6 +4,7 @@
 package com.epam.ta.reportportal.jooq.tables;
 
 
+import com.epam.ta.reportportal.dao.converters.InstantConverter;
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
@@ -12,7 +13,7 @@ import com.epam.ta.reportportal.jooq.enums.JRetentionPolicyEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.records.JLaunchRecord;
 
-import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
@@ -46,7 +47,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JLaunch extends TableImpl<JLaunchRecord> {
 
-    private static final long serialVersionUID = -1044821285;
+    private static final long serialVersionUID = 1239960135;
 
     /**
      * The reference instance of <code>public.launch</code>
@@ -94,12 +95,12 @@ public class JLaunch extends TableImpl<JLaunchRecord> {
     /**
      * The column <code>public.launch.start_time</code>.
      */
-    public final TableField<JLaunchRecord, Timestamp> START_TIME = createField(DSL.name("start_time"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "");
+    public final TableField<JLaunchRecord, Instant> START_TIME = createField(DSL.name("start_time"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "", new InstantConverter());
 
     /**
      * The column <code>public.launch.end_time</code>.
      */
-    public final TableField<JLaunchRecord, Timestamp> END_TIME = createField(DSL.name("end_time"), org.jooq.impl.SQLDataType.TIMESTAMP, this, "");
+    public final TableField<JLaunchRecord, Instant> END_TIME = createField(DSL.name("end_time"), org.jooq.impl.SQLDataType.TIMESTAMP, this, "", new InstantConverter());
 
     /**
      * The column <code>public.launch.number</code>.
@@ -109,7 +110,7 @@ public class JLaunch extends TableImpl<JLaunchRecord> {
     /**
      * The column <code>public.launch.last_modified</code>.
      */
-    public final TableField<JLaunchRecord, Timestamp> LAST_MODIFIED = createField(DSL.name("last_modified"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "");
+    public final TableField<JLaunchRecord, Instant> LAST_MODIFIED = createField(DSL.name("last_modified"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "", new InstantConverter());
 
     /**
      * The column <code>public.launch.mode</code>.
@@ -243,7 +244,7 @@ public class JLaunch extends TableImpl<JLaunchRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row16<Long, String, Long, Long, String, String, Timestamp, Timestamp, Integer, Timestamp, JLaunchModeEnum, JStatusEnum, Boolean, Boolean, Double, JRetentionPolicyEnum> fieldsRow() {
+    public Row16<Long, String, Long, Long, String, String, Instant, Instant, Integer, Instant, JLaunchModeEnum, JStatusEnum, Boolean, Boolean, Double, JRetentionPolicyEnum> fieldsRow() {
         return (Row16) super.fieldsRow();
     }
 }

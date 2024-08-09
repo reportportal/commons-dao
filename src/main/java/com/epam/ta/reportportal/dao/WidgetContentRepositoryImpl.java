@@ -182,6 +182,7 @@ import com.epam.reportportal.rules.exception.ErrorType;
 import com.google.common.collect.Lists;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -764,7 +765,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
             LAUNCH.STATUS,
             LAUNCH.START_TIME,
             LAUNCH.END_TIME,
-            timestampDiff(LAUNCH.END_TIME, LAUNCH.START_TIME).as(DURATION)
+            timestampDiff(LAUNCH.END_TIME.cast(Timestamp.class), LAUNCH.START_TIME.cast(Timestamp.class)).as(DURATION)
         )
         .from(LAUNCH)
         .join(LAUNCHES)
@@ -1458,7 +1459,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
                 .where(STATISTICS_FIELD.NAME.eq(EXECUTIONS_TOTAL)
                     .and(STATISTICS.LAUNCH_ID.eq(LAUNCH.ID)))
                 .asField(), 0)), 2).as(PASSING_RATE),
-        timestampDiff(LAUNCH.END_TIME, LAUNCH.START_TIME).as(DURATION)
+        timestampDiff(LAUNCH.END_TIME.cast(Timestamp.class), LAUNCH.START_TIME.cast(Timestamp.class))
+            .as(DURATION)
     );
 
     return selectFields;

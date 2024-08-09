@@ -4,12 +4,13 @@
 package com.epam.ta.reportportal.jooq.tables;
 
 
+import com.epam.ta.reportportal.dao.converters.InstantConverter;
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.records.JAttachmentDeletionRecord;
 
-import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
@@ -42,7 +43,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JAttachmentDeletion extends TableImpl<JAttachmentDeletionRecord> {
 
-    private static final long serialVersionUID = -2120808493;
+    private static final long serialVersionUID = 466997915;
 
     /**
      * The reference instance of <code>public.attachment_deletion</code>
@@ -75,12 +76,12 @@ public class JAttachmentDeletion extends TableImpl<JAttachmentDeletionRecord> {
     /**
      * The column <code>public.attachment_deletion.creation_attachment_date</code>.
      */
-    public final TableField<JAttachmentDeletionRecord, Timestamp> CREATION_ATTACHMENT_DATE = createField(DSL.name("creation_attachment_date"), org.jooq.impl.SQLDataType.TIMESTAMP, this, "");
+    public final TableField<JAttachmentDeletionRecord, Instant> CREATION_ATTACHMENT_DATE = createField(DSL.name("creation_attachment_date"), org.jooq.impl.SQLDataType.TIMESTAMP, this, "", new InstantConverter());
 
     /**
      * The column <code>public.attachment_deletion.deletion_date</code>.
      */
-    public final TableField<JAttachmentDeletionRecord, Timestamp> DELETION_DATE = createField(DSL.name("deletion_date"), org.jooq.impl.SQLDataType.TIMESTAMP, this, "");
+    public final TableField<JAttachmentDeletionRecord, Instant> DELETION_DATE = createField(DSL.name("deletion_date"), org.jooq.impl.SQLDataType.TIMESTAMP, this, "", new InstantConverter());
 
     /**
      * Create a <code>public.attachment_deletion</code> table reference
@@ -166,7 +167,7 @@ public class JAttachmentDeletion extends TableImpl<JAttachmentDeletionRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row5<Long, String, String, Timestamp, Timestamp> fieldsRow() {
+    public Row5<Long, String, String, Instant, Instant> fieldsRow() {
         return (Row5) super.fieldsRow();
     }
 }

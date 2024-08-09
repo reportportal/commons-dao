@@ -4,12 +4,13 @@
 package com.epam.ta.reportportal.jooq.tables;
 
 
+import com.epam.ta.reportportal.dao.converters.InstantConverter;
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.records.JStaleMaterializedViewRecord;
 
-import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
@@ -43,7 +44,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JStaleMaterializedView extends TableImpl<JStaleMaterializedViewRecord> {
 
-    private static final long serialVersionUID = 964883742;
+    private static final long serialVersionUID = -70601346;
 
     /**
      * The reference instance of <code>public.stale_materialized_view</code>
@@ -71,7 +72,7 @@ public class JStaleMaterializedView extends TableImpl<JStaleMaterializedViewReco
     /**
      * The column <code>public.stale_materialized_view.creation_date</code>.
      */
-    public final TableField<JStaleMaterializedViewRecord, Timestamp> CREATION_DATE = createField(DSL.name("creation_date"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "");
+    public final TableField<JStaleMaterializedViewRecord, Instant> CREATION_DATE = createField(DSL.name("creation_date"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "", new InstantConverter());
 
     /**
      * Create a <code>public.stale_materialized_view</code> table reference
@@ -162,7 +163,7 @@ public class JStaleMaterializedView extends TableImpl<JStaleMaterializedViewReco
     // -------------------------------------------------------------------------
 
     @Override
-    public Row3<Long, String, Timestamp> fieldsRow() {
+    public Row3<Long, String, Instant> fieldsRow() {
         return (Row3) super.fieldsRow();
     }
 }

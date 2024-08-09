@@ -16,7 +16,6 @@
 
 package com.epam.ta.reportportal.dao;
 
-import static com.epam.ta.reportportal.commons.EntityUtils.INSTANT_TO_TIMESTAMP;
 import static com.epam.ta.reportportal.commons.querygen.FilterTarget.FILTERED_ID;
 import static com.epam.ta.reportportal.commons.querygen.FilterTarget.FILTERED_QUERY;
 import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.retrieveOffsetAndApplyBoundaries;
@@ -584,7 +583,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
         .on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
         .where(baselineCondition)
         .and(TEST_ITEM.ITEM_ID.notEqual(itemId))
-        .and(TEST_ITEM.START_TIME.lessOrEqual(INSTANT_TO_TIMESTAMP.apply(startTime)))
+        .and(TEST_ITEM.START_TIME.lessOrEqual(startTime))
         .and(LAUNCH.MODE.eq(JLaunchModeEnum.DEFAULT))
         .orderBy(TEST_ITEM.START_TIME.desc(), LAUNCH.START_TIME.desc(), LAUNCH.NUMBER.desc())
         .limit(historyDepth)
@@ -800,7 +799,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
         .onKey()
         .where(TEST_ITEM.LAUNCH_ID.eq(launchId))
         .and(TEST_ITEM_RESULTS.STATUS.in(jStatuses))
-        .and(TEST_ITEM.START_TIME.gt(TimestampUtils.getTimestampBackFromNow(period)))
+        .and(TEST_ITEM.START_TIME.gt(TimestampUtils.getInstantBackFromNow(period)))
         .limit(1));
   }
 
@@ -817,7 +816,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
         .on(TEST_ITEM.ITEM_ID.eq(LOG.ITEM_ID))
         .where(TEST_ITEM.LAUNCH_ID.eq(launchId))
         .and(TEST_ITEM_RESULTS.STATUS.in(jStatuses))
-        .and(TEST_ITEM.START_TIME.lt(TimestampUtils.getTimestampBackFromNow(period)))
+        .and(TEST_ITEM.START_TIME.lt(TimestampUtils.getInstantBackFromNow(period)))
         .limit(1));
   }
 
@@ -939,7 +938,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
 
     return dsl.update(TEST_ITEM_RESULTS)
         .set(TEST_ITEM_RESULTS.STATUS, status)
-        .set(TEST_ITEM_RESULTS.END_TIME, INSTANT_TO_TIMESTAMP.apply(endTime))
+        .set(TEST_ITEM_RESULTS.END_TIME, endTime)
         .set(TEST_ITEM_RESULTS.DURATION,
             dsl.select(DSL.extract(endTime, DatePart.EPOCH)
                 .minus(DSL.extract(TEST_ITEM.START_TIME, DatePart.EPOCH))
@@ -954,7 +953,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
       Instant endTime) {
     return dsl.update(TEST_ITEM_RESULTS)
         .set(TEST_ITEM_RESULTS.STATUS, to)
-        .set(TEST_ITEM_RESULTS.END_TIME, INSTANT_TO_TIMESTAMP.apply(endTime))
+        .set(TEST_ITEM_RESULTS.END_TIME, endTime)
         .set(TEST_ITEM_RESULTS.DURATION,
             dsl.select(DSL.extract(endTime, DatePart.EPOCH)
                     .minus(DSL.extract(TEST_ITEM.START_TIME, DatePart.EPOCH))

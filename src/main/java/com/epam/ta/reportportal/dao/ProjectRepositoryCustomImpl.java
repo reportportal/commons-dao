@@ -32,6 +32,7 @@ import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectInfo;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import org.jooq.DSLContext;
@@ -131,5 +132,19 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
     );
   }
 
+  @Override
+  public int deleteByTypeAndLastLaunchRunBefore(ProjectType projectType, Instant bound,
+      int limit) {
+    return dsl.deleteFrom(PROJECT)
+        .where(PROJECT.ID.in(dsl.select(PROJECT.ID)
+            .from(PROJECT)
+            .join(LAUNCH)
+            .onKey()
+            .where(PROJECT.PROJECT_TYPE.eq(projectType.name()))
+            .groupBy(PROJECT.ID)
+            .having(DSL.max(LAUNCH.START_TIME).le(bound))
+            .limit(limit)))
+        .execute();
+  }
 
 }
