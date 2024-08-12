@@ -18,6 +18,8 @@ package com.epam.ta.reportportal.dao.converters;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import org.jooq.impl.AbstractConverter;
 
 public class InstantConverter extends AbstractConverter<Timestamp, Instant> {
@@ -34,7 +36,8 @@ public class InstantConverter extends AbstractConverter<Timestamp, Instant> {
 
   @Override
   public Timestamp to(Instant instant) {
-    return instant == null ? null : Timestamp.from(instant);
+    return instant == null ? null
+        : Timestamp.valueOf(LocalDateTime.ofInstant(instant, ZoneOffset.UTC));
   }
 
 }
