@@ -87,7 +87,7 @@ public class OrganizationMapper {
     // set launches
     OrganizationRelationRelationshipsLaunches orl = new OrganizationRelationRelationshipsLaunches();
     orl.meta(new OrganizationRelationRelationshipsLaunchesMeta()
-        //.count(row.get(OrganizationFilter.LAUNCHES_QUANTITY, Integer.class))
+        .count(row.get(OrganizationFilter.LAUNCHES_QUANTITY, Integer.class))
         .lastOccurredAt(row.get(OrganizationFilter.LAST_RUN, Instant.class)));
 
     // set projects

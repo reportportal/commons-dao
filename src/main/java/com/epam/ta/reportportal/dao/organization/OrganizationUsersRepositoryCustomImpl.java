@@ -20,7 +20,6 @@ package com.epam.ta.reportportal.dao.organization;
 import static com.epam.ta.reportportal.dao.util.OrganizationMapper.ORGANIZATION_USERS_LIST_FETCHER;
 
 import com.epam.reportportal.api.model.OrganizationUserInfo;
-import com.epam.ta.reportportal.commons.querygen.FilterTarget;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import java.util.List;
@@ -64,6 +63,6 @@ public class OrganizationUsersRepositoryCustomImpl implements OrganizationUsersR
     return PageableExecutionUtils.getPage(
         ORGANIZATION_USERS_LIST_FETCHER.apply(dsl.fetch(query)),
         pageable,
-        () -> dsl.fetchCount(QueryBuilder.newBuilder(FilterTarget.ORGANIZATION_USERS).build()));
+        () -> dsl.fetchCount(QueryBuilder.newBuilder(filter).build()));
   }
 }
