@@ -34,7 +34,13 @@ public enum JPasswordEncoderType implements EnumType {
 
     MD4("MD4"),
 
-    MD5("MD5");
+    MD5("MD5"),
+
+    PBKDF2("PBKDF2"),
+
+    PBKDF2_SHA256("PBKDF2_SHA256"),
+
+    PBKDF2_SHA512("PBKDF2_SHA512");
 
     private final String literal;
 
