@@ -1505,13 +1505,34 @@ public enum FilterTarget {
 
   PROJECT_PROFILE(ProjectProfile.class,
       Arrays.asList(
-          new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_ID, PROJECT.ORGANIZATION_ID, Long.class)
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_ID, PROJECT.ORGANIZATION_ID,
+                  Long.class)
               .get(),
-          new CriteriaHolderBuilder().newBuilder(PROJECT_USER.USER_ID.getName(), PROJECT_USER.USER_ID, Long.class)
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_USER, PROJECT_USER.USER_ID, Long.class)
               .get(),
           new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ID, PROJECT.ID, Long.class).get(),
           new CriteriaHolderBuilder().newBuilder(CRITERIA_NAME, PROJECT.NAME, String.class).get(),
-          new CriteriaHolderBuilder().newBuilder(CRITERIA_SLUG, PROJECT.SLUG, String.class).get()
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_SLUG, PROJECT.SLUG, String.class).get(),
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_KEY, PROJECT.KEY, String.class).get(),
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_CREATED_AT, PROJECT.CREATED_AT,
+              Timestamp.class).get(),
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_UPDATED_AT, PROJECT.UPDATED_AT,
+              Timestamp.class).get(),
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_USERS, USERS_QUANTITY, Long.class)
+              .withAggregateCriteria(DSL.countDistinct(PROJECT_USER.USER_ID).toString())
+              .get(),
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_LAST_LAUNCH_RUN, LAST_RUN,
+                  Timestamp.class)
+              .withAggregateCriteria(DSL.max(LAUNCH.START_TIME).toString())
+              .get(),
+          new CriteriaHolderBuilder()
+              .newBuilder(CRITERIA_ORG_LAUNCHES, LAUNCHES_QUANTITY, Long.class)
+              .withAggregateCriteria(
+                  DSL.countDistinct(
+                          choose()
+                              .when(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS), LAUNCH.ID))
+                      .toString())
+              .get()
       )
   ) {
     @Override
