@@ -1508,7 +1508,7 @@ public enum FilterTarget {
           new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_ID, PROJECT.ORGANIZATION_ID,
                   Long.class)
               .get(),
-          new CriteriaHolderBuilder().newBuilder(CRITERIA_USER, PROJECT_USER.USER_ID, Long.class)
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_USER_ID, PROJECT_USER.USER_ID, Long.class)
               .get(),
           new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ID, PROJECT.ID, Long.class).get(),
           new CriteriaHolderBuilder().newBuilder(CRITERIA_NAME, PROJECT.NAME, String.class).get(),
