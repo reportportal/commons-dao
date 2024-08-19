@@ -4,7 +4,7 @@
 package com.epam.ta.reportportal.jooq.tables;
 
 
-import com.epam.ta.reportportal.dao.converters.InstantConverter;
+import com.epam.ta.reportportal.dao.converters.JooqInstantConverter;
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
@@ -66,12 +66,12 @@ public class JShedlock extends TableImpl<JShedlockRecord> {
     /**
      * The column <code>public.shedlock.lock_until</code>.
      */
-    public final TableField<JShedlockRecord, Instant> LOCK_UNTIL = createField(DSL.name("lock_until"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "", new InstantConverter());
+    public final TableField<JShedlockRecord, Instant> LOCK_UNTIL = createField(DSL.name("lock_until"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "", new JooqInstantConverter());
 
     /**
      * The column <code>public.shedlock.locked_at</code>.
      */
-    public final TableField<JShedlockRecord, Instant> LOCKED_AT = createField(DSL.name("locked_at"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "", new InstantConverter());
+    public final TableField<JShedlockRecord, Instant> LOCKED_AT = createField(DSL.name("locked_at"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "", new JooqInstantConverter());
 
     /**
      * The column <code>public.shedlock.locked_by</code>.

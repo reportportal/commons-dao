@@ -4,7 +4,7 @@
 package com.epam.ta.reportportal.jooq.tables;
 
 
-import com.epam.ta.reportportal.dao.converters.InstantConverter;
+import com.epam.ta.reportportal.dao.converters.JooqInstantConverter;
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
@@ -76,12 +76,12 @@ public class JAttachmentDeletion extends TableImpl<JAttachmentDeletionRecord> {
     /**
      * The column <code>public.attachment_deletion.creation_attachment_date</code>.
      */
-    public final TableField<JAttachmentDeletionRecord, Instant> CREATION_ATTACHMENT_DATE = createField(DSL.name("creation_attachment_date"), org.jooq.impl.SQLDataType.TIMESTAMP, this, "", new InstantConverter());
+    public final TableField<JAttachmentDeletionRecord, Instant> CREATION_ATTACHMENT_DATE = createField(DSL.name("creation_attachment_date"), org.jooq.impl.SQLDataType.TIMESTAMP, this, "", new JooqInstantConverter());
 
     /**
      * The column <code>public.attachment_deletion.deletion_date</code>.
      */
-    public final TableField<JAttachmentDeletionRecord, Instant> DELETION_DATE = createField(DSL.name("deletion_date"), org.jooq.impl.SQLDataType.TIMESTAMP, this, "", new InstantConverter());
+    public final TableField<JAttachmentDeletionRecord, Instant> DELETION_DATE = createField(DSL.name("deletion_date"), org.jooq.impl.SQLDataType.TIMESTAMP, this, "", new JooqInstantConverter());
 
     /**
      * Create a <code>public.attachment_deletion</code> table reference

@@ -4,7 +4,7 @@
 package com.epam.ta.reportportal.jooq.tables;
 
 
-import com.epam.ta.reportportal.dao.converters.InstantConverter;
+import com.epam.ta.reportportal.dao.converters.JooqInstantConverter;
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
@@ -77,12 +77,12 @@ public class JOnboarding extends TableImpl<JOnboardingRecord> {
     /**
      * The column <code>public.onboarding.available_from</code>.
      */
-    public final TableField<JOnboardingRecord, Instant> AVAILABLE_FROM = createField(DSL.name("available_from"), org.jooq.impl.SQLDataType.TIMESTAMP, this, "", new InstantConverter());
+    public final TableField<JOnboardingRecord, Instant> AVAILABLE_FROM = createField(DSL.name("available_from"), org.jooq.impl.SQLDataType.TIMESTAMP, this, "", new JooqInstantConverter());
 
     /**
      * The column <code>public.onboarding.available_to</code>.
      */
-    public final TableField<JOnboardingRecord, Instant> AVAILABLE_TO = createField(DSL.name("available_to"), org.jooq.impl.SQLDataType.TIMESTAMP, this, "", new InstantConverter());
+    public final TableField<JOnboardingRecord, Instant> AVAILABLE_TO = createField(DSL.name("available_to"), org.jooq.impl.SQLDataType.TIMESTAMP, this, "", new JooqInstantConverter());
 
     /**
      * Create a <code>public.onboarding</code> table reference

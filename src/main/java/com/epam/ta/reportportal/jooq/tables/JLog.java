@@ -4,7 +4,7 @@
 package com.epam.ta.reportportal.jooq.tables;
 
 
-import com.epam.ta.reportportal.dao.converters.InstantConverter;
+import com.epam.ta.reportportal.dao.converters.JooqInstantConverter;
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
@@ -72,7 +72,7 @@ public class JLog extends TableImpl<JLogRecord> {
     /**
      * The column <code>public.log.log_time</code>.
      */
-    public final TableField<JLogRecord, Instant> LOG_TIME = createField(DSL.name("log_time"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "", new InstantConverter());
+    public final TableField<JLogRecord, Instant> LOG_TIME = createField(DSL.name("log_time"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "", new JooqInstantConverter());
 
     /**
      * The column <code>public.log.log_message</code>.
@@ -92,7 +92,7 @@ public class JLog extends TableImpl<JLogRecord> {
     /**
      * The column <code>public.log.last_modified</code>.
      */
-    public final TableField<JLogRecord, Instant> LAST_MODIFIED = createField(DSL.name("last_modified"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "", new InstantConverter());
+    public final TableField<JLogRecord, Instant> LAST_MODIFIED = createField(DSL.name("last_modified"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "", new JooqInstantConverter());
 
     /**
      * The column <code>public.log.log_level</code>.

@@ -4,7 +4,7 @@
 package com.epam.ta.reportportal.jooq.tables;
 
 
-import com.epam.ta.reportportal.dao.converters.InstantConverter;
+import com.epam.ta.reportportal.dao.converters.JooqInstantConverter;
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
@@ -95,12 +95,12 @@ public class JLaunch extends TableImpl<JLaunchRecord> {
     /**
      * The column <code>public.launch.start_time</code>.
      */
-    public final TableField<JLaunchRecord, Instant> START_TIME = createField(DSL.name("start_time"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "", new InstantConverter());
+    public final TableField<JLaunchRecord, Instant> START_TIME = createField(DSL.name("start_time"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "", new JooqInstantConverter());
 
     /**
      * The column <code>public.launch.end_time</code>.
      */
-    public final TableField<JLaunchRecord, Instant> END_TIME = createField(DSL.name("end_time"), org.jooq.impl.SQLDataType.TIMESTAMP, this, "", new InstantConverter());
+    public final TableField<JLaunchRecord, Instant> END_TIME = createField(DSL.name("end_time"), org.jooq.impl.SQLDataType.TIMESTAMP, this, "", new JooqInstantConverter());
 
     /**
      * The column <code>public.launch.number</code>.
@@ -110,7 +110,7 @@ public class JLaunch extends TableImpl<JLaunchRecord> {
     /**
      * The column <code>public.launch.last_modified</code>.
      */
-    public final TableField<JLaunchRecord, Instant> LAST_MODIFIED = createField(DSL.name("last_modified"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "", new InstantConverter());
+    public final TableField<JLaunchRecord, Instant> LAST_MODIFIED = createField(DSL.name("last_modified"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "", new JooqInstantConverter());
 
     /**
      * The column <code>public.launch.mode</code>.

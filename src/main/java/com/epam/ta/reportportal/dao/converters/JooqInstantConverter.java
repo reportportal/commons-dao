@@ -20,9 +20,9 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import org.jooq.impl.AbstractConverter;
 
-public class InstantConverter extends AbstractConverter<Timestamp, Instant> {
+public class JooqInstantConverter extends AbstractConverter<Timestamp, Instant> {
 
-  public InstantConverter() {
+  public JooqInstantConverter() {
     super(Timestamp.class, Instant.class);
   }
 
