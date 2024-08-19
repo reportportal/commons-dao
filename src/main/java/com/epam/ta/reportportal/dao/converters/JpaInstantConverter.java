@@ -2,6 +2,8 @@ package com.epam.ta.reportportal.dao.converters;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 import org.springframework.lang.Nullable;
@@ -12,7 +14,8 @@ public class JpaInstantConverter implements AttributeConverter<Instant, Timestam
   @Nullable
   @Override
   public Timestamp convertToDatabaseColumn(Instant instant) {
-    return instant == null ? null : Timestamp.from(instant);
+    return instant == null ? null
+        : Timestamp.valueOf(LocalDateTime.ofInstant(instant, ZoneOffset.UTC));
   }
 
   @Nullable
