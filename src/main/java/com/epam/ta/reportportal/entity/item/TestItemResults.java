@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.entity.item;
 
+import com.epam.ta.reportportal.dao.converters.JpaInstantConverter;
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
@@ -27,6 +28,7 @@ import java.util.Objects;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -60,6 +62,7 @@ public class TestItemResults implements Serializable {
   private StatusEnum status;
 
   @Column(name = "end_time")
+  @Convert(converter = JpaInstantConverter.class)
   private Instant endTime;
 
   @Column(name = "duration")

@@ -90,6 +90,7 @@ public class Launch implements Serializable {
   private Instant startTime;
 
   @Column(name = "end_time")
+  @Convert(converter = JpaInstantConverter.class)
   private Instant endTime;
 
   @Column(name = "number", nullable = false, precision = 32)
@@ -103,6 +104,7 @@ public class Launch implements Serializable {
 
   @Column(name = "last_modified", nullable = false)
   @LastModifiedDate
+  @Convert(converter = JpaInstantConverter.class)
   private Instant lastModified;
 
   @Column(name = "mode", nullable = false)

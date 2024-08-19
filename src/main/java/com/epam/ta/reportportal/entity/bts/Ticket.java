@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.entity.bts;
 
+import com.epam.ta.reportportal.dao.converters.JpaInstantConverter;
 import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
 import com.google.common.collect.Sets;
 import java.io.Serializable;
@@ -23,6 +24,7 @@ import java.time.Instant;
 import java.util.Objects;
 import java.util.Set;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -50,6 +52,7 @@ public class Ticket implements Serializable {
   private String submitter;
 
   @Column(name = "submit_date")
+  @Convert(converter = JpaInstantConverter.class)
   private Instant submitDate;
 
   @Column(name = "bts_url")

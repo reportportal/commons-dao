@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.entity.project;
 
+import com.epam.ta.reportportal.dao.converters.JpaInstantConverter;
 import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.integration.Integration;
@@ -29,6 +30,7 @@ import java.util.Objects;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -87,6 +89,7 @@ public class Project implements Serializable {
   private Set<SenderCase> senderCases = Sets.newHashSet();
 
   @Column(name = "creation_date")
+  @Convert(converter = JpaInstantConverter.class)
   private Instant creationDate;
 
   @Type(type = "json")
