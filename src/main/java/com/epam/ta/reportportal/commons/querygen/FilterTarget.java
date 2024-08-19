@@ -76,6 +76,7 @@ import static com.epam.ta.reportportal.commons.querygen.constant.OrganizationCri
 import static com.epam.ta.reportportal.commons.querygen.constant.OrganizationCriteriaConstant.CRITERIA_ORG_TYPE;
 import static com.epam.ta.reportportal.commons.querygen.constant.OrganizationCriteriaConstant.CRITERIA_ORG_UPDATED_AT;
 import static com.epam.ta.reportportal.commons.querygen.constant.OrganizationCriteriaConstant.CRITERIA_ORG_USERS;
+import static com.epam.ta.reportportal.commons.querygen.constant.OrganizationCriteriaConstant.CRITERIA_ORG_USER_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_ALLOCATED_STORAGE;
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_ATTRIBUTE_NAME;
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_CREATION_DATE;
@@ -1430,6 +1431,9 @@ public enum FilterTarget {
           String.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_USERS, USERS_QUANTITY, Long.class)
           .withAggregateCriteria(DSL.countDistinct(ORGANIZATION_USER.USER_ID).toString())
+          .get(),
+      new CriteriaHolderBuilder()
+          .newBuilder(CRITERIA_ORG_USER_ID, ORGANIZATION_USER.USER_ID, Long.class)
           .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_PROJECTS, PROJECTS_QUANTITY, Long.class)
           .withAggregateCriteria(DSL.countDistinct(PROJECT.ID).toString()).get(),

@@ -30,6 +30,7 @@ public final class OrganizationCriteriaConstant {
   public static final String CRITERIA_ORG_CREATED_AT = "created_at";
   public static final String CRITERIA_ORG_UPDATED_AT = "updated_at";
   public static final String CRITERIA_ORG_USERS = "users";
+  public static final String CRITERIA_ORG_USER_ID = "org_user_id";
   public static final String CRITERIA_ORG_PROJECTS = "projects";
   public static final String CRITERIA_ORG_LAUNCHES = "launches";
   public static final String CRITERIA_ORG_LAST_LAUNCH_RUN = "last_launch_occurred";
