@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.entity.launch;
 
+import com.epam.ta.reportportal.dao.converters.JpaInstantConverter;
 import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
@@ -30,6 +31,7 @@ import java.util.Objects;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
@@ -58,9 +60,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 @TypeDef(name = "pqsql_enum", typeClass = PostgreSQLEnumType.class)
 @Table(name = "launch", schema = "public", uniqueConstraints = {
-    @UniqueConstraint(columnNames = { "name", "number", "project_id" }) }, indexes = {
+    @UniqueConstraint(columnNames = {"name", "number", "project_id"})}, indexes = {
     @Index(name = "launch_pk", unique = true, columnList = "id ASC"),
-    @Index(name = "unq_name_number", unique = true, columnList = "name ASC, number ASC, project_id ASC") })
+    @Index(name = "unq_name_number", unique = true, columnList = "name ASC, number ASC, project_id ASC")})
 public class Launch implements Serializable {
 
   @Id
@@ -84,6 +86,7 @@ public class Launch implements Serializable {
   private String description;
 
   @Column(name = "start_time", nullable = false)
+  @Convert(converter = JpaInstantConverter.class)
   private Instant startTime;
 
   @Column(name = "end_time")
