@@ -19,9 +19,11 @@ package com.epam.ta.reportportal.entity.widget.content;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.DURATION;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.END_TIME;
 
+import com.epam.ta.reportportal.dao.converters.JpaInstantConverter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.Instant;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 
 /**
  * @author Ivan Budayeu
@@ -34,6 +36,7 @@ public class LaunchesDurationContent extends AbstractLaunchStatisticsContent {
 
   @Column(name = "end_time")
   @JsonProperty(value = END_TIME)
+  @Convert(converter = JpaInstantConverter.class)
   private Instant endTime;
 
   @Column(name = "duration")

@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.entity.item;
 
+import com.epam.ta.reportportal.dao.converters.JpaInstantConverter;
 import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
@@ -29,6 +30,7 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -79,6 +81,7 @@ public class TestItem implements Serializable {
   private TestItemTypeEnum type;
 
   @Column(name = "start_time", nullable = false)
+  @Convert(converter = JpaInstantConverter.class)
   private Instant startTime;
 
   @Column(name = "description")
@@ -89,6 +92,7 @@ public class TestItem implements Serializable {
 
   @LastModifiedDate
   @Column(name = "last_modified", nullable = false)
+  @Convert(converter = JpaInstantConverter.class)
   private Instant lastModified;
 
   @ElementCollection(fetch = FetchType.EAGER)

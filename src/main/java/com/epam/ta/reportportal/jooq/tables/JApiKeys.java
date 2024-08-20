@@ -4,7 +4,7 @@
 package com.epam.ta.reportportal.jooq.tables;
 
 
-import com.epam.ta.reportportal.dao.converters.InstantConverter;
+import com.epam.ta.reportportal.dao.converters.JooqInstantConverter;
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
@@ -78,7 +78,7 @@ public class JApiKeys extends TableImpl<JApiKeysRecord> {
     /**
      * The column <code>public.api_keys.created_at</code>.
      */
-    public final TableField<JApiKeysRecord, Instant> CREATED_AT = createField(DSL.name("created_at"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "", new InstantConverter());
+    public final TableField<JApiKeysRecord, Instant> CREATED_AT = createField(DSL.name("created_at"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "", new JooqInstantConverter());
 
     /**
      * The column <code>public.api_keys.user_id</code>.

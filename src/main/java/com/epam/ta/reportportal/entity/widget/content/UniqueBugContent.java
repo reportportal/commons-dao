@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.entity.widget.content;
 
+import com.epam.ta.reportportal.dao.converters.JpaInstantConverter;
 import com.epam.ta.reportportal.entity.item.ItemAttributePojo;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -25,6 +26,7 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.List;
 import java.util.Set;
+import javax.persistence.Convert;
 
 /**
  * @author Ivan Budayeu
@@ -39,6 +41,7 @@ public class UniqueBugContent implements Serializable {
   private String url;
 
   @JsonProperty(value = "submitDate")
+  @Convert(converter = JpaInstantConverter.class)
   private Instant submitDate;
 
   @JsonProperty(value = "items")

@@ -16,10 +16,12 @@
 
 package com.epam.ta.reportportal.entity.attachment;
 
+import com.epam.ta.reportportal.dao.converters.JpaInstantConverter;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -53,6 +55,7 @@ public class Attachment implements Serializable {
   private long fileSize;
 
   @Column(name = "creation_date")
+  @Convert(converter = JpaInstantConverter.class)
   private Instant creationDate;
 
   @Column(name = "project_id")

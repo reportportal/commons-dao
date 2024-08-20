@@ -35,7 +35,7 @@ dependencies {
     if (releaseMode) {
         compile 'com.epam.reportportal:commons'
     } else {
-        implementation 'com.github.reportportal:commons:9620556'
+        implementation 'com.github.reportportal:commons:d4be022'
     }
 
     implementation 'org.springframework.security:spring-security-core'
@@ -86,7 +86,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-cache'
     implementation 'com.github.ben-manes.caffeine:caffeine'
 
-    testImplementation'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.flywaydb.flyway-test-extensions:flyway-spring-test:6.1.0'
 
 }
