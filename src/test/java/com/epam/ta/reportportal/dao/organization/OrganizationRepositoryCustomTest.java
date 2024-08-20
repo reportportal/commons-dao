@@ -91,7 +91,7 @@ class OrganizationRepositoryCustomTest extends BaseTest {
         value,
         field);
 
-    filter.withCondition(new FilterCondition(Condition.EQUALS, false, "default", "user"));
+    filter.withCondition(new FilterCondition(Condition.EQUALS, false, "2", "org_user_id"));
 
     final List<OrganizationProfile> orgs = organizationRepositoryCustom.findByFilter(filter);
     assertEquals(rows, orgs.size());
@@ -105,6 +105,8 @@ class OrganizationRepositoryCustomTest extends BaseTest {
       "slug|eq|notexists|0",
       "users|eq|2|1",
       "users|eq|845|0",
+      "org_user_id|eq|1|1",
+      "org_user_id|eq|3|0",
       "launches|gt|-1|1",
       "launches|gt|999|0",
       "projects|eq|2|1",
