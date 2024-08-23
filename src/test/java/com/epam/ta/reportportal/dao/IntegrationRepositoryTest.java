@@ -164,25 +164,27 @@ class IntegrationRepositoryTest extends BaseTest {
 
   @Test
   void existsByNameTypePositive() {
-    boolean exists = integrationRepository.existsByNameAndTypeIdAndProjectIdIsNull("jira", 6L);
+    boolean exists = integrationRepository.existsByNameIgnoreCaseAndTypeIdAndProjectIdIsNull("jira", 6L);
     assertTrue(exists);
   }
 
   @Test
   void existsByNameTypeNegative() {
-    boolean exists = integrationRepository.existsByNameAndTypeIdAndProjectIdIsNull("jira1", 4L);
+    boolean exists = integrationRepository.existsByNameIgnoreCaseAndTypeIdAndProjectIdIsNull("jira1", 4L);
     assertFalse(exists);
   }
 
   @Test
   void existsByNameTypeProjectIdPositive() {
-    boolean exists = integrationRepository.existsByNameAndTypeIdAndProjectId("jira1", 6L, 1L);
+    boolean exists = integrationRepository.existsByNameIgnoreCaseAndTypeIdAndProjectId("jira1", 6L, 1L);
+    assertTrue(exists);
+    exists = integrationRepository.existsByNameIgnoreCaseAndTypeIdAndProjectId("JiRa1", 6L, 1L);
     assertTrue(exists);
   }
 
   @Test
   void existsByNameTypeProjectIdNegative() {
-    boolean exists = integrationRepository.existsByNameAndTypeIdAndProjectId("jira", 6L, 2L);
+    boolean exists = integrationRepository.existsByNameIgnoreCaseAndTypeIdAndProjectId("jira", 6L, 2L);
     assertFalse(exists);
   }
 
