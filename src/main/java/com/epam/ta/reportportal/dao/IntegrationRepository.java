@@ -32,9 +32,9 @@ import org.springframework.data.repository.query.Param;
 public interface IntegrationRepository extends ReportPortalRepository<Integration, Long>,
     IntegrationRepositoryCustom {
 
-  boolean existsByNameAndTypeIdAndProjectIdIsNull(String name, Long typeId);
+  boolean existsByNameIgnoreCaseAndTypeIdAndProjectIdIsNull(String name, Long typeId);
 
-  boolean existsByNameAndTypeIdAndProjectId(String name, Long typeId, Long projectId);
+  boolean existsByNameIgnoreCaseAndTypeIdAndProjectId(String name, Long typeId, Long projectId);
 
   /**
    * Retrieve integration by ID and project ID

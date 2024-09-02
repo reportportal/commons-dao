@@ -16,10 +16,12 @@
 
 package com.epam.ta.reportportal.entity.analytics;
 
+import com.epam.ta.reportportal.dao.converters.JpaInstantConverter;
 import com.epam.ta.reportportal.entity.Metadata;
 import java.io.Serializable;
 import java.time.Instant;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -61,6 +63,7 @@ public class AnalyticsData implements Serializable {
 
   @Column(name = "created_at", nullable = false)
   @CreatedDate
+  @Convert(converter = JpaInstantConverter.class)
   private Instant createdAt;
 
 }

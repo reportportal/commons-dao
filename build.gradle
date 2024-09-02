@@ -35,7 +35,7 @@ dependencies {
     if (releaseMode) {
         compile 'com.epam.reportportal:commons'
     } else {
-        api 'com.github.reportportal:commons:f849258'
+        implementation 'com.github.reportportal:commons:7f23a5f'
     }
 
     implementation 'io.swagger.core.v3:swagger-annotations:2.2.9'
@@ -87,7 +87,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-cache'
     implementation 'com.github.ben-manes.caffeine:caffeine'
 
-    testImplementation'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.flywaydb.flyway-test-extensions:flyway-spring-test:6.1.0'
 
 }

@@ -18,11 +18,13 @@ package com.epam.ta.reportportal.entity.widget.content;
 
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ID;
 
+import com.epam.ta.reportportal.dao.converters.JpaInstantConverter;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.time.Instant;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 
 /**
  * @author Ivan Budayeu
@@ -44,6 +46,7 @@ public abstract class AbstractLaunchStatisticsContent implements Serializable {
 
   @Column(name = "start_time")
   @JsonProperty(value = "startTime")
+  @Convert(converter = JpaInstantConverter.class)
   private Instant startTime;
 
   public AbstractLaunchStatisticsContent() {

@@ -4,7 +4,7 @@
 package com.epam.ta.reportportal.jooq.tables;
 
 
-import com.epam.ta.reportportal.dao.converters.InstantConverter;
+import com.epam.ta.reportportal.dao.converters.JooqInstantConverter;
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
@@ -72,7 +72,7 @@ public class JTestItemResults extends TableImpl<JTestItemResultsRecord> {
     /**
      * The column <code>public.test_item_results.end_time</code>.
      */
-    public final TableField<JTestItemResultsRecord, Instant> END_TIME = createField(DSL.name("end_time"), org.jooq.impl.SQLDataType.TIMESTAMP, this, "", new InstantConverter());
+    public final TableField<JTestItemResultsRecord, Instant> END_TIME = createField(DSL.name("end_time"), org.jooq.impl.SQLDataType.TIMESTAMP, this, "", new JooqInstantConverter());
 
     /**
      * The column <code>public.test_item_results.duration</code>.
