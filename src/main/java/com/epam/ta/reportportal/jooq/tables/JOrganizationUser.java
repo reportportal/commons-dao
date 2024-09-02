@@ -4,7 +4,7 @@
 package com.epam.ta.reportportal.jooq.tables;
 
 
-import com.epam.ta.reportportal.dao.converters.InstantConverter;
+import com.epam.ta.reportportal.dao.converters.JooqInstantConverter;
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
@@ -77,7 +77,7 @@ public class JOrganizationUser extends TableImpl<JOrganizationUserRecord> {
     /**
      * The column <code>public.organization_user.assigned_at</code>.
      */
-    public final TableField<JOrganizationUserRecord, Instant> ASSIGNED_AT = createField(DSL.name("assigned_at"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "", new InstantConverter());
+    public final TableField<JOrganizationUserRecord, Instant> ASSIGNED_AT = createField(DSL.name("assigned_at"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "", new JooqInstantConverter());
 
     /**
      * Create a <code>public.organization_user</code> table reference

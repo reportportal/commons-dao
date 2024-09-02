@@ -4,7 +4,7 @@
 package com.epam.ta.reportportal.jooq.tables;
 
 
-import com.epam.ta.reportportal.dao.converters.InstantConverter;
+import com.epam.ta.reportportal.dao.converters.JooqInstantConverter;
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
@@ -67,7 +67,7 @@ public class JOrganization extends TableImpl<JOrganizationRecord> {
     /**
      * The column <code>public.organization.created_at</code>.
      */
-    public final TableField<JOrganizationRecord, Instant> CREATED_AT = createField(DSL.name("created_at"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "", new InstantConverter());
+    public final TableField<JOrganizationRecord, Instant> CREATED_AT = createField(DSL.name("created_at"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "", new JooqInstantConverter());
 
     /**
      * The column <code>public.organization.name</code>.
@@ -87,7 +87,7 @@ public class JOrganization extends TableImpl<JOrganizationRecord> {
     /**
      * The column <code>public.organization.updated_at</code>.
      */
-    public final TableField<JOrganizationRecord, Instant> UPDATED_AT = createField(DSL.name("updated_at"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "", new InstantConverter());
+    public final TableField<JOrganizationRecord, Instant> UPDATED_AT = createField(DSL.name("updated_at"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "", new JooqInstantConverter());
 
     /**
      * The column <code>public.organization.external_id</code>.
