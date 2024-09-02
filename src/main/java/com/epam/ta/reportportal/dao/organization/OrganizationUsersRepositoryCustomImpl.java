@@ -19,7 +19,7 @@ package com.epam.ta.reportportal.dao.organization;
 
 import static com.epam.ta.reportportal.dao.util.OrganizationMapper.ORGANIZATION_USERS_LIST_FETCHER;
 
-import com.epam.reportportal.api.model.OrganizationUserInfo;
+import com.epam.reportportal.api.model.OrganizationUserAccount;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import java.util.List;
@@ -49,13 +49,13 @@ public class OrganizationUsersRepositoryCustomImpl implements OrganizationUsersR
   private DSLContext dsl;
 
   @Override
-  public List<OrganizationUserInfo> findByFilter(Queryable filter) {
+  public List<OrganizationUserAccount> findByFilter(Queryable filter) {
     return ORGANIZATION_USERS_LIST_FETCHER.apply(dsl.fetch(QueryBuilder.newBuilder(filter)
         .build()));
   }
 
   @Override
-  public Page<OrganizationUserInfo> findByFilter(Queryable filter, Pageable pageable) {
+  public Page<OrganizationUserAccount> findByFilter(Queryable filter, Pageable pageable) {
     SelectQuery<? extends Record> query = QueryBuilder.newBuilder(filter).with(pageable).build();
     if (LOGGER.isDebugEnabled()) {
       LOGGER.debug("Find organization users query: {}", query);

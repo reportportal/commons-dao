@@ -30,12 +30,13 @@ import com.epam.reportportal.api.model.OrganizationRelationRelationshipsProjects
 import com.epam.reportportal.api.model.OrganizationRelationRelationshipsProjectsMeta;
 import com.epam.reportportal.api.model.OrganizationRelationRelationshipsUsers;
 import com.epam.reportportal.api.model.OrganizationRelationRelationshipsUsersMeta;
-import com.epam.reportportal.api.model.OrganizationUserInfo;
-import com.epam.reportportal.api.model.OrganizationUserInfo.OrganizationRoleEnum;
+import com.epam.reportportal.api.model.OrganizationUserAccount;
+import com.epam.reportportal.api.model.OrganizationUserAccount.OrgRoleEnum;
 import com.epam.reportportal.api.model.OrganizationUserRelationRelationships;
 import com.epam.reportportal.api.model.OrganizationUserRelationRelationshipsProjects;
 import com.epam.reportportal.api.model.OrganizationUserRelationRelationshipsProjectsMeta;
-import com.epam.reportportal.api.model.UserAccountInfo.AuthProviderEnum;
+
+import com.epam.reportportal.api.model.UserAccount.AuthProviderEnum;
 import com.epam.reportportal.api.model.UserDetails.InstanceRoleEnum;
 import com.epam.ta.reportportal.entity.organization.Organization;
 import com.epam.ta.reportportal.entity.organization.OrganizationFilter;
@@ -113,19 +114,19 @@ public class OrganizationMapper {
   };
 
 
-  public static final Function<Result<? extends Record>, List<OrganizationUserInfo>> ORGANIZATION_USERS_LIST_FETCHER = rows -> {
-    List<OrganizationUserInfo> userProfiles = new ArrayList<>(rows.size());
+  public static final Function<Result<? extends Record>, List<OrganizationUserAccount>> ORGANIZATION_USERS_LIST_FETCHER = rows -> {
+    List<OrganizationUserAccount> userProfiles = new ArrayList<>(rows.size());
 
     rows.forEach(row -> {
-      OrganizationUserInfo organizationUserProfile = new OrganizationUserInfo();
+      OrganizationUserAccount organizationUserProfile = new OrganizationUserAccount();
 
       organizationUserProfile.setId(row.get(ORGANIZATION_USER.USER_ID));
       organizationUserProfile.setFullName(row.get(USERS.FULL_NAME));
       organizationUserProfile.setCreatedAt(row.get(USERS.CREATED_AT, Instant.class));
       organizationUserProfile.setUpdatedAt(row.get(USERS.UPDATED_AT, Instant.class));
       organizationUserProfile.setInstanceRole(InstanceRoleEnum.fromValue(row.get(USERS.ROLE)));
-      organizationUserProfile.setOrganizationRole(
-          OrganizationRoleEnum.fromValue(
+      organizationUserProfile.setOrgRole(
+          OrgRoleEnum.fromValue(
               row.get(ORGANIZATION_USER.ORGANIZATION_ROLE.getName(), String.class)));
       organizationUserProfile.setAuthProvider(AuthProviderEnum.fromValue(row.get(USERS.TYPE)));
       organizationUserProfile.setEmail(row.get(USERS.EMAIL));
