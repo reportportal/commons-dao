@@ -16,9 +16,11 @@
 
 package com.epam.ta.reportportal.entity.user;
 
+import com.epam.ta.reportportal.dao.converters.JpaInstantConverter;
+import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -46,7 +48,8 @@ public class ApiKey {
   private String hash;
 
   @Column(name = "created_at")
-  private LocalDateTime createdAt;
+  @Convert(converter = JpaInstantConverter.class)
+  private Instant createdAt;
 
   @Column(name = "user_id")
   private Long userId;
@@ -81,11 +84,11 @@ public class ApiKey {
     this.hash = hash;
   }
 
-  public LocalDateTime getCreatedAt() {
+  public Instant getCreatedAt() {
     return createdAt;
   }
 
-  public void setCreatedAt(LocalDateTime createdAt) {
+  public void setCreatedAt(Instant createdAt) {
     this.createdAt = createdAt;
   }
 

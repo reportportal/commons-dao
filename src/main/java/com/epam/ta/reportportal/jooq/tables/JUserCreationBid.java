@@ -4,12 +4,13 @@
 package com.epam.ta.reportportal.jooq.tables;
 
 
+import com.epam.ta.reportportal.dao.converters.JooqInstantConverter;
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.records.JUserCreationBidRecord;
 
-import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
@@ -43,7 +44,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JUserCreationBid extends TableImpl<JUserCreationBidRecord> {
 
-    private static final long serialVersionUID = 1009841154;
+    private static final long serialVersionUID = -303475788;
 
     /**
      * The reference instance of <code>public.user_creation_bid</code>
@@ -66,17 +67,12 @@ public class JUserCreationBid extends TableImpl<JUserCreationBidRecord> {
     /**
      * The column <code>public.user_creation_bid.last_modified</code>.
      */
-    public final TableField<JUserCreationBidRecord, Timestamp> LAST_MODIFIED = createField(DSL.name("last_modified"), org.jooq.impl.SQLDataType.TIMESTAMP.defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "");
+    public final TableField<JUserCreationBidRecord, Instant> LAST_MODIFIED = createField(DSL.name("last_modified"), org.jooq.impl.SQLDataType.TIMESTAMP.defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "", new JooqInstantConverter());
 
     /**
      * The column <code>public.user_creation_bid.email</code>.
      */
     public final TableField<JUserCreationBidRecord, String> EMAIL = createField(DSL.name("email"), org.jooq.impl.SQLDataType.VARCHAR.nullable(false), this, "");
-
-    /**
-     * The column <code>public.user_creation_bid.role</code>.
-     */
-    public final TableField<JUserCreationBidRecord, String> ROLE = createField(DSL.name("role"), org.jooq.impl.SQLDataType.VARCHAR.nullable(false), this, "");
 
     /**
      * The column <code>public.user_creation_bid.inviting_user_id</code>.
@@ -92,6 +88,11 @@ public class JUserCreationBid extends TableImpl<JUserCreationBidRecord> {
      * The column <code>public.user_creation_bid.metadata</code>.
      */
     public final TableField<JUserCreationBidRecord, JSONB> METADATA = createField(DSL.name("metadata"), org.jooq.impl.SQLDataType.JSONB, this, "");
+
+    /**
+     * The column <code>public.user_creation_bid.role</code>.
+     */
+    public final TableField<JUserCreationBidRecord, String> ROLE = createField(DSL.name("role"), org.jooq.impl.SQLDataType.VARCHAR.nullable(false), this, "");
 
     /**
      * Create a <code>public.user_creation_bid</code> table reference
@@ -186,7 +187,7 @@ public class JUserCreationBid extends TableImpl<JUserCreationBidRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row7<String, Timestamp, String, String, Long, String, JSONB> fieldsRow() {
+    public Row7<String, Instant, String, Long, String, JSONB, String> fieldsRow() {
         return (Row7) super.fieldsRow();
     }
 }

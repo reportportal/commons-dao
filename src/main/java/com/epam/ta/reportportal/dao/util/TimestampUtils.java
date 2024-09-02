@@ -32,4 +32,8 @@ public final class TimestampUtils {
   public static Timestamp getTimestampBackFromNow(Duration period) {
     return Timestamp.from(Instant.now().minusSeconds(period.getSeconds()));
   }
+
+  public static Instant getInstantBackFromNow(Duration period) {
+    return Instant.now().minusSeconds(period.getSeconds());
+  }
 }

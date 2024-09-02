@@ -4,6 +4,7 @@
 package com.epam.ta.reportportal.jooq.tables;
 
 
+import com.epam.ta.reportportal.dao.converters.JooqInstantConverter;
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
@@ -11,7 +12,7 @@ import com.epam.ta.reportportal.jooq.enums.JIntegrationAuthFlowEnum;
 import com.epam.ta.reportportal.jooq.enums.JIntegrationGroupEnum;
 import com.epam.ta.reportportal.jooq.tables.records.JIntegrationTypeRecord;
 
-import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
@@ -46,7 +47,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JIntegrationType extends TableImpl<JIntegrationTypeRecord> {
 
-    private static final long serialVersionUID = -1051931010;
+    private static final long serialVersionUID = 1851238148;
 
     /**
      * The reference instance of <code>public.integration_type</code>
@@ -79,7 +80,7 @@ public class JIntegrationType extends TableImpl<JIntegrationTypeRecord> {
     /**
      * The column <code>public.integration_type.creation_date</code>.
      */
-    public final TableField<JIntegrationTypeRecord, Timestamp> CREATION_DATE = createField(DSL.name("creation_date"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "");
+    public final TableField<JIntegrationTypeRecord, Instant> CREATION_DATE = createField(DSL.name("creation_date"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "", new JooqInstantConverter());
 
     /**
      * The column <code>public.integration_type.group_type</code>.
@@ -185,7 +186,7 @@ public class JIntegrationType extends TableImpl<JIntegrationTypeRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row7<Integer, String, JIntegrationAuthFlowEnum, Timestamp, JIntegrationGroupEnum, Boolean, JSONB> fieldsRow() {
+    public Row7<Integer, String, JIntegrationAuthFlowEnum, Instant, JIntegrationGroupEnum, Boolean, JSONB> fieldsRow() {
         return (Row7) super.fieldsRow();
     }
 }

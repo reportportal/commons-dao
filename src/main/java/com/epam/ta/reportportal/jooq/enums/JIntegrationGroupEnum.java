@@ -32,7 +32,9 @@ public enum JIntegrationGroupEnum implements EnumType {
 
     AUTH("AUTH"),
 
-    OTHER("OTHER");
+    OTHER("OTHER"),
+
+    IMPORT("IMPORT");
 
     private final String literal;
 

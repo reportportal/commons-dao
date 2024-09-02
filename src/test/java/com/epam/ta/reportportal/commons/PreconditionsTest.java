@@ -21,10 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
-import com.epam.ta.reportportal.ws.model.launch.Mode;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.Date;
+import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
+import java.time.Instant;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -36,7 +34,7 @@ class PreconditionsTest {
   @Test
   void hasModePositive() {
 
-    Mode mode = Mode.DEFAULT;
+    LaunchModeEnum mode = LaunchModeEnum.DEFAULT;
 
     Assertions.assertTrue(Preconditions.hasMode(mode).test(filterConditionWithMode(mode)));
   }
@@ -44,8 +42,8 @@ class PreconditionsTest {
   @Test
   void hasModeNegative() {
 
-    Mode mode = Mode.DEFAULT;
-    Mode anotherMode = Mode.DEBUG;
+    LaunchModeEnum mode = LaunchModeEnum.DEFAULT;
+    LaunchModeEnum anotherMode = LaunchModeEnum.DEBUG;
 
     Assertions.assertFalse(Preconditions.hasMode(mode).test(filterConditionWithMode(anotherMode)));
   }
@@ -53,20 +51,18 @@ class PreconditionsTest {
   @Test
   void sameTime() {
 
-    Date date = new Date();
+    Instant date = Instant.now();
+    Instant sameTime = Instant.now();
 
-    LocalDateTime sameTime = LocalDateTime.from(date.toInstant().atZone(ZoneOffset.UTC));
-
-    Assertions.assertTrue(Preconditions.sameTimeOrLater(sameTime).test(date));
+    Assertions.assertTrue(Preconditions.sameTimeOrLater(date).test(sameTime));
   }
 
   @Test
   void laterTime() {
 
-    Date date = new Date();
+    Instant date = Instant.now();
 
-    LocalDateTime laterTime = LocalDateTime.from(date.toInstant().atZone(ZoneOffset.UTC))
-        .minusSeconds(1L);
+    Instant laterTime = Instant.now().minusSeconds(1L);
 
     Assertions.assertTrue(Preconditions.sameTimeOrLater(laterTime).test(date));
   }
@@ -74,10 +70,9 @@ class PreconditionsTest {
   @Test
   void beforeTime() {
 
-    Date date = new Date();
+    Instant date = Instant.now();
 
-    LocalDateTime beforeTime = LocalDateTime.from(date.toInstant().atZone(ZoneOffset.UTC))
-        .plusSeconds(1L);
+    Instant beforeTime = Instant.now().plusSeconds(1L);
 
     Assertions.assertFalse(Preconditions.sameTimeOrLater(beforeTime).test(date));
   }
@@ -86,10 +81,10 @@ class PreconditionsTest {
   void validateNullValue() {
 
     assertThrows(NullPointerException.class,
-        () -> Preconditions.sameTimeOrLater(null).test(new Date()));
+        () -> Preconditions.sameTimeOrLater(null).test(Instant.now()));
   }
 
-  private FilterCondition filterConditionWithMode(Mode mode) {
+  private FilterCondition filterConditionWithMode(LaunchModeEnum mode) {
 
     return new FilterCondition(Condition.EQUALS, false, mode.name(), CRITERIA_LAUNCH_MODE);
   }

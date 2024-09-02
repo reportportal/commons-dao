@@ -4,12 +4,13 @@
 package com.epam.ta.reportportal.jooq.tables;
 
 
+import com.epam.ta.reportportal.dao.converters.JooqInstantConverter;
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.records.JActivityRecord;
 
-import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
@@ -44,7 +45,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JActivity extends TableImpl<JActivityRecord> {
 
-    private static final long serialVersionUID = 551259526;
+    private static final long serialVersionUID = 1836644654;
 
     /**
      * The reference instance of <code>public.activity</code>
@@ -67,7 +68,7 @@ public class JActivity extends TableImpl<JActivityRecord> {
     /**
      * The column <code>public.activity.created_at</code>.
      */
-    public final TableField<JActivityRecord, Timestamp> CREATED_AT = createField(DSL.name("created_at"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "");
+    public final TableField<JActivityRecord, Instant> CREATED_AT = createField(DSL.name("created_at"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "", new JooqInstantConverter());
 
     /**
      * The column <code>public.activity.action</code>.
@@ -222,7 +223,7 @@ public class JActivity extends TableImpl<JActivityRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row13<Long, Timestamp, String, String, String, Long, String, String, Long, JSONB, Long, String, String> fieldsRow() {
+    public Row13<Long, Instant, String, String, String, Long, String, String, Long, JSONB, Long, String, String> fieldsRow() {
         return (Row13) super.fieldsRow();
     }
 }

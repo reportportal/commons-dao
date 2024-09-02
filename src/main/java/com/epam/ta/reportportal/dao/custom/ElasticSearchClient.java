@@ -2,6 +2,7 @@ package com.epam.ta.reportportal.dao.custom;
 
 import com.epam.ta.reportportal.entity.log.LogMessage;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,13 +26,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+
 /**
  * Simple client to work with Elasticsearch.
  *
  * @author <a href="mailto:maksim_antonov@epam.com">Maksim Antonov</a>
  */
 @Service
-@ConditionalOnProperty(prefix = "rp.elasticsearch", name = "host")
+@ConditionalOnProperty(prefix = "rp.searchengine", name = "host")
 public class ElasticSearchClient {
 
   public static final String INDEX_PREFIX = "logs-reportportal-";
@@ -44,9 +49,9 @@ public class ElasticSearchClient {
   private final String host;
   private final RestTemplate restTemplate;
 
-  public ElasticSearchClient(@Value("${rp.elasticsearch.host}") String host,
-      @Value("${rp.elasticsearch.username:}") String username,
-      @Value("${rp.elasticsearch.password:}") String password) {
+  public ElasticSearchClient(@Value("${rp.searchengine.host}") String host,
+      @Value("${rp.searchengine.username:}") String username,
+      @Value("${rp.searchengine.password:}") String password) {
     restTemplate = new RestTemplate();
 
     if (!username.isEmpty() && !password.isEmpty()) {
@@ -187,7 +192,7 @@ public class ElasticSearchClient {
       if (org.apache.commons.collections.CollectionUtils.isNotEmpty(hits)) {
         for (LinkedHashMap<String, Object> hit : hits) {
           Map<String, Object> source = (Map<String, Object>) hit.get("_source");
-          Long testItemId = getLongValue(source.get("itemId"));
+          Long testItemId = ((Integer) source.get("itemId")).longValue();
           testItemIds.add(testItemId);
         }
 
@@ -249,11 +254,12 @@ public class ElasticSearchClient {
     } else {
       timestampString += "." + "0".repeat(6);
     }
-
-    return new LogMessage(getLongValue(source.get("id")),
-        LocalDateTime.parse(timestampString, DateTimeFormatter.ofPattern(ELASTIC_DATETIME_FORMAT)),
-        (String) source.get("message"), getLongValue(source.get("itemId")),
-        getLongValue(source.get("launchId")), projectId
+    var dateTime = LocalDateTime.parse(timestampString,
+            DateTimeFormatter.ofPattern(ELASTIC_DATETIME_FORMAT))
+        .toInstant(ZoneOffset.UTC);
+    return new LogMessage(((Integer) source.get("id")).longValue(), dateTime,
+        (String) source.get("message"), ((Integer) source.get("itemId")).longValue(),
+        ((Integer) source.get("launchId")).longValue(), projectId
     );
   }
 
@@ -357,16 +363,6 @@ public class ElasticSearchClient {
     headers.setContentType(MediaType.APPLICATION_JSON);
 
     return new HttpEntity<>(body, headers);
-  }
-
-  /**
-   * Returns long value through the string cast to avoid different types returned from text engine
-   *
-   * @param longVal Object from text engine response
-   * @return Long value
-   */
-  private Long getLongValue(Object longVal) {
-    return Long.valueOf(String.valueOf(longVal));
   }
 
 }

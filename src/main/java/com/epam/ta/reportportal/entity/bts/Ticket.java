@@ -16,13 +16,15 @@
 
 package com.epam.ta.reportportal.entity.bts;
 
+import com.epam.ta.reportportal.dao.converters.JpaInstantConverter;
 import com.epam.ta.reportportal.entity.item.issue.IssueEntity;
 import com.google.common.collect.Sets;
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Objects;
 import java.util.Set;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -50,7 +52,8 @@ public class Ticket implements Serializable {
   private String submitter;
 
   @Column(name = "submit_date")
-  private LocalDateTime submitDate;
+  @Convert(converter = JpaInstantConverter.class)
+  private Instant submitDate;
 
   @Column(name = "bts_url")
   private String btsUrl;
@@ -94,11 +97,11 @@ public class Ticket implements Serializable {
     this.submitter = submitter;
   }
 
-  public LocalDateTime getSubmitDate() {
+  public Instant getSubmitDate() {
     return submitDate;
   }
 
-  public void setSubmitDate(LocalDateTime submitDate) {
+  public void setSubmitDate(Instant submitDate) {
     this.submitDate = submitDate;
   }
 
@@ -151,11 +154,13 @@ public class Ticket implements Serializable {
       return false;
     }
     Ticket ticket = (Ticket) o;
-    return Objects.equals(ticketId, ticket.ticketId);
+    return Objects.equals(ticketId, ticket.ticketId) && Objects.equals(
+        btsProject, ticket.btsProject);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(ticketId);
+    return Objects.hash(ticketId, btsProject);
   }
 }
+

@@ -4,13 +4,14 @@
 package com.epam.ta.reportportal.jooq.tables;
 
 
+import com.epam.ta.reportportal.dao.converters.JooqInstantConverter;
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.epam.ta.reportportal.jooq.tables.records.JTestItemRecord;
 
-import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
@@ -44,7 +45,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JTestItem extends TableImpl<JTestItemRecord> {
 
-    private static final long serialVersionUID = 476122531;
+    private static final long serialVersionUID = 1074590849;
 
     /**
      * The reference instance of <code>public.test_item</code>
@@ -87,7 +88,7 @@ public class JTestItem extends TableImpl<JTestItemRecord> {
     /**
      * The column <code>public.test_item.start_time</code>.
      */
-    public final TableField<JTestItemRecord, Timestamp> START_TIME = createField(DSL.name("start_time"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "");
+    public final TableField<JTestItemRecord, Instant> START_TIME = createField(DSL.name("start_time"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "", new JooqInstantConverter());
 
     /**
      * The column <code>public.test_item.description</code>.
@@ -97,7 +98,7 @@ public class JTestItem extends TableImpl<JTestItemRecord> {
     /**
      * The column <code>public.test_item.last_modified</code>.
      */
-    public final TableField<JTestItemRecord, Timestamp> LAST_MODIFIED = createField(DSL.name("last_modified"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "");
+    public final TableField<JTestItemRecord, Instant> LAST_MODIFIED = createField(DSL.name("last_modified"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "", new JooqInstantConverter());
 
     /**
      * The column <code>public.test_item.path</code>.
@@ -255,7 +256,7 @@ public class JTestItem extends TableImpl<JTestItemRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row18<Long, String, String, String, JTestItemTypeEnum, Timestamp, String, Timestamp, Object, String, String, Boolean, Boolean, Boolean, Long, Long, Long, Integer> fieldsRow() {
+    public Row18<Long, String, String, String, JTestItemTypeEnum, Instant, String, Instant, Object, String, String, Boolean, Boolean, Boolean, Long, Long, Long, Integer> fieldsRow() {
         return (Row18) super.fieldsRow();
     }
 }

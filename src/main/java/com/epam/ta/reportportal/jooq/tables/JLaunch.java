@@ -4,14 +4,16 @@
 package com.epam.ta.reportportal.jooq.tables;
 
 
+import com.epam.ta.reportportal.dao.converters.JooqInstantConverter;
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
+import com.epam.ta.reportportal.jooq.enums.JRetentionPolicyEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.records.JLaunchRecord;
 
-import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
@@ -23,7 +25,7 @@ import org.jooq.Identity;
 import org.jooq.Index;
 import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row15;
+import org.jooq.Row16;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -45,7 +47,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JLaunch extends TableImpl<JLaunchRecord> {
 
-    private static final long serialVersionUID = 1513226778;
+    private static final long serialVersionUID = 1239960135;
 
     /**
      * The reference instance of <code>public.launch</code>
@@ -93,12 +95,12 @@ public class JLaunch extends TableImpl<JLaunchRecord> {
     /**
      * The column <code>public.launch.start_time</code>.
      */
-    public final TableField<JLaunchRecord, Timestamp> START_TIME = createField(DSL.name("start_time"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "");
+    public final TableField<JLaunchRecord, Instant> START_TIME = createField(DSL.name("start_time"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "", new JooqInstantConverter());
 
     /**
      * The column <code>public.launch.end_time</code>.
      */
-    public final TableField<JLaunchRecord, Timestamp> END_TIME = createField(DSL.name("end_time"), org.jooq.impl.SQLDataType.TIMESTAMP, this, "");
+    public final TableField<JLaunchRecord, Instant> END_TIME = createField(DSL.name("end_time"), org.jooq.impl.SQLDataType.TIMESTAMP, this, "", new JooqInstantConverter());
 
     /**
      * The column <code>public.launch.number</code>.
@@ -108,7 +110,7 @@ public class JLaunch extends TableImpl<JLaunchRecord> {
     /**
      * The column <code>public.launch.last_modified</code>.
      */
-    public final TableField<JLaunchRecord, Timestamp> LAST_MODIFIED = createField(DSL.name("last_modified"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "");
+    public final TableField<JLaunchRecord, Instant> LAST_MODIFIED = createField(DSL.name("last_modified"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "", new JooqInstantConverter());
 
     /**
      * The column <code>public.launch.mode</code>.
@@ -134,6 +136,11 @@ public class JLaunch extends TableImpl<JLaunchRecord> {
      * The column <code>public.launch.approximate_duration</code>.
      */
     public final TableField<JLaunchRecord, Double> APPROXIMATE_DURATION = createField(DSL.name("approximate_duration"), org.jooq.impl.SQLDataType.DOUBLE.defaultValue(org.jooq.impl.DSL.field("0.0", org.jooq.impl.SQLDataType.DOUBLE)), this, "");
+
+    /**
+     * The column <code>public.launch.retention_policy</code>.
+     */
+    public final TableField<JLaunchRecord, JRetentionPolicyEnum> RETENTION_POLICY = createField(DSL.name("retention_policy"), org.jooq.impl.SQLDataType.VARCHAR.defaultValue(org.jooq.impl.DSL.field("'REGULAR'::retention_policy_enum", org.jooq.impl.SQLDataType.VARCHAR)).asEnumDataType(com.epam.ta.reportportal.jooq.enums.JRetentionPolicyEnum.class), this, "");
 
     /**
      * Create a <code>public.launch</code> table reference
@@ -233,11 +240,11 @@ public class JLaunch extends TableImpl<JLaunchRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row15 type methods
+    // Row16 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row15<Long, String, Long, Long, String, String, Timestamp, Timestamp, Integer, Timestamp, JLaunchModeEnum, JStatusEnum, Boolean, Boolean, Double> fieldsRow() {
-        return (Row15) super.fieldsRow();
+    public Row16<Long, String, Long, Long, String, String, Instant, Instant, Integer, Instant, JLaunchModeEnum, JStatusEnum, Boolean, Boolean, Double, JRetentionPolicyEnum> fieldsRow() {
+        return (Row16) super.fieldsRow();
     }
 }

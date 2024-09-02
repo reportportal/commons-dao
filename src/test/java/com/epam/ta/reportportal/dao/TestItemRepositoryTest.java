@@ -49,6 +49,8 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.epam.reportportal.model.analyzer.IndexTestItem;
+import com.epam.reportportal.rules.exception.ErrorType;
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.ConvertibleCondition;
@@ -69,14 +71,12 @@ import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.statistics.Statistics;
-import com.epam.ta.reportportal.exception.ReportPortalException;
+import com.epam.reportportal.rules.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
-import com.epam.ta.reportportal.ws.model.ErrorType;
-import com.epam.ta.reportportal.ws.model.analyzer.IndexTestItem;
 import com.google.common.collect.Comparators;
 import java.time.Duration;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -606,7 +606,7 @@ class TestItemRepositoryTest extends BaseTest {
   void updateStatusAndEndTimeAndDurationById() {
 
     int result = testItemRepository.updateStatusAndEndTimeById(1L, JStatusEnum.CANCELLED,
-        LocalDateTime.now());
+        Instant.now());
 
     Assertions.assertEquals(1, result);
 
@@ -617,7 +617,7 @@ class TestItemRepositoryTest extends BaseTest {
   @Test
   void updateStatusAndEndTimeByRetryOfId() {
 
-    final LocalDateTime endTime = LocalDateTime.now();
+    final Instant endTime = Instant.now();
     int passedUpdated = testItemRepository.updateStatusAndEndTimeByRetryOfId(102L,
         JStatusEnum.PASSED, JStatusEnum.FAILED, endTime);
     int inProgressUpdated = testItemRepository.updateStatusAndEndTimeByRetryOfId(102L,
@@ -1257,7 +1257,7 @@ class TestItemRepositoryTest extends BaseTest {
   void saveItemWith700CharsParam() {
     String longParam = "pQJlVldHAf4vmEhm9PemBRGjHUCHixdkCfaSpzsPJKWUS29W0wygKgVjiuvu9xe3G4mBcUjjNeOUBqe1ZvM5A9GXYp15NcoVJDrgSBaIJoBdeZId2EEkxGKh0GrL7WMkCAZ36QlzA4JQg52sQgv2S9gdxCc0RteMuau1lxLdzvP8GqRldpvhsYHEBzKhhnes4KcmkLP20zV6nIIj7hdxGRZEPsqKI8vZWcX23P6FQxKtJN3OPVG8wxNekaCAD9e4aOV7XQhHgMk7mx3QCFK4u4KjQv5QF7BKUB4isQM1pMX0gysu6tj5Ss0eWI8Mg6JVb88bm61ByS08indxu7hqefBcLwL3CX6zTAEmeNn2c0BxI06RUFBwZxoa6durIomVhie4JwarzA5dB3qQ9H4UEH6lWqKO95FDH7yYH5CoMDdMCMXwoBnd8Fu61t9KIKrTk06IW1zSaPAPFq00bq2J2cEZk3ybaraMqaNepHX3huw4u7sYxCAXVZnb4COMkXwsFQ5V7ptCiuG4k7ZVgRg1vtQ7WmqbArL86tjGkUSh0f49wkcg2N6eYdBcGC1QNZZoGDQWJzIwydfnoRmGi4Utzt05erQeHa5XpKC05Iii6ZrT6Ib4sZ0QdhCUy8SEuKFxOzcGv7CRenv44Nhv0SdPjEuZ5BEKgAPkIuBknokoOgXAtdL7BFtMwu0IzH7U";
     TestItem item = new TestItem();
-    item.setStartTime(LocalDateTime.now());
+    item.setStartTime(Instant.now());
     item.setName("item");
     item.setPath("1.2.3");
     item.setUniqueId("uniqueID");
@@ -1281,7 +1281,7 @@ class TestItemRepositoryTest extends BaseTest {
   void saveItemWith700CharsTestCaseId() {
     String longParam = "pQJlVldHAf4vmEhm9PemBRGjHUCHixdkCfaSpzsPJKWUS29W0wygKgVjiuvu9xe3G4mBcUjjNeOUBqe1ZvM5A9GXYp15NcoVJDrgSBaIJoBdeZId2EEkxGKh0GrL7WMkCAZ36QlzA4JQg52sQgv2S9gdxCc0RteMuau1lxLdzvP8GqRldpvhsYHEBzKhhnes4KcmkLP20zV6nIIj7hdxGRZEPsqKI8vZWcX23P6FQxKtJN3OPVG8wxNekaCAD9e4aOV7XQhHgMk7mx3QCFK4u4KjQv5QF7BKUB4isQM1pMX0gysu6tj5Ss0eWI8Mg6JVb88bm61ByS08indxu7hqefBcLwL3CX6zTAEmeNn2c0BxI06RUFBwZxoa6durIomVhie4JwarzA5dB3qQ9H4UEH6lWqKO95FDH7yYH5CoMDdMCMXwoBnd8Fu61t9KIKrTk06IW1zSaPAPFq00bq2J2cEZk3ybaraMqaNepHX3huw4u7sYxCAXVZnb4COMkXwsFQ5V7ptCiuG4k7ZVgRg1vtQ7WmqbArL86tjGkUSh0f49wkcg2N6eYdBcGC1QNZZoGDQWJzIwydfnoRmGi4Utzt05erQeHa5XpKC05Iii6ZrT6Ib4sZ0QdhCUy8SEuKFxOzcGv7CRenv44Nhv0SdPjEuZ5BEKgAPkIuBknokoOgXAtdL7BFtMwu0IzH7U";
     TestItem item = new TestItem();
-    item.setStartTime(LocalDateTime.now());
+    item.setStartTime(Instant.now());
     item.setName("item");
     item.setPath("1.2.3");
     item.setUniqueId("uniqueID");

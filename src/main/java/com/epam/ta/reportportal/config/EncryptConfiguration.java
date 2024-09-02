@@ -16,22 +16,11 @@
 
 package com.epam.ta.reportportal.config;
 
-import static com.epam.ta.reportportal.binary.impl.DataStoreUtils.INTEGRATION_SECRETS_PATH;
-
+import com.epam.reportportal.rules.exception.ErrorType;
+import com.epam.reportportal.rules.exception.ReportPortalException;
 import com.epam.ta.reportportal.entity.enums.FeatureFlag;
-import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.filesystem.DataStore;
 import com.epam.ta.reportportal.util.FeatureFlagHandler;
-import com.epam.ta.reportportal.ws.model.ErrorType;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
-import java.security.SecureRandom;
-import java.util.Base64;
-import java.util.Optional;
 import org.apache.commons.io.IOUtils;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.jasypt.util.text.BasicTextEncryptor;
@@ -42,6 +31,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
+import java.security.SecureRandom;
+import java.util.Base64;
+import java.util.Optional;
+
+import static com.epam.ta.reportportal.binary.impl.DataStoreUtils.INTEGRATION_SECRETS_PATH;
 
 /**
  * Encrypt beans configuration for password values

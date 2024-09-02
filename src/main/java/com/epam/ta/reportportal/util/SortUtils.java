@@ -23,11 +23,12 @@ import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static org.jooq.impl.DSL.field;
 
+import com.epam.reportportal.rules.commons.validation.BusinessRule;
 import com.epam.ta.reportportal.commons.querygen.CriteriaHolder;
 import com.epam.ta.reportportal.commons.querygen.FilterTarget;
-import com.epam.ta.reportportal.commons.validation.BusinessRule;
-import com.epam.ta.reportportal.exception.ReportPortalException;
-import com.epam.ta.reportportal.ws.model.ErrorType;
+import com.epam.reportportal.rules.exception.ReportPortalException;
+
+import com.epam.reportportal.rules.exception.ErrorType;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;

@@ -16,32 +16,21 @@
 
 package com.epam.ta.reportportal.commons.querygen;
 
-import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.HAVING_CONDITION;
-
-import com.epam.ta.reportportal.commons.validation.BusinessRule;
-import com.epam.ta.reportportal.commons.validation.Suppliers;
+import com.epam.reportportal.rules.exception.ErrorType;
+import com.epam.reportportal.rules.commons.validation.BusinessRule;
+import com.epam.reportportal.rules.commons.validation.Suppliers;
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
-import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.collect.Lists;
-import java.io.Serializable;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.jooq.Operator;
+
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.HAVING_CONDITION;
 
 /**
  * Filter condition class for filters specifics

@@ -18,12 +18,13 @@ package com.epam.ta.reportportal.entity.filter;
 
 import static com.epam.ta.reportportal.commons.Predicates.isPresent;
 
-import com.epam.ta.reportportal.commons.validation.BusinessRule;
+import com.epam.reportportal.rules.commons.validation.BusinessRule;
 import com.epam.ta.reportportal.entity.activity.Activity;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
-import com.epam.ta.reportportal.ws.model.ErrorType;
+
+import com.epam.reportportal.rules.exception.ErrorType;
 import java.util.Arrays;
 import java.util.Optional;
 

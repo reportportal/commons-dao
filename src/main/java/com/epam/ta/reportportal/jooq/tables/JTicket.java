@@ -4,12 +4,13 @@
 package com.epam.ta.reportportal.jooq.tables;
 
 
+import com.epam.ta.reportportal.dao.converters.JooqInstantConverter;
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.records.JTicketRecord;
 
-import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
@@ -43,7 +44,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JTicket extends TableImpl<JTicketRecord> {
 
-    private static final long serialVersionUID = -119397332;
+    private static final long serialVersionUID = -914734476;
 
     /**
      * The reference instance of <code>public.ticket</code>
@@ -76,7 +77,7 @@ public class JTicket extends TableImpl<JTicketRecord> {
     /**
      * The column <code>public.ticket.submit_date</code>.
      */
-    public final TableField<JTicketRecord, Timestamp> SUBMIT_DATE = createField(DSL.name("submit_date"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "");
+    public final TableField<JTicketRecord, Instant> SUBMIT_DATE = createField(DSL.name("submit_date"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "", new JooqInstantConverter());
 
     /**
      * The column <code>public.ticket.bts_url</code>.
@@ -187,7 +188,7 @@ public class JTicket extends TableImpl<JTicketRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row8<Long, String, String, Timestamp, String, String, String, String> fieldsRow() {
+    public Row8<Long, String, String, Instant, String, String, String, String> fieldsRow() {
         return (Row8) super.fieldsRow();
     }
 }

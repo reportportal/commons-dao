@@ -32,7 +32,8 @@ import com.epam.ta.reportportal.entity.enums.ProjectAttributeEnum;
 import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectInfo;
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import org.apache.commons.collections4.CollectionUtils;
@@ -61,7 +62,7 @@ class ProjectRepositoryTest extends BaseTest {
     projects.getContent().forEach(project -> {
       assertNotNull(project.getId());
       assertTrue(CollectionUtils.isNotEmpty(project.getProjectAttributes()));
-      assertEquals(15, project.getProjectAttributes().size());
+      assertEquals(16, project.getProjectAttributes().size());
       assertTrue(project.getProjectAttributes()
           .stream()
           .anyMatch(pa -> ofNullable(pa.getValue()).isPresent() && pa.getAttribute()
@@ -165,8 +166,8 @@ class ProjectRepositoryTest extends BaseTest {
   @Test
   void deleteOneByTypeAndLastRunBefore() {
     int count = projectRepository.deleteByTypeAndLastLaunchRunBefore(ProjectType.UPSA,
-        LocalDateTime.now().minusDays(11), 1);
-    assertEquals(count, 1);
+        Instant.now().minus(10, ChronoUnit.DAYS), 1);
+    assertEquals(1, count);
     assertFalse(projectRepository.findById(100L).isPresent());
   }
 }

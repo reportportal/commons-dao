@@ -9,7 +9,8 @@ import java.util.Optional;
  * @author <a href="mailto:ivan_kustau@epam.com">Ivan Kustau</a>
  */
 public enum FeatureFlag {
-  SINGLE_BUCKET("singleBucket");
+  SINGLE_BUCKET("singleBucket"),
+  DEFAULT_LDAP_ENCODER("defaultLdapEncoder");
 
   private final String name;
 

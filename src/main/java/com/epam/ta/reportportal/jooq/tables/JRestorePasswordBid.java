@@ -4,12 +4,13 @@
 package com.epam.ta.reportportal.jooq.tables;
 
 
+import com.epam.ta.reportportal.dao.converters.JooqInstantConverter;
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.records.JRestorePasswordBidRecord;
 
-import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
@@ -42,7 +43,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JRestorePasswordBid extends TableImpl<JRestorePasswordBidRecord> {
 
-    private static final long serialVersionUID = -130391773;
+    private static final long serialVersionUID = 422602805;
 
     /**
      * The reference instance of <code>public.restore_password_bid</code>
@@ -65,7 +66,7 @@ public class JRestorePasswordBid extends TableImpl<JRestorePasswordBidRecord> {
     /**
      * The column <code>public.restore_password_bid.last_modified</code>.
      */
-    public final TableField<JRestorePasswordBidRecord, Timestamp> LAST_MODIFIED = createField(DSL.name("last_modified"), org.jooq.impl.SQLDataType.TIMESTAMP.defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "");
+    public final TableField<JRestorePasswordBidRecord, Instant> LAST_MODIFIED = createField(DSL.name("last_modified"), org.jooq.impl.SQLDataType.TIMESTAMP.defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "", new JooqInstantConverter());
 
     /**
      * The column <code>public.restore_password_bid.email</code>.
@@ -156,7 +157,7 @@ public class JRestorePasswordBid extends TableImpl<JRestorePasswordBidRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row3<String, Timestamp, String> fieldsRow() {
+    public Row3<String, Instant, String> fieldsRow() {
         return (Row3) super.fieldsRow();
     }
 }

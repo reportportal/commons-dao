@@ -16,20 +16,22 @@
 
 package com.epam.ta.reportportal.entity.user;
 
+import com.epam.ta.reportportal.dao.converters.JpaInstantConverter;
 import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.Modifiable;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.Instant;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -48,7 +50,8 @@ public class UserCreationBid implements Serializable, Modifiable {
 
   @LastModifiedDate
   @Column(name = LAST_MODIFIED)
-  private Date lastModified;
+  @Convert(converter = JpaInstantConverter.class)
+  private Instant lastModified;
 
   @Column(name = "email")
   private String email;
@@ -100,11 +103,11 @@ public class UserCreationBid implements Serializable, Modifiable {
   }
 
   @Override
-  public Date getLastModified() {
+  public Instant getLastModified() {
     return lastModified;
   }
 
-	public void setLastModified(Date lastModified) {
+	public void setLastModified(Instant lastModified) {
 		this.lastModified = lastModified;
 	}
 

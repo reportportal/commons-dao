@@ -34,6 +34,7 @@ import static com.epam.ta.reportportal.jooq.Tables.FILTER_SORT;
 import static com.epam.ta.reportportal.jooq.Tables.INTEGRATION;
 import static com.epam.ta.reportportal.jooq.Tables.LAUNCH;
 import static com.epam.ta.reportportal.jooq.Tables.LOG;
+import static com.epam.ta.reportportal.jooq.Tables.OWNED_ENTITY;
 import static com.epam.ta.reportportal.jooq.Tables.PARAMETER;
 import static com.epam.ta.reportportal.jooq.Tables.PROJECT_ATTRIBUTE;
 import static com.epam.ta.reportportal.jooq.tables.JProject.PROJECT;
@@ -42,6 +43,8 @@ import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
 import static java.util.Optional.ofNullable;
 
+import com.epam.reportportal.rules.exception.ErrorType;
+import com.epam.reportportal.rules.exception.ReportPortalException;
 import com.epam.ta.reportportal.commons.ReportPortalUser;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.entity.activity.Activity;
@@ -62,30 +65,20 @@ import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.entity.user.UserRole;
 import com.epam.ta.reportportal.entity.widget.Widget;
-import com.epam.ta.reportportal.exception.ReportPortalException;
-import com.epam.ta.reportportal.ws.model.ErrorType;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
 import org.jooq.Record;
 import org.jooq.Result;
 import org.springframework.data.domain.Sort;
 import org.springframework.util.CollectionUtils;
-
-import java.util.*;
-import java.util.function.Function;
-
-import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.PAGE_NUMBER;
-import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.TYPE;
-import static com.epam.ta.reportportal.dao.constant.LogRepositoryConstants.LOG_LEVEL;
-import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ID;
-import static com.epam.ta.reportportal.dao.util.RecordMappers.*;
-import static com.epam.ta.reportportal.jooq.Tables.*;
-import static com.epam.ta.reportportal.jooq.tables.JProject.PROJECT;
-import static com.epam.ta.reportportal.jooq.tables.JProjectUser.PROJECT_USER;
-import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
-import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
-import static java.util.Optional.ofNullable;
 
 /**
  * Fetches results from db by JOOQ queries into Java objects.
@@ -181,6 +174,26 @@ public class ResultFetchers {
   /**
    * Fetches records from db results into list of {@link TestItem} objects.
    */
+  public static final Function<Result<? extends Record>, List<TestItem>> TEST_ITEM_CLIPPED_FETCHER = records -> {
+    Map<Long, TestItem> testItems = Maps.newLinkedHashMap();
+    records.forEach(record -> {
+      Long id = record.get(TEST_ITEM.ITEM_ID);
+      TestItem testItem;
+      if (!testItems.containsKey(id)) {
+        testItem = RecordMappers.TEST_ITEM_RECORD_MAPPER.map(record);
+      } else {
+        testItem = testItems.get(id);
+      }
+      testItem.getItemResults().getStatistics()
+          .add(RecordMappers.STATISTICS_RECORD_MAPPER.map(record));
+      testItems.put(id, testItem);
+    });
+    return new ArrayList<>(testItems.values());
+  };
+
+  /**
+   * Fetches records from db results into list of {@link TestItem} objects.
+   */
   public static final Function<Result<? extends Record>, List<TestItem>> TEST_ITEM_RETRY_FETCHER = records -> {
     Map<Long, TestItem> testItems = Maps.newLinkedHashMap();
     records.forEach(record -> {
@@ -228,8 +241,8 @@ public class ResultFetchers {
   };
 
   /**
-   * Fetches records from db results into list of
-   * {@link com.epam.ta.reportportal.entity.integration.Integration} objects.
+   * Fetches records from db results into list of {@link com.epam.ta.reportportal.entity.integration.Integration}
+   * objects.
    */
   public static final Function<Result<? extends Record>, List<Integration>> INTEGRATION_FETCHER = records -> {
     Map<Integer, Integration> integrations = Maps.newLinkedHashMap();

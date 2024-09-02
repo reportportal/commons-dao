@@ -17,7 +17,6 @@
 
 package com.epam.ta.reportportal.dao.util;
 
-import static com.epam.ta.reportportal.commons.EntityUtils.TO_DATE;
 import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.STATISTICS_KEY;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_END_TIME;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAST_MODIFIED;
@@ -29,6 +28,7 @@ import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConst
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.CRITERIA;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.DELTA;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.EXECUTIONS_PASSED;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.EXECUTIONS_SKIPPED;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.EXECUTIONS_TOTAL;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.FILTER_NAME;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.FLAKY_COUNT;
@@ -65,9 +65,11 @@ import static com.epam.ta.reportportal.jooq.tables.JTicket.TICKET;
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
 import static java.util.Optional.ofNullable;
 
+import com.epam.reportportal.model.ActivityResource;
 import com.epam.ta.reportportal.commons.querygen.CriteriaHolder;
 import com.epam.ta.reportportal.commons.querygen.FilterTarget;
 import com.epam.ta.reportportal.entity.activity.ActivityDetails;
+import com.epam.ta.reportportal.entity.item.ItemAttributePojo;
 import com.epam.ta.reportportal.entity.widget.content.ChartStatisticsContent;
 import com.epam.ta.reportportal.entity.widget.content.CriteriaHistoryItem;
 import com.epam.ta.reportportal.entity.widget.content.CumulativeTrendChartContent;
@@ -82,11 +84,11 @@ import com.epam.ta.reportportal.entity.widget.content.ProductStatusStatisticsCon
 import com.epam.ta.reportportal.entity.widget.content.TopPatternTemplatesContent;
 import com.epam.ta.reportportal.entity.widget.content.UniqueBugContent;
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.ComponentHealthCheckContent;
+import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableGetParams;
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableStatisticsContent;
-import com.epam.ta.reportportal.exception.ReportPortalException;
-import com.epam.ta.reportportal.ws.model.ActivityResource;
-import com.epam.ta.reportportal.ws.model.ErrorType;
-import com.epam.ta.reportportal.ws.model.attribute.ItemAttributeResource;
+import com.epam.reportportal.rules.exception.ReportPortalException;
+
+import com.epam.reportportal.rules.exception.ErrorType;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -98,11 +100,10 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -205,7 +206,7 @@ public class WidgetContentUtil {
 				content.setName(record.get(DSL.field(LAUNCH.NAME.getQualifiedName().toString()), String.class));
 				content.setNumber(record.get(DSL.field(LAUNCH.NUMBER.getQualifiedName().toString()), Integer.class));
 
-				startTimeField.ifPresent(f -> content.setStartTime(record.get(f, Timestamp.class)));
+				startTimeField.ifPresent(f -> content.setStartTime(record.get(f, Instant.class)));
 			}
 
 			statisticsField.flatMap(sf -> ofNullable(record.get(sf, String.class)))
@@ -223,13 +224,13 @@ public class WidgetContentUtil {
 			});
 
 			itemAttributeIdField.flatMap(f -> ofNullable(record.get(f))).ifPresent(id -> {
-				Set<ItemAttributeResource> attributes = ofNullable(content.getAttributes()).orElseGet(Sets::newLinkedHashSet);
+				Set<ItemAttributePojo> attributes = ofNullable(content.getAttributes()).orElseGet(Sets::newLinkedHashSet);
 
-				ItemAttributeResource attributeResource = new ItemAttributeResource();
-				attributeResource.setKey(record.get(ITEM_ATTRIBUTE.KEY));
-				attributeResource.setValue(record.get(ITEM_ATTRIBUTE.VALUE));
+				ItemAttributePojo itemAttribute = new ItemAttributePojo();
+				itemAttribute.setKey(record.get(ITEM_ATTRIBUTE.KEY));
+				itemAttribute.setValue(record.get(ITEM_ATTRIBUTE.VALUE));
 
-				attributes.add(attributeResource);
+				attributes.add(itemAttribute);
 
 				content.setAttributes(attributes);
 			});
@@ -251,8 +252,7 @@ public class WidgetContentUtil {
 		activityResource.setActionType(r.get(ACTIVITY.EVENT_NAME));
 		activityResource.setObjectType(r.get(ACTIVITY.OBJECT_TYPE));
 		activityResource.setObjectName(r.get(ACTIVITY.OBJECT_NAME));
-		activityResource.setLastModified(
-				TO_DATE.apply(r.get(ACTIVITY.CREATED_AT, LocalDateTime.class)));
+		activityResource.setLastModified(r.get(ACTIVITY.CREATED_AT, Instant.class));
 		activityResource.setLoggedObjectId(r.get(ACTIVITY.OBJECT_ID));
 		String detailsJson = r.get(ACTIVITY.DETAILS, String.class);
 		ofNullable(detailsJson).ifPresent(s -> {
@@ -315,7 +315,7 @@ public class WidgetContentUtil {
 			}
 
 			ProductStatusStatisticsContent content = PRODUCT_STATUS_WITHOUT_ATTRIBUTES_MAPPER.apply(productStatusMapping, record);
-			startTimeField.ifPresent(f -> content.setStartTime(record.get(f, Timestamp.class)));
+			startTimeField.ifPresent(f -> content.setStartTime(record.get(f, Instant.class)));
 			statusField.ifPresent(f -> content.setStatus(record.get(f, String.class)));
 			if (attributeField.isPresent()) {
 				String attributeKey = record.get(fieldName(ATTR_TABLE, ATTRIBUTE_KEY), String.class);
@@ -345,7 +345,7 @@ public class WidgetContentUtil {
 
 		result.forEach(record -> {
 			ProductStatusStatisticsContent content = PRODUCT_STATUS_WITHOUT_ATTRIBUTES_MAPPER.apply(productStatusMapping, record);
-			startTimeField.ifPresent(f -> content.setStartTime(record.get(f, Timestamp.class)));
+			startTimeField.ifPresent(f -> content.setStartTime(record.get(f, Instant.class)));
 			statusField.ifPresent(f -> content.setStatus(record.get(f, String.class)));
 			if (attributeField.isPresent()) {
 				String attributeKey = record.get(fieldName(ATTR_TABLE, ATTRIBUTE_KEY), String.class);
@@ -361,13 +361,13 @@ public class WidgetContentUtil {
 		return new ArrayList<>(productStatusMapping.values());
 	};
 
-	public static final RecordMapper<Record, Optional<ItemAttributeResource>> ITEM_ATTRIBUTE_RESOURCE_MAPPER = record -> {
+	public static final RecordMapper<Record, Optional<ItemAttributePojo>> ITEM_ATTRIBUTE_RESOURCE_MAPPER = record -> {
 
 		String key = record.get(fieldName(ITEM_ATTRIBUTES, KEY), String.class);
 		String value = record.get(fieldName(ITEM_ATTRIBUTES, VALUE), String.class);
 
 		if (key != null || value != null) {
-			return Optional.of(new ItemAttributeResource(key, value));
+			return Optional.of(new ItemAttributePojo(key, value));
 		} else {
 			return Optional.empty();
 		}
@@ -376,7 +376,7 @@ public class WidgetContentUtil {
 	private static final RecordMapper<Record, UniqueBugContent> UNIQUE_BUG_CONTENT_RECORD_MAPPER = record -> {
 		UniqueBugContent uniqueBugContent = new UniqueBugContent();
 		uniqueBugContent.setUrl(record.get(TICKET.URL));
-		uniqueBugContent.setSubmitDate(record.get(TICKET.SUBMIT_DATE));
+		uniqueBugContent.setSubmitDate(record.get(TICKET.SUBMIT_DATE, Instant.class));
 		uniqueBugContent.setSubmitter(record.get(TICKET.SUBMITTER));
 		return uniqueBugContent;
 	};
@@ -484,7 +484,7 @@ public class WidgetContentUtil {
 				entry.setTotal(record.get(DSL.field(fieldName(TOTAL)), Long.class));
 				entry.setItemName(record.get(DSL.field(fieldName(ITEM_NAME)), String.class));
 				entry.setUniqueId(record.get(DSL.field(fieldName(UNIQUE_ID)), String.class));
-				entry.setStartTime(Collections.singletonList(record.get(DSL.field(fieldName(START_TIME_HISTORY)), Date.class)));
+				entry.setStartTime(Collections.singletonList(record.get(DSL.field(fieldName(START_TIME_HISTORY)), Instant.class)));
 				return entry;
 			})
 			.collect(Collectors.toList());
@@ -497,7 +497,7 @@ public class WidgetContentUtil {
 				entry.setTotal(record.get(DSL.field(fieldName(TOTAL)), Long.class));
 				entry.setName(record.get(TEST_ITEM.NAME));
 				entry.setUniqueId(record.get(TEST_ITEM.UNIQUE_ID));
-				entry.setStartTime(Collections.singletonList(record.get(DSL.field(fieldName(START_TIME_HISTORY)), Date.class)));
+				entry.setStartTime(Collections.singletonList(record.get(DSL.field(fieldName(START_TIME_HISTORY)), Instant.class)));
 				return entry;
 			})
 			.collect(Collectors.toList());
@@ -605,34 +605,36 @@ public class WidgetContentUtil {
 			})
 			.collect(Collectors.toList());
 
-	public static final Function<Result<? extends Record>, Map<String, HealthCheckTableStatisticsContent>> COMPONENT_HEALTH_CHECK_TABLE_STATS_FETCHER = result -> {
+  public static final BiFunction<Result<? extends Record>, HealthCheckTableGetParams,
+      Map<String, HealthCheckTableStatisticsContent>> COMPONENT_HEALTH_CHECK_TABLE_STATS_FETCHER =
+      (result, params) -> {
+        Map<String, HealthCheckTableStatisticsContent> resultMap = new LinkedHashMap<>();
 
-		Map<String, HealthCheckTableStatisticsContent> resultMap = new LinkedHashMap<>();
+        result.forEach(record -> {
+          String attributeValue = record.get(fieldName(VALUE), String.class);
+          String statisticsField = record.get(STATISTICS_FIELD.NAME, String.class);
+          Integer counter = record.get(fieldName(SUM), Integer.class);
 
-		result.forEach(record -> {
-			String attributeValue = record.get(fieldName(VALUE), String.class);
-			String statisticsField = record.get(STATISTICS_FIELD.NAME, String.class);
-			Integer counter = record.get(fieldName(SUM), Integer.class);
+          HealthCheckTableStatisticsContent content;
+          if (resultMap.containsKey(attributeValue)) {
+            content = resultMap.get(attributeValue);
+          } else {
+            content = new HealthCheckTableStatisticsContent();
+            resultMap.put(attributeValue, content);
+          }
+          content.getStatistics().put(statisticsField, counter);
 
-			HealthCheckTableStatisticsContent content;
-			if (resultMap.containsKey(attributeValue)) {
-				content = resultMap.get(attributeValue);
-			} else {
-				content = new HealthCheckTableStatisticsContent();
-				resultMap.put(attributeValue, content);
-			}
-			content.getStatistics().put(statisticsField, counter);
+        });
 
-		});
+        resultMap.forEach((key, content) -> {
+          double passingRate = 100.0 * content.getStatistics().getOrDefault(EXECUTIONS_PASSED, 0) /
+              content.getStatistics().getOrDefault(EXECUTIONS_TOTAL, 1);
+          content.setPassingRate(BigDecimal.valueOf(passingRate)
+              .setScale(2, RoundingMode.HALF_UP).doubleValue());
+        });
 
-		resultMap.forEach((key, content) -> {
-			double passingRate = 100.0 * content.getStatistics().getOrDefault(EXECUTIONS_PASSED, 0) / content.getStatistics()
-					.getOrDefault(EXECUTIONS_TOTAL, 1);
-			content.setPassingRate(new BigDecimal(passingRate).setScale(2, RoundingMode.HALF_UP).doubleValue());
-		});
-
-		return resultMap;
-	};
+        return resultMap;
+      };
 
 	public static final Function<Result<? extends Record>, Map<String, List<String>>> COMPONENT_HEALTH_CHECK_TABLE_COLUMN_FETCHER = result -> {
 
@@ -645,5 +647,17 @@ public class WidgetContentUtil {
 		));
 		return resultMap;
 	};
+
+  private static HealthCheckTableStatisticsContent excludeSkippedTests(
+      HealthCheckTableGetParams params, HealthCheckTableStatisticsContent content) {
+    if (params.isExcludeSkippedTests() && content.getStatistics().containsKey(EXECUTIONS_SKIPPED)) {
+      int newTotal = content.getStatistics().getOrDefault(EXECUTIONS_TOTAL, 1) -
+          content.getStatistics().getOrDefault(EXECUTIONS_SKIPPED, 0);
+
+      content.getStatistics().remove(EXECUTIONS_SKIPPED);
+      content.getStatistics().put(EXECUTIONS_TOTAL, newTotal);
+    }
+    return content;
+  }
 
 }

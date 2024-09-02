@@ -16,11 +16,13 @@
 
 package com.epam.ta.reportportal.entity.user;
 
+import com.epam.ta.reportportal.dao.converters.JpaInstantConverter;
 import com.epam.ta.reportportal.entity.Modifiable;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.Instant;
 import java.util.Objects;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -43,7 +45,8 @@ public class RestorePasswordBid implements Serializable, Modifiable {
 
   @LastModifiedDate
   @Column(name = LAST_MODIFIED)
-  private Date lastModifiedDate;
+  @Convert(converter = JpaInstantConverter.class)
+  private Instant lastModifiedDate;
 
   @Column(name = "email")
   private String email;
@@ -57,11 +60,11 @@ public class RestorePasswordBid implements Serializable, Modifiable {
   }
 
   @Override
-  public Date getLastModified() {
+  public Instant getLastModified() {
     return lastModifiedDate;
   }
 
-  public void setLastModifiedDate(Date lastModifiedDate) {
+  public void setLastModifiedDate(Instant lastModifiedDate) {
     this.lastModifiedDate = lastModifiedDate;
   }
 

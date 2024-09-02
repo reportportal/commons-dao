@@ -4,12 +4,13 @@
 package com.epam.ta.reportportal.jooq.tables;
 
 
+import com.epam.ta.reportportal.dao.converters.JooqInstantConverter;
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.records.JLogRecord;
 
-import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
@@ -43,7 +44,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JLog extends TableImpl<JLogRecord> {
 
-    private static final long serialVersionUID = -198837446;
+    private static final long serialVersionUID = -540189389;
 
     /**
      * The reference instance of <code>public.log</code>
@@ -71,7 +72,7 @@ public class JLog extends TableImpl<JLogRecord> {
     /**
      * The column <code>public.log.log_time</code>.
      */
-    public final TableField<JLogRecord, Timestamp> LOG_TIME = createField(DSL.name("log_time"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "");
+    public final TableField<JLogRecord, Instant> LOG_TIME = createField(DSL.name("log_time"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "", new JooqInstantConverter());
 
     /**
      * The column <code>public.log.log_message</code>.
@@ -91,7 +92,7 @@ public class JLog extends TableImpl<JLogRecord> {
     /**
      * The column <code>public.log.last_modified</code>.
      */
-    public final TableField<JLogRecord, Timestamp> LAST_MODIFIED = createField(DSL.name("last_modified"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "");
+    public final TableField<JLogRecord, Instant> LAST_MODIFIED = createField(DSL.name("last_modified"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "", new JooqInstantConverter());
 
     /**
      * The column <code>public.log.log_level</code>.
@@ -153,7 +154,7 @@ public class JLog extends TableImpl<JLogRecord> {
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.LOG_ATTACH_ID_IDX, Indexes.LOG_CLUSTER_IDX, Indexes.LOG_LAUNCH_ID_IDX, Indexes.LOG_MESSAGE_TRGM_IDX, Indexes.LOG_PK, Indexes.LOG_PROJECT_ID_LOG_TIME_IDX, Indexes.LOG_PROJECT_IDX, Indexes.LOG_TI_IDX);
+        return Arrays.<Index>asList(Indexes.LOG_ATTACH_ID_IDX, Indexes.LOG_CLUSTER_IDX, Indexes.LOG_LAUNCH_ID_IDX, Indexes.LOG_PK, Indexes.LOG_PROJECT_ID_LOG_TIME_IDX, Indexes.LOG_PROJECT_IDX, Indexes.LOG_TI_IDX);
     }
 
     @Override
@@ -219,7 +220,7 @@ public class JLog extends TableImpl<JLogRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row11<Long, String, Timestamp, String, Long, Long, Timestamp, Integer, Long, Long, Long> fieldsRow() {
+    public Row11<Long, String, Instant, String, Long, Long, Instant, Integer, Long, Long, Long> fieldsRow() {
         return (Row11) super.fieldsRow();
     }
 }

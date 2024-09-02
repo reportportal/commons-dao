@@ -47,6 +47,9 @@ import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static org.jooq.impl.DSL.field;
 
+import com.epam.reportportal.model.analyzer.IndexLog;
+import com.epam.reportportal.rules.exception.ErrorType;
+import com.epam.reportportal.rules.exception.ReportPortalException;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
@@ -57,16 +60,13 @@ import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.NestedItem;
 import com.epam.ta.reportportal.entity.item.NestedItemPage;
 import com.epam.ta.reportportal.entity.log.Log;
-import com.epam.ta.reportportal.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
-import com.epam.ta.reportportal.ws.model.ErrorType;
-import com.epam.ta.reportportal.ws.model.analyzer.IndexLog;
 import com.google.common.collect.Lists;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.sql.Timestamp;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -331,7 +331,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
         .on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
         .where(TEST_ITEM.LAUNCH_ID.eq(launchId))
         .and(TEST_ITEM_RESULTS.STATUS.in(jStatuses))
-        .and(LOG.LOG_TIME.gt(TimestampUtils.getTimestampBackFromNow(period)))
+        .and(LOG.LOG_TIME.gt(TimestampUtils.getInstantBackFromNow(period)))
         .limit(1));
   }
 
@@ -340,7 +340,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 
     return dsl.deleteFrom(LOG)
         .where(LOG.ITEM_ID.in(testItemIds)
-            .and(LOG.LOG_TIME.lt(TimestampUtils.getTimestampBackFromNow(period))))
+            .and(LOG.LOG_TIME.lt(TimestampUtils.getInstantBackFromNow(period))))
         .execute();
   }
 
@@ -348,7 +348,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
   public int deleteByPeriodAndLaunchIds(Duration period, Collection<Long> launchIds) {
     return dsl.deleteFrom(LOG)
         .where(LOG.LAUNCH_ID.in(launchIds)
-            .and(LOG.LOG_TIME.lt(TimestampUtils.getTimestampBackFromNow(period))))
+            .and(LOG.LOG_TIME.lt(TimestampUtils.getInstantBackFromNow(period))))
         .execute();
   }
 
@@ -365,7 +365,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
         .map(order -> field(TIME).sort(SortOrder.DESC))
         .orElseGet(() -> field(TIME).sort(SortOrder.ASC));
 
-    SelectOrderByStep<Record4<Long, Timestamp, String, Integer>> selectQuery = buildNestedStepQuery(
+    SelectOrderByStep<Record4<Long, Instant, String, Integer>> selectQuery = buildNestedStepQuery(
         parentId, excludeEmptySteps, filter);
 
     if (!excludeLogs) {
@@ -395,7 +395,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
         .map(order -> field(TIME).sort(SortOrder.DESC))
         .orElseGet(() -> field(TIME).sort(SortOrder.ASC));
 
-    SelectOrderByStep<Record4<Long, Timestamp, String, Integer>> selectQuery = buildNestedStepQuery(
+    SelectOrderByStep<Record4<Long, Instant, String, Integer>> selectQuery = buildNestedStepQuery(
         parentId, excludeEmptySteps, filter);
 
     if (!excludeLogs) {
@@ -491,11 +491,11 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
         .and(parentItemTable.ITEM_ID.in(itemIds));
   }
 
-  private SelectHavingStep<Record4<Long, Timestamp, String, Integer>> buildNestedStepQuery(
+  private SelectHavingStep<Record4<Long, Instant, String, Integer>> buildNestedStepQuery(
       Long parentId, boolean excludeEmptySteps,
       Queryable filter) {
 
-    SelectConditionStep<Record4<Long, Timestamp, String, Integer>> nestedStepSelect = dsl.select(
+    SelectConditionStep<Record4<Long, Instant, String, Integer>> nestedStepSelect = dsl.select(
             TEST_ITEM.ITEM_ID.as(ID),
             TEST_ITEM.START_TIME.as(TIME),
             DSL.val(ITEM).as(TYPE),
@@ -534,7 +534,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
     return nestedStepSelect.groupBy(TEST_ITEM.ITEM_ID);
   }
 
-  private SelectOnConditionStep<Record4<Long, Timestamp, String, Integer>> buildNestedLogQuery(
+  private SelectOnConditionStep<Record4<Long, Instant, String, Integer>> buildNestedLogQuery(
       Long parentId, Queryable filter) {
 
     Queryable logFilter = filter.getFilterConditions()

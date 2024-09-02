@@ -4,12 +4,13 @@
 package com.epam.ta.reportportal.jooq.tables;
 
 
+import com.epam.ta.reportportal.dao.converters.JooqInstantConverter;
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.records.JDashboardRecord;
 
-import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
@@ -42,7 +43,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JDashboard extends TableImpl<JDashboardRecord> {
 
-    private static final long serialVersionUID = 205291374;
+    private static final long serialVersionUID = 1541902098;
 
     /**
      * The reference instance of <code>public.dashboard</code>
@@ -75,7 +76,7 @@ public class JDashboard extends TableImpl<JDashboardRecord> {
     /**
      * The column <code>public.dashboard.creation_date</code>.
      */
-    public final TableField<JDashboardRecord, Timestamp> CREATION_DATE = createField(DSL.name("creation_date"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "");
+    public final TableField<JDashboardRecord, Instant> CREATION_DATE = createField(DSL.name("creation_date"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "", new JooqInstantConverter());
 
     /**
      * Create a <code>public.dashboard</code> table reference
@@ -170,7 +171,7 @@ public class JDashboard extends TableImpl<JDashboardRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row4<Long, String, String, Timestamp> fieldsRow() {
+    public Row4<Long, String, String, Instant> fieldsRow() {
         return (Row4) super.fieldsRow();
     }
 }

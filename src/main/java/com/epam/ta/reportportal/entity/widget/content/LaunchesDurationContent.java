@@ -19,9 +19,11 @@ package com.epam.ta.reportportal.entity.widget.content;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.DURATION;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.END_TIME;
 
+import com.epam.ta.reportportal.dao.converters.JpaInstantConverter;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.sql.Timestamp;
+import java.time.Instant;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 
 /**
  * @author Ivan Budayeu
@@ -34,7 +36,8 @@ public class LaunchesDurationContent extends AbstractLaunchStatisticsContent {
 
   @Column(name = "end_time")
   @JsonProperty(value = END_TIME)
-  private Timestamp endTime;
+  @Convert(converter = JpaInstantConverter.class)
+  private Instant endTime;
 
   @Column(name = "duration")
   @JsonProperty(value = DURATION)
@@ -48,11 +51,11 @@ public class LaunchesDurationContent extends AbstractLaunchStatisticsContent {
     this.status = status;
   }
 
-  public Timestamp getEndTime() {
+  public Instant getEndTime() {
     return endTime;
   }
 
-  public void setEndTime(Timestamp endTime) {
+  public void setEndTime(Instant endTime) {
     this.endTime = endTime;
   }
 

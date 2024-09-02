@@ -16,10 +16,12 @@
 
 package com.epam.ta.reportportal.entity.integration;
 
+import com.epam.ta.reportportal.dao.converters.JpaInstantConverter;
 import com.epam.ta.reportportal.entity.project.Project;
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
@@ -73,10 +75,11 @@ public class Integration implements Serializable {
 
   @CreatedDate
   @Column(name = "creation_date")
-  private LocalDateTime creationDate;
+  @Convert(converter = JpaInstantConverter.class)
+  private Instant creationDate;
 
   public Integration(Long id, Project project, IntegrationType type, IntegrationParams params,
-      LocalDateTime creationDate) {
+      Instant creationDate) {
     this.id = id;
     this.project = project;
     this.type = type;
@@ -135,11 +138,11 @@ public class Integration implements Serializable {
     this.creator = creator;
   }
 
-  public LocalDateTime getCreationDate() {
+  public Instant getCreationDate() {
     return creationDate;
   }
 
-  public void setCreationDate(LocalDateTime creationDate) {
+  public void setCreationDate(Instant creationDate) {
     this.creationDate = creationDate;
   }
 

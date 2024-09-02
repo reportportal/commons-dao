@@ -6,8 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.entity.materialized.StaleMaterializedView;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.Instant;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +24,7 @@ class StaleMaterializedViewRepositoryTest extends BaseTest {
 
     final StaleMaterializedView staleMaterializedView = new StaleMaterializedView();
     staleMaterializedView.setName("test");
-    staleMaterializedView.setCreationDate(LocalDateTime.now(ZoneOffset.UTC));
+    staleMaterializedView.setCreationDate(Instant.now());
 
     final StaleMaterializedView result = staleMaterializedViewRepository.insert(
         staleMaterializedView);

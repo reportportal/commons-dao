@@ -4,12 +4,13 @@
 package com.epam.ta.reportportal.jooq.tables;
 
 
+import com.epam.ta.reportportal.dao.converters.JooqInstantConverter;
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.records.JShedlockRecord;
 
-import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
@@ -42,7 +43,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JShedlock extends TableImpl<JShedlockRecord> {
 
-    private static final long serialVersionUID = 1429877320;
+    private static final long serialVersionUID = -2077089538;
 
     /**
      * The reference instance of <code>public.shedlock</code>
@@ -65,12 +66,12 @@ public class JShedlock extends TableImpl<JShedlockRecord> {
     /**
      * The column <code>public.shedlock.lock_until</code>.
      */
-    public final TableField<JShedlockRecord, Timestamp> LOCK_UNTIL = createField(DSL.name("lock_until"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "");
+    public final TableField<JShedlockRecord, Instant> LOCK_UNTIL = createField(DSL.name("lock_until"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "", new JooqInstantConverter());
 
     /**
      * The column <code>public.shedlock.locked_at</code>.
      */
-    public final TableField<JShedlockRecord, Timestamp> LOCKED_AT = createField(DSL.name("locked_at"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "");
+    public final TableField<JShedlockRecord, Instant> LOCKED_AT = createField(DSL.name("locked_at"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "", new JooqInstantConverter());
 
     /**
      * The column <code>public.shedlock.locked_by</code>.
@@ -161,7 +162,7 @@ public class JShedlock extends TableImpl<JShedlockRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row4<String, Timestamp, Timestamp, String> fieldsRow() {
+    public Row4<String, Instant, Instant, String> fieldsRow() {
         return (Row4) super.fieldsRow();
     }
 }

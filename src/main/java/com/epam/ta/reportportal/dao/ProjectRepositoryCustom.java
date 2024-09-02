@@ -22,7 +22,7 @@ import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectAttribute;
 import com.epam.ta.reportportal.entity.project.ProjectInfo;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -92,5 +92,5 @@ public interface ProjectRepositoryCustom extends FilterableRepository<Project> {
    * @param limit
    * @return number of deleted projects
    */
-  int deleteByTypeAndLastLaunchRunBefore(ProjectType projectType, LocalDateTime bound, int limit);
+  int deleteByTypeAndLastLaunchRunBefore(ProjectType projectType, Instant bound, int limit);
 }

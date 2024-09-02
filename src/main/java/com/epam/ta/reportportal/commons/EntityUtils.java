@@ -20,6 +20,8 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.Optional.ofNullable;
 
 import com.google.common.base.Preconditions;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
@@ -38,9 +40,21 @@ public class EntityUtils {
       date).map(d -> LocalDateTime.ofInstant(d.toInstant(),
       ZoneOffset.UTC
   )).orElse(null);
+
   public static final Function<LocalDateTime, Date> TO_DATE = localDateTime -> ofNullable(
       localDateTime).map(l -> Date.from(l.atZone(
       ZoneOffset.UTC).toInstant())).orElse(null);
+
+  public static final Function<Instant, LocalDateTime> INSTANT_TO_LDT = instant ->
+      ofNullable(instant)
+          .map(i -> i.atZone(ZoneOffset.UTC).toLocalDateTime())
+          .orElse(null);
+
+  public static final Function<Instant, Timestamp> INSTANT_TO_TIMESTAMP = instant ->
+      ofNullable(instant)
+          .map(i -> i.atZone(ZoneOffset.UTC).toLocalDateTime())
+          .map(Timestamp::valueOf)
+          .orElse(null);
   /**
    * Remove leading and trailing spaces from list of string
    */

@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.entity.project;
 
+import com.epam.ta.reportportal.dao.converters.JpaInstantConverter;
 import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.integration.Integration;
@@ -24,11 +25,12 @@ import com.epam.ta.reportportal.entity.project.email.SenderCase;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.google.common.collect.Sets;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.Instant;
 import java.util.Objects;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -38,6 +40,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
@@ -47,6 +53,10 @@ import org.hibernate.annotations.TypeDef;
 @Entity
 @TypeDef(name = "json", typeClass = Metadata.class)
 @Table(name = "project", schema = "public")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Project implements Serializable {
 
   private static final long serialVersionUID = -263516611;
@@ -79,7 +89,8 @@ public class Project implements Serializable {
   private Set<SenderCase> senderCases = Sets.newHashSet();
 
   @Column(name = "creation_date")
-  private Date creationDate;
+  @Convert(converter = JpaInstantConverter.class)
+  private Instant creationDate;
 
   @Type(type = "json")
   @Column(name = "metadata")
@@ -104,112 +115,6 @@ public class Project implements Serializable {
     this.name = name;
   }
 
-  public Project() {
-  }
-
-  public Date getCreationDate() {
-    return creationDate;
-  }
-
-  public void setCreationDate(Date creationDate) {
-    this.creationDate = creationDate;
-  }
-
-  public Long getId() {
-    return this.id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public ProjectType getProjectType() {
-    return projectType;
-  }
-
-  public void setProjectType(ProjectType projectType) {
-    this.projectType = projectType;
-  }
-
-  public Set<ProjectUser> getUsers() {
-    return users;
-  }
-
-  public void setUsers(Set<ProjectUser> users) {
-    this.users = users;
-  }
-
-  public long getAllocatedStorage() {
-    return allocatedStorage;
-  }
-
-  public void setAllocatedStorage(long allocatedStorage) {
-    this.allocatedStorage = allocatedStorage;
-  }
-
-  public Set<PatternTemplate> getPatternTemplates() {
-    return patternTemplates;
-  }
-
-  public void setPatternTemplates(Set<PatternTemplate> patternTemplates) {
-    this.patternTemplates = patternTemplates;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public Set<Integration> getIntegrations() {
-    return integrations;
-  }
-
-  public void setIntegrations(Set<Integration> integrations) {
-    this.integrations = integrations;
-  }
-
-  public Set<ProjectAttribute> getProjectAttributes() {
-    return projectAttributes;
-  }
-
-  public void setProjectAttributes(Set<ProjectAttribute> projectAttributes) {
-    this.projectAttributes = projectAttributes;
-  }
-
-  public Set<ProjectIssueType> getProjectIssueTypes() {
-    return projectIssueTypes;
-  }
-
-  public void setProjectIssueTypes(Set<ProjectIssueType> projectIssueTypes) {
-    this.projectIssueTypes = projectIssueTypes;
-  }
-
-  public Set<SenderCase> getSenderCases() {
-    return senderCases;
-  }
-
-  public void setSenderCases(Set<SenderCase> senderCases) {
-    this.senderCases = senderCases;
-  }
-
-  public String getOrganization() {
-    return organization;
-  }
-
-  public void setOrganization(String organization) {
-    this.organization = organization;
-  }
-
-  public Metadata getMetadata() {
-    return metadata;
-  }
-
-  public void setMetadata(Metadata metadata) {
-    this.metadata = metadata;
-  }
 
   @Override
   public boolean equals(Object o) {

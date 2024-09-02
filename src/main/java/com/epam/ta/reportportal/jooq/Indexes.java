@@ -5,6 +5,7 @@ package com.epam.ta.reportportal.jooq;
 
 
 import com.epam.ta.reportportal.jooq.tables.JActivity;
+import com.epam.ta.reportportal.jooq.tables.JAnalyticsData;
 import com.epam.ta.reportportal.jooq.tables.JApiKeys;
 import com.epam.ta.reportportal.jooq.tables.JAttachment;
 import com.epam.ta.reportportal.jooq.tables.JAttachmentDeletion;
@@ -86,6 +87,7 @@ public class Indexes {
     public static final Index ACTIVITY_OBJECT_IDX = Indexes0.ACTIVITY_OBJECT_IDX;
     public static final Index ACTIVITY_PK = Indexes0.ACTIVITY_PK;
     public static final Index ACTIVITY_PROJECT_IDX = Indexes0.ACTIVITY_PROJECT_IDX;
+    public static final Index ANALYTICS_DATA_PKEY = Indexes0.ANALYTICS_DATA_PKEY;
     public static final Index API_KEYS_PKEY = Indexes0.API_KEYS_PKEY;
     public static final Index HASH_API_KEYS_IDX = Indexes0.HASH_API_KEYS_IDX;
     public static final Index USERS_API_KEYS_UNIQUE = Indexes0.USERS_API_KEYS_UNIQUE;
@@ -144,7 +146,6 @@ public class Indexes {
     public static final Index LOG_ATTACH_ID_IDX = Indexes0.LOG_ATTACH_ID_IDX;
     public static final Index LOG_CLUSTER_IDX = Indexes0.LOG_CLUSTER_IDX;
     public static final Index LOG_LAUNCH_ID_IDX = Indexes0.LOG_LAUNCH_ID_IDX;
-    public static final Index LOG_MESSAGE_TRGM_IDX = Indexes0.LOG_MESSAGE_TRGM_IDX;
     public static final Index LOG_PK = Indexes0.LOG_PK;
     public static final Index LOG_PROJECT_ID_LOG_TIME_IDX = Indexes0.LOG_PROJECT_ID_LOG_TIME_IDX;
     public static final Index LOG_PROJECT_IDX = Indexes0.LOG_PROJECT_IDX;
@@ -173,7 +174,7 @@ public class Indexes {
     public static final Index RESTORE_PASSWORD_BID_PK = Indexes0.RESTORE_PASSWORD_BID_PK;
     public static final Index SENDER_CASE_PK = Indexes0.SENDER_CASE_PK;
     public static final Index SENDER_CASE_PROJECT_IDX = Indexes0.SENDER_CASE_PROJECT_IDX;
-    public static final Index UNIQUE_RULE_NAME_PER_PROJECT = Indexes0.UNIQUE_RULE_NAME_PER_PROJECT;
+    public static final Index UNIQUE_RULE_NAME_PER_PROJECT_RULE_TYPE = Indexes0.UNIQUE_RULE_NAME_PER_PROJECT_RULE_TYPE;
     public static final Index SERVER_SETTINGS_ID = Indexes0.SERVER_SETTINGS_ID;
     public static final Index SERVER_SETTINGS_KEY_KEY = Indexes0.SERVER_SETTINGS_KEY_KEY;
     public static final Index SHEDLOCK_PKEY = Indexes0.SHEDLOCK_PKEY;
@@ -218,6 +219,7 @@ public class Indexes {
         public static Index ACTIVITY_OBJECT_IDX = Internal.createIndex("activity_object_idx", JActivity.ACTIVITY, new OrderField[] { JActivity.ACTIVITY.OBJECT_ID }, false);
         public static Index ACTIVITY_PK = Internal.createIndex("activity_pk", JActivity.ACTIVITY, new OrderField[] { JActivity.ACTIVITY.ID }, true);
         public static Index ACTIVITY_PROJECT_IDX = Internal.createIndex("activity_project_idx", JActivity.ACTIVITY, new OrderField[] { JActivity.ACTIVITY.PROJECT_ID }, false);
+        public static Index ANALYTICS_DATA_PKEY = Internal.createIndex("analytics_data_pkey", JAnalyticsData.ANALYTICS_DATA, new OrderField[] { JAnalyticsData.ANALYTICS_DATA.ID }, true);
         public static Index API_KEYS_PKEY = Internal.createIndex("api_keys_pkey", JApiKeys.API_KEYS, new OrderField[] { JApiKeys.API_KEYS.ID }, true);
         public static Index HASH_API_KEYS_IDX = Internal.createIndex("hash_api_keys_idx", JApiKeys.API_KEYS, new OrderField[] { JApiKeys.API_KEYS.HASH }, false);
         public static Index USERS_API_KEYS_UNIQUE = Internal.createIndex("users_api_keys_unique", JApiKeys.API_KEYS, new OrderField[] { JApiKeys.API_KEYS.NAME, JApiKeys.API_KEYS.USER_ID }, true);
@@ -276,7 +278,6 @@ public class Indexes {
         public static Index LOG_ATTACH_ID_IDX = Internal.createIndex("log_attach_id_idx", JLog.LOG, new OrderField[] { JLog.LOG.ATTACHMENT_ID }, false);
         public static Index LOG_CLUSTER_IDX = Internal.createIndex("log_cluster_idx", JLog.LOG, new OrderField[] { JLog.LOG.CLUSTER_ID }, false);
         public static Index LOG_LAUNCH_ID_IDX = Internal.createIndex("log_launch_id_idx", JLog.LOG, new OrderField[] { JLog.LOG.LAUNCH_ID }, false);
-        public static Index LOG_MESSAGE_TRGM_IDX = Internal.createIndex("log_message_trgm_idx", JLog.LOG, new OrderField[] { JLog.LOG.LOG_MESSAGE }, false);
         public static Index LOG_PK = Internal.createIndex("log_pk", JLog.LOG, new OrderField[] { JLog.LOG.ID }, true);
         public static Index LOG_PROJECT_ID_LOG_TIME_IDX = Internal.createIndex("log_project_id_log_time_idx", JLog.LOG, new OrderField[] { JLog.LOG.PROJECT_ID, JLog.LOG.LOG_TIME }, false);
         public static Index LOG_PROJECT_IDX = Internal.createIndex("log_project_idx", JLog.LOG, new OrderField[] { JLog.LOG.PROJECT_ID }, false);
@@ -305,7 +306,7 @@ public class Indexes {
         public static Index RESTORE_PASSWORD_BID_PK = Internal.createIndex("restore_password_bid_pk", JRestorePasswordBid.RESTORE_PASSWORD_BID, new OrderField[] { JRestorePasswordBid.RESTORE_PASSWORD_BID.UUID }, true);
         public static Index SENDER_CASE_PK = Internal.createIndex("sender_case_pk", JSenderCase.SENDER_CASE, new OrderField[] { JSenderCase.SENDER_CASE.ID }, true);
         public static Index SENDER_CASE_PROJECT_IDX = Internal.createIndex("sender_case_project_idx", JSenderCase.SENDER_CASE, new OrderField[] { JSenderCase.SENDER_CASE.PROJECT_ID }, false);
-        public static Index UNIQUE_RULE_NAME_PER_PROJECT = Internal.createIndex("unique_rule_name_per_project", JSenderCase.SENDER_CASE, new OrderField[] { JSenderCase.SENDER_CASE.RULE_NAME, JSenderCase.SENDER_CASE.PROJECT_ID }, true);
+        public static Index UNIQUE_RULE_NAME_PER_PROJECT_RULE_TYPE = Internal.createIndex("unique_rule_name_per_project_rule_type", JSenderCase.SENDER_CASE, new OrderField[] { JSenderCase.SENDER_CASE.RULE_NAME, JSenderCase.SENDER_CASE.PROJECT_ID, JSenderCase.SENDER_CASE.RULE_TYPE }, true);
         public static Index SERVER_SETTINGS_ID = Internal.createIndex("server_settings_id", JServerSettings.SERVER_SETTINGS, new OrderField[] { JServerSettings.SERVER_SETTINGS.ID }, true);
         public static Index SERVER_SETTINGS_KEY_KEY = Internal.createIndex("server_settings_key_key", JServerSettings.SERVER_SETTINGS, new OrderField[] { JServerSettings.SERVER_SETTINGS.KEY }, true);
         public static Index SHEDLOCK_PKEY = Internal.createIndex("shedlock_pkey", JShedlock.SHEDLOCK, new OrderField[] { JShedlock.SHEDLOCK.NAME }, true);

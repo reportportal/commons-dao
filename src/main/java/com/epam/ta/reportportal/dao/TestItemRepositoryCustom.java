@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.dao;
 
+import com.epam.reportportal.model.analyzer.IndexTestItem;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
@@ -33,10 +34,8 @@ import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.statistics.Statistics;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
-import com.epam.ta.reportportal.ws.model.analyzer.IndexTestItem;
-import com.epam.ta.reportportal.ws.model.issue.Issue;
 import java.time.Duration;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -258,6 +257,8 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
 
   List<TestItem> findItemsForAnalyze(Long launchId);
 
+  List<TestItem> selectTestItemsProjection(Long launchId);
+
   /**
    * Select all {@link TestItem#getItemId()} of {@link TestItem} with attached {@link Issue} and
    * {@link TestItem#getLaunchId()} equal to provided `launchId`
@@ -351,7 +352,7 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
    * @param endTime {@link com.epam.ta.reportportal.entity.item.TestItemResults#endTime}
    * @return 1 if updated, otherwise 0
    */
-  int updateStatusAndEndTimeById(Long itemId, JStatusEnum status, LocalDateTime endTime);
+  int updateStatusAndEndTimeById(Long itemId, JStatusEnum status, Instant endTime);
 
   /**
    * @param retryOfId {@link TestItem#getRetryOf()}
@@ -361,7 +362,7 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
    * @return amount of updated items
    */
   int updateStatusAndEndTimeByRetryOfId(Long retryOfId, JStatusEnum from, JStatusEnum to,
-      LocalDateTime endTime);
+      Instant endTime);
 
   /**
    * @param itemId {@link TestItem#itemId}
@@ -473,5 +474,5 @@ public interface TestItemRepositoryCustom extends FilterableRepository<TestItem>
       boolean excludePassedLogs);
 
   List<IndexTestItem> findIndexTestItemByLaunchId(Long launchId,
-      Collection<JTestItemTypeEnum> itemTypes);
+                                                  Collection<JTestItemTypeEnum> itemTypes);
 }

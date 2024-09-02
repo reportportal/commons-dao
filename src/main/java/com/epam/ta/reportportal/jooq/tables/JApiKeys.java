@@ -4,13 +4,14 @@
 package com.epam.ta.reportportal.jooq.tables;
 
 
+import com.epam.ta.reportportal.dao.converters.JooqInstantConverter;
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.records.JApiKeysRecord;
 
 import java.sql.Date;
-import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
@@ -44,7 +45,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JApiKeys extends TableImpl<JApiKeysRecord> {
 
-    private static final long serialVersionUID = -1062577780;
+    private static final long serialVersionUID = -1384819830;
 
     /**
      * The reference instance of <code>public.api_keys</code>
@@ -77,7 +78,7 @@ public class JApiKeys extends TableImpl<JApiKeysRecord> {
     /**
      * The column <code>public.api_keys.created_at</code>.
      */
-    public final TableField<JApiKeysRecord, Timestamp> CREATED_AT = createField(DSL.name("created_at"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "");
+    public final TableField<JApiKeysRecord, Instant> CREATED_AT = createField(DSL.name("created_at"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false), this, "", new JooqInstantConverter());
 
     /**
      * The column <code>public.api_keys.user_id</code>.
@@ -187,7 +188,7 @@ public class JApiKeys extends TableImpl<JApiKeysRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row6<Long, String, String, Timestamp, Long, Date> fieldsRow() {
+    public Row6<Long, String, String, Instant, Long, Date> fieldsRow() {
         return (Row6) super.fieldsRow();
     }
 }

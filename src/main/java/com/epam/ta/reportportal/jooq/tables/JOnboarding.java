@@ -4,12 +4,13 @@
 package com.epam.ta.reportportal.jooq.tables;
 
 
+import com.epam.ta.reportportal.dao.converters.JooqInstantConverter;
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.records.JOnboardingRecord;
 
-import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
@@ -43,7 +44,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JOnboarding extends TableImpl<JOnboardingRecord> {
 
-    private static final long serialVersionUID = -1798770038;
+    private static final long serialVersionUID = -2033029058;
 
     /**
      * The reference instance of <code>public.onboarding</code>
@@ -76,12 +77,12 @@ public class JOnboarding extends TableImpl<JOnboardingRecord> {
     /**
      * The column <code>public.onboarding.available_from</code>.
      */
-    public final TableField<JOnboardingRecord, Timestamp> AVAILABLE_FROM = createField(DSL.name("available_from"), org.jooq.impl.SQLDataType.TIMESTAMP, this, "");
+    public final TableField<JOnboardingRecord, Instant> AVAILABLE_FROM = createField(DSL.name("available_from"), org.jooq.impl.SQLDataType.TIMESTAMP, this, "", new JooqInstantConverter());
 
     /**
      * The column <code>public.onboarding.available_to</code>.
      */
-    public final TableField<JOnboardingRecord, Timestamp> AVAILABLE_TO = createField(DSL.name("available_to"), org.jooq.impl.SQLDataType.TIMESTAMP, this, "");
+    public final TableField<JOnboardingRecord, Instant> AVAILABLE_TO = createField(DSL.name("available_to"), org.jooq.impl.SQLDataType.TIMESTAMP, this, "", new JooqInstantConverter());
 
     /**
      * Create a <code>public.onboarding</code> table reference
@@ -172,7 +173,7 @@ public class JOnboarding extends TableImpl<JOnboardingRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row5<Short, String, String, Timestamp, Timestamp> fieldsRow() {
+    public Row5<Short, String, String, Instant, Instant> fieldsRow() {
         return (Row5) super.fieldsRow();
     }
 }

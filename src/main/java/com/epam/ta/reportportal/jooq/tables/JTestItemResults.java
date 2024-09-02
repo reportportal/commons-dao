@@ -4,13 +4,14 @@
 package com.epam.ta.reportportal.jooq.tables;
 
 
+import com.epam.ta.reportportal.dao.converters.JooqInstantConverter;
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.records.JTestItemResultsRecord;
 
-import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
@@ -43,7 +44,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JTestItemResults extends TableImpl<JTestItemResultsRecord> {
 
-    private static final long serialVersionUID = 1284570207;
+    private static final long serialVersionUID = -648299127;
 
     /**
      * The reference instance of <code>public.test_item_results</code>
@@ -71,7 +72,7 @@ public class JTestItemResults extends TableImpl<JTestItemResultsRecord> {
     /**
      * The column <code>public.test_item_results.end_time</code>.
      */
-    public final TableField<JTestItemResultsRecord, Timestamp> END_TIME = createField(DSL.name("end_time"), org.jooq.impl.SQLDataType.TIMESTAMP, this, "");
+    public final TableField<JTestItemResultsRecord, Instant> END_TIME = createField(DSL.name("end_time"), org.jooq.impl.SQLDataType.TIMESTAMP, this, "", new JooqInstantConverter());
 
     /**
      * The column <code>public.test_item_results.duration</code>.
@@ -171,7 +172,7 @@ public class JTestItemResults extends TableImpl<JTestItemResultsRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row4<Long, JStatusEnum, Timestamp, Double> fieldsRow() {
+    public Row4<Long, JStatusEnum, Instant, Double> fieldsRow() {
         return (Row4) super.fieldsRow();
     }
 }

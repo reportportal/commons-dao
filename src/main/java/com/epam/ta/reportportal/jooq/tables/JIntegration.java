@@ -4,12 +4,13 @@
 package com.epam.ta.reportportal.jooq.tables;
 
 
+import com.epam.ta.reportportal.dao.converters.JooqInstantConverter;
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.records.JIntegrationRecord;
 
-import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
@@ -44,7 +45,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JIntegration extends TableImpl<JIntegrationRecord> {
 
-    private static final long serialVersionUID = 429690557;
+    private static final long serialVersionUID = 514650851;
 
     /**
      * The reference instance of <code>public.integration</code>
@@ -97,7 +98,7 @@ public class JIntegration extends TableImpl<JIntegrationRecord> {
     /**
      * The column <code>public.integration.creation_date</code>.
      */
-    public final TableField<JIntegrationRecord, Timestamp> CREATION_DATE = createField(DSL.name("creation_date"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "");
+    public final TableField<JIntegrationRecord, Instant> CREATION_DATE = createField(DSL.name("creation_date"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "", new JooqInstantConverter());
 
     /**
      * Create a <code>public.integration</code> table reference
@@ -201,7 +202,7 @@ public class JIntegration extends TableImpl<JIntegrationRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row8<Integer, String, Long, Integer, Boolean, JSONB, String, Timestamp> fieldsRow() {
+    public Row8<Integer, String, Long, Integer, Boolean, JSONB, String, Instant> fieldsRow() {
         return (Row8) super.fieldsRow();
     }
 }

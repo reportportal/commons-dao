@@ -16,19 +16,22 @@
 
 package com.epam.ta.reportportal.entity.launch;
 
+import com.epam.ta.reportportal.dao.converters.JpaInstantConverter;
 import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
+import com.epam.ta.reportportal.entity.enums.RetentionPolicyEnum;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.statistics.Statistics;
 import com.google.common.collect.Sets;
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Objects;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
@@ -83,10 +86,12 @@ public class Launch implements Serializable {
   private String description;
 
   @Column(name = "start_time", nullable = false)
-  private LocalDateTime startTime;
+  @Convert(converter = JpaInstantConverter.class)
+  private Instant startTime;
 
   @Column(name = "end_time")
-  private LocalDateTime endTime;
+  @Convert(converter = JpaInstantConverter.class)
+  private Instant endTime;
 
   @Column(name = "number", nullable = false, precision = 32)
   private Long number;
@@ -99,7 +104,8 @@ public class Launch implements Serializable {
 
   @Column(name = "last_modified", nullable = false)
   @LastModifiedDate
-  private LocalDateTime lastModified;
+  @Convert(converter = JpaInstantConverter.class)
+  private Instant lastModified;
 
   @Column(name = "mode", nullable = false)
   @Enumerated(EnumType.STRING)
@@ -110,6 +116,11 @@ public class Launch implements Serializable {
   @Enumerated(EnumType.STRING)
   @Type(type = "pqsql_enum")
   private StatusEnum status;
+
+  @Column(name = "retention_policy", nullable = false)
+  @Enumerated(EnumType.STRING)
+  @Type(type = "pqsql_enum")
+  private RetentionPolicyEnum retentionPolicy;
 
   @OneToMany(mappedBy = "launch", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
   @Fetch(FetchMode.JOIN)
@@ -198,11 +209,11 @@ public class Launch implements Serializable {
     this.description = description;
   }
 
-  public LocalDateTime getStartTime() {
+  public Instant getStartTime() {
     return startTime;
   }
 
-  public void setStartTime(LocalDateTime startTime) {
+  public void setStartTime(Instant startTime) {
     this.startTime = startTime;
   }
 
@@ -214,11 +225,11 @@ public class Launch implements Serializable {
     this.statistics = statistics;
   }
 
-  public LocalDateTime getEndTime() {
+  public Instant getEndTime() {
     return endTime;
   }
 
-  public void setEndTime(LocalDateTime endTime) {
+  public void setEndTime(Instant endTime) {
     this.endTime = endTime;
   }
 
@@ -238,11 +249,11 @@ public class Launch implements Serializable {
     this.hasRetries = hasRetries;
   }
 
-  public LocalDateTime getLastModified() {
+  public Instant getLastModified() {
     return lastModified;
   }
 
-  public void setLastModified(LocalDateTime lastModified) {
+  public void setLastModified(Instant lastModified) {
     this.lastModified = lastModified;
   }
 
@@ -278,6 +289,14 @@ public class Launch implements Serializable {
     this.approximateDuration = approximateDuration;
   }
 
+  public RetentionPolicyEnum getRetentionPolicy() {
+    return retentionPolicy;
+  }
+
+  public void setRetentionPolicy(RetentionPolicyEnum retentionPolicy) {
+    this.retentionPolicy = retentionPolicy;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -288,20 +307,19 @@ public class Launch implements Serializable {
     }
     Launch launch = (Launch) o;
     return hasRetries == launch.hasRetries && rerun == launch.rerun && Objects.equals(uuid,
-        launch.uuid) && Objects.equals(projectId,
-        launch.projectId
-    ) && Objects.equals(name, launch.name) && Objects.equals(description, launch.description)
-        && Objects.equals(startTime,
-        launch.startTime
-    ) && Objects.equals(endTime, launch.endTime) && Objects.equals(number, launch.number)
-        && mode == launch.mode
-        && status == launch.status;
+        launch.uuid
+    ) && Objects.equals(projectId, launch.projectId) && Objects.equals(
+        name, launch.name) && Objects.equals(description, launch.description) && Objects.equals(
+        startTime, launch.startTime) && Objects.equals(endTime, launch.endTime) && Objects.equals(
+        number, launch.number) && mode == launch.mode && status == launch.status
+        && retentionPolicy == launch.retentionPolicy;
   }
 
   @Override
   public int hashCode() {
     return Objects.hash(uuid, projectId, name, description, startTime, endTime, number, hasRetries,
-        rerun, mode, status);
+        rerun, mode, status, retentionPolicy
+    );
   }
 
   @Override
@@ -324,6 +342,7 @@ public class Launch implements Serializable {
     sb.append(", attributes=").append(attributes);
     sb.append(", statistics=").append(statistics);
     sb.append(", approximateDuration=").append(approximateDuration);
+    sb.append(", retentionPolicy=").append(retentionPolicy);
     sb.append('}');
     return sb.toString();
   }

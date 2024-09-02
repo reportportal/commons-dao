@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.dao;
 
+import com.epam.reportportal.model.analyzer.IndexLog;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
@@ -24,7 +25,6 @@ import com.epam.ta.reportportal.entity.item.NestedItemPage;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
-import com.epam.ta.reportportal.ws.model.analyzer.IndexLog;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
@@ -216,7 +216,7 @@ public interface LogRepositoryCustom extends FilterableRepository<Log> {
       String path, Integer level);
 
   /**
-   * Retrieves log message id of specified test item with log level greather or equals than
+   * Retrieves log message id of specified test item with log level greater or equals than
    * {@code level}
    *
    * @param launchId @link TestItem#getLaunchId()}

@@ -3,6 +3,7 @@ package com.epam.ta.reportportal.dao.widget.healthcheck.content.provider;
 import static com.epam.ta.reportportal.dao.util.WidgetContentUtil.COMPONENT_HEALTH_CHECK_TABLE_COLUMN_FETCHER;
 
 import com.epam.ta.reportportal.dao.widget.WidgetContentProvider;
+import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableGetParams;
 import java.util.List;
 import java.util.Map;
 import org.jooq.DSLContext;
@@ -15,8 +16,7 @@ import org.springframework.stereotype.Component;
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
 @Component
-public class HealthCheckTableColumnProvider implements
-    WidgetContentProvider<Map<String, List<String>>> {
+public class HealthCheckTableColumnProvider implements WidgetContentProvider<HealthCheckTableGetParams, Map<String, List<String>>> {
 
   private final DSLContext dslContext;
 
@@ -26,7 +26,7 @@ public class HealthCheckTableColumnProvider implements
   }
 
   @Override
-  public Map<String, List<String>> apply(Select<? extends Record> records) {
+  public Map<String, List<String>> apply(Select<? extends Record> records, HealthCheckTableGetParams params) {
     return COMPONENT_HEALTH_CHECK_TABLE_COLUMN_FETCHER.apply(dslContext.fetch(records));
   }
 }
