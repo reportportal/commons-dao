@@ -33,7 +33,7 @@ dependencyManagement {
 
 dependencies {
     if (releaseMode) {
-        compile 'com.epam.reportportal:commons'
+        implementation 'com.epam.reportportal:commons'
     } else {
         implementation 'com.github.reportportal:commons:d4be022'
     }
