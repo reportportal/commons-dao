@@ -33,9 +33,9 @@ dependencyManagement {
 
 dependencies {
     if (releaseMode) {
-        compile 'com.epam.reportportal:commons'
+        implementation 'com.epam.reportportal:commons'
     } else {
-        compile 'com.epam.reportportal:commons:5.12.1'
+        implementation 'com.epam.reportportal:commons:5.12.1'
     }
 
     implementation 'org.springframework.security:spring-security-core'
