@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.entity.log;
 
+import com.epam.ta.reportportal.dao.converters.JpaInstantConverter;
 import com.epam.ta.reportportal.entity.attachment.Attachment;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
@@ -24,6 +25,7 @@ import java.time.Instant;
 import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
@@ -56,6 +58,7 @@ public class Log implements Serializable {
   private String uuid;
 
   @Column(name = "log_time", nullable = false)
+  @Convert(converter = JpaInstantConverter.class)
   private Instant logTime;
 
   @Column(name = "log_message", nullable = false)
@@ -63,6 +66,7 @@ public class Log implements Serializable {
 
   @LastModifiedDate
   @Column(name = "last_modified", nullable = false)
+  @Convert(converter = JpaInstantConverter.class)
   private Instant lastModified;
 
   @Column(name = "log_level", nullable = false, precision = 32)

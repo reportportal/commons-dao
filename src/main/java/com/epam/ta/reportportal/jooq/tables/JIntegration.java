@@ -4,7 +4,7 @@
 package com.epam.ta.reportportal.jooq.tables;
 
 
-import com.epam.ta.reportportal.dao.converters.InstantConverter;
+import com.epam.ta.reportportal.dao.converters.JooqInstantConverter;
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
@@ -98,7 +98,7 @@ public class JIntegration extends TableImpl<JIntegrationRecord> {
     /**
      * The column <code>public.integration.creation_date</code>.
      */
-    public final TableField<JIntegrationRecord, Instant> CREATION_DATE = createField(DSL.name("creation_date"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "", new InstantConverter());
+    public final TableField<JIntegrationRecord, Instant> CREATION_DATE = createField(DSL.name("creation_date"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "", new JooqInstantConverter());
 
     /**
      * Create a <code>public.integration</code> table reference

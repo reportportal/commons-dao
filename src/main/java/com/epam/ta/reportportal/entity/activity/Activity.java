@@ -16,10 +16,12 @@
 
 package com.epam.ta.reportportal.entity.activity;
 
+import com.epam.ta.reportportal.dao.converters.JpaInstantConverter;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -53,6 +55,7 @@ public class Activity implements Serializable {
   private Long id;
 
   @Column(name = "created_at", nullable = false)
+  @Convert(converter = JpaInstantConverter.class)
   private Instant createdAt;
 
   @Column(name = "action", nullable = false)

@@ -25,7 +25,7 @@ jooq {
                         userType = "java.time.Instant"
 
                         // Associate that custom type with your converter.
-                        converter = "com.epam.ta.reportportal.dao.converters.InstantConverter"
+                        converter = "com.epam.ta.reportportal.dao.converters.JooqInstantConverter"
 
                         // A Java regex matching fully-qualified columns, attributes, parameters. Use the pipe to separate several expressions.
                         types = "TIMESTAMP"

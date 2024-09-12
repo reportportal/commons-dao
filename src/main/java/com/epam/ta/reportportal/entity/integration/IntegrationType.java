@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.entity.integration;
 
+import com.epam.ta.reportportal.dao.converters.JpaInstantConverter;
 import com.epam.ta.reportportal.entity.enums.IntegrationAuthFlowEnum;
 import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
 import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
@@ -24,6 +25,7 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.Set;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -61,6 +63,7 @@ public class IntegrationType implements Serializable {
 
   @CreatedDate
   @Column(name = "creation_date", nullable = false)
+  @Convert(converter = JpaInstantConverter.class)
   private Instant creationDate;
 
   @Enumerated(EnumType.STRING)

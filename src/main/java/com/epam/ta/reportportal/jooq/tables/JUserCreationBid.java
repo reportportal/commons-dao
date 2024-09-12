@@ -4,7 +4,7 @@
 package com.epam.ta.reportportal.jooq.tables;
 
 
-import com.epam.ta.reportportal.dao.converters.InstantConverter;
+import com.epam.ta.reportportal.dao.converters.JooqInstantConverter;
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
@@ -67,7 +67,7 @@ public class JUserCreationBid extends TableImpl<JUserCreationBidRecord> {
     /**
      * The column <code>public.user_creation_bid.last_modified</code>.
      */
-    public final TableField<JUserCreationBidRecord, Instant> LAST_MODIFIED = createField(DSL.name("last_modified"), org.jooq.impl.SQLDataType.TIMESTAMP.defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "", new InstantConverter());
+    public final TableField<JUserCreationBidRecord, Instant> LAST_MODIFIED = createField(DSL.name("last_modified"), org.jooq.impl.SQLDataType.TIMESTAMP.defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "", new JooqInstantConverter());
 
     /**
      * The column <code>public.user_creation_bid.email</code>.
