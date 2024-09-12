@@ -44,7 +44,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JTicket extends TableImpl<JTicketRecord> {
 
-    private static final long serialVersionUID = -914734476;
+    private static final long serialVersionUID = -1169544097;
 
     /**
      * The reference instance of <code>public.ticket</code>

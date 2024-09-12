@@ -45,7 +45,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JAnalyticsData extends TableImpl<JAnalyticsDataRecord> {
 
-    private static final long serialVersionUID = -1928480576;
+    private static final long serialVersionUID = 282420139;
 
     /**
      * The reference instance of <code>public.analytics_data</code>

@@ -44,7 +44,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JAttachment extends TableImpl<JAttachmentRecord> {
 
-    private static final long serialVersionUID = -2060499086;
+    private static final long serialVersionUID = 116419815;
 
     /**
      * The reference instance of <code>public.attachment</code>

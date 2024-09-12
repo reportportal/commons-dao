@@ -44,7 +44,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JOnboarding extends TableImpl<JOnboardingRecord> {
 
-    private static final long serialVersionUID = -2033029058;
+    private static final long serialVersionUID = 1642783657;
 
     /**
      * The reference instance of <code>public.onboarding</code>

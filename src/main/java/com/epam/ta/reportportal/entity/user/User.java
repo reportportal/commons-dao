@@ -21,6 +21,7 @@ import com.google.common.collect.Sets;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -32,6 +33,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import org.checkerframework.checker.units.qual.C;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
@@ -49,6 +51,15 @@ public class User implements Serializable {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id", unique = true, nullable = false, precision = 64)
   private Long id;
+
+  @Column(name = "uuid")
+  private UUID uuid;
+
+  @Column(name = "external_id")
+  private String externalId;
+
+  @Column(name = "active")
+  private boolean active;
 
   @Column(name = "login")
   private String login;
@@ -91,6 +102,26 @@ public class User implements Serializable {
 
   public Long getId() {
     return this.id;
+  }
+
+  public UUID getUuid() {
+    return uuid;
+  }
+
+  public String getExternalId() {
+    return externalId;
+  }
+
+  public void setExternalId(String externalId) {
+    this.externalId = externalId;
+  }
+
+  public boolean isActive() {
+    return active;
+  }
+
+  public void setActive(boolean active) {
+    this.active = active;
   }
 
   public void setId(Long id) {
@@ -194,21 +225,11 @@ public class User implements Serializable {
       return false;
     }
     User user = (User) o;
-    return isExpired == user.isExpired && Objects.equals(id, user.id) && Objects.equals(login,
-        user.login) && Objects.equals(password,
-        user.password
-    ) && Objects.equals(email, user.email) && role == user.role && Objects.equals(fullName,
-        user.fullName) && Objects.equals(metadata,
-        user.metadata
-    ) && Objects.equals(attachment, user.attachment) && Objects.equals(attachmentThumbnail,
-        user.attachmentThumbnail)
-        && userType == user.userType;
+    return Objects.equals(id, user.id) && Objects.equals(uuid, user.uuid);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, login, password, email, role, fullName, isExpired, metadata, attachment,
-        attachmentThumbnail, userType);
+    return Objects.hash(id, uuid);
   }
-
 }
