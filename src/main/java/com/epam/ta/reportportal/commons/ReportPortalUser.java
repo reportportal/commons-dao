@@ -211,6 +211,7 @@ public class ReportPortalUser extends User {
       this.username = userDetails.getUsername();
       this.password = userDetails.getPassword();
       this.authorities = userDetails.getAuthorities();
+      this.active = userDetails.isEnabled();
       return this;
     }
 
