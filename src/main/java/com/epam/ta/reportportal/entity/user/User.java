@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.entity.user;
 import com.epam.ta.reportportal.entity.Metadata;
 import com.google.common.collect.Sets;
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import javax.persistence.CascadeType;
@@ -32,14 +33,18 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
 /**
  * @author Andrei Varabyeu
  */
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 @TypeDef(name = "meta", typeClass = Metadata.class)
 @Table(name = "users", schema = "public")
@@ -96,4 +101,21 @@ public class User implements Serializable {
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = {CascadeType.PERSIST,
       CascadeType.MERGE, CascadeType.REFRESH})
   private Set<ProjectUser> projects = Sets.newHashSet();
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    User user = (User) o;
+    return Objects.equals(id, user.id) && Objects.equals(uuid, user.uuid);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, uuid);
+  }
 }
