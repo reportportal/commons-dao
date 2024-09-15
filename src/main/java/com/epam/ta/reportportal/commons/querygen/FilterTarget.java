@@ -379,6 +379,9 @@ public enum FilterTarget {
     protected Collection<? extends SelectField> selectFields() {
       return Lists.newArrayList(USERS.ID,
           USERS.LOGIN,
+          USERS.UUID,
+          USERS.EXTERNAL_ID,
+          USERS.ACTIVE,
           USERS.FULL_NAME,
           USERS.TYPE,
           USERS.ATTACHMENT,
