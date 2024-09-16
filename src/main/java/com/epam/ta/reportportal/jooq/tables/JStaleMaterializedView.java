@@ -44,7 +44,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JStaleMaterializedView extends TableImpl<JStaleMaterializedViewRecord> {
 
-    private static final long serialVersionUID = -70601346;
+    private static final long serialVersionUID = 581510835;
 
     /**
      * The reference instance of <code>public.stale_materialized_view</code>

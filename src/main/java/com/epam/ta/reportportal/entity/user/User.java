@@ -21,6 +21,7 @@ import com.google.common.collect.Sets;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -32,12 +33,18 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
 /**
  * @author Andrei Varabyeu
  */
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 @TypeDef(name = "meta", typeClass = Metadata.class)
 @Table(name = "users", schema = "public")
@@ -49,6 +56,15 @@ public class User implements Serializable {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id", unique = true, nullable = false, precision = 64)
   private Long id;
+
+  @Column(name = "uuid")
+  private UUID uuid;
+
+  @Column(name = "external_id")
+  private String externalId;
+
+  @Column(name = "active")
+  private boolean active;
 
   @Column(name = "login")
   private String login;
@@ -86,105 +102,6 @@ public class User implements Serializable {
       CascadeType.MERGE, CascadeType.REFRESH})
   private Set<ProjectUser> projects = Sets.newHashSet();
 
-  public User() {
-  }
-
-  public Long getId() {
-    return this.id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public String getLogin() {
-    return this.login;
-  }
-
-  public void setLogin(String login) {
-    this.login = login;
-  }
-
-  public String getPassword() {
-    return this.password;
-  }
-
-  public void setPassword(String password) {
-    this.password = password;
-  }
-
-  public String getEmail() {
-    return this.email;
-  }
-
-  public void setEmail(String email) {
-    this.email = email;
-  }
-
-  public UserRole getRole() {
-    return role;
-  }
-
-  public void setRole(UserRole role) {
-    this.role = role;
-  }
-
-  public Set<ProjectUser> getProjects() {
-    return projects;
-  }
-
-  public void setProjects(Set<ProjectUser> projects) {
-    this.projects = projects;
-  }
-
-  public String getFullName() {
-    return this.fullName;
-  }
-
-  public void setFullName(String fullName) {
-    this.fullName = fullName;
-  }
-
-  public boolean isExpired() {
-    return isExpired;
-  }
-
-  public void setExpired(boolean expired) {
-    isExpired = expired;
-  }
-
-  public String getAttachment() {
-    return attachment;
-  }
-
-  public void setAttachment(String attachment) {
-    this.attachment = attachment;
-  }
-
-  public String getAttachmentThumbnail() {
-    return attachmentThumbnail;
-  }
-
-  public void setAttachmentThumbnail(String attachmentThumbnail) {
-    this.attachmentThumbnail = attachmentThumbnail;
-  }
-
-  public UserType getUserType() {
-    return userType;
-  }
-
-  public void setUserType(UserType userType) {
-    this.userType = userType;
-  }
-
-  public Metadata getMetadata() {
-    return metadata;
-  }
-
-  public void setMetadata(Metadata metadata) {
-    this.metadata = metadata;
-  }
-
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -194,21 +111,12 @@ public class User implements Serializable {
       return false;
     }
     User user = (User) o;
-    return isExpired == user.isExpired && Objects.equals(id, user.id) && Objects.equals(login,
-        user.login) && Objects.equals(password,
-        user.password
-    ) && Objects.equals(email, user.email) && role == user.role && Objects.equals(fullName,
-        user.fullName) && Objects.equals(metadata,
-        user.metadata
-    ) && Objects.equals(attachment, user.attachment) && Objects.equals(attachmentThumbnail,
-        user.attachmentThumbnail)
-        && userType == user.userType;
+    return Objects.equals(id, user.id) && Objects.equals(uuid, user.uuid)
+        && Objects.equals(login, user.login) && Objects.equals(email, user.email);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, login, password, email, role, fullName, isExpired, metadata, attachment,
-        attachmentThumbnail, userType);
+    return Objects.hash(id, uuid, login, email);
   }
-
 }

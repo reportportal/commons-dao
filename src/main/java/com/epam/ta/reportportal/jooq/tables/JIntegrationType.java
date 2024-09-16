@@ -47,7 +47,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JIntegrationType extends TableImpl<JIntegrationTypeRecord> {
 
-    private static final long serialVersionUID = 1851238148;
+    private static final long serialVersionUID = 884680057;
 
     /**
      * The reference instance of <code>public.integration_type</code>

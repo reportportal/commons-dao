@@ -50,6 +50,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import org.assertj.core.util.Sets;
 import org.hamcrest.Matchers;
 import org.jooq.Operator;
@@ -342,6 +343,7 @@ class UserRepositoryTest extends BaseTest {
     User reg = new User();
 
     reg.setEmail("email.com");
+    reg.setUuid(UUID.randomUUID());
     reg.setFullName("test");
     reg.setLogin("created");
     reg.setPassword("new");

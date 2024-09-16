@@ -24,6 +24,8 @@ package com.epam.ta.reportportal.commons.querygen.constant;
 public final class GeneralCriteriaConstant {
 
   public static final String CRITERIA_ID = "id";
+
+  public static final String CRITERIA_UUID = "uuid";
   public static final String CRITERIA_NAME = "name";
   public static final String CRITERIA_SHARED = "shared";
   public static final String CRITERIA_OWNER = "owner";

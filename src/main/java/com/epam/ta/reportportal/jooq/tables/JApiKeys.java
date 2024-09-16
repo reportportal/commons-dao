@@ -45,7 +45,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JApiKeys extends TableImpl<JApiKeysRecord> {
 
-    private static final long serialVersionUID = -1384819830;
+    private static final long serialVersionUID = -859604491;
 
     /**
      * The reference instance of <code>public.api_keys</code>
