@@ -111,11 +111,12 @@ public class User implements Serializable {
       return false;
     }
     User user = (User) o;
-    return Objects.equals(id, user.id) && Objects.equals(uuid, user.uuid);
+    return Objects.equals(id, user.id) && Objects.equals(uuid, user.uuid)
+        && Objects.equals(login, user.login) && Objects.equals(email, user.email);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, uuid);
+    return Objects.hash(id, uuid, login, email);
   }
 }
