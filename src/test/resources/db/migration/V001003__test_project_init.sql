@@ -20,10 +20,10 @@ BEGIN
         VALUES ('millennium_falcon', 'millennium_falcon', 'prj-slug', now(), org_id);
     falcon := (SELECT currval(pg_get_serial_sequence('project', 'id')));
 
-    INSERT INTO users (login, password, email, role, type, full_name, expired, metadata)
+    INSERT INTO users (login, password, email, role, type, full_name, expired, metadata, uuid)
     VALUES ('han_solo', '3531f6f9b0538fd347f4c95bd2af9d01', 'han_solo@domain.com', 'ADMINISTRATOR',
             'INTERNAL', 'Han Solo', FALSE,
-            '{"metadata": {"last_login": "1551187023768"}}');
+            '{"metadata": {"last_login": "1551187023768"}}', gen_random_uuid());
     han_solo := (SELECT currval(pg_get_serial_sequence('users', 'id')));
 
     INSERT INTO project_user (user_id, project_id, project_role)
@@ -32,10 +32,10 @@ BEGIN
     INSERT INTO organization_user (user_id, organization_id, organization_role)
        VALUES (han_solo, org_id, (SELECT 'MANAGER'::public."organization_role_enum"));
 
-    INSERT INTO users (login, password, email, role, type, full_name, expired, metadata)
+    INSERT INTO users (login, password, email, role, type, full_name, expired, metadata, uuid)
     VALUES ('chubaka', '601c4731aeff3b84f76672ad024bb2a0', 'chybaka@domain.com', 'USER', 'INTERNAL',
             'Chubaka', FALSE,
-            '{"metadata": {"last_login": "1551187023768"}}');
+            '{"metadata": {"last_login": "1551187023768"}}', gen_random_uuid());
     chubaka := (SELECT currval(pg_get_serial_sequence('users', 'id')));
 
     INSERT INTO project_user (user_id, project_id, project_role) VALUES (chubaka, falcon, 'VIEWER');
@@ -44,10 +44,10 @@ BEGIN
         VALUES (chubaka, org_id, (SELECT 'MEMBER'::public."organization_role_enum"));
 
 
-    INSERT INTO users (login, password, email, role, type, full_name, expired, metadata)
+    INSERT INTO users (login, password, email, role, type, full_name, expired, metadata, uuid)
     VALUES ('fake_chubaka', '601c4731aeff3b84f76672ad024bb2a0', 'chybakafake@domain.com', 'USER',
             'INTERNAL', 'Chubaka Fake', FALSE,
-            '{"metadata": {"last_login": "1551187023768"}}');
+            '{"metadata": {"last_login": "1551187023768"}}', gen_random_uuid());
     fake_chubaka := (SELECT currval(pg_get_serial_sequence('users', 'id')));
 
     INSERT INTO organization_user (user_id, organization_id, organization_role)
@@ -56,10 +56,10 @@ BEGIN
     INSERT INTO project_user (user_id, project_id, project_role)
     VALUES (fake_chubaka, falcon, 'VIEWER');
 
-    INSERT INTO users (login, password, email, role, type, full_name, expired, metadata)
+    INSERT INTO users (login, password, email, role, type, full_name, expired, metadata, uuid)
     VALUES ('ch_not_assigned', '601c4731aeff3b84f76672ad024bb2a0', 'ch_not_assigned@domain.com',
             'USER', 'INTERNAL', 'Ch Not Assigned', FALSE,
-            '{"metadata": {"last_login": "1551187023768"}}');
+            '{"metadata": {"last_login": "1551187023768"}}', gen_random_uuid());
 
     INSERT INTO issue_type_project (project_id, issue_type_id)
     VALUES (falcon, 1),

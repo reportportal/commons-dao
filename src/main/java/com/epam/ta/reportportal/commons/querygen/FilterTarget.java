@@ -106,8 +106,10 @@ import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteri
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_UNIQUE_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_UUID;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.RETRY_PARENT;
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_ACTIVE;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_EMAIL;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_EXPIRED;
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_EXTERNAL_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_FULL_NAME;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_LAST_LOGIN;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_ROLE;
@@ -184,6 +186,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import org.jooq.Field;
 import org.jooq.JoinType;
@@ -372,6 +375,11 @@ public enum FilterTarget {
   USER_TARGET(User.class, Arrays.asList(
 
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ID, USERS.ID, Long.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_UUID, USERS.UUID, UUID.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_EXTERNAL_ID, USERS.EXTERNAL_ID, String.class)
+          .get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_ACTIVE, USERS.ACTIVE, Boolean.class)
+          .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_USER, USERS.LOGIN, String.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_EMAIL, USERS.EMAIL, String.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_FULL_NAME, USERS.FULL_NAME, String.class)
@@ -403,6 +411,9 @@ public enum FilterTarget {
     protected Collection<? extends SelectField> selectFields() {
       return Lists.newArrayList(USERS.ID,
           USERS.LOGIN,
+          USERS.UUID,
+          USERS.EXTERNAL_ID,
+          USERS.ACTIVE,
           USERS.FULL_NAME,
           USERS.TYPE,
           USERS.ATTACHMENT,

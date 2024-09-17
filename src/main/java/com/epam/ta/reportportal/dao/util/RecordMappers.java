@@ -394,6 +394,7 @@ public class RecordMappers {
   };
 
   public static final RecordMapper<Record, ReportPortalUser> REPORT_PORTAL_USER_MAPPER = r -> ReportPortalUser.userBuilder()
+      .withActive(r.get(USERS.ACTIVE))
       .withUserName(r.get(USERS.LOGIN))
       .withPassword(ofNullable(r.get(USERS.PASSWORD)).orElse(""))
       .withAuthorities(Collections.emptyList())

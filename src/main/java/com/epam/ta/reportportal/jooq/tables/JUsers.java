@@ -13,6 +13,7 @@ import com.epam.ta.reportportal.jooq.tables.records.JUsersRecord;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import javax.annotation.processing.Generated;
 
@@ -23,7 +24,7 @@ import org.jooq.Index;
 import org.jooq.JSONB;
 import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row13;
+import org.jooq.Row14;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -126,6 +127,21 @@ public class JUsers extends TableImpl<JUsersRecord> {
     public final TableField<JUsersRecord, Instant> UPDATED_AT = createField(DSL.name("updated_at"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "", new JooqInstantConverter());
 
     /**
+     * The column <code>public.users.uuid</code>.
+     */
+    public final TableField<JUsersRecord, UUID> UUID = createField(DSL.name("uuid"), org.jooq.impl.SQLDataType.UUID.nullable(false).defaultValue(org.jooq.impl.DSL.field("gen_random_uuid()", org.jooq.impl.SQLDataType.UUID)), this, "");
+
+    /**
+     * The column <code>public.users.external_id</code>.
+     */
+    public final TableField<JUsersRecord, String> EXTERNAL_ID = createField(DSL.name("external_id"), org.jooq.impl.SQLDataType.VARCHAR, this, "");
+
+    /**
+     * The column <code>public.users.active</code>.
+     */
+    public final TableField<JUsersRecord, Boolean> ACTIVE = createField(DSL.name("active"), org.jooq.impl.SQLDataType.BOOLEAN.defaultValue(org.jooq.impl.DSL.field("true", org.jooq.impl.SQLDataType.BOOLEAN)), this, "");
+
+    /**
      * Create a <code>public.users</code> table reference
      */
     public JUsers() {
@@ -210,11 +226,11 @@ public class JUsers extends TableImpl<JUsersRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row13 type methods
+    // Row14 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row13<Long, String, String, String, String, String, String, String, Boolean, String, JSONB, Instant, Instant> fieldsRow() {
-        return (Row13) super.fieldsRow();
+    public Row14<Long, String, String, String, String, String, String, String, Boolean, String, JSONB, UUID, String, Boolean> fieldsRow() {
+        return (Row14) super.fieldsRow();
     }
 }

@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -44,6 +45,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 /**
  * @author Andrei Varabyeu
  */
+@Getter
+@Setter
+@NoArgsConstructor
 @Entity
 @TypeDef(name = "meta", typeClass = Metadata.class)
 @Table(name = "users", schema = "public")
@@ -58,6 +62,15 @@ public class User implements Serializable {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id", unique = true, nullable = false, precision = 64)
   private Long id;
+
+  @Column(name = "uuid")
+  private UUID uuid;
+
+  @Column(name = "external_id")
+  private String externalId;
+
+  @Column(name = "active")
+  private boolean active;
 
   @Column(name = "login")
   private String login;
@@ -117,22 +130,15 @@ public class User implements Serializable {
       return false;
     }
     User user = (User) o;
-    return isExpired == user.isExpired
-        && Objects.equals(id, user.id)
+    return  Objects.equals(id, user.id)
+        && Objects.equals(uuid, user.uuid)
         && Objects.equals(login, user.login)
-        && Objects.equals(password, user.password)
         && Objects.equals(email, user.email)
-        && role == user.role
-        && Objects.equals(fullName, user.fullName)
-        && Objects.equals(metadata, user.metadata)
-        && Objects.equals(attachment, user.attachment)
-        && Objects.equals(attachmentThumbnail, user.attachmentThumbnail)
-        && userType == user.userType;
+        ;
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, login, password, email, role, fullName, isExpired, metadata, attachment,
-        attachmentThumbnail, userType);
+    return Objects.hash(id, uuid, login, email);
   }
 }

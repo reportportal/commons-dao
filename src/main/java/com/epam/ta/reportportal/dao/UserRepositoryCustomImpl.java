@@ -131,7 +131,7 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
                 USERS.LOGIN,
                 USERS.PASSWORD,
                 USERS.ROLE,
-                USERS.EMAIL,
+                USERS.EMAIL, USERS.ACTIVE,
                 PROJECT_USER.PROJECT_ID,
                 PROJECT_USER.PROJECT_ROLE,
                 PROJECT.NAME,
@@ -151,7 +151,7 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
   @Override
   public Optional<ReportPortalUser> findReportPortalUser(String login) {
-    return dsl.select(USERS.ID, USERS.LOGIN, USERS.PASSWORD, USERS.ROLE, USERS.EMAIL)
+    return dsl.select(USERS.ID, USERS.LOGIN, USERS.PASSWORD, USERS.ROLE, USERS.EMAIL, USERS.ACTIVE)
         .from(USERS)
         .where(USERS.LOGIN.eq(login))
         .fetchOptional(REPORT_PORTAL_USER_MAPPER);
@@ -159,7 +159,7 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
   @Override
   public Optional<ReportPortalUser> findReportPortalUser(Long userId) {
-    return dsl.select(USERS.ID, USERS.LOGIN, USERS.PASSWORD, USERS.ROLE, USERS.EMAIL)
+    return dsl.select(USERS.ID, USERS.LOGIN, USERS.PASSWORD, USERS.ROLE, USERS.EMAIL, USERS.ACTIVE)
         .from(USERS)
         .where(USERS.ID.eq(userId))
         .fetchOptional(REPORT_PORTAL_USER_MAPPER);

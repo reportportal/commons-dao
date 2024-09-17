@@ -41,6 +41,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * ReportPortal user representation
@@ -52,6 +56,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 @EqualsAndHashCode(callSuper = false)
 public class ReportPortalUser extends User {
 
+  private boolean active;
+
   private Long userId;
   private UserRole userRole;
   private String email;
@@ -60,12 +66,13 @@ public class ReportPortalUser extends User {
 
   private ReportPortalUser(String username, String password,
       Collection<? extends GrantedAuthority> authorities, Long userId,
-      UserRole role, Map<String, OrganizationDetails> organizationDetails, String email) {
+      UserRole role, Map<String, OrganizationDetails> organizationDetails, String email, boolean isActive) {
     super(username, password, authorities);
     this.userId = userId;
     this.userRole = role;
     this.organizationDetails = organizationDetails;
     this.email = email;
+    this.active = isActive;
   }
 
   public static ReportPortalUserBuilder userBuilder() {
@@ -88,6 +95,19 @@ public class ReportPortalUser extends User {
     private OrganizationRole orgRole;
 
     private Map<String, ProjectDetails> projectDetails;
+  @Override
+  public boolean isEnabled() {
+    return active;
+  }
+
+  @Override
+  public boolean isAccountNonLocked() {
+    return active;
+  }
+
+  public Long getUserId() {
+    return userId;
+  }
 
     public static OrganizationDetailsBuilder builder() {
       return new OrganizationDetailsBuilder();
@@ -203,6 +223,7 @@ public class ReportPortalUser extends User {
 
   public static class ReportPortalUserBuilder {
 
+    private boolean active;
     private String username;
     private String password;
     private Long userId;
@@ -212,6 +233,11 @@ public class ReportPortalUser extends User {
     private Collection<? extends GrantedAuthority> authorities;
 
     private ReportPortalUserBuilder() {
+    }
+
+    public ReportPortalUserBuilder withActive(boolean active) {
+      this.active = active;
+      return this;
     }
 
     public ReportPortalUserBuilder withUserName(String userName) {
@@ -234,6 +260,7 @@ public class ReportPortalUser extends User {
       this.username = userDetails.getUsername();
       this.password = userDetails.getPassword();
       this.authorities = userDetails.getAuthorities();
+      this.active = userDetails.isEnabled();
       return this;
     }
 
@@ -258,6 +285,7 @@ public class ReportPortalUser extends User {
     }
 
     public ReportPortalUser fromUser(com.epam.ta.reportportal.entity.user.User user) {
+      this.active = user.isActive();
       this.username = user.getLogin();
       this.email = user.getPassword();
       this.userId = user.getId();
@@ -292,7 +320,7 @@ public class ReportPortalUser extends User {
 
     public ReportPortalUser build() {
       return new ReportPortalUser(username, password, authorities, userId, userRole,
-          organizationDetails, email);
+          organizationDetails, email, active);
     }
   }
 }
