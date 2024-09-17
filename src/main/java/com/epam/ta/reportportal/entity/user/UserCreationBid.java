@@ -56,12 +56,6 @@ public class UserCreationBid implements Serializable, Modifiable {
   @Column(name = "email")
   private String email;
 
-	@Column(name = "project_name")
-	private String projectName;
-
-  @Column(name = "role")
-  private String role;
-
   @OneToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "inviting_user_id")
   private User invitingUser;
@@ -84,22 +78,6 @@ public class UserCreationBid implements Serializable, Modifiable {
 
   public void setEmail(String email) {
     this.email = email;
-  }
-
-  public String getProjectName() {
-    return projectName;
-  }
-
-  public void setProjectName(String projectName) {
-    this.projectName = projectName;
-  }
-
-  public String getRole() {
-    return role;
-  }
-
-  public void setRole(String role) {
-    this.role = role;
   }
 
   @Override
