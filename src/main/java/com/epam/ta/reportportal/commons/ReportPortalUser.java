@@ -41,10 +41,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * ReportPortal user representation
@@ -75,6 +71,17 @@ public class ReportPortalUser extends User {
     this.active = isActive;
   }
 
+  @Override
+  public boolean isEnabled() {
+    return active;
+  }
+
+  @Override
+  public boolean isAccountNonLocked() {
+    return active;
+  }
+
+
   public static ReportPortalUserBuilder userBuilder() {
     return new ReportPortalUserBuilder();
   }
@@ -95,19 +102,6 @@ public class ReportPortalUser extends User {
     private OrganizationRole orgRole;
 
     private Map<String, ProjectDetails> projectDetails;
-  @Override
-  public boolean isEnabled() {
-    return active;
-  }
-
-  @Override
-  public boolean isAccountNonLocked() {
-    return active;
-  }
-
-  public Long getUserId() {
-    return userId;
-  }
 
     public static OrganizationDetailsBuilder builder() {
       return new OrganizationDetailsBuilder();

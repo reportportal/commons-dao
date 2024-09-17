@@ -24,7 +24,7 @@ import org.jooq.Index;
 import org.jooq.JSONB;
 import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row14;
+import org.jooq.Row16;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -127,6 +127,11 @@ public class JUsers extends TableImpl<JUsersRecord> {
     public final TableField<JUsersRecord, Instant> UPDATED_AT = createField(DSL.name("updated_at"), org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.field("now()", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "", new JooqInstantConverter());
 
     /**
+     * The column <code>public.users.active</code>.
+     */
+    public final TableField<JUsersRecord, Boolean> ACTIVE = createField(DSL.name("active"), org.jooq.impl.SQLDataType.BOOLEAN.defaultValue(org.jooq.impl.DSL.field("true", org.jooq.impl.SQLDataType.BOOLEAN)), this, "");
+
+    /**
      * The column <code>public.users.uuid</code>.
      */
     public final TableField<JUsersRecord, UUID> UUID = createField(DSL.name("uuid"), org.jooq.impl.SQLDataType.UUID.nullable(false).defaultValue(org.jooq.impl.DSL.field("gen_random_uuid()", org.jooq.impl.SQLDataType.UUID)), this, "");
@@ -135,11 +140,6 @@ public class JUsers extends TableImpl<JUsersRecord> {
      * The column <code>public.users.external_id</code>.
      */
     public final TableField<JUsersRecord, String> EXTERNAL_ID = createField(DSL.name("external_id"), org.jooq.impl.SQLDataType.VARCHAR, this, "");
-
-    /**
-     * The column <code>public.users.active</code>.
-     */
-    public final TableField<JUsersRecord, Boolean> ACTIVE = createField(DSL.name("active"), org.jooq.impl.SQLDataType.BOOLEAN.defaultValue(org.jooq.impl.DSL.field("true", org.jooq.impl.SQLDataType.BOOLEAN)), this, "");
 
     /**
      * Create a <code>public.users</code> table reference
@@ -226,11 +226,11 @@ public class JUsers extends TableImpl<JUsersRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row14 type methods
+    // Row16 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row14<Long, String, String, String, String, String, String, String, Boolean, String, JSONB, UUID, String, Boolean> fieldsRow() {
-        return (Row14) super.fieldsRow();
+    public Row16<Long, String, String, String, String, String, String, String, Boolean, String, JSONB, Instant, Instant, Boolean, UUID, String> fieldsRow() {
+        return (Row16) super.fieldsRow();
     }
 }

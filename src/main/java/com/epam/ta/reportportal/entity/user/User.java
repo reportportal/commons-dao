@@ -51,9 +51,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 @Entity
 @TypeDef(name = "meta", typeClass = Metadata.class)
 @Table(name = "users", schema = "public")
-@Getter
-@Setter
-@NoArgsConstructor
 public class User implements Serializable {
 
   private static final long serialVersionUID = 923392981;

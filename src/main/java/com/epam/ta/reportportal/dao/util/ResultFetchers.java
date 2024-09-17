@@ -424,7 +424,7 @@ public class ResultFetchers {
     if (!CollectionUtils.isEmpty(rows)) {
       ReportPortalUser user = ReportPortalUser.userBuilder()
           .withUserName(rows.get(0).get(USERS.LOGIN))
-          .withActive(records.get(0).get(USERS.ACTIVE))
+          .withActive(rows.get(0).get(USERS.ACTIVE))
           .withPassword(ofNullable(rows.get(0).get(USERS.PASSWORD)).orElse(""))
           .withAuthorities(Collections.emptyList())
           .withUserId(rows.get(0).get(USERS.ID))
