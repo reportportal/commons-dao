@@ -31,7 +31,9 @@ public enum UserType {
   UPSA,
   GITHUB,
   LDAP,
-  SAML;
+  SAML,
+
+  SCIM;
   //@formatter:on
 
   public static UserType getByName(String type) {
