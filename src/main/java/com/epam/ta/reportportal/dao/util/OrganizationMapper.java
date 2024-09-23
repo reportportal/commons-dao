@@ -35,9 +35,8 @@ import com.epam.reportportal.api.model.OrganizationUserAccount.OrgRoleEnum;
 import com.epam.reportportal.api.model.OrganizationUserRelationRelationships;
 import com.epam.reportportal.api.model.OrganizationUserRelationRelationshipsProjects;
 import com.epam.reportportal.api.model.OrganizationUserRelationRelationshipsProjectsMeta;
-
-import com.epam.reportportal.api.model.UserAccount.AuthProviderEnum;
-import com.epam.reportportal.api.model.UserDetails.InstanceRoleEnum;
+import com.epam.reportportal.api.model.UserAccount.InstanceRoleEnum;
+import com.epam.reportportal.api.model.UserMetadata.AuthProviderEnum;
 import com.epam.ta.reportportal.entity.organization.Organization;
 import com.epam.ta.reportportal.entity.organization.OrganizationFilter;
 import com.fasterxml.jackson.databind.DeserializationFeature;
