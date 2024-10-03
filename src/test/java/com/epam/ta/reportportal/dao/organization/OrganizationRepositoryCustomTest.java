@@ -19,13 +19,13 @@ package com.epam.ta.reportportal.dao.organization;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.util.AssertionErrors.assertTrue;
 
+import com.epam.reportportal.api.model.OrganizationInfo;
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.entity.organization.Organization;
 import com.epam.ta.reportportal.entity.organization.OrganizationFilter;
-import com.epam.reportportal.api.model.OrganizationProfile;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -63,7 +63,7 @@ class OrganizationRepositoryCustomTest extends BaseTest {
 
   @Test
   void organizationByFilterNotFound() {
-    final List<OrganizationProfile> orgs = organizationRepositoryCustom.findByFilter(
+    final List<OrganizationInfo> orgs = organizationRepositoryCustom.findByFilter(
         new Filter(OrganizationFilter.class,
             Condition.EQUALS,
             false,
@@ -93,7 +93,7 @@ class OrganizationRepositoryCustomTest extends BaseTest {
 
     filter.withCondition(new FilterCondition(Condition.EQUALS, false, "2", "org_user_id"));
 
-    final List<OrganizationProfile> orgs = organizationRepositoryCustom.findByFilter(filter);
+    final List<OrganizationInfo> orgs = organizationRepositoryCustom.findByFilter(filter);
     assertEquals(rows, orgs.size());
   }
 
@@ -118,7 +118,7 @@ class OrganizationRepositoryCustomTest extends BaseTest {
       "last_launch_occurred|lt|2024-08-01T12:42:30.758055Z|0"
   }, delimiter = '|')
   void findOrganizationByFilter(String field, String condition, String value, int rows) {
-    final List<OrganizationProfile> orgs = organizationRepositoryCustom.findByFilter(
+    final List<OrganizationInfo> orgs = organizationRepositoryCustom.findByFilter(
         new Filter(OrganizationFilter.class,
             Condition.findByMarker(condition).get(),
             false,

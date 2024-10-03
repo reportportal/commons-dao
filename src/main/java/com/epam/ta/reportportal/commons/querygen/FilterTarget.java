@@ -157,7 +157,6 @@ import static com.epam.ta.reportportal.jooq.tables.JOwnedEntity.OWNED_ENTITY;
 import static org.jooq.impl.DSL.choose;
 import static org.jooq.impl.DSL.field;
 
-import com.epam.reportportal.api.model.ProjectProfile;
 import com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant;
 import com.epam.ta.reportportal.commons.querygen.query.JoinEntity;
 import com.epam.ta.reportportal.commons.querygen.query.QuerySupplier;
@@ -1518,7 +1517,7 @@ public enum FilterTarget {
 
   },
 
-  PROJECT_PROFILE(ProjectProfile.class,
+  PROJECT_PROFILE(com.epam.reportportal.api.model.ProjectInfo.class,
       Arrays.asList(
           new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_ID, PROJECT.ORGANIZATION_ID,
                   Long.class)

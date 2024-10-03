@@ -46,13 +46,11 @@ import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
 import static java.util.Optional.ofNullable;
 
-import com.epam.reportportal.api.model.OrganizationProfile;
-import com.epam.reportportal.api.model.ProjectProfile;
-import com.epam.reportportal.api.model.ProjectRelationshipsRelationships;
-import com.epam.reportportal.api.model.ProjectRelationshipsRelationshipsLaunches;
-import com.epam.reportportal.api.model.ProjectRelationshipsRelationshipsLaunchesMeta;
-import com.epam.reportportal.api.model.ProjectRelationshipsRelationshipsUsers;
-import com.epam.reportportal.api.model.ProjectRelationshipsRelationshipsUsersMeta;
+import com.epam.reportportal.api.model.OrganizationInfo;
+import com.epam.reportportal.api.model.ProjectInfo;
+import com.epam.reportportal.api.model.ProjectStats;
+import com.epam.reportportal.api.model.ProjectStatsLaunchStats;
+import com.epam.reportportal.api.model.ProjectStatsUserStats;
 import com.epam.reportportal.rules.exception.ErrorType;
 import com.epam.reportportal.rules.exception.ReportPortalException;
 import com.epam.ta.reportportal.commons.ReportPortalUser;
@@ -89,6 +87,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.jooq.Record;
 import org.jooq.Result;
 import org.springframework.data.domain.Sort;
@@ -138,11 +137,11 @@ public class ResultFetchers {
   /**
    * Fetches records from db results into list of {@link Organization} objects.
    */
-  public static final Function<Result<? extends Record>, List<OrganizationProfile>> ORGANIZATION_FETCHER = rows -> {
-    Map<Long, OrganizationProfile> orgs = Maps.newLinkedHashMap();
+  public static final Function<Result<? extends Record>, List<OrganizationInfo>> ORGANIZATION_FETCHER = rows -> {
+    Map<Long, OrganizationInfo> orgs = Maps.newLinkedHashMap();
     rows.forEach(row -> {
       Long id = row.get(ORGANIZATION.ID);
-      OrganizationProfile organization;
+      OrganizationInfo organization;
       if (!orgs.containsKey(id)) {
         organization = OrganizationMapper.ORGANIZATION_MAPPER.map(row);
       } else {
@@ -275,8 +274,8 @@ public class ResultFetchers {
   };
 
   /**
-   * Fetches records from db results into list of {@link com.epam.ta.reportportal.entity.integration.Integration}
-   * objects.
+   * Fetches records from db results into list of
+   * {@link com.epam.ta.reportportal.entity.integration.Integration} objects.
    */
   public static final Function<Result<? extends Record>, List<Integration>> INTEGRATION_FETCHER = rows -> {
     Map<Integer, Integration> integrations = Maps.newLinkedHashMap();
@@ -475,43 +474,23 @@ public class ResultFetchers {
     return null;
   };
 
-  public static final Function<Result<? extends Record>, List<ProjectProfile>> ORGANIZATION_PROJECT_LIST_FETCHER = rows -> {
-    List<ProjectProfile> projectProfiles = new ArrayList<>(rows.size());
-
-    rows.forEach(row -> {
-      ProjectProfile projectProfile = new ProjectProfile();
-
-      projectProfile.setId(row.get(PROJECT.ID));
-      projectProfile.setOrganizationId(row.get(PROJECT.ORGANIZATION_ID));
-      projectProfile.setCreatedAt(row.get(PROJECT.CREATED_AT, Instant.class));
-      projectProfile.setUpdatedAt(row.get(PROJECT.UPDATED_AT, Instant.class));
-      projectProfile.setKey(row.get(PROJECT.KEY));
-      projectProfile.setSlug(row.get(PROJECT.SLUG));
-      projectProfile.setName(row.get(PROJECT.NAME, String.class));
-
-      ProjectRelationshipsRelationshipsLaunches prl = new ProjectRelationshipsRelationshipsLaunches();
-      // set launches
-      prl.meta(new ProjectRelationshipsRelationshipsLaunchesMeta()
-          .count(row.get(OrganizationFilter.LAUNCHES_QUANTITY, Integer.class))
-          .lastOccurredAt(row.get(OrganizationFilter.LAST_RUN, Instant.class)));
-
-      // set users
-      ProjectRelationshipsRelationshipsUsersMeta usersMeta = new ProjectRelationshipsRelationshipsUsersMeta()
-          .count(row.get(OrganizationFilter.USERS_QUANTITY, Integer.class));
-      ProjectRelationshipsRelationshipsUsers oru = new ProjectRelationshipsRelationshipsUsers()
-          .meta(usersMeta);
-
-      ProjectRelationshipsRelationships relationships = new ProjectRelationshipsRelationships()
-          .launches(prl)
-          .users(oru);
-
-      projectProfile.setRelationships(relationships);
-
-      projectProfiles.add(projectProfile);
-
-    });
-
-    return projectProfiles;
-  };
+  public static final Function<Result<? extends Record>, List<ProjectInfo>> ORGANIZATION_PROJECT_LIST_FETCHER = rows ->
+      rows.stream().map(row -> new ProjectInfo()
+              .id(row.get(PROJECT.ID))
+              .organizationId(row.get(PROJECT.ORGANIZATION_ID))
+              .createdAt(row.get(PROJECT.CREATED_AT, Instant.class))
+              .updatedAt(row.get(PROJECT.UPDATED_AT, Instant.class))
+              .key(row.get(PROJECT.KEY))
+              .slug(row.get(PROJECT.SLUG))
+              .name(row.get(PROJECT.NAME, String.class))
+              .stats(new ProjectStats()
+                  .billingStats(null)
+                  .launchStats(new ProjectStatsLaunchStats()
+                      .totalCount(row.get(OrganizationFilter.LAUNCHES_QUANTITY, Integer.class))
+                      .lastOccurredAt(row.get(OrganizationFilter.LAST_RUN, Instant.class)))
+                  .userStats(new ProjectStatsUserStats().totalCount(
+                      row.get(OrganizationFilter.USERS_QUANTITY, Integer.class))))
+          )
+          .collect(Collectors.toList());
 
 }

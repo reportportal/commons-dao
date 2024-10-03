@@ -5,7 +5,7 @@ import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteria
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.epam.reportportal.api.model.ProjectProfile;
+import com.epam.reportportal.api.model.ProjectInfo;
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
@@ -36,13 +36,13 @@ class OrganizationProjectRepositoryTest extends BaseTest {
       "1|launches|eq|0"
   }, delimiter = '|')
   void findAllOrganizationProjects(Long orgId, String field, String op, String value) {
-    Filter filter = new Filter(ProjectProfile.class, Lists.newArrayList())
+    Filter filter = new Filter(ProjectInfo.class, Lists.newArrayList())
         .withCondition(
             new FilterCondition(Condition.EQUALS, false, orgId.toString(), "organization_id"))
         .withCondition(new FilterCondition(Condition.findByMarker(op).get(), false, value, field));
     Pageable pageable = PageRequest.of(0, 1, Sort.by("name"));
 
-    Page<ProjectProfile> projectsListPage = organizationProjectRepository.getProjectProfileListByFilter(filter, pageable);
+    Page<ProjectInfo> projectsListPage = organizationProjectRepository.getProjectProfileListByFilter(filter, pageable);
 
     assertTrue(isNotEmpty(projectsListPage.toList()));
   }
@@ -53,14 +53,14 @@ class OrganizationProjectRepositoryTest extends BaseTest {
       "2|1|Member",
   }, delimiter = '|')
   void findOrganizationProjectsAssignedToUser(Long userId, Long orgId, String role) {
-    Filter filter = new Filter(ProjectProfile.class, Lists.newArrayList())
+    Filter filter = new Filter(ProjectInfo.class, Lists.newArrayList())
         .withCondition(new FilterCondition(Condition.EQUALS, false, orgId.toString(), "organization_id"))
         .withCondition(new FilterCondition(Condition.IN, false, "1, 2", CRITERIA_PROJECT_ID))
         .withCondition(
             new FilterCondition(Condition.EQUALS, false, userId.toString(), CRITERIA_USER_ID));
     Pageable pageable = PageRequest.of(0, 10, Sort.by("name"));
 
-    Page<ProjectProfile> projectsListPage = organizationProjectRepository.getProjectProfileListByFilter(filter, pageable);
+    Page<ProjectInfo> projectsListPage = organizationProjectRepository.getProjectProfileListByFilter(filter, pageable);
     assertTrue(isNotEmpty(projectsListPage.toList()));
   }
 }

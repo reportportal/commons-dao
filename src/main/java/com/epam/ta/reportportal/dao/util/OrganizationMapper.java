@@ -21,22 +21,20 @@ import static com.epam.ta.reportportal.jooq.Tables.ORGANIZATION;
 import static com.epam.ta.reportportal.jooq.Tables.ORGANIZATION_USER;
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
 
+import com.epam.reportportal.api.model.OrganizationInfo;
 import com.epam.reportportal.api.model.OrganizationInfo.TypeEnum;
-import com.epam.reportportal.api.model.OrganizationProfile;
-import com.epam.reportportal.api.model.OrganizationRelationRelationships;
-import com.epam.reportportal.api.model.OrganizationRelationRelationshipsLaunches;
-import com.epam.reportportal.api.model.OrganizationRelationRelationshipsLaunchesMeta;
-import com.epam.reportportal.api.model.OrganizationRelationRelationshipsProjects;
-import com.epam.reportportal.api.model.OrganizationRelationRelationshipsProjectsMeta;
-import com.epam.reportportal.api.model.OrganizationRelationRelationshipsUsers;
-import com.epam.reportportal.api.model.OrganizationRelationRelationshipsUsersMeta;
-import com.epam.reportportal.api.model.OrganizationUserAccount;
-import com.epam.reportportal.api.model.OrganizationUserAccount.OrgRoleEnum;
-import com.epam.reportportal.api.model.OrganizationUserRelationRelationships;
-import com.epam.reportportal.api.model.OrganizationUserRelationRelationshipsProjects;
-import com.epam.reportportal.api.model.OrganizationUserRelationRelationshipsProjectsMeta;
-import com.epam.reportportal.api.model.UserAccount.InstanceRoleEnum;
-import com.epam.reportportal.api.model.UserMetadata.AuthProviderEnum;
+import com.epam.reportportal.api.model.OrganizationStatsRelationships;
+import com.epam.reportportal.api.model.OrganizationStatsRelationshipsLaunches;
+import com.epam.reportportal.api.model.OrganizationStatsRelationshipsLaunchesMeta;
+import com.epam.reportportal.api.model.OrganizationStatsRelationshipsProjects;
+import com.epam.reportportal.api.model.OrganizationStatsRelationshipsProjectsMeta;
+import com.epam.reportportal.api.model.OrganizationStatsRelationshipsUsers;
+import com.epam.reportportal.api.model.OrganizationStatsRelationshipsUsersMeta;
+import com.epam.reportportal.api.model.OrganizationUser.OrgRoleEnum;
+import com.epam.reportportal.api.model.OrganizationUserAllOfStats;
+import com.epam.reportportal.api.model.OrganizationUserAllOfStatsProjectStats;
+import com.epam.reportportal.api.model.UserBase;
+import com.epam.reportportal.api.model.UserBase.AccountTypeEnum;
 import com.epam.ta.reportportal.entity.organization.Organization;
 import com.epam.ta.reportportal.entity.organization.OrganizationFilter;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -47,6 +45,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
 import org.jooq.Result;
@@ -73,94 +72,66 @@ public class OrganizationMapper {
   /**
    * Maps record into {@link Organization} object
    */
-  public static final RecordMapper<? super Record, OrganizationProfile> ORGANIZATION_MAPPER = row -> {
-    OrganizationProfile organization = row.into(OrganizationProfile.class);
-
-    organization.setId(row.get(ORGANIZATION.ID, Long.class));
-    organization.setCreatedAt(row.get(ORGANIZATION.CREATED_AT, Instant.class));
-    organization.setUpdatedAt(row.get(ORGANIZATION.UPDATED_AT, Instant.class));
-    organization.setName(row.get(ORGANIZATION.NAME, String.class));
-    organization.setSlug(row.get(ORGANIZATION.SLUG, String.class));
-    organization.setExternalId(row.get(ORGANIZATION.EXTERNAL_ID, String.class));
-    organization.setType(TypeEnum.valueOf(row.get(ORGANIZATION.ORGANIZATION_TYPE)));
-
-    // set launches
-    OrganizationRelationRelationshipsLaunches orl = new OrganizationRelationRelationshipsLaunches();
-    orl.meta(new OrganizationRelationRelationshipsLaunchesMeta()
-        .count(row.get(OrganizationFilter.LAUNCHES_QUANTITY, Integer.class))
-        .lastOccurredAt(row.get(OrganizationFilter.LAST_RUN, Instant.class)));
-
-    // set projects
-    OrganizationRelationRelationshipsProjects rp = new OrganizationRelationRelationshipsProjects();
-    rp.meta(new OrganizationRelationRelationshipsProjectsMeta()
-        .count(row.get(PROJECTS_QUANTITY, Integer.class)));
-
-    // set users
-    OrganizationRelationRelationshipsUsersMeta usersMeta =
-        new OrganizationRelationRelationshipsUsersMeta()
-            .count(row.get(OrganizationFilter.USERS_QUANTITY, Integer.class));
-    OrganizationRelationRelationshipsUsers oru = new OrganizationRelationRelationshipsUsers()
-        .meta(usersMeta);
-
-    OrganizationRelationRelationships organizationRelation = new OrganizationRelationRelationships()
-        .launches(orl)
-        .projects(rp)
-        .users(oru);
-
-    organization.setRelationships(organizationRelation);
-
-    return organization;
-  };
+  public static final RecordMapper<? super Record, OrganizationInfo> ORGANIZATION_MAPPER = row ->
+      row.into(OrganizationInfo.class)
+          .id(row.get(ORGANIZATION.ID, Long.class))
+          .createdAt(row.get(ORGANIZATION.CREATED_AT, Instant.class))
+          .updatedAt(row.get(ORGANIZATION.UPDATED_AT, Instant.class))
+          .name(row.get(ORGANIZATION.NAME, String.class))
+          .slug(row.get(ORGANIZATION.SLUG, String.class))
+          .externalId(row.get(ORGANIZATION.EXTERNAL_ID, String.class))
+          .type(TypeEnum.valueOf(row.get(ORGANIZATION.ORGANIZATION_TYPE)))
+          .relationships(new OrganizationStatsRelationships()
+              .billing(null)
+              .launches(new OrganizationStatsRelationshipsLaunches()
+                  .meta(new OrganizationStatsRelationshipsLaunchesMeta()
+                      .count(row.get(OrganizationFilter.LAUNCHES_QUANTITY, Integer.class))
+                      .lastOccurredAt(row.get(OrganizationFilter.LAST_RUN, Instant.class))))
+              .projects(new OrganizationStatsRelationshipsProjects()
+                  .meta(new OrganizationStatsRelationshipsProjectsMeta()
+                      .count(row.get(PROJECTS_QUANTITY, Integer.class))))
+              .users(new OrganizationStatsRelationshipsUsers()
+                  .meta(new OrganizationStatsRelationshipsUsersMeta().count(
+                      row.get(OrganizationFilter.USERS_QUANTITY, Integer.class)))));
 
 
-  public static final Function<Result<? extends Record>, List<OrganizationUserAccount>> ORGANIZATION_USERS_LIST_FETCHER = rows -> {
-    List<OrganizationUserAccount> userProfiles = new ArrayList<>(rows.size());
+  public static final Function<Result<? extends Record>, List<com.epam.reportportal.api.model.OrganizationUser>> ORGANIZATION_USERS_LIST_FETCHER = rows -> {
+    List<com.epam.reportportal.api.model.OrganizationUser> users = new ArrayList<>(rows.size());
 
-    rows.forEach(row -> {
-      OrganizationUserAccount organizationUserProfile = new OrganizationUserAccount();
+    return rows.stream().map(row -> {
+          var organizationUserInfo = new com.epam.reportportal.api.model.OrganizationUser()
+              .id(row.get(ORGANIZATION_USER.USER_ID))
+              .fullName(row.get(USERS.FULL_NAME))
+              .createdAt(row.get(USERS.CREATED_AT, Instant.class))
+              .updatedAt(row.get(USERS.UPDATED_AT, Instant.class))
+              .instanceRole(UserBase.InstanceRoleEnum.fromValue(row.get(USERS.ROLE)))
+              .orgRole(OrgRoleEnum.fromValue(
+                  row.get(ORGANIZATION_USER.ORGANIZATION_ROLE.getName(), String.class)))
+              .accountType(AccountTypeEnum.fromValue(row.get(USERS.TYPE)))
+              .email(row.get(USERS.EMAIL))
+              //.uuid(row.get(USERS.EXTERNAL_ID, UUID.class))
+              .stats(new OrganizationUserAllOfStats()
+                  .projectStats(new OrganizationUserAllOfStatsProjectStats()
+                      .totalCount(row.get(PROJECTS_QUANTITY, Integer.class))));
 
-      organizationUserProfile.setId(row.get(ORGANIZATION_USER.USER_ID));
-      organizationUserProfile.setFullName(row.get(USERS.FULL_NAME));
-      organizationUserProfile.setCreatedAt(row.get(USERS.CREATED_AT, Instant.class));
-      organizationUserProfile.setUpdatedAt(row.get(USERS.UPDATED_AT, Instant.class));
-      organizationUserProfile.setInstanceRole(InstanceRoleEnum.fromValue(row.get(USERS.ROLE)));
-      organizationUserProfile.setOrgRole(
-          OrgRoleEnum.fromValue(
-              row.get(ORGANIZATION_USER.ORGANIZATION_ROLE.getName(), String.class)));
-      organizationUserProfile.setAuthProvider(AuthProviderEnum.fromValue(row.get(USERS.TYPE)));
-      organizationUserProfile.setEmail(row.get(USERS.EMAIL));
+          Optional.ofNullable(row.field(USERS.METADATA))
+              .ifPresent(meta -> {
+                // TODO: refactor after switching to jooq 3.19 with jsonb processing support
+                JSONObject json = new JSONObject(row.get(USERS.METADATA).data());
+                Long millis = json.optJSONObject("metadata", new JSONObject()).optLong("last_login");
+                organizationUserInfo.setLastLoginAt(Instant.ofEpochMilli(millis));
+              });
 
-      Optional.ofNullable(row.field(USERS.METADATA))
-          .ifPresent(meta -> {
-            // TODO: refactor after switching to jooq 3.19 with jsonb processing support
-            JSONObject json = new JSONObject(row.get(USERS.METADATA).data());
-            Long millis = json.optJSONObject("metadata", new JSONObject()).optLong("last_login");
-            organizationUserProfile.setLastLoginAt(Instant.ofEpochMilli(millis));
+          Optional.ofNullable(row.field(ORGANIZATION.EXTERNAL_ID))
+              .ifPresent(
+                  extId -> organizationUserInfo.setExternalId(row.get(ORGANIZATION.EXTERNAL_ID)));
+          Optional.ofNullable(row.field(ORGANIZATION.EXTERNAL_ID))
+              .ifPresent(extId -> organizationUserInfo.setUuid(row.get(USERS.UUID)));
 
-          });
+          return organizationUserInfo;
+        }
+    ).collect(Collectors.toList());
 
-      Optional.ofNullable(row.field(ORGANIZATION.EXTERNAL_ID))
-          .ifPresent(
-              extId -> organizationUserProfile.setExternalId(row.get(ORGANIZATION.EXTERNAL_ID)));
-
-      // organizationUserProfile.setUuid(row.get(USERS.EXTERNAL_ID, UUID.class));// uncomment later
-
-      OrganizationUserRelationRelationshipsProjects projects =
-          new OrganizationUserRelationRelationshipsProjects()
-              .meta(new OrganizationUserRelationRelationshipsProjectsMeta()
-                  .count(row.get(PROJECTS_QUANTITY, Integer.class))
-              );
-
-      OrganizationUserRelationRelationships organizationUserRelation = new OrganizationUserRelationRelationships()
-          .projects(projects);
-
-      organizationUserProfile.setRelationships(organizationUserRelation);
-
-      userProfiles.add(organizationUserProfile);
-
-    });
-
-    return userProfiles;
   };
 
 

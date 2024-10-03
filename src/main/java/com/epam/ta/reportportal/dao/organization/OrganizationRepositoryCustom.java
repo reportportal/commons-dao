@@ -16,9 +16,9 @@
 
 package com.epam.ta.reportportal.dao.organization;
 
+import com.epam.reportportal.api.model.OrganizationInfo;
 import com.epam.ta.reportportal.dao.FilterableRepository;
 import com.epam.ta.reportportal.entity.organization.Organization;
-import com.epam.reportportal.api.model.OrganizationProfile;
 import java.util.Optional;
 
 /**
@@ -26,7 +26,7 @@ import java.util.Optional;
  *
  * @author Siarhei Hrabko
  */
-public interface OrganizationRepositoryCustom extends FilterableRepository<OrganizationProfile> {
+public interface OrganizationRepositoryCustom extends FilterableRepository<OrganizationInfo> {
 
   Optional<Organization> findById(Long orgId);
 

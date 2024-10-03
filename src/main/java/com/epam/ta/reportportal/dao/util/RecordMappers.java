@@ -103,9 +103,6 @@ import com.epam.ta.reportportal.entity.widget.Widget;
 import com.epam.ta.reportportal.entity.widget.WidgetOptions;
 import com.epam.ta.reportportal.jooq.Tables;
 import com.epam.ta.reportportal.jooq.tables.JLog;
-import com.epam.reportportal.api.model.OrganizationInfo;
-import com.epam.reportportal.api.model.OrganizationProfile;
-import com.epam.reportportal.api.model.OrganizationRelation;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -203,24 +200,6 @@ public class RecordMappers {
     });
 
     return project;
-  };
-
-  /**
-   * Maps record into {@link Organization} object
-   */
-  public static final RecordMapper<? super Record, OrganizationProfile> ORGANIZATION_MAPPER = row -> {
-    OrganizationProfile organization = row.into(OrganizationProfile.class);
-
-    organization.setId(row.get(ORGANIZATION.ID, Long.class));
-    organization.setCreatedAt(row.get(ORGANIZATION.CREATED_AT, Instant.class));
-    organization.setUpdatedAt(row.get(ORGANIZATION.UPDATED_AT, Instant.class));
-    organization.setName(row.get(ORGANIZATION.NAME, String.class));
-    organization.setSlug(row.get(ORGANIZATION.SLUG, String.class));
-    organization.setExternalId(row.get(ORGANIZATION.EXTERNAL_ID, String.class));
-    organization.setType(OrganizationInfo.TypeEnum.valueOf(row.get(ORGANIZATION.ORGANIZATION_TYPE)));
-    OrganizationRelation organizationRelation = new OrganizationRelation();
-
-    return organization;
   };
 
 

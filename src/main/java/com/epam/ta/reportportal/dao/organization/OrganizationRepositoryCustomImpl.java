@@ -20,10 +20,10 @@ import static com.epam.ta.reportportal.dao.util.QueryUtils.collectJoinFields;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.ORGANIZATION_FETCHER;
 import static com.epam.ta.reportportal.jooq.Tables.ORGANIZATION;
 
+import com.epam.reportportal.api.model.OrganizationInfo;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.entity.organization.Organization;
-import com.epam.reportportal.api.model.OrganizationProfile;
 import java.util.List;
 import java.util.Optional;
 import org.jooq.DSLContext;
@@ -51,7 +51,7 @@ public class OrganizationRepositoryCustomImpl implements OrganizationRepositoryC
   private DSLContext dsl;
 
   @Override
-  public List<OrganizationProfile> findByFilter(Queryable filter) {
+  public List<OrganizationInfo> findByFilter(Queryable filter) {
 
     SelectQuery<? extends Record> query = QueryBuilder
         .newBuilder(filter, collectJoinFields(filter))
@@ -64,7 +64,7 @@ public class OrganizationRepositoryCustomImpl implements OrganizationRepositoryC
   }
 
   @Override
-  public Page<OrganizationProfile> findByFilter(Queryable filter, Pageable pageable) {
+  public Page<OrganizationInfo> findByFilter(Queryable filter, Pageable pageable) {
     SelectQuery<? extends Record> query = QueryBuilder.newBuilder(filter,
             collectJoinFields(filter, pageable.getSort()))
         .with(pageable)
