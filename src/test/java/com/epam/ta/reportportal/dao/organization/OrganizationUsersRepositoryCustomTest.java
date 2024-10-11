@@ -5,11 +5,11 @@ import static com.epam.ta.reportportal.commons.querygen.constant.OrganizationCri
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-import com.epam.reportportal.api.model.OrganizationUserAccount;
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
+import com.epam.ta.reportportal.entity.organization.OrganizationUserAccount;
 import com.epam.ta.reportportal.entity.organization.OrganizationUserFilter;
 import java.util.List;
 import org.junit.jupiter.api.Test;

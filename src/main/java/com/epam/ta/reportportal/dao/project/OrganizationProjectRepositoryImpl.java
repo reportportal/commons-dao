@@ -2,9 +2,9 @@ package com.epam.ta.reportportal.dao.project;
 
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.ORGANIZATION_PROJECT_LIST_FETCHER;
 
-import com.epam.reportportal.api.model.ProjectProfile;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
+import com.epam.ta.reportportal.entity.project.ProjectProfile;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

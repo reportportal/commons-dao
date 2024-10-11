@@ -16,8 +16,8 @@
 
 package com.epam.ta.reportportal.dao.organization;
 
-import com.epam.reportportal.api.model.OrganizationUserAccount;
 import com.epam.ta.reportportal.dao.FilterableRepository;
+import com.epam.ta.reportportal.entity.organization.OrganizationUserAccount;
 
 /**
  * Repository interface for searching and filtering organization records.
