@@ -157,7 +157,6 @@ import static com.epam.ta.reportportal.jooq.tables.JOwnedEntity.OWNED_ENTITY;
 import static org.jooq.impl.DSL.choose;
 import static org.jooq.impl.DSL.field;
 
-import com.epam.reportportal.api.model.ProjectProfile;
 import com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant;
 import com.epam.ta.reportportal.commons.querygen.query.JoinEntity;
 import com.epam.ta.reportportal.commons.querygen.query.QuerySupplier;
@@ -173,6 +172,7 @@ import com.epam.ta.reportportal.entity.organization.OrganizationFilter;
 import com.epam.ta.reportportal.entity.organization.OrganizationUserFilter;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectInfo;
+import com.epam.ta.reportportal.entity.project.ProjectProfile;
 import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.entity.widget.Widget;
 import com.epam.ta.reportportal.jooq.enums.JIntegrationGroupEnum;

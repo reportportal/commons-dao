@@ -25,7 +25,7 @@ import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.entity.organization.Organization;
 import com.epam.ta.reportportal.entity.organization.OrganizationFilter;
-import com.epam.reportportal.api.model.OrganizationProfile;
+import com.epam.ta.reportportal.entity.organization.OrganizationProfile;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -46,6 +46,7 @@ class OrganizationRepositoryCustomTest extends BaseTest {
     String name = "My organization";
     Optional<Organization> organization = organizationRepositoryCustom.findOrganizationByName(name);
     assertTrue("Organization not found", organization.isPresent());
+    assertEquals(name, organization.get().getName());
   }
 
   @Test
@@ -53,12 +54,15 @@ class OrganizationRepositoryCustomTest extends BaseTest {
     String slug = "my-organization";
     Optional<Organization> organization = organizationRepositoryCustom.findOrganizationBySlug(slug);
     assertTrue("Organization not found", organization.isPresent());
+    assertEquals(slug, organization.get().getSlug());
   }
 
   @Test
   void findByIdTest() {
-    Optional<Organization> organization = organizationRepositoryCustom.findById(1L);
+    Long id = 1L;
+    Optional<Organization> organization = organizationRepositoryCustom.findById(id);
     assertTrue("Organization not found", organization.isPresent());
+    assertEquals(id, organization.get().getId());
   }
 
   @Test

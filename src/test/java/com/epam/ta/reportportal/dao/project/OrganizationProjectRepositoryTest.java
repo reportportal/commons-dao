@@ -5,11 +5,11 @@ import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteria
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.epam.reportportal.api.model.ProjectProfile;
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
+import com.epam.ta.reportportal.entity.project.ProjectProfile;
 import com.google.common.collect.Lists;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;

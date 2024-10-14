@@ -19,9 +19,9 @@ package com.epam.ta.reportportal.dao.organization;
 
 import static com.epam.ta.reportportal.dao.util.OrganizationMapper.ORGANIZATION_USERS_LIST_FETCHER;
 
-import com.epam.reportportal.api.model.OrganizationUserAccount;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
+import com.epam.ta.reportportal.entity.organization.OrganizationUserAccount;
 import java.util.List;
 import org.jooq.DSLContext;
 import org.jooq.Record;

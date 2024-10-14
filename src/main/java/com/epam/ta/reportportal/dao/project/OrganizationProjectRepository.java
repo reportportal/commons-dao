@@ -1,7 +1,7 @@
 package com.epam.ta.reportportal.dao.project;
 
 import com.epam.ta.reportportal.commons.querygen.Queryable;
-import com.epam.reportportal.api.model.ProjectProfile;
+import com.epam.ta.reportportal.entity.project.ProjectProfile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

@@ -46,13 +46,6 @@ import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
 import static java.util.Optional.ofNullable;
 
-import com.epam.reportportal.api.model.OrganizationProfile;
-import com.epam.reportportal.api.model.ProjectProfile;
-import com.epam.reportportal.api.model.ProjectRelationshipsRelationships;
-import com.epam.reportportal.api.model.ProjectRelationshipsRelationshipsLaunches;
-import com.epam.reportportal.api.model.ProjectRelationshipsRelationshipsLaunchesMeta;
-import com.epam.reportportal.api.model.ProjectRelationshipsRelationshipsUsers;
-import com.epam.reportportal.api.model.ProjectRelationshipsRelationshipsUsersMeta;
 import com.epam.reportportal.rules.exception.ErrorType;
 import com.epam.reportportal.rules.exception.ReportPortalException;
 import com.epam.ta.reportportal.commons.ReportPortalUser;
@@ -70,9 +63,11 @@ import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.organization.Organization;
 import com.epam.ta.reportportal.entity.organization.OrganizationFilter;
+import com.epam.ta.reportportal.entity.organization.OrganizationProfile;
 import com.epam.ta.reportportal.entity.pattern.PatternTemplateTestItem;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectAttribute;
+import com.epam.ta.reportportal.entity.project.ProjectProfile;
 import com.epam.ta.reportportal.entity.user.OrganizationUser;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.epam.ta.reportportal.entity.user.User;
@@ -489,23 +484,9 @@ public class ResultFetchers {
       projectProfile.setSlug(row.get(PROJECT.SLUG));
       projectProfile.setName(row.get(PROJECT.NAME, String.class));
 
-      ProjectRelationshipsRelationshipsLaunches prl = new ProjectRelationshipsRelationshipsLaunches();
-      // set launches
-      prl.meta(new ProjectRelationshipsRelationshipsLaunchesMeta()
-          .count(row.get(OrganizationFilter.LAUNCHES_QUANTITY, Integer.class))
-          .lastOccurredAt(row.get(OrganizationFilter.LAST_RUN, Instant.class)));
-
-      // set users
-      ProjectRelationshipsRelationshipsUsersMeta usersMeta = new ProjectRelationshipsRelationshipsUsersMeta()
-          .count(row.get(OrganizationFilter.USERS_QUANTITY, Integer.class));
-      ProjectRelationshipsRelationshipsUsers oru = new ProjectRelationshipsRelationshipsUsers()
-          .meta(usersMeta);
-
-      ProjectRelationshipsRelationships relationships = new ProjectRelationshipsRelationships()
-          .launches(prl)
-          .users(oru);
-
-      projectProfile.setRelationships(relationships);
+      projectProfile.setLaunchesQuantity(row.get(OrganizationFilter.LAUNCHES_QUANTITY, Integer.class));
+      projectProfile.setLastRun(row.get(OrganizationFilter.LAST_RUN, Instant.class));
+      projectProfile.setUsersQuantity(row.get(OrganizationFilter.USERS_QUANTITY, Integer.class));
 
       projectProfiles.add(projectProfile);
 
