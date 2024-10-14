@@ -36,6 +36,7 @@ import javax.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
@@ -48,6 +49,7 @@ import org.hibernate.annotations.TypeDef;
 @Entity
 @TypeDef(name = "meta", typeClass = Metadata.class)
 @Table(name = "users", schema = "public")
+@DynamicInsert
 public class User implements Serializable {
 
   private static final long serialVersionUID = 923392981;
@@ -64,7 +66,7 @@ public class User implements Serializable {
   private String externalId;
 
   @Column(name = "active")
-  private boolean active;
+  private Boolean active;
 
   @Column(name = "login")
   private String login;
