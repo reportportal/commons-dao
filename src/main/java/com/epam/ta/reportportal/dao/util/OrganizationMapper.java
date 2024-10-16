@@ -100,7 +100,7 @@ public class OrganizationMapper {
       organizationUserProfile.setAuthProvider(UserType.valueOf(row.get(USERS.TYPE)));
       organizationUserProfile.setEmail(row.get(USERS.EMAIL));
 
-      Optional.ofNullable(row.field(USERS.METADATA))
+      Optional.ofNullable(row.get(USERS.METADATA))
           .ifPresent(meta -> {
             // TODO: refactor after switching to jooq 3.19 with jsonb processing support
             JSONObject json = new JSONObject(row.get(USERS.METADATA).data());
@@ -109,13 +109,13 @@ public class OrganizationMapper {
 
           });
 
-      Optional.ofNullable(row.field(ORGANIZATION.EXTERNAL_ID))
+      Optional.ofNullable(row.get(USERS.EXTERNAL_ID))
           .ifPresent(
-              extId -> organizationUserProfile.setExternalId(row.get(ORGANIZATION.EXTERNAL_ID)));
+              extId -> organizationUserProfile.setExternalId(row.get(USERS.EXTERNAL_ID)));
 
-      Optional.ofNullable(row.field(ORGANIZATION.EXTERNAL_ID))
+      Optional.ofNullable(row.get(USERS.UUID))
           .ifPresent(
-              extId -> organizationUserProfile.setUuid(row.get(ORGANIZATION.EXTERNAL_ID, UUID.class)));
+              extId -> organizationUserProfile.setUuid(row.get(USERS.UUID, UUID.class)));
 
       organizationUserProfile.setProjectCount(row.get(PROJECTS_QUANTITY, Integer.class));
 

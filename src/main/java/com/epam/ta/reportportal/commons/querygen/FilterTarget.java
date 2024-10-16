@@ -1624,6 +1624,8 @@ public enum FilterTarget {
           USERS.CREATED_AT,
           USERS.UPDATED_AT,
           USERS.FULL_NAME,
+          USERS.EXTERNAL_ID,
+          USERS.UUID,
           ORGANIZATION_USER.ORGANIZATION_ROLE);
       QuerySupplier querySupplier = new QuerySupplier(query);
       joinTables(querySupplier);
@@ -1641,6 +1643,8 @@ public enum FilterTarget {
           USERS.CREATED_AT,
           USERS.UPDATED_AT,
           USERS.FULL_NAME,
+          USERS.EXTERNAL_ID,
+          USERS.UUID,
           ORGANIZATION_USER.ORGANIZATION_ROLE
       );
     }

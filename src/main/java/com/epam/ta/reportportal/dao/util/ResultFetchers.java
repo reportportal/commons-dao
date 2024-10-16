@@ -298,7 +298,7 @@ public class ResultFetchers {
       } else {
         user = users.get(id);
       }
-      if (ofNullable(row.field(PROJECT_USER.PROJECT_ROLE)).isPresent()) {
+      if (ofNullable(row.get(PROJECT_USER.PROJECT_ROLE)).isPresent()) {
         boolean isProjectAdded = user.getProjects().stream()
             .map(ProjectUser::getProject)
             .map(Project::getKey)
@@ -308,7 +308,7 @@ public class ResultFetchers {
         }
       }
 
-      if (ofNullable(row.field(ORGANIZATION_USER.ORGANIZATION_ROLE)).isPresent()) {
+      if (ofNullable(row.get(ORGANIZATION_USER.ORGANIZATION_ROLE)).isPresent()) {
         boolean isOrgAdded = user.getOrganizationUsers().stream()
             .map(OrganizationUser::getOrganization)
             .map(Organization::getId)
@@ -432,7 +432,7 @@ public class ResultFetchers {
 
       rows.forEach(
           row ->
-              ofNullable(row.field(ORGANIZATION_USER.ORGANIZATION_ID))
+              ofNullable(row.get(ORGANIZATION_USER.ORGANIZATION_ID))
                   .ifPresent(orgId -> {
                     String orgName = row.get(ORGANIZATION.NAME, String.class);
 
