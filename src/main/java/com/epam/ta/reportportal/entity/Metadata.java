@@ -24,7 +24,7 @@ import java.util.Objects;
 /**
  * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
  */
-public class Metadata extends JsonbUserType implements Serializable {
+public class Metadata extends JsonbUserType<Metadata> implements Serializable {
 
   private Map<String, Object> metadata;
 
@@ -36,7 +36,12 @@ public class Metadata extends JsonbUserType implements Serializable {
   }
 
   @Override
-  public Class<?> returnedClass() {
+  public int getSqlType() {
+    return 0;
+  }
+
+  @Override
+  public Class<Metadata> returnedClass() {
     return Metadata.class;
   }
 

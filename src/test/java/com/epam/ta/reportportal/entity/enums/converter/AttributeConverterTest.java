@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import com.epam.reportportal.rules.exception.ReportPortalException;
 import java.util.List;
 import java.util.Map;
-import javax.persistence.AttributeConverter;
+import jakarta.persistence.AttributeConverter;
 import org.junit.jupiter.api.Test;
 
 /**

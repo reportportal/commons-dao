@@ -1,5 +1,5 @@
-sourceCompatibility = JavaVersion.VERSION_11
-targetCompatibility = JavaVersion.VERSION_11
+sourceCompatibility = JavaVersion.VERSION_21
+targetCompatibility = JavaVersion.VERSION_21
 
 def commonScriptsUrl = 'https://raw.githubusercontent.com/reportportal/gradle-scripts/'
 def migrationsScriptsUrl = 'https://raw.githubusercontent.com/reportportal/migrations/'
@@ -110,8 +110,4 @@ project.ext {
             'method'     : 55,
             'class'      : 87
     ]
-}
-
-wrapper {
-    gradleVersion = '6.0'
 }

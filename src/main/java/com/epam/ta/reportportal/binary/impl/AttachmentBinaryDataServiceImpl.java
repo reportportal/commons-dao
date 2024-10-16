@@ -38,7 +38,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -128,9 +127,9 @@ public class AttachmentBinaryDataServiceImpl implements AttachmentBinaryDataServ
     } catch (IOException e) {
       LOGGER.error("Unable to save binary data", e);
     } finally {
-      if (file instanceof CommonsMultipartFile) {
+/*      if (file instanceof CommonsMultipartFile) {
         ((CommonsMultipartFile) file).getFileItem().delete();
-      }
+      }*/
     }
     return result;
   }

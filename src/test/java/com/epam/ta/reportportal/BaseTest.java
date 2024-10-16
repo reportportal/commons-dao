@@ -22,26 +22,29 @@ import com.epam.ta.reportportal.config.TestConfiguration;
 import org.flywaydb.test.FlywayTestExecutionListener;
 import org.flywaydb.test.annotation.FlywayTest;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Pavel Bortnik
  */
-@ExtendWith(SpringExtension.class)
+@SpringBootTest
+@FlywayTest
 @ContextConfiguration(classes = {DataSourceConfig.class, DatabaseConfiguration.class,
-    TestConfiguration.class})
+    TestConfiguration.class
+})
 @Transactional
 @ActiveProfiles("unittest")
 @TestExecutionListeners(listeners = {
     FlywayTestExecutionListener.class}, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
+@TestPropertySource(locations="classpath:application.yml")
 public abstract class BaseTest {
 
-  @FlywayTest
+  @FlywayTest(invokeCleanDB = false)
   @BeforeAll
   static void setUp() {
   }

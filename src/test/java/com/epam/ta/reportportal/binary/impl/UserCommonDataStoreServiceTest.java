@@ -30,7 +30,7 @@ import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
@@ -49,7 +49,7 @@ class UserCommonDataStoreServiceTest extends BaseTest {
 
   @Test
   void saveUserPhoto() throws IOException {
-    CommonsMultipartFile multipartFile = getMultipartFile("meh.jpg");
+    MultipartFile multipartFile = getMultipartFile("meh.jpg");
     User user = userRepository.findByLogin("default").get();
 
     userDataStoreService.saveUserPhoto(user, multipartFile);
