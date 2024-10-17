@@ -443,11 +443,11 @@ public enum FilterTarget {
 
     @Override
     protected void joinTables(QuerySupplier query) {
-      query.addJoin(PROJECT_USER, JoinType.LEFT_OUTER_JOIN, USERS.ID.eq(PROJECT_USER.USER_ID));
+      query.addJoin(ORGANIZATION_USER, JoinType.LEFT_OUTER_JOIN, ORGANIZATION_USER.USER_ID.eq(USERS.ID));
+      query.addJoin(ORGANIZATION, JoinType.LEFT_OUTER_JOIN, ORGANIZATION.ID.eq(ORGANIZATION_USER.ORGANIZATION_ID));
+
+      query.addJoin(PROJECT_USER, JoinType.LEFT_OUTER_JOIN, ORGANIZATION_USER.USER_ID.eq(PROJECT_USER.USER_ID));
       query.addJoin(PROJECT, JoinType.LEFT_OUTER_JOIN, PROJECT_USER.PROJECT_ID.eq(PROJECT.ID));
-      query.addJoin(ORGANIZATION, JoinType.LEFT_OUTER_JOIN, ORGANIZATION.ID.eq(PROJECT.ORGANIZATION_ID));
-      query.addJoin(ORGANIZATION_USER, JoinType.LEFT_OUTER_JOIN,
-          ORGANIZATION_USER.ORGANIZATION_ID.eq(PROJECT.ORGANIZATION_ID).and(USERS.ID.eq(ORGANIZATION_USER.USER_ID)));
     }
 
     @Override
@@ -1624,6 +1624,8 @@ public enum FilterTarget {
           USERS.CREATED_AT,
           USERS.UPDATED_AT,
           USERS.FULL_NAME,
+          USERS.EXTERNAL_ID,
+          USERS.UUID,
           ORGANIZATION_USER.ORGANIZATION_ROLE);
       QuerySupplier querySupplier = new QuerySupplier(query);
       joinTables(querySupplier);
@@ -1641,6 +1643,8 @@ public enum FilterTarget {
           USERS.CREATED_AT,
           USERS.UPDATED_AT,
           USERS.FULL_NAME,
+          USERS.EXTERNAL_ID,
+          USERS.UUID,
           ORGANIZATION_USER.ORGANIZATION_ROLE
       );
     }
