@@ -37,6 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
     TestConfiguration.class})
 @Transactional
 @ActiveProfiles("unittest")
+
 @TestExecutionListeners(listeners = {
     FlywayTestExecutionListener.class}, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
 public abstract class BaseTest {
