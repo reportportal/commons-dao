@@ -19,14 +19,14 @@ package com.epam.ta.reportportal.entity.item.issue;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import java.io.Serializable;
 import java.util.Objects;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import org.hibernate.annotations.Type;
 
 /**
@@ -43,7 +43,7 @@ public class IssueGroup implements Serializable {
 
   @Column(name = "issue_group")
   @Enumerated(EnumType.STRING)
-  @Type(type = "pqsql_enum")
+  
   private TestItemIssueGroup testItemIssueGroup;
 
   public IssueGroup() {

@@ -25,7 +25,7 @@ import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConst
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.List;
-import javax.persistence.Column;
+import jakarta.persistence.Column;
 import lombok.Getter;
 import lombok.Setter;
 

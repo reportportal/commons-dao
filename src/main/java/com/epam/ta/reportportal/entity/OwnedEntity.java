@@ -18,7 +18,7 @@ package com.epam.ta.reportportal.entity;
 
 import com.epam.ta.reportportal.entity.project.Project;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 /**
  * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>

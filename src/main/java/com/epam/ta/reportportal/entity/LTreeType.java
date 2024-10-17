@@ -21,49 +21,47 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.usertype.UserType;
 
-public class LTreeType implements UserType {
+public class LTreeType implements UserType<LTreeType>, Serializable {
 
   @Override
-  public int[] sqlTypes() {
-    return new int[]{Types.OTHER};
+  public int getSqlType() {
+    return Types.OTHER;
   }
 
   @SuppressWarnings("rawtypes")
   @Override
-  public Class returnedClass() {
-    return String.class;
+  public Class<LTreeType> returnedClass() {
+    return LTreeType.class;
   }
 
   @Override
-  public boolean equals(Object x, Object y) throws HibernateException {
+  public boolean equals(LTreeType x, LTreeType y) {
     return x == y;
   }
 
   @Override
-  public int hashCode(Object x) throws HibernateException {
+  public int hashCode(LTreeType x) {
     return x.hashCode();
   }
 
   @Override
-  public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session,
-      Object owner)
-      throws HibernateException, SQLException {
-    return rs.getString(names[0]);
+  public LTreeType nullSafeGet(ResultSet rs, int position, SharedSessionContractImplementor session,
+      Object owner) throws SQLException {
+    return (LTreeType) rs.getObject(position);
   }
 
   @Override
-  public void nullSafeSet(PreparedStatement st, Object value, int index,
-      SharedSessionContractImplementor session)
-      throws HibernateException, SQLException {
+  public void nullSafeSet(PreparedStatement st, LTreeType value, int index,
+      SharedSessionContractImplementor session) throws SQLException {
     st.setObject(index, value, Types.OTHER);
+
   }
 
   @Override
-  public Object deepCopy(Object value) throws HibernateException {
+  public LTreeType deepCopy(LTreeType value) {
     return value;
   }
 
@@ -73,18 +71,13 @@ public class LTreeType implements UserType {
   }
 
   @Override
-  public Serializable disassemble(Object value) throws HibernateException {
-    return (Serializable) value;
+  public Serializable disassemble(LTreeType value) {
+    return value;
   }
 
   @Override
-  public Object assemble(Serializable cached, Object owner) throws HibernateException {
-    return cached;
-  }
-
-  @Override
-  public Object replace(Object original, Object target, Object owner) throws HibernateException {
-    return deepCopy(original);
+  public LTreeType assemble(Serializable cached, Object owner) {
+    return deepCopy((LTreeType) cached);
   }
 
 }

@@ -22,8 +22,8 @@ import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConst
 import com.epam.ta.reportportal.dao.converters.JpaInstantConverter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.Instant;
-import javax.persistence.Column;
-import javax.persistence.Convert;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 
 /**
  * @author Ivan Budayeu

@@ -20,8 +20,8 @@ import com.epam.ta.reportportal.dao.ReportPortalRepositoryImpl;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Properties;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import org.flywaydb.core.Flyway;
 import org.jooq.SQLDialect;
@@ -83,11 +83,6 @@ public class DatabaseConfiguration {
     factory.setPackagesToScan("com.epam.ta.reportportal.commons",
         "com.epam.ta.reportportal.entity");
     factory.setDataSource(dataSource);
-
-    Properties jpaProperties = new Properties();
-    jpaProperties.setProperty("hibernate.dialect",
-        "com.epam.ta.reportportal.commons.JsonbAwarePostgresDialect");
-    factory.setJpaProperties(jpaProperties);
 
     factory.afterPropertiesSet();
 
