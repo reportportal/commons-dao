@@ -54,26 +54,18 @@ dependencies {
     implementation('org.springframework.boot:spring-boot-starter-data-jpa') {
         exclude group: 'org.hibernate', module: 'hibernate-core'
     }
-    implementation 'org.springframework:spring-jdbc:5.3.33'
-    implementation 'org.hibernate:hibernate-core:6.5.2.Final'
-    //
-
-    //https://nvd.nist.gov/vuln/detail/CVE-2020-13692
-    implementation "org.jooq:jooq:${jooqVersion}"
-    implementation 'org.postgresql:postgresql:42.7.3'
+    implementation 'org.springframework:spring-jdbc:6.1.9'
 
     implementation 'io.minio:minio:6.0.13'
 
-    implementation group: 'org.json', name: 'json', version: '20231013'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
     implementation 'org.hibernate.validator:hibernate-validator'
 
     implementation 'org.apache.commons:commons-collections4:4.4'
     implementation 'commons-fileupload:commons-fileupload:1.4'
-    implementation('commons-validator:commons-validator:1.6') {
+    implementation ('commons-validator:commons-validator:1.9.0') {
         exclude group: 'commons-beanutils', module: 'commons-beanutils'
     }
-    //implementation "org.ow2.asm:asm:9.7.1"
 
     implementation 'org.jasypt:jasypt:1.9.3'
 

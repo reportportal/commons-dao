@@ -42,7 +42,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.support.StandardMultipartHttpServletRequest;
+import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
@@ -87,7 +89,7 @@ class CommonDataStoreServiceTest extends BaseTest {
 
   @Test
   void saveThumbnailTest() throws IOException {
-    CommonsMultipartFile multipartFile = getMultipartFile("meh.jpg");
+    StandardServletMultipartResolver multipartFile = getMultipartFile("meh.jpg");
     String fileId = dataStoreService.saveThumbnail(
         BUCKET_NAME + File.separator + multipartFile.getOriginalFilename(),
         multipartFile.getInputStream()
@@ -127,13 +129,13 @@ class CommonDataStoreServiceTest extends BaseTest {
     assertFalse(Files.exists(Paths.get(dataEncoder.decode(getModifiedPath(fileId)))));
   }
 
-  public static CommonsMultipartFile getMultipartFile(String path) throws IOException {
+  public static MultipartFile getMultipartFile(String path) throws IOException {
     File file = new ClassPathResource(path).getFile();
     FileItem fileItem =
         new DiskFileItem("mainFile", Files.probeContentType(file.toPath()), false, file.getName(),
             (int) file.length(), file.getParentFile()
         );
     IOUtils.copy(new FileInputStream(file), fileItem.getOutputStream());
-    return new CommonsMultipartFile(fileItem);
+    return new StandardMultipartHttpServletRequest(). ().fileItem);
   }
 }
