@@ -39,21 +39,24 @@ dependencies {
     } else {
         implementation 'com.github.reportportal:commons:d4be022'
     }
-    jooqCodegen "org.postgresql:postgresql:${jdbcDriverVersion}"
 
     // jooq dependencies
     implementation "org.jooq:jooq:${jooqVersion}"
-    implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.2'
-    implementation 'com.zaxxer:HikariCP:6.0.0'
-
     implementation "org.postgresql:postgresql:${jdbcDriverVersion}"
+    jooqCodegen "org.postgresql:postgresql:${jdbcDriverVersion}"
+
+    implementation 'jakarta.xml.bind:jakarta.xml.bind-api:2.3.2'
+    implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.2'
+
     implementation 'org.springframework.security:spring-security-core'
     implementation 'org.springframework:spring-webmvc'
     implementation 'org.apache.tika:tika-core'
+    implementation 'net.bytebuddy:byte-buddy:1.15.4'
 
     implementation('org.springframework.boot:spring-boot-starter-data-jpa') {
         exclude group: 'org.hibernate', module: 'hibernate-core'
     }
+    implementation 'org.hibernate:hibernate-core:6.5.3.Final'
     implementation 'org.springframework:spring-jdbc:6.1.9'
 
     implementation 'io.minio:minio:6.0.13'
@@ -62,21 +65,22 @@ dependencies {
     implementation 'org.hibernate.validator:hibernate-validator'
 
     implementation 'org.apache.commons:commons-collections4:4.4'
-    implementation 'commons-fileupload:commons-fileupload:1.4'
+    implementation 'commons-fileupload:commons-fileupload:1.4' // get rid of unnecessary dep
     implementation ('commons-validator:commons-validator:1.9.0') {
         exclude group: 'commons-beanutils', module: 'commons-beanutils'
     }
 
     implementation 'org.jasypt:jasypt:1.9.3'
 
-    implementation 'io.zonky.test:embedded-postgres:2.0.7'
+    implementation 'io.zonky.test:embedded-postgres:2.0.6'
     //Fix CVE-2024-25710, CVE-2024-26308
     implementation 'org.apache.commons:commons-compress:1.26.0'
-    implementation 'org.flywaydb:flyway-core:6.3.1'
+    implementation 'org.flywaydb:flyway-core:10.15.2'
 
-    implementation 'org.apache.jclouds.api:s3:2.5.0'
-    implementation 'org.apache.jclouds.provider:aws-s3:2.5.0'
-    implementation 'org.apache.jclouds.api:filesystem:2.5.0'
+    implementation "org.apache.jclouds.api:s3:${jcloudsVersion}"
+    implementation "org.apache.jclouds.provider:aws-s3:${jcloudsVersion}"
+    implementation "org.apache.jclouds.api:filesystem:${jcloudsVersion}"
+    implementation 'javax.servlet:javax.servlet-api:4.0.1'
 
     // add lombok support
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
@@ -87,7 +91,7 @@ dependencies {
     implementation 'com.github.ben-manes.caffeine:caffeine'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.flywaydb.flyway-test-extensions:flyway-spring-test:6.1.0'
+    testImplementation 'org.flywaydb.flyway-test-extensions:flyway-spring-test:10.0.0'
 
 }
 

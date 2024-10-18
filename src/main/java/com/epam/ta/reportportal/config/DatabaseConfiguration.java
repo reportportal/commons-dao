@@ -19,7 +19,6 @@ package com.epam.ta.reportportal.config;
 import com.epam.ta.reportportal.dao.ReportPortalRepositoryImpl;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Properties;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -74,7 +73,6 @@ public class DatabaseConfiguration {
 
   @Bean
   public EntityManagerFactory entityManagerFactory() {
-
     HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
     vendorAdapter.setGenerateDdl(false);
 
