@@ -62,7 +62,6 @@ dependencies {
     implementation 'com.github.ben-manes.caffeine:caffeine'
 
     implementation 'io.minio:minio:8.5.12'
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.22'; // fix CVE-2020-29582 in minio 8.5.12
 
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
     api 'org.hibernate.validator:hibernate-validator:6.2.5.Final'
