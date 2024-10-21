@@ -64,7 +64,7 @@ dependencies {
     implementation 'io.minio:minio:8.5.12'
 
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
-    api 'org.hibernate.validator:hibernate-validator'
+    api 'org.hibernate.validator:hibernate-validator:6.2.5.Final'
 
     implementation 'org.apache.commons:commons-collections4:4.4'
     implementation 'commons-fileupload:commons-fileupload:1.5' // get rid of unnecessary dep. use spring multipart instead
