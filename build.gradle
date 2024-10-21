@@ -55,14 +55,16 @@ dependencies {
     implementation 'org.springframework:spring-webmvc'
     implementation 'org.apache.tika:tika-core'
 
-    implementation('org.springframework.boot:spring-boot-starter-data-jpa') {
+    api('org.springframework.boot:spring-boot-starter-data-jpa') {
         exclude group: 'org.hibernate', module: 'hibernate-core'
     }
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
+    implementation 'com.github.ben-manes.caffeine:caffeine'
 
     implementation 'io.minio:minio:8.5.12'
 
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
-    implementation 'org.hibernate.validator:hibernate-validator'
+    api 'org.hibernate.validator:hibernate-validator'
 
     implementation 'org.apache.commons:commons-collections4:4.4'
     implementation 'commons-fileupload:commons-fileupload:1.5' // get rid of unnecessary dep. use spring multipart instead
@@ -72,22 +74,20 @@ dependencies {
 
     implementation 'org.jasypt:jasypt:1.9.3'
 
-    implementation 'io.zonky.test:embedded-postgres:2.0.7'
+    api 'io.zonky.test:embedded-postgres:2.0.7'
     implementation 'org.apache.commons:commons-compress:1.26.1'
     implementation 'org.flywaydb:flyway-core:10.15.2'
 
     implementation "org.apache.jclouds.api:s3:${jcloudsVersion}"
     implementation "org.apache.jclouds.provider:aws-s3:${jcloudsVersion}"
     implementation "org.apache.jclouds.api:filesystem:${jcloudsVersion}"
-    implementation 'com.google.guava:guava:33.2.1-jre'
+    api 'com.google.guava:guava:33.2.1-jre'
 
     // add lombok support
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
     testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
     testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
-    implementation 'org.springframework.boot:spring-boot-starter-cache'
-    implementation 'com.github.ben-manes.caffeine:caffeine'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation 'org.flywaydb:flyway-database-postgresql:10.20.0'
