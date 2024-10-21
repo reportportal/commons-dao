@@ -22,28 +22,27 @@ import com.epam.ta.reportportal.entity.filter.UserFilter;
 import com.google.common.collect.Sets;
 import java.io.Serializable;
 import java.util.Set;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.Table;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
+import jakarta.persistence.Table;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
+
 
 /**
  * @author Pavel Bortnik
  */
 @Entity
 @Table(name = "widget")
-@TypeDef(name = "widgetOptions", typeClass = WidgetOptions.class)
 public class Widget extends OwnedEntity implements Serializable {
 
   @Column(name = "name")
@@ -68,7 +67,7 @@ public class Widget extends OwnedEntity implements Serializable {
   @OrderBy(value = "id")
   private Set<String> contentFields = Sets.newLinkedHashSet();
 
-  @Type(type = "widgetOptions")
+  @Type(WidgetOptions.class)
   @Column(name = "widget_options")
   private WidgetOptions widgetOptions;
 

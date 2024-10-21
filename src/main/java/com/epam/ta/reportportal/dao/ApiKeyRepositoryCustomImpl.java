@@ -2,7 +2,7 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.user.ApiKey;
 import java.time.LocalDate;
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.transaction.annotation.Transactional;

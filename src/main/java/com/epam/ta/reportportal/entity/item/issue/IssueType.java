@@ -16,29 +16,34 @@
 
 package com.epam.ta.reportportal.entity.item.issue;
 
-import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import java.io.Serializable;
 import java.util.Objects;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Index;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import org.hibernate.annotations.TypeDef;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * @author Pavel Bortnik
  */
 @Entity
-@TypeDef(name = "pqsql_enum", typeClass = PostgreSQLEnumType.class)
 @Table(name = "issue_type", schema = "public", indexes = {
     @Index(name = "issue_type_pk", unique = true, columnList = "id ASC")})
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class IssueType implements Serializable {
 
   @Id
@@ -61,66 +66,6 @@ public class IssueType implements Serializable {
 
   @Column(name = "hex_color", length = 7)
   private String hexColor;
-
-  public IssueType() {
-  }
-
-  public IssueType(IssueGroup issueGroup, String locator, String longName, String shortName,
-      String hexColor) {
-    this.issueGroup = issueGroup;
-    this.locator = locator;
-    this.longName = longName;
-    this.shortName = shortName;
-    this.hexColor = hexColor;
-  }
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public IssueGroup getIssueGroup() {
-    return issueGroup;
-  }
-
-  public void setIssueGroup(IssueGroup issueGroup) {
-    this.issueGroup = issueGroup;
-  }
-
-  public String getLocator() {
-    return locator;
-  }
-
-  public void setLocator(String locator) {
-    this.locator = locator;
-  }
-
-  public String getLongName() {
-    return longName;
-  }
-
-  public void setLongName(String longName) {
-    this.longName = longName;
-  }
-
-  public String getShortName() {
-    return shortName;
-  }
-
-  public void setShortName(String shortName) {
-    this.shortName = shortName;
-  }
-
-  public String getHexColor() {
-    return hexColor;
-  }
-
-  public void setHexColor(String hexColor) {
-    this.hexColor = hexColor;
-  }
 
   @Override
   public boolean equals(Object o) {
