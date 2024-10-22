@@ -279,7 +279,7 @@ public class ReportPortalUser extends User {
     }
 
     public ReportPortalUser fromUser(com.epam.ta.reportportal.entity.user.User user) {
-      this.active = user.isActive();
+      this.active = user.getActive();
       this.username = user.getLogin();
       this.email = user.getPassword();
       this.userId = user.getId();
