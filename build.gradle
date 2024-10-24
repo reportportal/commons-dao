@@ -62,6 +62,11 @@ dependencies {
     implementation 'com.github.ben-manes.caffeine:caffeine'
 
     implementation 'io.minio:minio:8.5.12'
+    // CVE-2020-29582 in minio. override with latest kotlin dependencies
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.0.21'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.0.21'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:2.0.21'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-common:2.0.21'
 
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
     api 'org.hibernate.validator:hibernate-validator:6.2.5.Final'
