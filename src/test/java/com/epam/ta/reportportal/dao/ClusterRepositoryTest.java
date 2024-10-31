@@ -57,6 +57,9 @@ class ClusterRepositoryTest extends BaseTest {
   @Autowired
   private ClusterRepository clusterRepository;
 
+  @Autowired
+  private ClusterRepositoryCustomImpl clusterRepositoryCustom;
+
   @BeforeEach
   void insertClusters() {
     final List<Cluster> clusters = LongStream.range(CLUSTER_ID_START_VALUE, CLUSTER_ID_END_VALUE)
@@ -69,6 +72,7 @@ class ClusterRepositoryTest extends BaseTest {
           return cluster;
         }).collect(Collectors.toList());
     clusterRepository.saveAll(clusters);
+    clusterRepositoryCustom.saveClusterTestItems(clusters.get(0), Set.of(1L));
     clusters.stream().map(Cluster::getId).forEach(savedIds::add);
   }
 
@@ -92,7 +96,7 @@ class ClusterRepositoryTest extends BaseTest {
     final Pageable pageable = PageRequest.of(0, 3, Sort.by(Sort.Order.by(CRITERIA_ID)));
     final Page<ClusterInfoResource> clusters = clusterRepository.findAllByLaunchIdWithCount(LAUNCH_ID, pageable);
     assertFalse(clusters.isEmpty());
-    assertEquals(3, clusters.getContent().size());
+    assertEquals(1, clusters.getContent().size());
     clusters.getContent().forEach(cluster -> assertEquals(LAUNCH_ID, cluster.getLaunchId()));
   }
 
