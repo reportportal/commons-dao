@@ -69,6 +69,7 @@ class ClusterRepositoryTest extends BaseTest {
           return cluster;
         }).collect(Collectors.toList());
     clusterRepository.saveAll(clusters);
+    clusterRepository.saveClusterTestItems(clusters.get(0), Set.of(1L));
     clusters.stream().map(Cluster::getId).forEach(savedIds::add);
   }
 
@@ -92,7 +93,7 @@ class ClusterRepositoryTest extends BaseTest {
     final Pageable pageable = PageRequest.of(0, 3, Sort.by(Sort.Order.by(CRITERIA_ID)));
     final Page<ClusterInfoResource> clusters = clusterRepository.findAllByLaunchIdWithCount(LAUNCH_ID, pageable);
     assertFalse(clusters.isEmpty());
-    assertEquals(3, clusters.getContent().size());
+    assertEquals(1, clusters.getContent().size());
     clusters.getContent().forEach(cluster -> assertEquals(LAUNCH_ID, cluster.getLaunchId()));
   }
 
@@ -128,36 +129,24 @@ class ClusterRepositoryTest extends BaseTest {
 
   @Test
   void shouldDeleteClusterTestItemsByProjectId() {
-    final Cluster cluster = clusterRepository.findByIndexIdAndLaunchId(1L, 1L).get();
-    clusterRepository.saveClusterTestItems(cluster, Set.of(1L));
-
     final int removed = clusterRepository.deleteClusterTestItemsByProjectId(1L);
     assertEquals(1, removed);
   }
 
   @Test
   void shouldDeleteClusterTestItemsByLaunchId() {
-    final Cluster cluster = clusterRepository.findByIndexIdAndLaunchId(1L, 1L).get();
-    clusterRepository.saveClusterTestItems(cluster, Set.of(1L));
-
     final int removed = clusterRepository.deleteClusterTestItemsByLaunchId(1L);
     assertEquals(1, removed);
   }
 
   @Test
   void shouldDeleteClusterTestItemsByItemId() {
-    final Cluster cluster = clusterRepository.findByIndexIdAndLaunchId(1L, 1L).get();
-    clusterRepository.saveClusterTestItems(cluster, Set.of(1L));
-
     final int removed = clusterRepository.deleteClusterTestItemsByItemId(1L);
     assertEquals(1, removed);
   }
 
   @Test
   void shouldDeleteClusterTestItemsByItemIdIn() {
-    final Cluster cluster = clusterRepository.findByIndexIdAndLaunchId(1L, 1L).get();
-    clusterRepository.saveClusterTestItems(cluster, Set.of(1L));
-
     final int removed = clusterRepository.deleteClusterTestItemsByItemIds(List.of(1L));
     assertEquals(1, removed);
 
@@ -168,7 +157,7 @@ class ClusterRepositoryTest extends BaseTest {
 
   @Test
   void shouldSaveClusterTestItems() {
-    final Cluster cluster = clusterRepository.findAllByLaunchId(LAUNCH_ID).get(0);
+    final Cluster cluster = clusterRepository.findAllByLaunchId(LAUNCH_ID).get(1);
     final int inserted = clusterRepository.saveClusterTestItems(cluster, Set.of(1L, 2L));
     assertEquals(2, inserted);
   }
