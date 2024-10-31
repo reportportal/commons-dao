@@ -47,7 +47,8 @@ public interface ClusterRepository extends ReportPortalRepository<Cluster, Long>
       "SELECT new com.epam.reportportal.model.launch.cluster.ClusterInfoResource(c.id, c.indexId as index, c.launchId, c.message, count(cti.itemId) as matchedTests) "
           + "FROM Cluster c LEFT JOIN ClusterTestItem cti ON c.id = cti.clusterId "
           + "WHERE c.launchId = :launchId "
-          + "GROUP BY c.id")
+          + "GROUP BY c.id"
+          + "HAVING count(cti.itemId) > 0")
   Page<ClusterInfoResource> findAllByLaunchIdWithCount(@Param("launchId") Long launchId, Pageable pageable);
 
   @Modifying
