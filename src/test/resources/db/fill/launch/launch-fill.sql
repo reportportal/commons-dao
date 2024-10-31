@@ -49,19 +49,19 @@ INSERT INTO public.launch(id, uuid, project_id, user_id, name, start_time, end_t
 VALUES (300, 'uuid5', 2, 2, 'finished launch', now(), now(), now(), 'DEFAULT', 'FAILED');
 
 INSERT INTO public.clusters(id, index_id, project_id, launch_id, message)
-VALUES (1, 1, 2, 1, 'msg');
+VALUES (1, 1, 2, 100, 'msg');
 
 INSERT INTO public.clusters_test_item(cluster_id, item_id)
 VALUES (1, 1);
 
 INSERT INTO public.clusters(id, index_id, project_id, launch_id, message)
-VALUES (1, 2, 2, 1, 'msg2');
+VALUES (2, 2, 2, 100, 'msg2');
 
 INSERT INTO public.clusters_test_item(cluster_id, item_id)
 VALUES (2, 2);
 
 INSERT INTO public.clusters(id, index_id, project_id, launch_id, message)
-VALUES (1, 3, 2, 1, 'msg3');
+VALUES (3, 3, 2, 100, 'msg3');
 
 INSERT INTO public.clusters_test_item(cluster_id, item_id)
 VALUES (3, 3);
