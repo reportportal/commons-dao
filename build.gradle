@@ -67,12 +67,12 @@ dependencies {
     api 'org.hibernate.validator:hibernate-validator:6.2.5.Final'
 
     implementation 'org.apache.commons:commons-collections4:4.4'
-    implementation 'commons-fileupload:commons-fileupload:1.5' // get rid of unnecessary dep. use spring multipart instead
-    implementation ('commons-validator:commons-validator:1.9.0') {
+    api 'commons-fileupload:commons-fileupload:1.5' // get rid of unnecessary dep. use spring multipart instead
+    api ('commons-validator:commons-validator:1.9.0') {
         exclude group: 'commons-beanutils', module: 'commons-beanutils'
     }
 
-    implementation 'org.jasypt:jasypt:1.9.3'
+    api 'org.jasypt:jasypt:1.9.3'
 
     api 'io.zonky.test:embedded-postgres:2.0.7'
     implementation 'org.apache.commons:commons-compress:1.26.1'
