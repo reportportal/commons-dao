@@ -42,7 +42,7 @@ dependencies {
     }
 
     // jooq dependencies
-    implementation "org.jooq:jooq:${jooqVersion}"
+    api "org.jooq:jooq:${jooqVersion}"
     implementation "org.postgresql:postgresql:${jdbcDriverVersion}"
     jooqCodegen "org.postgresql:postgresql:${jdbcDriverVersion}"
 
