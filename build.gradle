@@ -78,9 +78,9 @@ dependencies {
     implementation 'org.apache.commons:commons-compress:1.26.1'
     implementation 'org.flywaydb:flyway-core:10.15.2'
 
-    implementation "org.apache.jclouds.api:s3:${jcloudsVersion}"
-    implementation "org.apache.jclouds.provider:aws-s3:${jcloudsVersion}"
-    implementation "org.apache.jclouds.api:filesystem:${jcloudsVersion}"
+    api "org.apache.jclouds.api:s3:${jcloudsVersion}"
+    api "org.apache.jclouds.provider:aws-s3:${jcloudsVersion}"
+    api "org.apache.jclouds.api:filesystem:${jcloudsVersion}"
     api 'com.google.guava:guava:33.2.1-jre'
 
     // add lombok support
