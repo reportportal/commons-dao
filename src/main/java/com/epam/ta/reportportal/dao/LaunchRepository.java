@@ -24,7 +24,6 @@ import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.TestItemResults;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.project.Project;
-import jakarta.persistence.NamedQuery;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
