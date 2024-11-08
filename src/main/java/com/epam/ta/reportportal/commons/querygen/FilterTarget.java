@@ -347,7 +347,7 @@ public enum FilterTarget {
   USER_TARGET(User.class, Arrays.asList(
 
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ID, USERS.ID, Long.class).get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_UUID, USERS.UUID, UUID.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_UUID, USERS.UUID, String.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_EXTERNAL_ID, USERS.EXTERNAL_ID, String.class)
           .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ACTIVE, USERS.ACTIVE, Boolean.class)
