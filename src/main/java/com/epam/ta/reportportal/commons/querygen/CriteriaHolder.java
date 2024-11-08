@@ -16,9 +16,11 @@
 
 package com.epam.ta.reportportal.commons.querygen;
 
-import com.epam.reportportal.rules.exception.ErrorType;
+import static com.epam.reportportal.rules.commons.validation.Suppliers.formattedSupplier;
+
 import com.epam.reportportal.rules.commons.validation.BusinessRule;
-import com.epam.reportportal.rules.commons.validation.Suppliers;
+import com.epam.reportportal.rules.exception.ErrorType;
+import com.epam.reportportal.rules.exception.ReportPortalException;
 import com.epam.ta.reportportal.commons.querygen.query.JoinEntity;
 import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
 import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
@@ -26,7 +28,6 @@ import com.epam.ta.reportportal.entity.enums.LogLevel;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
-import com.epam.reportportal.rules.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.enums.JIntegrationGroupEnum;
 import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
@@ -41,6 +42,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import org.apache.commons.lang3.BooleanUtils;
 import org.jooq.Field;
 import org.jooq.impl.DSL;
@@ -165,7 +167,7 @@ public class CriteriaHolder {
           castedValue = DateTimeUtils.parseDateTimeWithOffset(oneValue);
         } catch (DateTimeParseException e) {
           throw new ReportPortalException(errorType,
-              Suppliers.formattedSupplier("Cannot convert '{}' to valid date", oneValue).get()
+              formattedSupplier("Cannot convert '{}' to valid date", oneValue).get()
           );
         }
       }
@@ -176,17 +178,17 @@ public class CriteriaHolder {
       Optional<LogLevel> level = LogLevel.toLevel(oneValue);
       BusinessRule.expect(level, Optional::isPresent)
           .verify(errorType,
-              Suppliers.formattedSupplier("Cannot convert '{}' to valid 'LogLevel'", oneValue));
+              formattedSupplier("Cannot convert '{}' to valid 'LogLevel'", oneValue));
       castedValue = level.get().toInt();
       BusinessRule.expect(castedValue, Objects::nonNull)
           .verify(errorType,
-              Suppliers.formattedSupplier("Cannot convert '{}' to valid 'LogLevel'", oneValue));
+              formattedSupplier("Cannot convert '{}' to valid 'LogLevel'", oneValue));
     } else if (JStatusEnum.class.isAssignableFrom(getDataType())) {
 
       Optional<StatusEnum> status = StatusEnum.fromValue(oneValue);
       BusinessRule.expect(status, Optional::isPresent)
           .verify(errorType,
-              Suppliers.formattedSupplier("Cannot convert '{}' to valid 'Status'", oneValue));
+              formattedSupplier("Cannot convert '{}' to valid 'Status'", oneValue));
       castedValue = JStatusEnum.valueOf(status.get().name());
 
     } else if (JTestItemTypeEnum.class.isAssignableFrom(getDataType())) {
@@ -194,7 +196,7 @@ public class CriteriaHolder {
       Optional<TestItemTypeEnum> itemType = TestItemTypeEnum.fromValue(oneValue);
       BusinessRule.expect(itemType, Optional::isPresent)
           .verify(errorType,
-              Suppliers.formattedSupplier("Cannot convert '{}' to valid 'Test item type'",
+              formattedSupplier("Cannot convert '{}' to valid 'Test item type'",
                   oneValue));
       castedValue = JTestItemTypeEnum.valueOf(itemType.get().name());
 
@@ -203,7 +205,7 @@ public class CriteriaHolder {
       Optional<LaunchModeEnum> launchMode = LaunchModeEnum.findByName(oneValue);
       BusinessRule.expect(launchMode, Optional::isPresent)
           .verify(errorType,
-              Suppliers.formattedSupplier("Cannot convert '{}' to valid 'Launch mode'", oneValue));
+              formattedSupplier("Cannot convert '{}' to valid 'Launch mode'", oneValue));
       castedValue = JLaunchModeEnum.valueOf(launchMode.get().name());
 
     } else if (JIntegrationGroupEnum.class.isAssignableFrom(getDataType())) {
@@ -211,7 +213,7 @@ public class CriteriaHolder {
       Optional<IntegrationGroupEnum> integrationGroup = IntegrationGroupEnum.findByName(oneValue);
       BusinessRule.expect(integrationGroup, Optional::isPresent)
           .verify(errorType,
-              Suppliers.formattedSupplier("Cannot convert '{}' to valid 'Integration group",
+              formattedSupplier("Cannot convert '{}' to valid 'Integration group",
                   oneValue));
       castedValue = JIntegrationGroupEnum.valueOf(integrationGroup.get().name());
 
@@ -219,12 +221,19 @@ public class CriteriaHolder {
       castedValue = TestItemIssueGroup.validate(oneValue);
       BusinessRule.expect(castedValue, Objects::nonNull)
           .verify(errorType,
-              Suppliers.formattedSupplier("Cannot convert '{}' to valid 'Issue Type'", oneValue));
+              formattedSupplier("Cannot convert '{}' to valid 'Issue Type'", oneValue));
     } else if (Collection.class.isAssignableFrom(getDataType())) {
       /* Collection doesn't stores objects as ObjectId */
       castedValue = oneValue;
     } else if (String.class.isAssignableFrom(getDataType())) {
       castedValue = oneValue != null ? oneValue.trim() : null;
+    } else if (UUID.class.isAssignableFrom(getDataType())) {
+      try {
+        castedValue = UUID.fromString(oneValue);
+      } catch (IllegalArgumentException e) {
+        throw new ReportPortalException(errorType,
+            formattedSupplier("Cannot convert '{}' to valid 'UUID'", oneValue));
+      }
     } else {
       castedValue = DSL.val(oneValue).cast(getDataType());
     }
@@ -237,7 +246,7 @@ public class CriteriaHolder {
       return Long.parseLong(value);
     } catch (final NumberFormatException nfe) {
       throw new ReportPortalException(errorType,
-          Suppliers.formattedSupplier("Cannot convert '{}' to valid number", value));
+          formattedSupplier("Cannot convert '{}' to valid number", value));
     }
   }
 
