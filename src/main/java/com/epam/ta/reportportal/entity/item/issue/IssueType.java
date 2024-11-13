@@ -67,6 +67,15 @@ public class IssueType implements Serializable {
   @Column(name = "hex_color", length = 7)
   private String hexColor;
 
+  public IssueType(IssueGroup issueGroup, String locator, String longName, String shortName,
+      String hexColor) {
+    this.issueGroup = issueGroup;
+    this.locator = locator;
+    this.longName = longName;
+    this.shortName = shortName;
+    this.hexColor = hexColor;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {

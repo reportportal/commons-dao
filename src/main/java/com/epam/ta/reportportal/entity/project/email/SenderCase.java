@@ -103,4 +103,17 @@ public class SenderCase implements Serializable {
   @Column(name = "attributes_operator")
   private LogicalOperator attributesOperator;
 
+
+  public SenderCase(String ruleName, Set<String> recipients, Set<String> launchNames,
+      Set<LaunchAttributeRule> launchAttributeRules, SendCase sendCase,
+      boolean enabled, String type, LogicalOperator attributesOperator) {
+    this.ruleName = ruleName;
+    this.recipients = recipients;
+    this.launchNames = launchNames;
+    this.launchAttributeRules = launchAttributeRules;
+    this.sendCase = sendCase;
+    this.enabled = enabled;
+    this.type = type;
+    this.attributesOperator = attributesOperator;
+  }
 }
