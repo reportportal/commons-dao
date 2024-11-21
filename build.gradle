@@ -59,7 +59,7 @@ dependencies {
 
     //https://nvd.nist.gov/vuln/detail/CVE-2020-13692
     implementation 'org.postgresql:postgresql:42.7.3'
-    implementation 'org.jooq:jooq'
+    api 'org.jooq:jooq'
 
     implementation 'io.minio:minio:6.0.13'
 
@@ -68,7 +68,7 @@ dependencies {
     implementation 'org.hibernate.validator:hibernate-validator'
 
     implementation 'org.apache.commons:commons-collections4:4.4'
-    implementation 'commons-fileupload:commons-fileupload:1.4'
+    api 'commons-fileupload:commons-fileupload:1.4'
     implementation('commons-validator:commons-validator:1.6') {
         exclude group: 'commons-beanutils', module: 'commons-beanutils'
     }
