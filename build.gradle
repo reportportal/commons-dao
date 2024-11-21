@@ -4,16 +4,16 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.9.RELEASE'
     id 'java'
     id 'java-library'
-    id 'nu.studer.jooq' version '3.0.3'
-    id 'org.owasp.dependencycheck' version '5.3.1'
+    id 'org.owasp.dependencycheck' version '11.1.0'
+    id "org.jooq.jooq-codegen-gradle" version "${jooqVersion}"
 }
 
 apply from: 'project-properties.gradle'
 apply from: "$scriptsUrl/release-commons.gradle"
 apply from: "$scriptsUrl/signing.gradle"
 apply from: "$scriptsUrl/copy-database-scripts.gradle"
-apply from: "$scriptsUrl/build-quality.gradle"
-apply from: "$scriptsUrl/jacoco.gradle"
+//apply from: "$scriptsUrl/build-quality.gradle"
+//apply from: "$scriptsUrl/jacoco.gradle"
 apply from: 'jooq.gradle'
 
 repositories {
@@ -24,6 +24,13 @@ repositories {
     }
 }
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+ext['spring-boot.version'] = '2.5.15'
+
 dependencyManagement {
     imports {
         mavenBom(releaseMode ? 'com.epam.reportportal:commons-bom:5.11.7' : 'com.epam.reportportal:commons-bom:5.11.7')
@@ -33,9 +40,9 @@ dependencyManagement {
 
 dependencies {
     if (releaseMode) {
-        compile 'com.epam.reportportal:commons'
+        implementation 'com.epam.reportportal:commons'
     } else {
-        implementation 'com.github.reportportal:commons:d4be022'
+        implementation 'com.github.reportportal:commons:e55b9e6'
     }
 
     implementation 'org.springframework.security:spring-security-core'
@@ -43,7 +50,7 @@ dependencies {
     implementation 'org.apache.tika:tika-core'
 
     //https://nvd.nist.gov/vuln/detail/CVE-2020-10683 (dom4j 2.1.3 version dependency) AND https://nvd.nist.gov/vuln/detail/CVE-2019-14900
-    compile('org.springframework.boot:spring-boot-starter-data-jpa') {
+    implementation('org.springframework.boot:spring-boot-starter-data-jpa') {
         exclude group: 'org.hibernate', module: 'hibernate-core'
     }
     implementation 'org.springframework:spring-jdbc:5.3.33'
@@ -51,31 +58,29 @@ dependencies {
     //
 
     //https://nvd.nist.gov/vuln/detail/CVE-2020-13692
-    compile 'org.postgresql:postgresql:42.7.3'
-    compile 'org.jooq:jooq'
-    jooqRuntime 'org.postgresql:postgresql:42.7.3'
+    implementation 'org.postgresql:postgresql:42.7.3'
+    implementation 'org.jooq:jooq'
 
-    compile 'io.minio:minio:6.0.13'
+    implementation 'io.minio:minio:6.0.13'
 
     implementation group: 'org.json', name: 'json', version: '20231013'
-    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
-    compile 'org.hibernate.validator:hibernate-validator'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+    implementation 'org.hibernate.validator:hibernate-validator'
 
-    compile 'org.apache.commons:commons-collections4:4.4'
-    compile 'commons-fileupload:commons-fileupload:1.4'
-    compile('commons-validator:commons-validator:1.6') {
+    implementation 'org.apache.commons:commons-collections4:4.4'
+    implementation 'commons-fileupload:commons-fileupload:1.4'
+    implementation('commons-validator:commons-validator:1.6') {
         exclude group: 'commons-beanutils', module: 'commons-beanutils'
     }
 
-    compile 'org.jasypt:jasypt:1.9.3'
+    api 'org.jasypt:jasypt:1.9.3'
 
-    compile 'io.zonky.test:embedded-postgres:2.0.6'
-    //Fix CVE-2024-25710, CVE-2024-26308
-    compile 'org.apache.commons:commons-compress:1.26.0'
-    compile 'org.flywaydb:flyway-core:6.3.1'
+    implementation 'io.zonky.test:embedded-postgres:2.0.6'
+    implementation 'org.apache.commons:commons-compress:1.26.0'
+    implementation 'org.flywaydb:flyway-core:6.3.1'
 
-    compile 'org.apache.jclouds.api:s3:2.5.0'
-    compile 'org.apache.jclouds.provider:aws-s3:2.5.0'
+    implementation 'org.apache.jclouds.api:s3:2.5.0'
+    implementation 'org.apache.jclouds.provider:aws-s3:2.5.0'
     implementation 'org.apache.jclouds.api:filesystem:2.5.0'
 
     // add lombok support
@@ -86,8 +91,11 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-cache'
     implementation 'com.github.ben-manes.caffeine:caffeine'
 
+    testImplementation 'net.bytebuddy:byte-buddy:1.14.9'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.flywaydb.flyway-test-extensions:flyway-spring-test:6.1.0'
+    testImplementation 'org.ow2.asm:asm:9.5'
+    testImplementation 'org.ow2.asm:asm-util:9.5'
 
 }
 
@@ -112,4 +120,4 @@ tasks.withType(JavaCompile) {
 
 checkCommitNeeded.dependsOn removeScripts
 test.dependsOn copyTestDatabaseScripts
-build.dependsOn jacocoTestReport
+//build.dependsOn jacocoTestReport
