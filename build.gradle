@@ -69,7 +69,7 @@ dependencies {
 
     implementation 'org.apache.commons:commons-collections4:4.4'
     api 'commons-fileupload:commons-fileupload:1.4'
-    implementation('commons-validator:commons-validator:1.6') {
+    api('commons-validator:commons-validator:1.6') {
         exclude group: 'commons-beanutils', module: 'commons-beanutils'
     }
 
