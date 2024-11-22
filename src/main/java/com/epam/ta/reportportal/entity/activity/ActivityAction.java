@@ -72,7 +72,9 @@ public enum ActivityAction {
   CREATE_PROJECT("createProject"),
   DELETE_PROJECT("deleteProject"),
   BULK_DELETE_PROJECT("bulkDeleteProject"),
-  UPDATE_PATTERN_ANALYZER("updatePatternAnalysisSettings");
+  UPDATE_PATTERN_ANALYZER("updatePatternAnalysisSettings"),
+
+  UPDATE_INSTANCE("updateInstance");
 
   private final String value;
 
