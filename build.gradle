@@ -67,7 +67,7 @@ dependencies {
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
     implementation 'org.hibernate.validator:hibernate-validator'
 
-    implementation 'org.apache.commons:commons-collections4:4.4'
+    api 'org.apache.commons:commons-collections4:4.4'
     api 'commons-fileupload:commons-fileupload:1.4'
     api('commons-validator:commons-validator:1.6') {
         exclude group: 'commons-beanutils', module: 'commons-beanutils'
