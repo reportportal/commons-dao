@@ -28,7 +28,8 @@ public final class UserCriteriaConstant {
   public static final String CRITERIA_USER = "user";
   public static final String CRITERIA_ROLE = "role";
   public static final String CRITERIA_TYPE = "type";
-  public static final String CRITERIA_FULL_NAME = "fullName";
+  public static final String CRITERIA_FULLNAME = "fullName";
+  public static final String CRITERIA_FULL_NAME = "full_name";
   public static final String CRITERIA_EMAIL = "email";
   public static final String CRITERIA_EXPIRED = "expired";
   public static final String CRITERIA_LAST_LOGIN = "lastLogin";

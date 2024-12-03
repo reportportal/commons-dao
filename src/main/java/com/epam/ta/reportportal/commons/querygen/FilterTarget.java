@@ -110,6 +110,7 @@ import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaCon
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_EMAIL;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_EXPIRED;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_EXTERNAL_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_FULLNAME;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_FULL_NAME;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_LAST_LOGIN;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_ROLE;
@@ -383,6 +384,8 @@ public enum FilterTarget {
       new CriteriaHolderBuilder().newBuilder(CRITERIA_USER, USERS.LOGIN, String.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_EMAIL, USERS.EMAIL, String.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_FULL_NAME, USERS.FULL_NAME, String.class)
+          .get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_FULLNAME, USERS.FULL_NAME, String.class)
           .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ROLE, USERS.ROLE, String.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_TYPE, USERS.TYPE, String.class).get(),
