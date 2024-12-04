@@ -64,7 +64,7 @@ dependencies {
     implementation 'io.minio:minio:6.0.13'
 
     implementation group: 'org.json', name: 'json', version: '20231013'
-    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+    api 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
     implementation 'org.hibernate.validator:hibernate-validator'
 
     api 'org.apache.commons:commons-collections4:4.4'
