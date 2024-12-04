@@ -21,15 +21,18 @@ package com.epam.ta.reportportal.commons.querygen.constant;
  */
 public final class UserCriteriaConstant {
 
-  public static final String CRITERIA_EXTERNAL_ID = "externalId";
+  public static final String CRITERIA_EXTERNALID = "externalId"; // TODO: for removal
+  public static final String CRITERIA_EXTERNAL_ID = "external_id";
 
   public static final String CRITERIA_ACTIVE = "active";
 
   public static final String CRITERIA_USER = "user";
   public static final String CRITERIA_ROLE = "role";
-  public static final String CRITERIA_TYPE = "type";
-  public static final String CRITERIA_FULLNAME = "fullName";
-  public static final String CRITERIA_FULL_NAME = "full_name";
+  public static final String CRITERIA_INSTANCE_ROLE = "instance_role"; // TODO: for removal
+  public static final String CRITERIA_TYPE = "type"; // TODO: for removal
+  public static final String CRITERIA_ACCOUNT_TYPE = "account_type";
+  public static final String CRITERIA_FULL_NAME = "fullName"; // TODO: for removal
+  public static final String CRITERIA_FULLNAME = "full_name";
   public static final String CRITERIA_EMAIL = "email";
   public static final String CRITERIA_EXPIRED = "expired";
   public static final String CRITERIA_LAST_LOGIN = "lastLogin";
