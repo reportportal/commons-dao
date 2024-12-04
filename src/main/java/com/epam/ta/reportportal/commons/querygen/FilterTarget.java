@@ -392,8 +392,6 @@ public enum FilterTarget {
           .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_FULLNAME, USERS.FULL_NAME, String.class)
           .get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_FULLNAME, USERS.FULL_NAME, String.class)
-          .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ROLE, USERS.ROLE, String.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_INSTANCE_ROLE, USERS.ROLE, String.class)
           .get(),
@@ -429,6 +427,8 @@ public enum FilterTarget {
           USERS.ACTIVE,
           USERS.FULL_NAME,
           USERS.TYPE,
+          USERS.CREATED_AT,
+          USERS.UPDATED_AT,
           USERS.ATTACHMENT,
           USERS.ATTACHMENT_THUMBNAIL,
           USERS.EMAIL,
