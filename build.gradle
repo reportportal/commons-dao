@@ -121,3 +121,7 @@ tasks.withType(JavaCompile) {
 checkCommitNeeded.dependsOn removeScripts
 test.dependsOn copyTestDatabaseScripts
 //build.dependsOn jacocoTestReport
+
+tasks.preTagCommit.enabled = false
+tasks.updateVersion.enabled = false
+tasks.commitNewVersion.enabled = false
