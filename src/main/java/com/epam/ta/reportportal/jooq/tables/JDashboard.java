@@ -43,7 +43,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JDashboard extends TableImpl<JDashboardRecord> {
 
-    private static final long serialVersionUID = 1541902098;
+    private static final long serialVersionUID = 396879431;
 
     /**
      * The reference instance of <code>public.dashboard</code>

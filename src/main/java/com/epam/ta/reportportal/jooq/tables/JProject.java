@@ -45,7 +45,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JProject extends TableImpl<JProjectRecord> {
 
-    private static final long serialVersionUID = -1619671757;
+    private static final long serialVersionUID = 1861656734;
 
     /**
      * The reference instance of <code>public.project</code>

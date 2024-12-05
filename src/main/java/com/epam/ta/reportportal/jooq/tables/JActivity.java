@@ -45,7 +45,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JActivity extends TableImpl<JActivityRecord> {
 
-    private static final long serialVersionUID = 1836644654;
+    private static final long serialVersionUID = 946186659;
 
     /**
      * The reference instance of <code>public.activity</code>

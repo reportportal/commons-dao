@@ -21,6 +21,10 @@ package com.epam.ta.reportportal.commons.querygen.constant;
  */
 public final class UserCriteriaConstant {
 
+  public static final String CRITERIA_EXTERNAL_ID = "externalId";
+
+  public static final String CRITERIA_ACTIVE = "active";
+
   public static final String CRITERIA_USER = "user";
   public static final String CRITERIA_ROLE = "role";
   public static final String CRITERIA_TYPE = "type";

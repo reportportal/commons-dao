@@ -16,23 +16,22 @@
 
 package com.epam.ta.reportportal.commons;
 
+import static java.util.Optional.ofNullable;
+
+import com.epam.reportportal.rules.exception.ErrorType;
 import com.epam.reportportal.rules.exception.ReportPortalException;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
 import com.epam.ta.reportportal.entity.user.UserRole;
-import com.epam.reportportal.rules.exception.ErrorType;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import static java.util.Optional.ofNullable;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * ReportPortal user representation
@@ -40,6 +39,8 @@ import static java.util.Optional.ofNullable;
  * @author <a href="mailto:andrei_varabyeu@epam.com">Andrei Varabyeu</a>
  */
 public class ReportPortalUser extends User {
+
+  private boolean active;
 
   private Long userId;
 
@@ -51,16 +52,27 @@ public class ReportPortalUser extends User {
 
   private ReportPortalUser(String username, String password,
       Collection<? extends GrantedAuthority> authorities, Long userId,
-      UserRole role, Map<String, ProjectDetails> projectDetails, String email) {
+      UserRole role, Map<String, ProjectDetails> projectDetails, String email, boolean isActive) {
     super(username, password, authorities);
     this.userId = userId;
     this.userRole = role;
     this.projectDetails = projectDetails;
     this.email = email;
+    this.active = isActive;
   }
 
   public static ReportPortalUserBuilder userBuilder() {
     return new ReportPortalUserBuilder();
+  }
+
+  @Override
+  public boolean isEnabled() {
+    return active;
+  }
+
+  @Override
+  public boolean isAccountNonLocked() {
+    return active;
   }
 
   public Long getUserId() {
@@ -161,6 +173,7 @@ public class ReportPortalUser extends User {
 
   public static class ReportPortalUserBuilder {
 
+    private boolean active;
     private String username;
     private String password;
     private Long userId;
@@ -171,6 +184,11 @@ public class ReportPortalUser extends User {
 
     private ReportPortalUserBuilder() {
 
+    }
+
+    public ReportPortalUserBuilder withActive(boolean active) {
+      this.active = active;
+      return this;
     }
 
     public ReportPortalUserBuilder withUserName(String userName) {
@@ -193,6 +211,7 @@ public class ReportPortalUser extends User {
       this.username = userDetails.getUsername();
       this.password = userDetails.getPassword();
       this.authorities = userDetails.getAuthorities();
+      this.active = userDetails.isEnabled();
       return this;
     }
 
@@ -217,6 +236,7 @@ public class ReportPortalUser extends User {
     }
 
     public ReportPortalUser fromUser(com.epam.ta.reportportal.entity.user.User user) {
+      this.active = user.getActive();
       this.username = user.getLogin();
       this.email = user.getPassword();
       this.userId = user.getId();
@@ -237,7 +257,7 @@ public class ReportPortalUser extends User {
 
     public ReportPortalUser build() {
       return new ReportPortalUser(username, password, authorities, userId, userRole, projectDetails,
-          email);
+          email, active);
     }
   }
 }

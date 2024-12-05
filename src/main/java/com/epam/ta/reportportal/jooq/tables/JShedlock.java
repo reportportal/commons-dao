@@ -43,7 +43,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class JShedlock extends TableImpl<JShedlockRecord> {
 
-    private static final long serialVersionUID = -2077089538;
+    private static final long serialVersionUID = -1932515469;
 
     /**
      * The reference instance of <code>public.shedlock</code>
