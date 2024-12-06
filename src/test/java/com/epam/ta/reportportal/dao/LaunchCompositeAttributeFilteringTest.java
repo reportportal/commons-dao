@@ -41,6 +41,24 @@ public class LaunchCompositeAttributeFilteringTest extends BaseTest {
 
     assertEquals(1, launches.size());
     assertEquals(1L, launches.get(0).getId());
+
+    launches = launchRepository.findByFilter(
+        buildFilterWithConditions(buildCompositeAttributeCondition(Condition.HAS,
+            "key:semi:value:colon",
+            false
+        )));
+
+    assertEquals(1, launches.size());
+    assertEquals(1L, launches.get(0).getId());
+
+    launches = launchRepository.findByFilter(
+        buildFilterWithConditions(buildCompositeAttributeCondition(Condition.HAS,
+            "key:semi:value:colon,key1:value1,key2:value2,key3:value3",
+            false
+        )));
+
+    assertEquals(1, launches.size());
+    assertEquals(1L, launches.get(0).getId());
   }
 
   @Test

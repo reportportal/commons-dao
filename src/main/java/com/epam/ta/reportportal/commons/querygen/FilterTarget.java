@@ -139,6 +139,7 @@ import static com.epam.ta.reportportal.jooq.Tables.USERS;
 import static com.epam.ta.reportportal.jooq.Tables.WIDGET;
 import static com.epam.ta.reportportal.jooq.tables.JOwnedEntity.OWNED_ENTITY;
 import static org.jooq.impl.DSL.choose;
+import static org.jooq.impl.DSL.coalesce;
 import static org.jooq.impl.DSL.field;
 
 import com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant;
@@ -550,15 +551,13 @@ public enum FilterTarget {
     }
 
     private List<Field<?>> getSelectAggregatedFields() {
-      return Lists.newArrayList(DSL.arrayAgg(
-          DSL.field("concat({0}, {1}, {2}, {3}, {4})",
-              ITEM_ATTRIBUTE.KEY,
-              KEY_VALUE_SEPARATOR,
-              ITEM_ATTRIBUTE.VALUE,
-              KEY_VALUE_SEPARATOR,
-              ITEM_ATTRIBUTE.SYSTEM
-          )).as(ATTRIBUTE_ALIAS)
-      );
+      return Lists.newArrayList(
+          DSL.arrayAgg(DSL.jsonArray(
+                  coalesce(ITEM_ATTRIBUTE.KEY, ""),
+                  coalesce(ITEM_ATTRIBUTE.VALUE, ""),
+                  ITEM_ATTRIBUTE.SYSTEM
+              ))
+              .as(ATTRIBUTE_ALIAS));
     }
   },
 
@@ -989,15 +988,13 @@ public enum FilterTarget {
     }
 
     private List<Field<?>> getSelectAggregatedFields() {
-      return Lists.newArrayList(DSL.arrayAgg(
-          DSL.field("concat({0}, {1}, {2}, {3}, {4})",
-              ITEM_ATTRIBUTE.KEY,
-              KEY_VALUE_SEPARATOR,
-              ITEM_ATTRIBUTE.VALUE,
-              KEY_VALUE_SEPARATOR,
-              ITEM_ATTRIBUTE.SYSTEM
-          )).as(ATTRIBUTE_ALIAS)
-      );
+      return Lists.newArrayList(
+          DSL.arrayAgg(DSL.jsonArray(
+                  coalesce(ITEM_ATTRIBUTE.KEY, ""),
+                  coalesce(ITEM_ATTRIBUTE.VALUE, ""),
+                  ITEM_ATTRIBUTE.SYSTEM
+              ))
+              .as(ATTRIBUTE_ALIAS));
     }
   },
 
