@@ -4,7 +4,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.1.6'
     id 'java'
     id 'java-library'
-    id 'org.owasp.dependencycheck' version '11.1.0'
+    id 'org.owasp.dependencycheck' version '11.1.1'
     id "org.jooq.jooq-codegen-gradle" version "${jooqVersion}"
 }
 
@@ -15,7 +15,6 @@ apply from: "$scriptsUrl/copy-database-scripts.gradle"
 //apply from: "$scriptsUrl/build-quality.gradle"
 //apply from: "$scriptsUrl/jacoco.gradle" // TODO: fix scripts
 apply from: 'jooq.gradle'
-
 
 repositories {
     mavenCentral { url "https://repo1.maven.org/maven2" }
@@ -34,7 +33,7 @@ ext['spring-boot.version'] = "${springBootVersion}"
 
 dependencyManagement {
     imports {
-        mavenBom(releaseMode ? 'com.epam.reportportal:commons-bom:5.11.7' : 'com.epam.reportportal:commons-bom:5.11.7')
+        mavenBom(releaseMode ? 'com.epam.reportportal:commons-bom:5.12.1' : 'com.epam.reportportal:commons-bom:5.12.1')
         mavenBom('io.zonky.test.postgres:embedded-postgres-binaries-bom:16.2.0')
     }
 }
@@ -62,9 +61,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-cache'
     implementation 'com.github.ben-manes.caffeine:caffeine'
 
-    implementation 'io.minio:minio:8.5.12'
+    implementation 'io.minio:minio:8.5.14'
 
-    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+    api 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
     implementation "org.hibernate.validator:hibernate-validator:${hibernateValidatorVersion}"
 
     implementation 'org.apache.commons:commons-collections4:4.4'
@@ -79,7 +78,7 @@ dependencies {
     implementation 'org.flywaydb:flyway-core:10.15.2'
     implementation 'org.flywaydb:flyway-database-postgresql:10.20.0'
 
-    implementation "org.apache.jclouds.api:s3:${jcloudsVersion}"
+    api "org.apache.jclouds.api:s3:${jcloudsVersion}"
     implementation "org.apache.jclouds.provider:aws-s3:${jcloudsVersion}"
     implementation "org.apache.jclouds.api:filesystem:${jcloudsVersion}"
     api 'com.google.guava:guava:33.2.1-jre'
@@ -113,7 +112,6 @@ tasks.withType(JavaCompile) {
     options.debug = true
     options.debugOptions.debugLevel = "source,lines,vars"
 }
-
 
 checkCommitNeeded.dependsOn removeScripts
 test.dependsOn copyTestDatabaseScripts
