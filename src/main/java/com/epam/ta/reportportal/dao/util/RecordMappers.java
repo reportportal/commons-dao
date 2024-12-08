@@ -162,7 +162,9 @@ public class RecordMappers {
    */
   public static final RecordMapper<? super Record, IssueEntity> ISSUE_RECORD_MAPPER = r -> {
     IssueEntity issueEntity = r.into(IssueEntity.class);
-    issueEntity.setIssueType(ISSUE_TYPE_RECORD_MAPPER.map(r));
+    if (r.field(ISSUE.ISSUE_ID) != null){
+      issueEntity.setIssueType(ISSUE_TYPE_RECORD_MAPPER.map(r));
+    }
     return issueEntity;
   };
 

@@ -16,27 +16,33 @@
 
 package com.epam.ta.reportportal.entity.filter;
 
-import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import java.io.Serializable;
 import java.util.Objects;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 import org.springframework.data.domain.Sort;
 
 /**
  * @author Pavel Bortnik
  */
 @Entity
-@TypeDef(name = "pqsql_enum", typeClass = PostgreSQLEnumType.class)
 @Table(name = "filter_sort", schema = "public")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class FilterSort implements Serializable {
 
   @Id
@@ -49,32 +55,8 @@ public class FilterSort implements Serializable {
 
   @Column(name = "direction", nullable = false)
   @Enumerated(EnumType.STRING)
-  @Type(type = "pqsql_enum")
+  @JdbcType(PostgreSQLEnumJdbcType.class)
   private Sort.Direction direction;
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public String getField() {
-    return field;
-  }
-
-  public void setField(String field) {
-    this.field = field;
-  }
-
-  public Sort.Direction getDirection() {
-    return direction;
-  }
-
-  public void setDirection(Sort.Direction direction) {
-    this.direction = direction;
-  }
 
   @Override
   public boolean equals(Object o) {

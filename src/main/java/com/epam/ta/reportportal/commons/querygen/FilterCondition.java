@@ -19,13 +19,14 @@ package com.epam.ta.reportportal.commons.querygen;
 import com.epam.reportportal.rules.exception.ErrorType;
 import com.epam.reportportal.rules.commons.validation.BusinessRule;
 import com.epam.reportportal.rules.commons.validation.Suppliers;
-import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.google.common.collect.Lists;
+import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
+
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 import org.jooq.Operator;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -37,7 +38,7 @@ import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.HAVING_COND
  */
 @Entity
 @Table(name = "filter_condition", schema = "public")
-@TypeDef(name = "pgsql_enum", typeClass = PostgreSQLEnumType.class)
+
 public class FilterCondition implements ConvertibleCondition, Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -51,7 +52,7 @@ public class FilterCondition implements ConvertibleCondition, Serializable {
    * Filter Condition
    */
   @Enumerated(EnumType.STRING)
-  @Type(type = "pqsql_enum")
+  @JdbcType(PostgreSQLEnumJdbcType.class)
   @Column(name = "condition")
   private Condition condition;
 

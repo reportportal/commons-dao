@@ -108,7 +108,3 @@ project.ext {
             'class'      : 87
     ]
 }
-
-wrapper {
-    gradleVersion = '8.10'
-}
