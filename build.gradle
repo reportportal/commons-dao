@@ -42,7 +42,7 @@ dependencies {
     if (releaseMode) {
         implementation 'com.epam.reportportal:commons'
     } else {
-        implementation 'com.github.reportportal:commons:bbb9a1a'
+        implementation 'com.github.reportportal:commons:56e9608'
     }
     // jooq dependencies
     api "org.jooq:jooq:${jooqVersion}"
