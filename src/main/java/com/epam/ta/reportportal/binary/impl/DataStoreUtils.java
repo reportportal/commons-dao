@@ -41,7 +41,7 @@ public class DataStoreUtils {
 
   static final String ROOT_USER_PHOTO_DIR = "users";
 
-  static final String ATTACHMENT_CONTENT_TYPE = "attachmentContentType";
+  public static final String ATTACHMENT_CONTENT_TYPE = "attachmentContentType";
 
   static final String PROJECT_PATH = "project-data";
 

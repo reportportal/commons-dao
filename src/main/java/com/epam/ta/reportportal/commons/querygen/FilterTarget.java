@@ -106,11 +106,15 @@ import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteri
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_UNIQUE_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_UUID;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.RETRY_PARENT;
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_ACCOUNT_TYPE;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_ACTIVE;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_EMAIL;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_EXPIRED;
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_EXTERNALID;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_EXTERNAL_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_FULLNAME;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_FULL_NAME;
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_INSTANCE_ROLE;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_LAST_LOGIN;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_ROLE;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_SYNCHRONIZATION_DATE;
@@ -378,14 +382,21 @@ public enum FilterTarget {
       new CriteriaHolderBuilder().newBuilder(CRITERIA_UUID, USERS.UUID, UUID.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_EXTERNAL_ID, USERS.EXTERNAL_ID, String.class)
           .get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_EXTERNALID, USERS.EXTERNAL_ID, String.class)
+          .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ACTIVE, USERS.ACTIVE, Boolean.class)
           .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_USER, USERS.LOGIN, String.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_EMAIL, USERS.EMAIL, String.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_FULL_NAME, USERS.FULL_NAME, String.class)
           .get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_FULLNAME, USERS.FULL_NAME, String.class)
+          .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ROLE, USERS.ROLE, String.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_INSTANCE_ROLE, USERS.ROLE, String.class)
+          .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_TYPE, USERS.TYPE, String.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_ACCOUNT_TYPE, USERS.TYPE, String.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_EXPIRED, USERS.EXPIRED, Boolean.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ID, PROJECT_USER.PROJECT_ID,
           Long.class).get(),
@@ -416,6 +427,8 @@ public enum FilterTarget {
           USERS.ACTIVE,
           USERS.FULL_NAME,
           USERS.TYPE,
+          USERS.CREATED_AT,
+          USERS.UPDATED_AT,
           USERS.ATTACHMENT,
           USERS.ATTACHMENT_THUMBNAIL,
           USERS.EMAIL,
