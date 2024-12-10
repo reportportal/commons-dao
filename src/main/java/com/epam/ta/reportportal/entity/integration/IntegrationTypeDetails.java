@@ -23,12 +23,12 @@ import java.util.Map;
 /**
  * @author Yauheni_Martynau
  */
-public class IntegrationTypeDetails extends JsonbUserType implements Serializable {
+public class IntegrationTypeDetails extends JsonbUserType<IntegrationTypeDetails> implements Serializable {
 
   private Map<String, Object> details;
 
   @Override
-  public Class<?> returnedClass() {
+  public Class<IntegrationTypeDetails> returnedClass() {
     return IntegrationTypeDetails.class;
   }
 

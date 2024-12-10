@@ -16,28 +16,25 @@
 
 package com.epam.ta.reportportal.dao.converters;
 
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import org.jooq.impl.AbstractConverter;
 
-public class JooqInstantConverter extends AbstractConverter<Timestamp, Instant> {
+public class JooqInstantConverter extends AbstractConverter<LocalDateTime, Instant> {
 
   public JooqInstantConverter() {
-    super(Timestamp.class, Instant.class);
-  }
-
-
-  @Override
-  public Instant from(Timestamp timestamp) {
-    return timestamp == null ? null : timestamp.toInstant();
+    super(LocalDateTime.class, Instant.class);
   }
 
   @Override
-  public Timestamp to(Instant instant) {
-    return instant == null ? null
-        : Timestamp.valueOf(LocalDateTime.ofInstant(instant, ZoneOffset.UTC));
+  public Instant from(LocalDateTime localDateTime) {
+    return localDateTime == null ? null : localDateTime.atOffset(ZoneOffset.UTC).toInstant();
+  }
+
+  @Override
+  public LocalDateTime to(Instant instant) {
+    return instant == null ? null : LocalDateTime.ofInstant(instant, ZoneOffset.UTC);
   }
 
 }

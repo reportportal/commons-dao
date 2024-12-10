@@ -18,17 +18,21 @@ package com.epam.ta.reportportal.entity.dashboard;
 
 import com.epam.ta.reportportal.entity.widget.Widget;
 import java.io.Serializable;
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapsId;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * @author Pavel Bortnik
  */
+@Setter
+@Getter
 @Entity
 @Table(name = "dashboard_widget")
 public class DashboardWidget implements Serializable {
@@ -37,11 +41,11 @@ public class DashboardWidget implements Serializable {
   private DashboardWidgetId id;
 
   @ManyToOne(fetch = FetchType.EAGER)
-  @MapsId("dashboard_id")
+  @MapsId("dashboardId")
   private Dashboard dashboard;
 
   @ManyToOne(fetch = FetchType.EAGER)
-  @MapsId("widget_id")
+  @MapsId("widgetId")
   private Widget widget;
 
   @Column(name = "widget_name")
@@ -68,95 +72,7 @@ public class DashboardWidget implements Serializable {
   @Column(name = "widget_position_y")
   private int positionY;
 
-	public DashboardWidgetId getId() {
-		return id;
-	}
-
-  public void setId(DashboardWidgetId id) {
-    this.id = id;
-  }
-
-  public Dashboard getDashboard() {
-    return dashboard;
-  }
-
-  public void setDashboard(Dashboard dashboard) {
-    this.dashboard = dashboard;
-  }
-
-  public Widget getWidget() {
-    return widget;
-  }
-
-  public void setWidget(Widget widget) {
-    this.widget = widget;
-  }
-
-  public String getWidgetName() {
-    return widgetName;
-  }
-
-  public void setWidgetName(String widgetName) {
-    this.widgetName = widgetName;
-  }
-
-  public String getWidgetOwner() {
-    return widgetOwner;
-  }
-
-  public void setWidgetOwner(String widgetOwner) {
-    this.widgetOwner = widgetOwner;
-  }
-
-  public boolean isCreatedOn() {
-    return createdOn;
-  }
-
-  public void setCreatedOn(boolean createdOn) {
-    this.createdOn = createdOn;
-  }
-
-  public int getWidth() {
-    return width;
-  }
-
-  public void setWidth(int width) {
-    this.width = width;
-  }
-
-  public String getWidgetType() {
-    return widgetType;
-  }
-
-  public void setWidgetType(String widgetType) {
-    this.widgetType = widgetType;
-  }
-
-  public int getHeight() {
-    return height;
-  }
-
-  public void setHeight(int height) {
-    this.height = height;
-  }
-
-  public int getPositionX() {
-    return positionX;
-  }
-
-  public void setPositionX(int positionX) {
-    this.positionX = positionX;
-  }
-
-  public int getPositionY() {
-    return positionY;
-  }
-
-  public void setPositionY(int positionY) {
-    this.positionY = positionY;
-  }
-
-	@Override
+  @Override
 	public boolean equals(Object o) {
 		if (this == o) {
 			return true;

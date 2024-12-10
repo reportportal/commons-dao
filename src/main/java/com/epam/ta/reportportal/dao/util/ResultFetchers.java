@@ -324,7 +324,7 @@ public class ResultFetchers {
         project.setId(r.get(OWNED_ENTITY.PROJECT_ID, Long.class));
         dashboard.setProject(project);
       }
-      DASHBOARD_WIDGET_MAPPER.apply(r).ifPresent(it -> dashboard.getDashboardWidgets().add(it));
+      DASHBOARD_WIDGET_MAPPER.apply(r).ifPresent(dashboard::addWidget);
       dashboardMap.put(dashboardId, dashboard);
     });
     return Lists.newArrayList(dashboardMap.values());

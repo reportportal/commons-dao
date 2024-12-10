@@ -17,38 +17,44 @@
 package com.epam.ta.reportportal.entity.project.email;
 
 import com.epam.ta.reportportal.entity.enums.LogicalOperator;
-import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.epam.ta.reportportal.entity.enums.SendCase;
-import com.epam.ta.reportportal.entity.integration.IntegrationParams;
 import com.epam.ta.reportportal.entity.project.Project;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
+import jakarta.persistence.Table;
 import java.io.Serializable;
 import java.util.Set;
-import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
+
 
 /**
  * @author Ivan Budayeu
  */
 @Entity
 @Table(name = "sender_case")
-@TypeDef(name = "pqsql_enum", typeClass = PostgreSQLEnumType.class)
-@TypeDef(name = "ruleDetails", typeClass = SenderCaseOptions.class)
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class SenderCase implements Serializable {
 
   @Id
@@ -73,9 +79,9 @@ public class SenderCase implements Serializable {
   @OrderBy
   private Set<LaunchAttributeRule> launchAttributeRules;
 
-  @Enumerated(EnumType.STRING)
   @Column(name = "send_case")
-  @Type(type = "pqsql_enum")
+  @Enumerated(EnumType.STRING)
+  @JdbcType(PostgreSQLEnumJdbcType.class)
   private SendCase sendCase;
 
   @ManyToOne(fetch = FetchType.LAZY)
@@ -88,17 +94,15 @@ public class SenderCase implements Serializable {
   @Column(name = "rule_type")
   private String type;
 
-  @Type(type = "ruleDetails")
+  @Type(SenderCaseOptions.class)
   @Column(name = "rule_details")
   private SenderCaseOptions ruleDetails;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "attributes_operator")
-	@Type(type = "pqsql_enum")
-	private LogicalOperator attributesOperator;
+  @Enumerated(EnumType.STRING)
+  @JdbcType(PostgreSQLEnumJdbcType.class)
+  @Column(name = "attributes_operator")
+  private LogicalOperator attributesOperator;
 
-	public SenderCase() {
-	}
 
   public SenderCase(String ruleName, Set<String> recipients, Set<String> launchNames,
       Set<LaunchAttributeRule> launchAttributeRules, SendCase sendCase,
@@ -111,93 +115,5 @@ public class SenderCase implements Serializable {
     this.enabled = enabled;
     this.type = type;
     this.attributesOperator = attributesOperator;
-  }
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public String getRuleName() {
-    return ruleName;
-  }
-
-  public void setRuleName(String ruleName) {
-    this.ruleName = ruleName;
-  }
-
-  public Set<String> getRecipients() {
-    return recipients;
-  }
-
-  public void setRecipients(Set<String> recipients) {
-    this.recipients = recipients;
-  }
-
-  public Set<String> getLaunchNames() {
-    return launchNames;
-  }
-
-  public void setLaunchNames(Set<String> launchNames) {
-    this.launchNames = launchNames;
-  }
-
-  public Set<LaunchAttributeRule> getLaunchAttributeRules() {
-    return launchAttributeRules;
-  }
-
-  public void setLaunchAttributeRules(Set<LaunchAttributeRule> launchAttributeRules) {
-    this.launchAttributeRules = launchAttributeRules;
-  }
-
-  public SendCase getSendCase() {
-    return sendCase;
-  }
-
-  public void setSendCase(SendCase sendCase) {
-    this.sendCase = sendCase;
-  }
-
-  public Project getProject() {
-    return project;
-  }
-
-  public void setProject(Project project) {
-    this.project = project;
-  }
-
-  public boolean isEnabled() {
-    return enabled;
-  }
-
-  public void setEnabled(boolean enabled) {
-    this.enabled = enabled;
-  }
-
-  public LogicalOperator getAttributesOperator() {
-    return attributesOperator;
-  }
-
-  public void setAttributesOperator(LogicalOperator attributesOperator) {
-    this.attributesOperator = attributesOperator;
-  }
-
-  public String getType() {
-    return type;
-  }
-
-  public void setType(String type) {
-    this.type = type;
-  }
-
-  public SenderCaseOptions getRuleDetails() {
-    return ruleDetails;
-  }
-
-  public void setRuleDetails(SenderCaseOptions ruleDetails) {
-    this.ruleDetails = ruleDetails;
   }
 }

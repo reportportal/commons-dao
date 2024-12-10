@@ -128,7 +128,7 @@ public class ProjectUtils {
       /* Current recipients of specified project */
       Set<SenderCase> cases = project.getSenderCases();
       if (null != cases) {
-        cases.stream().forEach(c -> {
+        cases.forEach(c -> {
           // saved - list of saved user emails before changes
           Set<String> saved = c.getRecipients();
           c.setRecipients(saved.stream().filter(it -> !toExclude.contains(it.toLowerCase()))

@@ -206,7 +206,7 @@ public class WidgetContentUtil {
 				content.setName(record.get(DSL.field(LAUNCH.NAME.getQualifiedName().toString()), String.class));
 				content.setNumber(record.get(DSL.field(LAUNCH.NUMBER.getQualifiedName().toString()), Integer.class));
 
-				startTimeField.ifPresent(f -> content.setStartTime(record.get(f, Instant.class)));
+				startTimeField.ifPresent(f -> content.setStartTime(record.get(f, Timestamp.class).toInstant()));
 			}
 
 			statisticsField.flatMap(sf -> ofNullable(record.get(sf, String.class)))
@@ -315,7 +315,7 @@ public class WidgetContentUtil {
 			}
 
 			ProductStatusStatisticsContent content = PRODUCT_STATUS_WITHOUT_ATTRIBUTES_MAPPER.apply(productStatusMapping, record);
-			startTimeField.ifPresent(f -> content.setStartTime(record.get(f, Instant.class)));
+			startTimeField.ifPresent(f -> content.setStartTime(record.get(f, Timestamp.class).toInstant()));
 			statusField.ifPresent(f -> content.setStatus(record.get(f, String.class)));
 			if (attributeField.isPresent()) {
 				String attributeKey = record.get(fieldName(ATTR_TABLE, ATTRIBUTE_KEY), String.class);
@@ -345,7 +345,7 @@ public class WidgetContentUtil {
 
 		result.forEach(record -> {
 			ProductStatusStatisticsContent content = PRODUCT_STATUS_WITHOUT_ATTRIBUTES_MAPPER.apply(productStatusMapping, record);
-			startTimeField.ifPresent(f -> content.setStartTime(record.get(f, Instant.class)));
+			startTimeField.ifPresent(f -> content.setStartTime(record.get(f, Timestamp.class).toInstant()));
 			statusField.ifPresent(f -> content.setStatus(record.get(f, String.class)));
 			if (attributeField.isPresent()) {
 				String attributeKey = record.get(fieldName(ATTR_TABLE, ATTRIBUTE_KEY), String.class);

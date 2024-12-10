@@ -1,0 +1,37 @@
+embedded:
+  datasource:
+    dir: ${java.io.tmpdir}/reportportal/embedded-postgres
+    clean: true
+    port: 0
+
+rp:
+  binarystore:
+    path: ${java.io.tmpdir}/reportportal/datastore
+  feature:
+    flags: ""
+
+datastore:
+  path: ${rp.binarystore.path:/data/storage}
+  bucketPrefix: prj-
+  defaultBucketName: rp-bucket
+  bucketPostfix: ""
+  seaweed:
+    master:
+      host: ${rp.binarystore.master.host:localhost}
+      port: ${rp.binarystore.master.port:9333}
+  s3:
+    endpoint: ${rp.binarystore.s3.endpoint:https://play.min.io}
+    accessKey: ${rp.binarystore.s3.accessKey:Q3AM3UQ867SPQQA43P2F}
+    secretKey: ${rp.binarystore.s3.secretKey:zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG}
+  type: filesystem
+  thumbnail:
+    attachment:
+      width: ${rp.binarystore.thumbnail.attachment.width:100}
+      height: ${rp.binarystore.thumbnail.attachment.height:55}
+    avatar:
+      width: ${rp.binarystore.thumbnail.avatar.width:40}
+      height: ${rp.binarystore.thumbnail.avatar.height:50}
+
+spring:
+  flyway:
+    clean-disabled: false
