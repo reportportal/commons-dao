@@ -42,8 +42,9 @@ dependencies {
     if (releaseMode) {
         implementation 'com.epam.reportportal:commons'
     } else {
-        implementation 'com.github.reportportal:commons:56e9608'
+        implementation 'com.github.reportportal:commons:bcb72b3'
     }
+    implementation "io.swagger.core.v3:swagger-annotations-jakarta:2.2.25"
     // jooq dependencies
     api "org.jooq:jooq:${jooqVersion}"
     implementation "org.postgresql:postgresql:${jdbcDriverVersion}"

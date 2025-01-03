@@ -47,6 +47,7 @@ import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import org.springframework.web.multipart.support.StandardMultipartHttpServletRequest;
 
 import static com.epam.reportportal.rules.commons.validation.BusinessRule.expect;
 import static com.epam.reportportal.rules.commons.validation.Suppliers.formattedSupplier;
@@ -127,6 +128,7 @@ public class AttachmentBinaryDataServiceImpl implements AttachmentBinaryDataServ
     } catch (IOException e) {
       LOGGER.error("Unable to save binary data", e);
     } finally {
+      // TODO: uncomment and fix later !!!
 /*      if (file instanceof CommonsMultipartFile) {
         ((CommonsMultipartFile) file).getFileItem().delete();
       }*/
