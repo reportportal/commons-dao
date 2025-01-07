@@ -30,6 +30,7 @@ import static com.epam.ta.reportportal.jooq.Tables.FILTER;
 import static com.epam.ta.reportportal.jooq.Tables.INTEGRATION;
 import static com.epam.ta.reportportal.jooq.Tables.INTEGRATION_TYPE;
 import static com.epam.ta.reportportal.jooq.Tables.ISSUE;
+import static com.epam.ta.reportportal.jooq.Tables.ISSUE_GROUP;
 import static com.epam.ta.reportportal.jooq.Tables.ISSUE_TYPE;
 import static com.epam.ta.reportportal.jooq.Tables.LAUNCH;
 import static com.epam.ta.reportportal.jooq.Tables.LOG;
@@ -71,6 +72,7 @@ import com.epam.ta.reportportal.entity.enums.IntegrationAuthFlowEnum;
 import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
 import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
+import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
 import com.epam.ta.reportportal.entity.integration.Integration;
@@ -156,8 +158,31 @@ public class RecordMappers {
    * Maps record into {@link IssueType} object
    */
   public static final RecordMapper<? super Record, IssueType> ISSUE_TYPE_RECORD_MAPPER = r -> {
-    IssueType type = r.into(IssueType.class);
-    type.setIssueGroup(r.into(IssueGroup.class));
+    IssueType type = new IssueType();
+    ofNullable(r.field(ISSUE_TYPE.ID))
+        .ifPresent(val -> type.setId(r.get(ISSUE_TYPE.ID)));
+    ofNullable(r.field(ISSUE_TYPE.ISSUE_NAME))
+        .ifPresent(longName -> type.setLongName(r.get(ISSUE_TYPE.ISSUE_NAME)));
+    ofNullable(r.field(ISSUE_TYPE.LOCATOR))
+        .ifPresent(locator -> type.setLocator(r.get(ISSUE_TYPE.LOCATOR)));
+    ofNullable(r.field(ISSUE_TYPE.ABBREVIATION))
+        .ifPresent(shortName -> type.setShortName(r.get(ISSUE_TYPE.ABBREVIATION)));
+    ofNullable(r.field(ISSUE_TYPE.HEX_COLOR))
+        .ifPresent(hexColor -> type.setHexColor(r.get(ISSUE_TYPE.HEX_COLOR)));
+    ofNullable(r.field(ISSUE_TYPE.ISSUE_GROUP_ID))
+        .ifPresent(grp ->
+            {
+              IssueGroup ig = new IssueGroup();
+              ofNullable(r.field(ISSUE_GROUP.ISSUE_GROUP_)).ifPresent(igName ->
+                  ig.setTestItemIssueGroup(
+                      TestItemIssueGroup.valueOf(r.get(ISSUE_GROUP.ISSUE_GROUP_).getLiteral())));
+              ofNullable(r.field(ISSUE_GROUP.ISSUE_GROUP_ID))
+                  .ifPresent(igId -> ig.setId(r.get(ISSUE_GROUP.ISSUE_GROUP_ID, Integer.class)));
+
+              type.setIssueGroup(ig);
+            }
+        );
+
     return type;
   };
 
@@ -166,7 +191,7 @@ public class RecordMappers {
    */
   public static final RecordMapper<? super Record, IssueEntity> ISSUE_RECORD_MAPPER = r -> {
     IssueEntity issueEntity = r.into(IssueEntity.class);
-    if (r.field(ISSUE.ISSUE_ID) != null){
+    if (r.field(ISSUE.ISSUE_ID) != null) {
       issueEntity.setIssueType(ISSUE_TYPE_RECORD_MAPPER.map(r));
     }
     return issueEntity;
@@ -330,8 +355,8 @@ public class RecordMappers {
   );
 
   /**
-   * Maps record into {@link PatternTemplate} object (only {@link PatternTemplate#id} and {@link
-   * PatternTemplate#name} fields)
+   * Maps record into {@link PatternTemplate} object (only {@link PatternTemplate#id} and
+   * {@link PatternTemplate#name} fields)
    */
   public static final Function<? super Record, Optional<PatternTemplate>> PATTERN_TEMPLATE_NAME_RECORD_MAPPER = r -> ofNullable(
       r.get(
@@ -357,7 +382,7 @@ public class RecordMappers {
     final IndexLaunch indexLaunch = new IndexLaunch();
     indexLaunch.setLaunchId(record.get(LAUNCH.ID));
     indexLaunch.setLaunchName(record.get(LAUNCH.NAME));
-    indexLaunch.setLaunchStartTime(record.get(LAUNCH.START_TIME, LocalDateTime.class ));
+    indexLaunch.setLaunchStartTime(record.get(LAUNCH.START_TIME, LocalDateTime.class));
     indexLaunch.setProjectId(record.get(LAUNCH.PROJECT_ID));
     indexLaunch.setLaunchNumber(
         (record.get(LAUNCH.NUMBER) != null) ? record.get(LAUNCH.NUMBER).longValue() : null);
@@ -515,7 +540,8 @@ public class RecordMappers {
     if (r.get(ATTRIBUTE_ALIAS) != null) {
       List<JSON> attributesArray = r.get(ATTRIBUTE_ALIAS, List.class);
       Gson gson = new Gson();
-      Type listType = new TypeToken<List<String>>() {}.getType();
+      Type listType = new TypeToken<List<String>>() {
+      }.getType();
 
       for (JSON attributeEntry : attributesArray) {
         if (attributeEntry == null) {
