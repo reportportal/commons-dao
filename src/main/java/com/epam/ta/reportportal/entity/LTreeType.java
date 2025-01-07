@@ -21,6 +21,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.usertype.UserType;
 
@@ -39,7 +40,7 @@ public class LTreeType implements UserType<String> {
 
   @Override
   public boolean equals(String s, String j1) {
-    return s.equals(j1);
+    return StringUtils.equals(s, j1);
   }
 
   @Override
