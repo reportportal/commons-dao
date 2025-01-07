@@ -47,7 +47,6 @@ import jakarta.persistence.Table;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.JdbcType;
-import org.hibernate.annotations.Type;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -115,8 +114,7 @@ public class TestItem implements Serializable {
   @OneToMany(mappedBy = "testItem", fetch = FetchType.LAZY, orphanRemoval = true)
   private Set<Log> logs = Sets.newHashSet();
 
-  @Column(name = "path", nullable = false, columnDefinition = "ltree")
-  @Type(com.epam.ta.reportportal.entity.LTreeType.class)
+  @Column(name = "path", columnDefinition = "ltree")
   private String path;
 
   @Column(name = "retry_of", precision = 64)
