@@ -20,6 +20,7 @@ import com.epam.reportportal.commons.ContentTypeResolver;
 import com.epam.reportportal.commons.Thumbnailator;
 import com.epam.reportportal.commons.ThumbnailatorImpl;
 import com.epam.reportportal.commons.TikaContentTypeResolver;
+import com.epam.ta.reportportal.binary.impl.AttachmentBinaryDataServiceImpl;
 import com.epam.ta.reportportal.filesystem.DataStore;
 import com.epam.ta.reportportal.filesystem.LocalDataStore;
 import com.epam.ta.reportportal.filesystem.distributed.s3.S3DataStore;
@@ -38,8 +39,13 @@ import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.filesystem.reference.FilesystemConstants;
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import org.jclouds.rest.ConfiguresHttpApi;
 import org.jclouds.s3.S3Client;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -51,6 +57,9 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class DataStoreConfiguration {
+
+  private static final Logger LOGGER =
+      LoggerFactory.getLogger(DataStoreConfiguration.class);
 
   /**
    * Amazon has a general work flow they publish that allows clients to always find the correct URL
@@ -214,17 +223,41 @@ public class DataStoreConfiguration {
    * @return {@link BlobStore}
    */
   @Bean
-  @ConditionalOnProperty(name = "datastore.type", havingValue = "s3")
-  public BlobStore s3BlobStore(@Value("${datastore.accessKey}") String accessKey,
-      @Value("${datastore.secretKey}") String secretKey,
+  public BlobStore s3BlobStore(
+      @Value("${datastore.accessKey:#{null}}") Optional<String> accessKey,
+      @Value("${datastore.secretKey:#{null}}") Optional<String> secretKey,
       @Value("${datastore.region}") String region) {
-    Iterable<Module> modules = ImmutableSet.of(new CustomBucketToRegionModule(region));
 
-    BlobStoreContext blobStoreContext =
-        ContextBuilder.newBuilder("aws-s3").modules(modules).credentials(accessKey, secretKey)
-            .buildView(BlobStoreContext.class);
+    BlobStoreContext blobStoreContext;
+    if (accessKey.isPresent() && secretKey.isPresent()) {
+      Iterable<Module> modules = ImmutableSet.of(new CustomBucketToRegionModule(region));
+      blobStoreContext = ContextBuilder.newBuilder("aws-s3")
+          .modules(modules)
+          .credentials(accessKey.get(), secretKey.get())
+          .buildView(BlobStoreContext.class);
+    } else {
+      try {
+        AWSCredentials credentials = getAWSCredentials();
+
+        LOGGER.info("AWSAccessKeyId: " + credentials.getAWSAccessKeyId());
+        LOGGER.info("AWSSecretKey: " + credentials.getAWSSecretKey());
+      } catch (Exception e) {
+        LOGGER.info("Exception " + e);
+      }
+
+
+      Iterable<Module> modules = ImmutableSet.of(new CustomBucketToRegionModule(region));
+      blobStoreContext = ContextBuilder.newBuilder("aws-s3")
+          .modules(modules)
+          .buildView(BlobStoreContext.class);
+    }
 
     return blobStoreContext.getBlobStore();
+  }
+
+  public AWSCredentials getAWSCredentials() {
+    AWSCredentialsProvider credentialsProvider = new DefaultAWSCredentialsProviderChain();
+    return credentialsProvider.getCredentials();
   }
 
   @Bean
