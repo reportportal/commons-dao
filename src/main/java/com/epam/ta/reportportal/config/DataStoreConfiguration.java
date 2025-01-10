@@ -229,24 +229,25 @@ public class DataStoreConfiguration {
       @Value("${datastore.secretKey:#{null}}") Optional<String> secretKey,
       @Value("${datastore.region}") String region) {
 
+    try {
+      AWSCredentials credentials = getAWSCredentials();
+
+      LOGGER.error("AWSAccessKeyId: " + credentials.getAWSAccessKeyId());
+      LOGGER.error("AWSSecretKey: " + credentials.getAWSSecretKey());
+    } catch (Exception e) {
+      LOGGER.error("Exception " + e);
+    }
+
     BlobStoreContext blobStoreContext;
     if (accessKey.isPresent() && secretKey.isPresent()) {
+      LOGGER.error("accessKey and secretKey is not null");
       Iterable<Module> modules = ImmutableSet.of(new CustomBucketToRegionModule(region));
       blobStoreContext = ContextBuilder.newBuilder("aws-s3")
           .modules(modules)
           .credentials(accessKey.get(), secretKey.get())
           .buildView(BlobStoreContext.class);
     } else {
-      try {
-        AWSCredentials credentials = getAWSCredentials();
-
-        LOGGER.info("AWSAccessKeyId: " + credentials.getAWSAccessKeyId());
-        LOGGER.info("AWSSecretKey: " + credentials.getAWSSecretKey());
-      } catch (Exception e) {
-        LOGGER.info("Exception " + e);
-      }
-
-
+      LOGGER.error("accessKey and secretKey is null");
       Iterable<Module> modules = ImmutableSet.of(new CustomBucketToRegionModule(region));
       blobStoreContext = ContextBuilder.newBuilder("aws-s3")
           .modules(modules)
