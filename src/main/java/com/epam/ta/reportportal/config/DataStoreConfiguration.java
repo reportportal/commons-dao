@@ -223,6 +223,7 @@ public class DataStoreConfiguration {
    * @return {@link BlobStore}
    */
   @Bean
+  @ConditionalOnProperty(name = "datastore.type", havingValue = "s3")
   public BlobStore s3BlobStore(
       @Value("${datastore.accessKey:#{null}}") Optional<String> accessKey,
       @Value("${datastore.secretKey:#{null}}") Optional<String> secretKey,
