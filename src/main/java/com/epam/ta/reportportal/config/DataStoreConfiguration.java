@@ -16,6 +16,8 @@
 
 package com.epam.ta.reportportal.config;
 
+import com.amazonaws.auth.AWSCredentialsProviderChain;
+import com.amazonaws.auth.InstanceProfileCredentialsProvider;
 import com.epam.reportportal.commons.ContentTypeResolver;
 import com.epam.reportportal.commons.Thumbnailator;
 import com.epam.reportportal.commons.ThumbnailatorImpl;
@@ -231,6 +233,7 @@ public class DataStoreConfiguration {
 
     try {
       AWSCredentials credentials = getAWSCredentials();
+      AWSCredentials credentials2 = getAWSInstanceCredentials();
 
       LOGGER.error("AWSAccessKeyId: " + credentials.getAWSAccessKeyId());
       LOGGER.error("AWSSecretKey: " + credentials.getAWSSecretKey());
@@ -259,6 +262,12 @@ public class DataStoreConfiguration {
 
   public AWSCredentials getAWSCredentials() {
     AWSCredentialsProvider credentialsProvider = new DefaultAWSCredentialsProviderChain();
+    return credentialsProvider.getCredentials();
+  }
+
+  public AWSCredentials getAWSInstanceCredentials() {
+    AWSCredentialsProviderChain credentialsProvider = new AWSCredentialsProviderChain(InstanceProfileCredentialsProvider.getInstance());
+    LOGGER.error("Credentials: " + credentialsProvider.getCredentials().getAWSAccessKeyId() + " " + credentialsProvider.getCredentials().getAWSSecretKey());
     return credentialsProvider.getCredentials();
   }
 
