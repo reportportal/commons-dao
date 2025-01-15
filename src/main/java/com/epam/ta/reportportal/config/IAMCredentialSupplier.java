@@ -27,13 +27,13 @@ import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 /**
  * @author <a href="mailto:andrei_piankouski@epam.com">Andrei Piankouski</a>
  */
-public class IAMCredentialSupplier implements Supplier<Credentials> {
+public class IAMCredentialSupplier implements Supplier<AwsCredentials> {
 
   private static final Logger LOGGER =
       LoggerFactory.getLogger(IAMCredentialSupplier.class);
 
   @Override
-  public Credentials get() {
+  public AwsCredentials get() {
     DefaultCredentialsProvider defaultCredentialsProvider = DefaultCredentialsProvider.create();
     AwsCredentials awsCredentials = defaultCredentialsProvider.resolveCredentials();
 
@@ -53,10 +53,7 @@ public class IAMCredentialSupplier implements Supplier<Credentials> {
       LOGGER.warn("Unknown credentials type.");
     }
 
-    return new Credentials(
-        awsCredentials.accessKeyId(),
-        awsCredentials.secretAccessKey()
-    );
+    return awsCredentials;
   }
 
 }

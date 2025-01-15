@@ -26,6 +26,7 @@ import com.epam.ta.reportportal.filesystem.distributed.s3.S3DataStore;
 import com.epam.ta.reportportal.util.FeatureFlagHandler;
 import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.cache.CacheLoader;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -34,10 +35,12 @@ import java.util.Properties;
 import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.jclouds.ContextBuilder;
+import org.jclouds.aws.domain.SessionCredentials;
 import org.jclouds.aws.s3.config.AWSS3HttpApiModule;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.ContainerNotFoundException;
+import org.jclouds.domain.Credentials;
 import org.jclouds.filesystem.reference.FilesystemConstants;
 import org.jclouds.rest.ConfiguresHttpApi;
 import org.jclouds.s3.S3Client;
@@ -48,6 +51,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import software.amazon.awssdk.auth.credentials.AwsCredentials;
+import software.amazon.awssdk.auth.credentials.AwsSessionCredentials;
 
 /**
  * @author Dzianis_Shybeka
@@ -237,9 +242,15 @@ public class DataStoreConfiguration {
           .credentials(accessKey, secretKey)
           .buildView(BlobStoreContext.class);
     } else {
+      AwsSessionCredentials credentials1 = (AwsSessionCredentials) new IAMCredentialSupplier().get();
+      SessionCredentials credentials = SessionCredentials.builder()
+          .accessKeyId(credentials1.accessKeyId())
+    .secretAccessKey(credentials1.secretAccessKey())
+    .sessionToken(credentials1.sessionToken())
+    .build();
       Iterable<Module> modules = ImmutableSet.of(new CustomBucketToRegionModule(region));
       blobStoreContext = ContextBuilder.newBuilder("aws-s3")
-          .credentialsSupplier(new IAMCredentialSupplier())
+          .credentialsSupplier(Suppliers.ofInstance(credentials))
           .modules(modules)
           .buildView(BlobStoreContext.class);
     }
