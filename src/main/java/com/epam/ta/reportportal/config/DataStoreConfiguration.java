@@ -32,6 +32,7 @@ import com.google.common.collect.Iterables;
 import com.google.inject.Module;
 import java.util.Properties;
 import java.util.Set;
+import org.apache.commons.lang3.StringUtils;
 import org.jclouds.ContextBuilder;
 import org.jclouds.aws.s3.config.AWSS3HttpApiModule;
 import org.jclouds.blobstore.BlobStore;
@@ -53,6 +54,9 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class DataStoreConfiguration {
+
+  private static final Logger LOGGER =
+      LoggerFactory.getLogger(DataStoreConfiguration.class);
 
   /**
    * Amazon has a general work flow they publish that allows clients to always find the correct URL
@@ -218,16 +222,19 @@ public class DataStoreConfiguration {
   @Bean
   @ConditionalOnProperty(name = "datastore.type", havingValue = "s3")
   public BlobStore s3BlobStore(
-      @Value("${datastore.accessKey:#{null}}") Optional<String> accessKey,
-      @Value("${datastore.secretKey:#{null}}") Optional<String> secretKey,
+      @Value("${datastore.accessKey:}") String accessKey,
+      @Value("${datastore.secretKey:}") String secretKey,
       @Value("${datastore.region}") String region) {
 
+    LOGGER.error("accessKey: " + accessKey);
+    LOGGER.error("secretKey: " + secretKey);
+
     BlobStoreContext blobStoreContext;
-    if (accessKey.isPresent() && secretKey.isPresent()) {
+    if (StringUtils.isNotEmpty(accessKey) && StringUtils.isNotEmpty(secretKey)) {
       Iterable<Module> modules = ImmutableSet.of(new CustomBucketToRegionModule(region));
       blobStoreContext = ContextBuilder.newBuilder("aws-s3")
           .modules(modules)
-          .credentials(accessKey.get(), secretKey.get())
+          .credentials(accessKey, secretKey)
           .buildView(BlobStoreContext.class);
     } else {
       Iterable<Module> modules = ImmutableSet.of(new CustomBucketToRegionModule(region));
