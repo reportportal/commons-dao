@@ -79,7 +79,8 @@ dependencies {
     api 'org.apache.commons:commons-compress:1.26.0'
     implementation 'org.flywaydb:flyway-core:6.3.1'
 
-    implementation 'com.amazonaws:aws-java-sdk-core:1.12.780'
+    implementation 'software.amazon.awssdk:aws-core:2.29.50'
+    implementation 'software.amazon.awssdk:sts:2.29.50'
     api 'org.apache.jclouds.provider:aws-s3:2.5.0'
     api 'org.apache.jclouds.api:filesystem:2.5.0'
 

@@ -16,13 +16,10 @@
 
 package com.epam.ta.reportportal.config;
 
-import com.amazonaws.auth.AWSCredentialsProviderChain;
-import com.amazonaws.auth.InstanceProfileCredentialsProvider;
 import com.epam.reportportal.commons.ContentTypeResolver;
 import com.epam.reportportal.commons.Thumbnailator;
 import com.epam.reportportal.commons.ThumbnailatorImpl;
 import com.epam.reportportal.commons.TikaContentTypeResolver;
-import com.epam.ta.reportportal.binary.impl.AttachmentBinaryDataServiceImpl;
 import com.epam.ta.reportportal.filesystem.DataStore;
 import com.epam.ta.reportportal.filesystem.LocalDataStore;
 import com.epam.ta.reportportal.filesystem.distributed.s3.S3DataStore;
@@ -41,9 +38,6 @@ import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.filesystem.reference.FilesystemConstants;
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.AWSCredentialsProvider;
-import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import org.jclouds.rest.ConfiguresHttpApi;
 import org.jclouds.s3.S3Client;
 import org.slf4j.Logger;
@@ -59,9 +53,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class DataStoreConfiguration {
-
-  private static final Logger LOGGER =
-      LoggerFactory.getLogger(DataStoreConfiguration.class);
 
   /**
    * Amazon has a general work flow they publish that allows clients to always find the correct URL
@@ -231,44 +222,22 @@ public class DataStoreConfiguration {
       @Value("${datastore.secretKey:#{null}}") Optional<String> secretKey,
       @Value("${datastore.region}") String region) {
 
-    try {
-      AWSCredentials credentials = getAWSCredentials();
-      AWSCredentials credentials2 = getAWSInstanceCredentials();
-
-      LOGGER.error("AWSAccessKeyId: " + credentials.getAWSAccessKeyId());
-      LOGGER.error("AWSSecretKey: " + credentials.getAWSSecretKey());
-    } catch (Exception e) {
-      LOGGER.error("Exception " + e);
-    }
-
     BlobStoreContext blobStoreContext;
     if (accessKey.isPresent() && secretKey.isPresent()) {
-      LOGGER.error("accessKey and secretKey is not null");
       Iterable<Module> modules = ImmutableSet.of(new CustomBucketToRegionModule(region));
       blobStoreContext = ContextBuilder.newBuilder("aws-s3")
           .modules(modules)
           .credentials(accessKey.get(), secretKey.get())
           .buildView(BlobStoreContext.class);
     } else {
-      LOGGER.error("accessKey and secretKey is null");
       Iterable<Module> modules = ImmutableSet.of(new CustomBucketToRegionModule(region));
       blobStoreContext = ContextBuilder.newBuilder("aws-s3")
+          .credentialsSupplier(new IAMCredentialSupplier())
           .modules(modules)
           .buildView(BlobStoreContext.class);
     }
 
     return blobStoreContext.getBlobStore();
-  }
-
-  public AWSCredentials getAWSCredentials() {
-    AWSCredentialsProvider credentialsProvider = new DefaultAWSCredentialsProviderChain();
-    return credentialsProvider.getCredentials();
-  }
-
-  public AWSCredentials getAWSInstanceCredentials() {
-    AWSCredentialsProviderChain credentialsProvider = new AWSCredentialsProviderChain(InstanceProfileCredentialsProvider.getInstance());
-    LOGGER.error("Credentials: " + credentialsProvider.getCredentials().getAWSAccessKeyId() + " " + credentialsProvider.getCredentials().getAWSSecretKey());
-    return credentialsProvider.getCredentials();
   }
 
   @Bean
