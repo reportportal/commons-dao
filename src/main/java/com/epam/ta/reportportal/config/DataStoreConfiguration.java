@@ -220,16 +220,15 @@ public class DataStoreConfiguration {
       @Value("${datastore.accessKey:}") String accessKey,
       @Value("${datastore.secretKey:}") String secretKey,
       @Value("${datastore.region}") String region) {
+    Iterable<Module> modules = ImmutableSet.of(new CustomBucketToRegionModule(region));
 
     BlobStoreContext blobStoreContext;
     if (StringUtils.isNotEmpty(accessKey) && StringUtils.isNotEmpty(secretKey)) {
-      Iterable<Module> modules = ImmutableSet.of(new CustomBucketToRegionModule(region));
       blobStoreContext = ContextBuilder.newBuilder("aws-s3")
           .modules(modules)
           .credentials(accessKey, secretKey)
           .buildView(BlobStoreContext.class);
     } else {
-      Iterable<Module> modules = ImmutableSet.of(new CustomBucketToRegionModule(region));
       blobStoreContext = ContextBuilder.newBuilder("aws-s3")
           .credentialsSupplier(new IAMCredentialSupplier())
           .modules(modules)
