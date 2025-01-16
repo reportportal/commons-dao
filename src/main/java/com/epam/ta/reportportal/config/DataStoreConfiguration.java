@@ -41,6 +41,8 @@ import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.filesystem.reference.FilesystemConstants;
 import org.jclouds.rest.ConfiguresHttpApi;
 import org.jclouds.s3.S3Client;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -52,6 +54,8 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class DataStoreConfiguration {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(DataStoreConfiguration.class);
 
   /**
    * Amazon has a general work flow they publish that allows clients to always find the correct URL
@@ -221,6 +225,9 @@ public class DataStoreConfiguration {
       @Value("${datastore.secretKey:}") String secretKey,
       @Value("${datastore.region}") String region) {
     Iterable<Module> modules = ImmutableSet.of(new CustomBucketToRegionModule(region));
+
+    LOGGER.error("accessKey: " +accessKey);
+    LOGGER.error("secretKey: " +secretKey);
 
     BlobStoreContext blobStoreContext;
     if (StringUtils.isNotEmpty(accessKey) && StringUtils.isNotEmpty(secretKey)) {
