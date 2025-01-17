@@ -23,7 +23,6 @@ import org.jclouds.aws.domain.SessionCredentials;
 import org.jclouds.domain.Credentials;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentials;
 import software.amazon.awssdk.auth.credentials.AwsSessionCredentials;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
@@ -40,8 +39,6 @@ public class IAMCredentialSupplier implements Supplier<Credentials> {
 
   @Override
   public Credentials get() {
-
-    LOGGER.error("Try to get credentials");
     if (credentialsAreExpired()) {
       lock.lock();
       try {
@@ -60,7 +57,7 @@ public class IAMCredentialSupplier implements Supplier<Credentials> {
   }
 
   private void refreshCredentials() {
-    LOGGER.error("refreshCredentials");
+    LOGGER.debug("Refresh IAM Credentials");
     AwsSessionCredentials awsCredentials = obtainAwsSessionCredentials();
 
     if (awsCredentials != null) {
@@ -75,24 +72,8 @@ public class IAMCredentialSupplier implements Supplier<Credentials> {
   }
 
   private AwsSessionCredentials obtainAwsSessionCredentials() {
-    LOGGER.error("obtainAwsSessionCredentials");
     DefaultCredentialsProvider defaultCredentialsProvider = DefaultCredentialsProvider.create();
     AwsCredentials awsCredentials = defaultCredentialsProvider.resolveCredentials();
-    if (awsCredentials instanceof AwsBasicCredentials basicCredentials) {
-      LOGGER.info("Access Key: {}", basicCredentials.accessKeyId());
-      LOGGER.info("Secret Key: {}", basicCredentials.secretAccessKey());
-      LOGGER.info("providerName: {}", basicCredentials.providerName());
-      LOGGER.info("accountId: {}", basicCredentials.accountId());
-    } else if (awsCredentials instanceof AwsSessionCredentials sessionCredentials) {
-      LOGGER.info("Access Key: {}", sessionCredentials.accessKeyId());
-      LOGGER.info("Secret Key: {}", sessionCredentials.secretAccessKey());
-      LOGGER.info("providerName: {}", sessionCredentials.providerName());
-      LOGGER.info("expirationTime: {}", sessionCredentials.expirationTime());
-      LOGGER.info("accountId: {}", sessionCredentials.accountId());
-      LOGGER.info("Session Token: {}", sessionCredentials.sessionToken());
-    } else {
-      LOGGER.warn("Unknown credentials type.");
-    }
     if (awsCredentials instanceof AwsSessionCredentials sessionCredentials) {
       return sessionCredentials;
     }
