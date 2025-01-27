@@ -80,8 +80,10 @@ dependencies {
     implementation 'org.flywaydb:flyway-database-postgresql:10.20.0'
 
     api "org.apache.jclouds.api:s3:${jcloudsVersion}"
-    implementation "org.apache.jclouds.provider:aws-s3:${jcloudsVersion}"
-    implementation "org.apache.jclouds.api:filesystem:${jcloudsVersion}"
+    api "org.apache.jclouds.provider:aws-s3:${jcloudsVersion}"
+    api "org.apache.jclouds.api:filesystem:${jcloudsVersion}"
+    implementation 'software.amazon.awssdk:aws-core:2.29.50'
+    implementation 'software.amazon.awssdk:sts:2.29.50'
     api 'com.google.guava:guava:33.2.1-jre'
 
     // add lombok support
