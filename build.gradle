@@ -1,10 +1,10 @@
 import org.owasp.dependencycheck.reporting.ReportGenerator
 
 plugins {
-    id 'io.spring.dependency-management' version '1.1.6'
+    id 'io.spring.dependency-management' version '1.1.7'
     id 'java'
     id 'java-library'
-    id 'org.owasp.dependencycheck' version '11.1.1'
+    id 'org.owasp.dependencycheck' version '12.0.1'
     id "org.jooq.jooq-codegen-gradle" version "${jooqVersion}"
 }
 
@@ -42,9 +42,9 @@ dependencies {
     if (releaseMode) {
         implementation 'com.epam.reportportal:commons'
     } else {
-        implementation 'com.github.reportportal:commons:bcb72b3'
+        implementation 'com.github.reportportal:commons:30cad66'
     }
-    implementation "io.swagger.core.v3:swagger-annotations-jakarta:2.2.25"
+    implementation "io.swagger.core.v3:swagger-annotations-jakarta:2.2.27"
     // jooq dependencies
     api "org.jooq:jooq:${jooqVersion}"
     implementation "org.postgresql:postgresql:${jdbcDriverVersion}"
@@ -62,7 +62,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-cache'
     implementation 'com.github.ben-manes.caffeine:caffeine'
 
-    implementation 'io.minio:minio:8.5.14'
+    implementation 'io.minio:minio:8.5.17'
 
     api 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
     implementation "org.hibernate.validator:hibernate-validator:${hibernateValidatorVersion}"
