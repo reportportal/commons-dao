@@ -19,9 +19,9 @@ package com.epam.ta.reportportal.entity.pattern;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import java.io.Serializable;
 import java.util.Objects;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>

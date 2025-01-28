@@ -18,28 +18,26 @@ package com.epam.ta.reportportal.entity.analytics;
 
 import com.epam.ta.reportportal.dao.converters.JpaInstantConverter;
 import com.epam.ta.reportportal.entity.Metadata;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import java.io.Serializable;
 import java.time.Instant;
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
 import org.springframework.data.annotation.CreatedDate;
 
 /**
  * @author Siarhei Hrabko
  */
 @Entity
-@TypeDef(name = "meta", typeClass = Metadata.class)
 @Table(name = "analytics_data", schema = "public")
 @Getter
 @Setter
@@ -58,7 +56,7 @@ public class AnalyticsData implements Serializable {
   private String type;
 
   @Column(name = "metadata")
-  @Type(type = "meta")
+  @Type(Metadata.class)
   private Metadata metadata;
 
   @Column(name = "created_at", nullable = false)

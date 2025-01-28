@@ -21,50 +21,48 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import org.hibernate.HibernateException;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.usertype.UserType;
 
-public class LTreeType implements UserType {
+public class LTreeType implements UserType<String> {
 
   @Override
-  public int[] sqlTypes() {
-    return new int[]{Types.OTHER};
+  public int getSqlType() {
+    return Types.OTHER;
   }
 
   @SuppressWarnings("rawtypes")
   @Override
-  public Class returnedClass() {
+  public Class<String> returnedClass() {
     return String.class;
   }
 
   @Override
-  public boolean equals(Object x, Object y) throws HibernateException {
-    return x == y;
+  public boolean equals(String s, String j1) {
+    return StringUtils.equals(s, j1);
   }
 
   @Override
-  public int hashCode(Object x) throws HibernateException {
-    return x.hashCode();
+  public int hashCode(String s) {
+    return s.hashCode();
   }
 
   @Override
-  public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session,
-      Object owner)
-      throws HibernateException, SQLException {
-    return rs.getString(names[0]);
+  public String nullSafeGet(ResultSet rs, int position, SharedSessionContractImplementor session,
+      Object owner) throws SQLException {
+    return rs.getString(position);
   }
 
   @Override
-  public void nullSafeSet(PreparedStatement st, Object value, int index,
-      SharedSessionContractImplementor session)
-      throws HibernateException, SQLException {
+  public String deepCopy(String s) {
+    return s;
+  }
+
+  @Override
+  public void nullSafeSet(PreparedStatement st, String value, int index,
+      SharedSessionContractImplementor session) throws SQLException {
     st.setObject(index, value, Types.OTHER);
-  }
-
-  @Override
-  public Object deepCopy(Object value) throws HibernateException {
-    return value;
   }
 
   @Override
@@ -73,18 +71,13 @@ public class LTreeType implements UserType {
   }
 
   @Override
-  public Serializable disassemble(Object value) throws HibernateException {
-    return (Serializable) value;
+  public Serializable disassemble(String s) {
+    return s;
   }
 
   @Override
-  public Object assemble(Serializable cached, Object owner) throws HibernateException {
-    return cached;
-  }
-
-  @Override
-  public Object replace(Object original, Object target, Object owner) throws HibernateException {
-    return deepCopy(original);
+  public String assemble(Serializable cached, Object owner) {
+    return deepCopy((String) cached);
   }
 
 }

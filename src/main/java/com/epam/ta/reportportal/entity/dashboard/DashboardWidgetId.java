@@ -16,13 +16,17 @@
 
 package com.epam.ta.reportportal.entity.dashboard;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 import java.io.Serializable;
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * @author Pavel Bortnik
  */
+@Getter
+@Setter
 @Embeddable
 public class DashboardWidgetId implements Serializable {
 
@@ -37,22 +41,6 @@ public class DashboardWidgetId implements Serializable {
 
   public DashboardWidgetId(Long dashboardId, Long widgetId) {
     this.dashboardId = dashboardId;
-    this.widgetId = widgetId;
-  }
-
-  public Long getDashboardId() {
-    return dashboardId;
-  }
-
-  public void setDashboardId(Long dashboardId) {
-    this.dashboardId = dashboardId;
-  }
-
-  public Long getWidgetId() {
-    return widgetId;
-  }
-
-  public void setWidgetId(Long widgetId) {
     this.widgetId = widgetId;
   }
 

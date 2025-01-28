@@ -19,31 +19,25 @@ package com.epam.ta.reportportal.entity.integration;
 import com.epam.ta.reportportal.commons.JsonbUserType;
 import java.io.Serializable;
 import java.util.Map;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * @author Yauheni_Martynau
  */
-public class IntegrationParams extends JsonbUserType implements Serializable {
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+public class IntegrationParams extends JsonbUserType<IntegrationParams> implements Serializable {
 
   private Map<String, Object> params;
 
-  public IntegrationParams() {
-  }
-
-  public IntegrationParams(Map<String, Object> params) {
-    this.params = params;
-  }
-
   @Override
-  public Class<?> returnedClass() {
+  public Class<IntegrationParams> returnedClass() {
     return IntegrationParams.class;
   }
 
-  public Map<String, Object> getParams() {
-    return params;
-  }
-
-  public void setParams(Map<String, Object> params) {
-    this.params = params;
-  }
 }

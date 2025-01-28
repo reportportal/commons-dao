@@ -18,25 +18,27 @@ package com.epam.ta.reportportal.entity.project.email;
 import com.epam.ta.reportportal.commons.JsonbUserType;
 import java.io.Serializable;
 import java.util.Map;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
  * @author <a href="mailto:andrei_piankouski@epam.com">Andrei Piankouski</a>
  */
-@Data
-public class SenderCaseOptions extends JsonbUserType implements Serializable {
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
+public class SenderCaseOptions extends JsonbUserType<SenderCaseOptions> implements Serializable {
 
   private Map<String, Object> options;
 
-  public SenderCaseOptions() {
-  }
-
-  public SenderCaseOptions(Map<String, Object> options) {
-    this.options = options;
-  }
-
   @Override
-  public Class<?> returnedClass() {
+  public Class<SenderCaseOptions> returnedClass() {
     return SenderCaseOptions.class;
   }
 }
