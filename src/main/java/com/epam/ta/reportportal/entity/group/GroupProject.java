@@ -5,6 +5,8 @@ import com.epam.ta.reportportal.entity.project.ProjectRole;
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
@@ -23,6 +25,7 @@ public class GroupProject {
   @EmbeddedId
   private GroupProjectId id;
 
+  @Enumerated(EnumType.STRING)
   @Column(name = "project_role")
   private ProjectRole projectRole;
 
