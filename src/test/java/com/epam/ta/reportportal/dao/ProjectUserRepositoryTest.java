@@ -31,9 +31,25 @@ public class ProjectUserRepositoryTest extends BaseTest {
   }
 
   @Test
-  void shouldNotFindDetailsByUserIdAndProjectNameWhenNotExists() {
+  void shouldNotFindProjectRoleByUserIdAndProjectName() {
 
     final String projectName = "superadmin_personal";
+    final Optional<ReportPortalUser.ProjectDetails> projectDetails = projectUserRepository.findDetailsByUserIdAndProjectName(
+        2L,
+        projectName
+    );
+
+    Assertions.assertTrue(projectDetails.isPresent());
+
+    Assertions.assertNull(projectDetails.get().getProjectRole());
+    Assertions.assertEquals(projectName, projectDetails.get().getProjectName());
+    Assertions.assertEquals(1L, projectDetails.get().getProjectId());
+  }
+
+  @Test
+  void shouldNotFindDetailsByUserIdAndProjectNameWhenNotExists() {
+
+    final String projectName = "non_existing_project";
     final Optional<ReportPortalUser.ProjectDetails> projectDetails = projectUserRepository.findDetailsByUserIdAndProjectName(
         2L,
         projectName
