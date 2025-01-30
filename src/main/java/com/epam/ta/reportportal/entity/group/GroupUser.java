@@ -12,6 +12,7 @@ import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,6 +21,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "groups_users", schema = "public")
 public class GroupUser implements Serializable {
   @EmbeddedId
@@ -42,8 +44,4 @@ public class GroupUser implements Serializable {
   @ManyToOne(fetch = FetchType.LAZY)
   @MapsId("userId")
   private User user;
-
-  public GroupUser(Long groupId, Long userId) {
-    this.id = new GroupUserId(groupId, userId);
-  }
 }

@@ -12,6 +12,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,6 +21,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "groups_projects", schema = "public")
 public class GroupProject {
   @EmbeddedId
@@ -42,9 +44,4 @@ public class GroupProject {
   @ManyToOne(fetch = FetchType.LAZY)
   @MapsId("projectId")
   private Project project;
-
-  public GroupProject(Long groupId, Long projectId, ProjectRole projectRole) {
-    this.id = new GroupProjectId(groupId, projectId);
-    this.projectRole = projectRole;
-  }
 }

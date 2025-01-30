@@ -10,6 +10,7 @@ import jakarta.persistence.Table;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,6 +19,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "groups", schema = "public")
 public class Group implements Serializable {
   @Id
@@ -43,11 +45,4 @@ public class Group implements Serializable {
 
   @OneToMany(mappedBy = "group", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
   private List<GroupProject> projects;
-
-  public Group(Long id, String slug, String name, Long createdBy) {
-    this.id = id;
-    this.slug = slug;
-    this.name = name;
-    this.createdBy = createdBy;
-  }
 }
