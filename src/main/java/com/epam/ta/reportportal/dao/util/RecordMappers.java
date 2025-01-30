@@ -436,9 +436,9 @@ public class RecordMappers {
   };
 
   public static final RecordMapper<Record, ReportPortalUser.ProjectDetails> PROJECT_DETAILS_MAPPER = r -> {
-    final Long projectId = r.get(PROJECT.ID);
+    final Long projectId = r.get(PROJECT_USER.PROJECT_ID);
     final String projectName = r.get(PROJECT.NAME);
-    final ProjectRole projectRole = r.get(PROJECT_USER.PROJECT_ROLE, ProjectRole.class);
+    final ProjectRole projectRole = r.into(PROJECT_USER.PROJECT_ROLE).into(ProjectRole.class);
     return new ReportPortalUser.ProjectDetails(projectId, projectName, projectRole);
   };
 
