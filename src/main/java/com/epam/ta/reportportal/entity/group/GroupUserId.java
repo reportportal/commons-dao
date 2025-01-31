@@ -15,6 +15,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GroupUserId implements Serializable {
+
   @Column(name = "group_id")
   private Long groupId;
   @Column(name = "user_id")
@@ -22,8 +23,12 @@ public class GroupUserId implements Serializable {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
 
     GroupUserId that = (GroupUserId) o;
     return Objects.equals(groupId, that.groupId) && Objects.equals(userId, that.userId);

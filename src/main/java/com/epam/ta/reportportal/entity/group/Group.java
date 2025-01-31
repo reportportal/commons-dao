@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import java.io.Serializable;
 import java.time.Instant;
@@ -43,9 +44,14 @@ public class Group implements Serializable {
   @Column(name = "updated_at")
   private Instant updatedAt;
 
-  @OneToMany(mappedBy = "group", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+  @OneToMany(mappedBy = "group", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<GroupUser> users;
 
-  @OneToMany(mappedBy = "group", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+  @OneToMany(mappedBy = "group", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<GroupProject> projects;
+
+  @PreUpdate
+  protected void onUpdated() {
+    this.updatedAt = Instant.now();
+  }
 }
