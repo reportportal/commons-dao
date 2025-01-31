@@ -4,14 +4,12 @@ import com.epam.ta.reportportal.entity.user.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,14 +26,10 @@ public class GroupUser implements Serializable {
   private GroupUserId id;
 
   @Column(name = "created_at", updatable = false)
-  private LocalDateTime createdAt;
+  private Instant createdAt;
 
   @Column(name = "updated_at")
-  private LocalDateTime updatedAt;
-
-  @Enumerated(EnumType.STRING)
-  @Column(name = "group_role")
-  private GroupRole groupRole;
+  private Instant updatedAt;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @MapsId("groupId")
@@ -44,4 +38,8 @@ public class GroupUser implements Serializable {
   @ManyToOne(fetch = FetchType.LAZY)
   @MapsId("userId")
   private User user;
+
+  public GroupUser(Long groupId, Long userId) {
+    this.id = new GroupUserId(groupId, userId);
+  }
 }

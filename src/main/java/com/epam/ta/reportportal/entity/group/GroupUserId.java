@@ -4,24 +4,21 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import java.io.Serializable;
 import java.util.Objects;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 @Embeddable
+@AllArgsConstructor
+@NoArgsConstructor
 public class GroupUserId implements Serializable {
   @Column(name = "group_id")
   private Long groupId;
   @Column(name = "user_id")
   private Long userId;
-
-  public GroupUserId() {}
-
-  public GroupUserId(Long groupId, Long userId) {
-    this.groupId = groupId;
-    this.userId = userId;
-  }
 
   @Override
   public boolean equals(Object o) {
