@@ -67,7 +67,11 @@ public class IAMCredentialSupplier implements Supplier<Credentials> {
           .sessionToken(awsCredentials.sessionToken())
           .build();
 
-      expirationTime = Instant.now().plusSeconds(3600);
+      if (awsCredentials.expirationTime().isPresent()) {
+        expirationTime = awsCredentials.expirationTime().get();
+      } else {
+        expirationTime = Instant.now().plusSeconds(3600);
+      }
     }
   }
 
