@@ -5,6 +5,8 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
@@ -28,6 +30,7 @@ public class GroupUser implements Serializable {
   @EmbeddedId
   private GroupUserId id;
 
+  @Enumerated(EnumType.STRING)
   @Column(name = "group_role")
   private GroupRole groupRole;
 
