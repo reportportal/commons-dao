@@ -24,6 +24,7 @@ import com.epam.ta.reportportal.entity.project.ProjectRole;
 import com.epam.ta.reportportal.entity.user.UserRole;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -37,7 +38,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
 /**
- * ReportPortal user representation
+ * ReportPortal user representation.
  *
  * @author <a href="mailto:andrei_varabyeu@epam.com">Andrei Varabyeu</a>
  */
@@ -104,23 +105,18 @@ public class ReportPortalUser extends User {
       this.projectRole = projectRole;
     }
 
-    public ProjectDetails(Long projectId, String projectName, List<ProjectRole> roles) {
+    public ProjectDetails(Long projectId, String[] projectRoles) {
       this.projectId = projectId;
-      this.projectName = projectName;
-      setHighestRole(roles);
-    }
 
-    public ProjectDetails(Long projectId, List<ProjectRole> projectRoles) {
-      this.projectId = projectId;
-      setHighestRole(projectRoles);
-    }
-
-    public static ProjectDetailsBuilder builder() {
-      return new ProjectDetailsBuilder();
+      setHighestRole(Arrays.stream(projectRoles).map(ProjectRole::valueOf).collect(Collectors.toList()));
     }
 
     public void setHighestRole(List<ProjectRole> roles) {
       this.projectRole = roles.stream().max(ProjectRole::compareTo).orElse(null);
+    }
+
+    public static ProjectDetailsBuilder builder() {
+      return new ProjectDetailsBuilder();
     }
 
     public static class ProjectDetailsBuilder {
