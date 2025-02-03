@@ -5,10 +5,13 @@ import com.epam.ta.reportportal.entity.group.Group;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
 import java.util.List;
 import java.util.Optional;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface GroupRepository extends ReportPortalRepository<Group, Long> {
+
   @Query(value = """
       SELECT DISTINCT gp.project_role
       FROM groups_projects gp
@@ -25,17 +28,16 @@ public interface GroupRepository extends ReportPortalRepository<Group, Long> {
   );
 
   @Query(value = """
-      SELECT gp.project_id, array_agg(gp.project_role) AS project_roles
+      SELECT gp.project_id,
+             array_agg(gp.project_role) AS project_roles
       FROM groups_projects gp
       JOIN groups_users gu
         ON gp.group_id = gu.group_id
           AND gu.user_id = :userId
-      WHERE gp.project_id = (
-        SELECT p.id
-        FROM Project p
-        WHERE p.name = :projectName
-      )
-      GROUP BY gp.project_id
+      JOIN Project p
+        ON gp.project_id = p.id
+      WHERE p.name = :projectName
+      GROUP BY gp.project_id, p.name
       LIMIT 1
       """,
       nativeQuery = true
@@ -44,4 +46,10 @@ public interface GroupRepository extends ReportPortalRepository<Group, Long> {
       @Param("userId") Long userId,
       @Param("projectName") String projectName
   );
+
+  @NotNull
+  @EntityGraph(attributePaths = {"users", "projects"})
+  Optional<Group> findGroupById(@NotNull Long id);
+
+  Group findBySlug(String slug);
 }
