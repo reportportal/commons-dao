@@ -15,11 +15,15 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.test.context.jdbc.Sql;
 
 @Sql("/db/fill/group/group-fill.sql")
 class GroupRepositoryTest extends BaseTest {
 
+  @Autowired
+  private CacheManager cacheManager;
   @Autowired
   private GroupRepository groupRepository;
   @Autowired
@@ -52,7 +56,7 @@ class GroupRepositoryTest extends BaseTest {
 
   @Test
   void shouldReturnUserGroupProjectRoles() {
-    List<ProjectRole> projectRoles = groupRepository.getUserProjectRoles(
+    final List<ProjectRole> projectRoles = groupRepository.getUserProjectRoles(
         fakeChubaka.getId(),
         falcon.getId()
     );
@@ -61,7 +65,7 @@ class GroupRepositoryTest extends BaseTest {
 
   @Test
   void shouldGetMaxUserProjectRole() {
-    List<ProjectRole> projectRoles = groupRepository.getUserProjectRoles(
+    final List<ProjectRole> projectRoles = groupRepository.getUserProjectRoles(
         fakeChubaka.getId(),
         falcon.getId()
     );
@@ -82,11 +86,40 @@ class GroupRepositoryTest extends BaseTest {
     Long userId = fakeChubaka.getId();
     String projectName = falcon.getName();
 
-    Optional<ReportPortalUser.ProjectDetails> projectDetails = groupRepository
+    final Optional<ReportPortalUser.ProjectDetails> projectDetails = groupRepository
         .getProjectDetails(userId, projectName);
 
     assertTrue(projectDetails.isPresent());
     assertEquals(falcon.getId(), projectDetails.get().getProjectId());
     assertEquals(ProjectRole.MEMBER, projectDetails.get().getProjectRole());
+  }
+
+  @Test
+  void ShouldCacheUserProjectRoles() {
+    final List<ProjectRole> projectRoles = groupRepository.getUserProjectRoles(
+        fakeChubaka.getId(),
+        falcon.getId()
+    );
+    assertNotNull(projectRoles);
+
+    Cache cache = cacheManager.getCache("userProjectRolesCache");
+    assertNotNull(cache);
+
+    Cache.ValueWrapper valueWrapper = cache.get(fakeChubaka.getId() + "_" + falcon.getId());
+    assertNotNull(valueWrapper);
+  }
+
+  @Test
+  void ShouldCacheProjectDetails() {
+    final Long userId = fakeChubaka.getId();
+    final String projectName = falcon.getName();
+    final Optional<ReportPortalUser.ProjectDetails> projectDetails = groupRepository
+        .getProjectDetails(userId, projectName);
+    assertTrue(projectDetails.isPresent());
+
+    Cache cache = cacheManager.getCache("projectDetailsCache");
+    assertNotNull(cache);
+    Cache.ValueWrapper valueWrapper = cache.get(userId + "_" + projectName);
+    assertNotNull(valueWrapper);
   }
 }

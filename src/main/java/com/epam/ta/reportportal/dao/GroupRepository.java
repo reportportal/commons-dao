@@ -6,26 +6,38 @@ import com.epam.ta.reportportal.entity.project.ProjectRole;
 import java.util.List;
 import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface GroupRepository extends ReportPortalRepository<Group, Long>{
 
+  /**
+   * @param  userId user id
+   * @param  projectId project id
+   * @return all roles of the user in the project via group membership {@link List<ProjectRole>}
+   */
   @Query(value = """
       SELECT DISTINCT gp.project_role
       FROM groups_projects gp
       JOIN groups_users gu
         ON gp.group_id = gu.group_id
-            AND gu.user_id = :userId
-            AND gp.project_id = :projectId
+          AND gu.user_id = :userId
+          AND gp.project_id = :projectId
       """,
       nativeQuery = true
   )
+  @Cacheable(value = "userProjectRolesCache", key = "#userId + '_' + #projectId")
   List<ProjectRole> getUserProjectRoles(
       @Param("userId") Long userId,
       @Param("projectId") Long projectId
   );
 
+  /**
+   * @param  userId user id
+   * @param  projectName project name
+   * @return project raw details of the user in the project via group membership {@link ReportPortalUser.ProjectDetailsMapper}
+   */
   @Query(value = """
         SELECT p.id AS projectId,
           p.name AS projectName,
@@ -45,6 +57,12 @@ public interface GroupRepository extends ReportPortalRepository<Group, Long>{
       @Param("projectName") String projectName
   );
 
+  /**
+   * @param  userId user id
+   * @param  projectName project name
+   * @return project details of the user in the project via group membership {@link ReportPortalUser.ProjectDetails}
+   */
+  @Cacheable(value = "projectDetailsCache", key = "#userId + '_' + #projectName")
   default Optional<ReportPortalUser.ProjectDetails> getProjectDetails(
       @NotNull Long userId,
       @NotNull String projectName
