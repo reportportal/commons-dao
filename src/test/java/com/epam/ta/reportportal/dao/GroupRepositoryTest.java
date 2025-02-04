@@ -28,44 +28,65 @@ class GroupRepositoryTest extends BaseTest {
   private ProjectRepository projectRepository;
 
   private Group rebelGroup;
-  private User hanSolo;
+  private User fakeChubaka;
   private Project falcon;
 
   @BeforeEach
   void setUp() {
     rebelGroup = groupRepository.findBySlug("rebel-group");
-    hanSolo = userRepository.findByLogin("han_solo")
+    fakeChubaka = userRepository.findByLogin("fake_chubaka")
         .orElseThrow(() -> new RuntimeException("User not found"));
     falcon = projectRepository.findByName("millennium_falcon")
         .orElseThrow(() -> new RuntimeException("Project not found"));
   }
 
   @Test
-  void shouldAssignUserToGroup() {
+  void shouldReturnAssignedUsers() {
     assertNotNull(rebelGroup.getUsers());
   }
 
   @Test
-  void shouldAssignProjectToGroup() {
+  void shouldReturnAssignedProjects() {
     assertNotNull(rebelGroup.getProjects());
   }
 
   @Test
-  void shouldReturnUserProjectRoles() {
+  void shouldReturnUserGroupProjectRoles() {
     List<ProjectRole> projectRoles = groupRepository.getUserProjectRoles(
-        hanSolo.getId(),
+        fakeChubaka.getId(),
         falcon.getId()
     );
-    assertNotNull(projectRoles);
+    assertEquals(3, projectRoles.size());
+  }
+
+  @Test
+  void shouldGetMaxUserProjectRole() {
+    List<ProjectRole> projectRoles = groupRepository.getUserProjectRoles(
+        fakeChubaka.getId(),
+        falcon.getId()
+    );
+
+    ReportPortalUser.ProjectDetails projectDetails = new ReportPortalUser.ProjectDetails(
+        falcon.getId(),
+        falcon.getName(),
+        ProjectRole.OPERATOR
+    );
+
+    projectDetails.setHighestRole(projectRoles);
+
+    assertEquals(ProjectRole.MEMBER, projectDetails.getProjectRole());
   }
 
   @Test
   void shouldReturnUserProjectDetails() {
-    Long userId = hanSolo.getId();
+    Long userId = fakeChubaka.getId();
     String projectName = falcon.getName();
 
     Optional<ReportPortalUser.ProjectDetails> projectDetails = groupRepository
-        .getUserProjectDetails(userId, projectName);
+        .getProjectDetails(userId, projectName);
+
     assertTrue(projectDetails.isPresent());
+    assertEquals(falcon.getId(), projectDetails.get().getProjectId());
+    assertEquals(ProjectRole.MEMBER, projectDetails.get().getProjectRole());
   }
 }

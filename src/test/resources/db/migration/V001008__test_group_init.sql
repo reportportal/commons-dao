@@ -8,6 +8,8 @@ DECLARE
     fake_chubaka BIGINT;
     rebel        BIGINT;
     ewoks        BIGINT;
+    empire       BIGINT;
+    jedi         BIGINT;
 BEGIN
     falcon := (SELECT p.id FROM project p WHERE name = 'millennium_falcon');
     han_solo := (SELECT u.id FROM users u WHERE login = 'han_solo');
@@ -22,6 +24,14 @@ BEGIN
     VALUES ('Ewoks group', 'ewoks-group', 1, now());
     ewoks := (SELECT currval(pg_get_serial_sequence('groups', 'id')));
 
+    INSERT INTO groups (name, slug, created_by, created_at)
+    VALUES ('Empire group', 'empire-group', 1, now());
+    empire := (SELECT currval(pg_get_serial_sequence('groups', 'id')));
+
+    INSERT INTO groups (name, slug, created_by, created_at)
+    VALUES ('Jedi group', 'jedi-group', 1, now());
+    jedi := (SELECT currval(pg_get_serial_sequence('groups', 'id')));
+
     INSERT INTO groups_users (group_id, user_id, group_role, created_at)
     VALUES (rebel, han_solo, 'ADMIN', now());
 
@@ -34,11 +44,23 @@ BEGIN
     INSERT INTO groups_users (group_id, user_id, group_role, created_at)
     VALUES (ewoks, fake_chubaka, 'MEMBER', now());
 
+    INSERT INTO groups_users (group_id, user_id, group_role, created_at)
+    VALUES (empire, fake_chubaka, 'MEMBER', now());
+
+    INSERT INTO groups_users (group_id, user_id, group_role, created_at)
+    VALUES (jedi, fake_chubaka, 'MEMBER', now());
+
     INSERT INTO groups_projects (group_id, project_id, project_role, created_at)
     VALUES (rebel, falcon, 'PROJECT_MANAGER', now());
 
     INSERT INTO groups_projects (group_id, project_id, project_role, created_at)
     VALUES (ewoks, falcon, 'MEMBER', now());
+
+    INSERT INTO groups_projects (group_id, project_id, project_role, created_at)
+    VALUES (empire, falcon, 'OPERATOR', now());
+
+    INSERT INTO groups_projects (group_id, project_id, project_role, created_at)
+    VALUES (jedi, falcon, 'CUSTOMER', now());
 
 END;
 $$
