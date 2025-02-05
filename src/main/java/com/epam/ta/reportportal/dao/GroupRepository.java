@@ -2,6 +2,7 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.ReportPortalUser;
 import com.epam.ta.reportportal.entity.group.Group;
+import com.epam.ta.reportportal.entity.group.dto.GroupProjectDetailsRecord;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
 import java.util.List;
 import java.util.Optional;
@@ -36,7 +37,7 @@ public interface GroupRepository extends ReportPortalRepository<Group, Long>{
   /**
    * @param  userId user id
    * @param  projectName project name
-   * @return project raw details of the user in the project via group membership {@link ReportPortalUser.ProjectDetailsMapper}
+   * @return project details record of the user in the project via group membership {@link GroupProjectDetailsRecord}
    */
   @Query(value = """
         SELECT p.id AS projectId,
@@ -52,7 +53,7 @@ public interface GroupRepository extends ReportPortalRepository<Group, Long>{
         """,
       nativeQuery = true
   )
-  Optional<ReportPortalUser.ProjectDetailsMapper> getProjectDetailsRaw(
+  Optional<GroupProjectDetailsRecord> findProjectDetailsRaw(
       @Param("userId") Long userId,
       @Param("projectName") String projectName
   );
@@ -63,12 +64,11 @@ public interface GroupRepository extends ReportPortalRepository<Group, Long>{
    * @return project details of the user in the project via group membership {@link ReportPortalUser.ProjectDetails}
    */
   @Cacheable(value = "projectDetailsCache", key = "#userId + '_' + #projectName")
-  default Optional<ReportPortalUser.ProjectDetails> getProjectDetails(
+  default Optional<ReportPortalUser.ProjectDetails> findProjectDetails(
       @NotNull Long userId,
       @NotNull String projectName
   ) {
-    return getProjectDetailsRaw(userId, projectName)
-        .map(ReportPortalUser.ProjectDetailsMapper::toProjectDetails);
+    return findProjectDetailsRaw(userId, projectName).map(GroupProjectDetailsRecord::toProjectDetails);
   }
 
   Group findBySlug(String slug);

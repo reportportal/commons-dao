@@ -87,7 +87,7 @@ class GroupRepositoryTest extends BaseTest {
     String projectName = falcon.getName();
 
     final Optional<ReportPortalUser.ProjectDetails> projectDetails = groupRepository
-        .getProjectDetails(userId, projectName);
+        .findProjectDetails(userId, projectName);
 
     assertTrue(projectDetails.isPresent());
     assertEquals(falcon.getId(), projectDetails.get().getProjectId());
@@ -114,7 +114,7 @@ class GroupRepositoryTest extends BaseTest {
     final Long userId = fakeChubaka.getId();
     final String projectName = falcon.getName();
     final Optional<ReportPortalUser.ProjectDetails> projectDetails = groupRepository
-        .getProjectDetails(userId, projectName);
+        .findProjectDetails(userId, projectName);
     assertTrue(projectDetails.isPresent());
 
     Cache cache = cacheManager.getCache("projectDetailsCache");

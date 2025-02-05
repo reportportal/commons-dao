@@ -24,7 +24,6 @@ import com.epam.ta.reportportal.entity.project.ProjectRole;
 import com.epam.ta.reportportal.entity.user.UserRole;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -89,21 +88,8 @@ public class ReportPortalUser extends User {
   }
 
   @Getter
-//  @Entity
-//  @SqlResultSetMapping(
-//      name = "ProjectDetailsMapping",
-//      classes = @jakarta.persistence.ConstructorResult(
-//          targetClass = ReportPortalUser.ProjectDetails.class,
-//          columns = {
-//              @jakarta.persistence.ColumnResult(name = "projectId", type = Long.class),
-//              @jakarta.persistence.ColumnResult(name = "projectName", type = String.class),
-//              @jakarta.persistence.ColumnResult(name = "projectRole", type = String.class)
-//          }
-//      )
-//  )
   public static class ProjectDetails implements Serializable {
 
-//    @Id
     @JsonProperty(value = "id")
     private Long projectId;
 
@@ -112,9 +98,6 @@ public class ReportPortalUser extends User {
 
     @JsonProperty("role")
     private ProjectRole projectRole;
-
-//    public ProjectDetails() {
-//    }
 
     public ProjectDetails(Long projectId, String projectName, ProjectRole projectRole) {
       this.projectId = projectId;
@@ -257,26 +240,6 @@ public class ReportPortalUser extends User {
     public ReportPortalUser build() {
       return new ReportPortalUser(username, password, authorities, userId, userRole, projectDetails,
           email, active);
-    }
-  }
-
-  public static class ProjectDetailsMapper {
-    private final Long projectId;
-    private final String projectName;
-    private final String[] projectRoles;
-
-    public ProjectDetailsMapper(Long projectId, String projectName, String[] projectRoles) {
-      this.projectId = projectId;
-      this.projectName = projectName;
-      this.projectRoles = projectRoles;
-    }
-
-    public ProjectDetails toProjectDetails() {
-      List<ProjectRole> projectRoles = Arrays.stream(this.projectRoles)
-          .map(ProjectRole::valueOf)
-          .collect(Collectors.toList());
-
-      return new ProjectDetails(projectId, projectName, projectRoles);
     }
   }
 }
