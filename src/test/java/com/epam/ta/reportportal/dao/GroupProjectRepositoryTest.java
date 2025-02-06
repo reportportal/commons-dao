@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.commons.ReportPortalUser;
 import com.epam.ta.reportportal.entity.group.Group;
+import com.epam.ta.reportportal.entity.group.GroupProject;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
 import com.epam.ta.reportportal.entity.user.User;
@@ -124,5 +125,11 @@ class GroupProjectRepositoryTest extends BaseTest {
     assertNotNull(cache);
     Cache.ValueWrapper valueWrapper = cache.get(userId + "_" + projectName);
     assertNotNull(valueWrapper);
+  }
+
+  @Test
+  void ShouldReturnAllUserProjects() {
+    List<GroupProject> groupProjects = groupProjectRepository.findAllUserProjects(fakeChubaka.getId());
+    assertEquals(5, groupProjects.size());
   }
 }
