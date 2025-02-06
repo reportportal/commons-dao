@@ -20,12 +20,14 @@ import org.springframework.cache.CacheManager;
 import org.springframework.test.context.jdbc.Sql;
 
 @Sql("/db/fill/group/group-fill.sql")
-class GroupRepositoryTest extends BaseTest {
+class GroupProjectRepositoryTest extends BaseTest {
 
   @Autowired
   private CacheManager cacheManager;
   @Autowired
   private GroupRepository groupRepository;
+  @Autowired
+  private GroupProjectRepository groupProjectRepository;
   @Autowired
   private UserRepository userRepository;
   @Autowired
@@ -37,7 +39,8 @@ class GroupRepositoryTest extends BaseTest {
 
   @BeforeEach
   void setUp() {
-    rebelGroup = groupRepository.findBySlug("rebel-group");
+    rebelGroup = groupRepository.findBySlug("rebel-group")
+        .orElseThrow(() -> new RuntimeException("Group not found"));
     fakeChubaka = userRepository.findByLogin("fake_chubaka")
         .orElseThrow(() -> new RuntimeException("User not found"));
     falcon = projectRepository.findByName("millennium_falcon")
@@ -56,7 +59,7 @@ class GroupRepositoryTest extends BaseTest {
 
   @Test
   void shouldReturnUserGroupProjectRoles() {
-    final List<ProjectRole> projectRoles = groupRepository.getUserProjectRoles(
+    final List<ProjectRole> projectRoles = groupProjectRepository.getUserProjectRoles(
         fakeChubaka.getId(),
         falcon.getId()
     );
@@ -65,7 +68,7 @@ class GroupRepositoryTest extends BaseTest {
 
   @Test
   void shouldGetMaxUserProjectRole() {
-    final List<ProjectRole> projectRoles = groupRepository.getUserProjectRoles(
+    final List<ProjectRole> projectRoles = groupProjectRepository.getUserProjectRoles(
         fakeChubaka.getId(),
         falcon.getId()
     );
@@ -86,7 +89,7 @@ class GroupRepositoryTest extends BaseTest {
     Long userId = fakeChubaka.getId();
     String projectName = falcon.getName();
 
-    final Optional<ReportPortalUser.ProjectDetails> projectDetails = groupRepository
+    final Optional<ReportPortalUser.ProjectDetails> projectDetails = groupProjectRepository
         .findProjectDetails(userId, projectName);
 
     assertTrue(projectDetails.isPresent());
@@ -96,13 +99,13 @@ class GroupRepositoryTest extends BaseTest {
 
   @Test
   void ShouldCacheUserProjectRoles() {
-    final List<ProjectRole> projectRoles = groupRepository.getUserProjectRoles(
+    final List<ProjectRole> projectRoles = groupProjectRepository.getUserProjectRoles(
         fakeChubaka.getId(),
         falcon.getId()
     );
     assertNotNull(projectRoles);
 
-    Cache cache = cacheManager.getCache("userProjectRolesCache");
+    Cache cache = cacheManager.getCache("groupUserProjectRolesCache");
     assertNotNull(cache);
 
     Cache.ValueWrapper valueWrapper = cache.get(fakeChubaka.getId() + "_" + falcon.getId());
@@ -113,11 +116,11 @@ class GroupRepositoryTest extends BaseTest {
   void ShouldCacheProjectDetails() {
     final Long userId = fakeChubaka.getId();
     final String projectName = falcon.getName();
-    final Optional<ReportPortalUser.ProjectDetails> projectDetails = groupRepository
+    final Optional<ReportPortalUser.ProjectDetails> projectDetails = groupProjectRepository
         .findProjectDetails(userId, projectName);
     assertTrue(projectDetails.isPresent());
 
-    Cache cache = cacheManager.getCache("projectDetailsCache");
+    Cache cache = cacheManager.getCache("groupProjectDetailsCache");
     assertNotNull(cache);
     Cache.ValueWrapper valueWrapper = cache.get(userId + "_" + projectName);
     assertNotNull(valueWrapper);
