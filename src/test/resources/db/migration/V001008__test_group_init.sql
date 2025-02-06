@@ -3,6 +3,7 @@ CREATE OR REPLACE FUNCTION test_group_init()
 $$
 DECLARE
     falcon       BIGINT;
+    death_star   BIGINT;
     han_solo     BIGINT;
     chubaka      BIGINT;
     fake_chubaka BIGINT;
@@ -10,8 +11,10 @@ DECLARE
     ewoks        BIGINT;
     empire       BIGINT;
     jedi         BIGINT;
+    sith         BIGINT;
 BEGIN
     falcon := (SELECT p.id FROM project p WHERE name = 'millennium_falcon');
+    death_star := (SELECT p.id FROM project p WHERE name = 'death_star');
     han_solo := (SELECT u.id FROM users u WHERE login = 'han_solo');
     chubaka := (SELECT u.id FROM users u WHERE login = 'chubaka');
     fake_chubaka := (SELECT u.id FROM users u WHERE login = 'fake_chubaka');
@@ -32,6 +35,10 @@ BEGIN
     VALUES ('Jedi group', 'jedi-group', 1, now());
     jedi := (SELECT currval(pg_get_serial_sequence('groups', 'id')));
 
+    INSERT INTO groups (name, slug, created_by, created_at)
+    VALUES ('Sith', 'sith-group', 1, now());
+    sith := (SELECT currval(pg_get_serial_sequence('groups', 'id')));
+
     INSERT INTO groups_users (group_id, user_id, group_role, created_at)
     VALUES (rebel, han_solo, 'ADMIN', now());
 
@@ -50,6 +57,9 @@ BEGIN
     INSERT INTO groups_users (group_id, user_id, group_role, created_at)
     VALUES (jedi, fake_chubaka, 'MEMBER', now());
 
+    INSERT INTO groups_users (group_id, user_id, group_role, created_at)
+    VALUES (sith, fake_chubaka, 'MEMBER', now());
+
     INSERT INTO groups_projects (group_id, project_id, project_role, created_at)
     VALUES (rebel, falcon, 'PROJECT_MANAGER', now());
 
@@ -57,10 +67,13 @@ BEGIN
     VALUES (ewoks, falcon, 'MEMBER', now());
 
     INSERT INTO groups_projects (group_id, project_id, project_role, created_at)
-    VALUES (empire, falcon, 'OPERATOR', now());
+    VALUES (jedi, falcon, 'CUSTOMER', now());
 
     INSERT INTO groups_projects (group_id, project_id, project_role, created_at)
-    VALUES (jedi, falcon, 'CUSTOMER', now());
+    VALUES (empire, death_star, 'PROJECT_MANAGER', now());
+
+    INSERT INTO groups_projects (group_id, project_id, project_role, created_at)
+    VALUES (sith, death_star, 'CUSTOMER', now());
 
 END;
 $$
