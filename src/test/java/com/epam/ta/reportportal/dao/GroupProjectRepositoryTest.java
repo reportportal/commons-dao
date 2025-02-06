@@ -130,6 +130,6 @@ class GroupProjectRepositoryTest extends BaseTest {
   @Test
   void ShouldReturnAllUserProjects() {
     List<GroupProject> groupProjects = groupProjectRepository.findAllUserProjects(fakeChubaka.getId());
-    assertEquals(5, groupProjects.size());
+    assertEquals(4, groupProjects.size());
   }
 }

@@ -11,7 +11,7 @@ DECLARE
     ewoks        BIGINT;
     empire       BIGINT;
     jedi         BIGINT;
-    sith         BIGINT;
+    sith_order   BIGINT;
 BEGIN
     falcon := (SELECT p.id FROM project p WHERE name = 'millennium_falcon');
     death_star := (SELECT p.id FROM project p WHERE name = 'death_star');
@@ -36,8 +36,8 @@ BEGIN
     jedi := (SELECT currval(pg_get_serial_sequence('groups', 'id')));
 
     INSERT INTO groups (name, slug, created_by, created_at)
-    VALUES ('Sith', 'sith-group', 1, now());
-    sith := (SELECT currval(pg_get_serial_sequence('groups', 'id')));
+    VALUES ('Sith order group', 'sith-group', 1, now());
+    sith_order := (SELECT currval(pg_get_serial_sequence('groups', 'id')));
 
     INSERT INTO groups_users (group_id, user_id, group_role, created_at)
     VALUES (rebel, han_solo, 'ADMIN', now());
@@ -58,7 +58,7 @@ BEGIN
     VALUES (jedi, fake_chubaka, 'MEMBER', now());
 
     INSERT INTO groups_users (group_id, user_id, group_role, created_at)
-    VALUES (sith, fake_chubaka, 'MEMBER', now());
+    VALUES (sith_order, fake_chubaka, 'MEMBER', now());
 
     INSERT INTO groups_projects (group_id, project_id, project_role, created_at)
     VALUES (rebel, falcon, 'PROJECT_MANAGER', now());
@@ -73,7 +73,7 @@ BEGIN
     VALUES (empire, death_star, 'PROJECT_MANAGER', now());
 
     INSERT INTO groups_projects (group_id, project_id, project_role, created_at)
-    VALUES (sith, death_star, 'CUSTOMER', now());
+    VALUES (sith_order, death_star, 'CUSTOMER', now());
 
 END;
 $$
