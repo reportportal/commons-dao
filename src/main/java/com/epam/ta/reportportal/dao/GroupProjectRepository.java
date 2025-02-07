@@ -29,7 +29,7 @@ public interface GroupProjectRepository extends ReportPortalRepository<GroupProj
       nativeQuery = true
   )
   @Cacheable(value = "groupUserProjectRolesCache", key = "#userId + '_' + #projectId")
-  List<ProjectRole> getUserProjectRoles(
+  List<ProjectRole> findUserProjectRoles(
       @Param("userId") Long userId,
       @Param("projectId") Long projectId
   );

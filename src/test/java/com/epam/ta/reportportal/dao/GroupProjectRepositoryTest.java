@@ -60,7 +60,7 @@ class GroupProjectRepositoryTest extends BaseTest {
 
   @Test
   void shouldReturnUserGroupProjectRoles() {
-    final List<ProjectRole> projectRoles = groupProjectRepository.getUserProjectRoles(
+    final List<ProjectRole> projectRoles = groupProjectRepository.findUserProjectRoles(
         fakeChubaka.getId(),
         falcon.getId()
     );
@@ -69,7 +69,7 @@ class GroupProjectRepositoryTest extends BaseTest {
 
   @Test
   void shouldGetMaxUserProjectRole() {
-    final List<ProjectRole> projectRoles = groupProjectRepository.getUserProjectRoles(
+    final List<ProjectRole> projectRoles = groupProjectRepository.findUserProjectRoles(
         fakeChubaka.getId(),
         falcon.getId()
     );
@@ -100,7 +100,7 @@ class GroupProjectRepositoryTest extends BaseTest {
 
   @Test
   void ShouldCacheUserProjectRoles() {
-    final List<ProjectRole> projectRoles = groupProjectRepository.getUserProjectRoles(
+    final List<ProjectRole> projectRoles = groupProjectRepository.findUserProjectRoles(
         fakeChubaka.getId(),
         falcon.getId()
     );
