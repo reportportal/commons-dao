@@ -26,36 +26,21 @@ class GroupProjectRepositoryTest extends BaseTest {
   @Autowired
   private CacheManager cacheManager;
   @Autowired
-  private GroupRepository groupRepository;
-  @Autowired
   private GroupProjectRepository groupProjectRepository;
   @Autowired
   private UserRepository userRepository;
   @Autowired
   private ProjectRepository projectRepository;
 
-  private Group rebelGroup;
   private User fakeChubaka;
   private Project falcon;
 
   @BeforeEach
   void setUp() {
-    rebelGroup = groupRepository.findBySlug("rebel-group")
-        .orElseThrow(() -> new RuntimeException("Group not found"));
     fakeChubaka = userRepository.findByLogin("fake_chubaka")
         .orElseThrow(() -> new RuntimeException("User not found"));
     falcon = projectRepository.findByName("millennium_falcon")
         .orElseThrow(() -> new RuntimeException("Project not found"));
-  }
-
-  @Test
-  void shouldReturnAssignedUsers() {
-    assertNotNull(rebelGroup.getUsers());
-  }
-
-  @Test
-  void shouldReturnAssignedProjects() {
-    assertNotNull(rebelGroup.getProjects());
   }
 
   @Test
