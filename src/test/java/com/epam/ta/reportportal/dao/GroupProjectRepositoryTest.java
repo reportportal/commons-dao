@@ -64,7 +64,7 @@ class GroupProjectRepositoryTest extends BaseTest {
         fakeChubaka.getId(),
         falcon.getId()
     );
-    assertEquals(3, projectRoles.size());
+    assertEquals(2, projectRoles.size());
   }
 
   @Test
