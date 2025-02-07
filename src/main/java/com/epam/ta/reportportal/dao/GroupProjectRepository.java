@@ -70,4 +70,19 @@ public interface GroupProjectRepository extends ReportPortalRepository<GroupProj
   ) {
     return findProjectDetailsRaw(userId, projectName).map(GroupProjectDetailsRecord::toProjectDetails);
   }
+
+  /**
+   * @param  userId user id
+   * @return all projects of the user via group membership {@link List<GroupProject>}
+   */
+  @Query(value = """
+      SELECT gp.project_id, gp.group_id, gp.project_role, gp.created_at, gp.updated_at
+      FROM groups_projects gp
+      JOIN groups_users gu
+        ON gp.group_id = gu.group_id
+      WHERE gu.user_id = :user_id
+      """,
+      nativeQuery = true
+  )
+  List<GroupProject> findAllUserProjects(@Param("user_id") Long userId);
 }
