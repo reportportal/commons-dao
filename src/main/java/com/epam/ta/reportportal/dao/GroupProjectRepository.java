@@ -28,7 +28,7 @@ public interface GroupProjectRepository extends ReportPortalRepository<GroupProj
       """,
       nativeQuery = true
   )
-  @Cacheable(value = "groupUserProjectRolesCache", key = "#userId + '_' + #projectId")
+  @Cacheable(value = "groupUserProjectRolesCache", key = "#userId + '_' + #projectId", cacheManager = "caffeineCacheManager")
   List<ProjectRole> findUserProjectRoles(
       @Param("userId") Long userId,
       @Param("projectId") Long projectId
@@ -63,26 +63,11 @@ public interface GroupProjectRepository extends ReportPortalRepository<GroupProj
    * @param  projectName project name
    * @return project details of the user in the project via group membership {@link ReportPortalUser.ProjectDetails}
    */
-  @Cacheable(value = "groupProjectDetailsCache", key = "#userId + '_' + #projectName")
+  @Cacheable(value = "groupProjectDetailsCache", key = "#userId + '_' + #projectName", cacheManager = "caffeineCacheManager")
   default Optional<ReportPortalUser.ProjectDetails> findProjectDetails(
       @NotNull Long userId,
       @NotNull String projectName
   ) {
     return findProjectDetailsRaw(userId, projectName).map(GroupProjectDetailsRecord::toProjectDetails);
   }
-
-  /**
-   * @param  userId user id
-   * @return all projects of the user via group membership {@link List<GroupProject>}
-   */
-  @Query(value = """
-      SELECT gp.project_id, gp.group_id, gp.project_role, gp.created_at, gp.updated_at
-      FROM groups_projects gp
-      JOIN groups_users gu
-        ON gp.group_id = gu.group_id
-      WHERE gu.user_id = :user_id
-      """,
-      nativeQuery = true
-  )
-  List<GroupProject> findAllUserProjects(@Param("user_id") Long userId);
 }
