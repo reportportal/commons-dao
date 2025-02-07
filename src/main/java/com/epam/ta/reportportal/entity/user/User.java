@@ -17,7 +17,6 @@
 package com.epam.ta.reportportal.entity.user;
 
 import com.epam.ta.reportportal.entity.Metadata;
-import com.epam.ta.reportportal.entity.group.GroupProject;
 import com.epam.ta.reportportal.entity.group.GroupUser;
 import com.google.common.collect.Sets;
 import jakarta.persistence.CascadeType;
@@ -32,11 +31,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.io.Serializable;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -44,7 +41,6 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.Type;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
-import org.springframework.data.jpa.repository.Query;
 
 /**
  * @author Andrei Varabyeu
