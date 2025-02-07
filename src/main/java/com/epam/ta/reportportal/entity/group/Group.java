@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.List;
@@ -25,6 +26,10 @@ import lombok.Setter;
 @AllArgsConstructor
 @Table(name = "groups", schema = "public")
 public class Group implements Serializable {
+
+  @Serial
+  private static final long serialVersionUID = 1823423444;
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
