@@ -25,6 +25,7 @@ import com.epam.ta.reportportal.entity.user.UserRole;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -105,9 +106,13 @@ public class ReportPortalUser extends User {
       this.projectRole = projectRole;
     }
 
-    public ProjectDetails(Long projectId, String projectName, List<ProjectRole> projectRoles) {
+    public ProjectDetails(Long projectId, String projectName, String[] roles) {
       this.projectId = projectId;
       this.projectName = projectName;
+
+      List<ProjectRole> projectRoles = Arrays.stream(roles)
+            .map(ProjectRole::valueOf)
+            .toList();
 
       setHighestRole(projectRoles);
     }

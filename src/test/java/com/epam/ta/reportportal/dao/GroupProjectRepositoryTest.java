@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.commons.ReportPortalUser;
 import com.epam.ta.reportportal.entity.group.GroupProject;
+import com.epam.ta.reportportal.entity.group.dto.GroupProjectDetailsRecord;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
 import com.epam.ta.reportportal.entity.user.User;
@@ -74,12 +75,19 @@ class GroupProjectRepositoryTest extends BaseTest {
     Long userId = fakeChubaka.getId();
     String projectName = falcon.getName();
 
-    final Optional<ReportPortalUser.ProjectDetails> projectDetails = groupProjectRepository
-        .findProjectDetails(userId, projectName);
+    final Optional<GroupProjectDetailsRecord> projectDetailsRaw = groupProjectRepository
+        .findProjectDetailsRaw(userId, projectName);
 
-    assertTrue(projectDetails.isPresent());
-    assertEquals(falcon.getId(), projectDetails.get().getProjectId());
-    assertEquals(ProjectRole.MEMBER, projectDetails.get().getProjectRole());
+    assertTrue(projectDetailsRaw.isPresent());
+
+    ReportPortalUser.ProjectDetails projectDetails = new ReportPortalUser.ProjectDetails(
+        projectDetailsRaw.get().projectId(),
+        projectDetailsRaw.get().projectName(),
+        projectDetailsRaw.get().projectRoles()
+    );
+
+    assertEquals(falcon.getId(), projectDetails.getProjectId());
+    assertEquals(ProjectRole.MEMBER, projectDetails.getProjectRole());
   }
 
   @Test
@@ -101,10 +109,11 @@ class GroupProjectRepositoryTest extends BaseTest {
   void ShouldCacheProjectDetails() {
     final Long userId = fakeChubaka.getId();
     final String projectName = falcon.getName();
-    final Optional<ReportPortalUser.ProjectDetails> projectDetails = groupProjectRepository
-        .findProjectDetails(userId, projectName);
+    final Optional<GroupProjectDetailsRecord> projectDetails = groupProjectRepository.findProjectDetailsRaw(
+        userId,
+        projectName
+    );
     assertTrue(projectDetails.isPresent());
-
     Cache cache = cacheManager.getCache("groupProjectDetailsCache");
     assertNotNull(cache);
     Cache.ValueWrapper valueWrapper = cache.get(userId + "_" + projectName);
@@ -113,7 +122,8 @@ class GroupProjectRepositoryTest extends BaseTest {
 
   @Test
   void ShouldReturnAllUserProjects() {
-    List<GroupProject> groupProjects = groupProjectRepository.findAllUserProjects(fakeChubaka.getId());
+    List<GroupProject> groupProjects = groupProjectRepository.findAllUserProjects(
+        fakeChubaka.getId());
     assertEquals(4, groupProjects.size());
   }
 }
