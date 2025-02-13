@@ -110,16 +110,15 @@ public class ReportPortalUser extends User {
       this.projectId = projectId;
       this.projectName = projectName;
 
-      List<ProjectRole> projectRoles = Arrays.stream(roles)
+      List<ProjectRole> projectRoles = new ArrayList<>(Arrays.stream(roles)
             .map(ProjectRole::valueOf)
-            .toList();
+            .toList());
 
       setHighestRole(projectRoles);
     }
 
     public void setHighestRole(List<ProjectRole> roles) {
-      List<ProjectRole> rolesCopy = new ArrayList<>(roles);
-      this.projectRole = rolesCopy.stream().max(ProjectRole::compareTo).orElse(null);
+      this.projectRole = roles.stream().max(ProjectRole::compareTo).orElse(null);
     }
 
     public static ProjectDetailsBuilder builder() {
