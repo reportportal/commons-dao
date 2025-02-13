@@ -23,9 +23,9 @@ public interface GroupProjectRepository extends
       SELECT DISTINCT gp.project_role
       FROM groups_projects gp
       JOIN groups_users gu
-        ON gp.group_id = gu.group_id
-          AND gu.user_id = :userId
-      WHERE project_id = :projectId
+      ON gp.group_id = gu.group_id
+        AND gu.user_id = :userId
+      WHERE gp.project_id = :projectId
       """,
       nativeQuery = true
   )
