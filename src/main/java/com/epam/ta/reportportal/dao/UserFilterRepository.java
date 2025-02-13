@@ -17,7 +17,6 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.filter.UserFilter;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -63,5 +62,15 @@ public interface UserFilterRepository extends ReportPortalRepository<UserFilter,
    * @return if exists 'true' else 'false'
    */
   boolean existsByNameAndOwnerAndProjectId(String name, String owner, Long projectId);
+
+  /**
+   * Checks the existence of the {@link UserFilter} with specified name on a project
+   *
+   * @param name      {@link UserFilter#name}
+   * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} on which
+   *                  filter existence will be checked
+   * @return if exists 'true' else 'false'
+   */
+  boolean existsByNameAndProjectId(String name, Long projectId);
 
 }
