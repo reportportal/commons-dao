@@ -12,13 +12,13 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.Instant;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.jetbrains.annotations.NotNull;
 
 @Getter
 @Setter
@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 @AllArgsConstructor
 @Table(name = "groups_users", schema = "public")
 public class GroupUser implements Serializable {
+
   @EmbeddedId
   private GroupUserId id;
 
