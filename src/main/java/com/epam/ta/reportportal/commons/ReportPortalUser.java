@@ -43,24 +43,14 @@ import org.springframework.security.core.userdetails.UserDetails;
  *
  * @author <a href="mailto:andrei_varabyeu@epam.com">Andrei Varabyeu</a>
  */
+@Setter
+@Getter
 public class ReportPortalUser extends User {
 
   private final boolean active;
-
-  @Setter
-  @Getter
   private Long userId;
-
-  @Setter
-  @Getter
   private UserRole userRole;
-
-  @Setter
-  @Getter
   private String email;
-
-  @Setter
-  @Getter
   private Map<String, ProjectDetails> projectDetails;
 
   private ReportPortalUser(String username, String password,
