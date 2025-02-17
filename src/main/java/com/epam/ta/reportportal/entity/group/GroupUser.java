@@ -21,8 +21,6 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
@@ -43,7 +41,6 @@ import lombok.Setter;
  * @see GroupUserId
  * @see Group
  * @see User
- * @see GroupRole
  */
 @Getter
 @Setter
@@ -55,10 +52,6 @@ public class GroupUser implements Serializable {
 
   @EmbeddedId
   private GroupUserId id;
-
-  @Enumerated(EnumType.STRING)
-  @Column(name = "group_role")
-  private GroupRole groupRole;
 
   @Column(name = "created_at", updatable = false)
   private Instant createdAt;
@@ -79,17 +72,14 @@ public class GroupUser implements Serializable {
    *
    * @param group     Group
    * @param user      User
-   * @param groupRole GroupRole
    */
   public GroupUser(
       @NotNull Group group,
-      @NotNull User user,
-      GroupRole groupRole
+      @NotNull User user
   ) {
     this.id = new GroupUserId(group.getId(), user.getId());
     this.group = group;
     this.user = user;
-    this.groupRole = groupRole;
     this.createdAt = Instant.now();
   }
 
