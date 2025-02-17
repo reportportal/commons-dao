@@ -1,3 +1,19 @@
+/*
+ * Copyright 2025 EPAM Systems
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.ReportPortalUser;
@@ -11,13 +27,23 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+/**
+ * Repository for {@link GroupProject} and related entities.
+ *
+ * @author <a href="mailto:Reingold_Shekhtel@epam.com">Reingold Shekhtel</a>
+ * @see GroupProject
+ * @see ReportPortalUser.ProjectDetails
+ * @see ProjectRole
+ */
 public interface GroupProjectRepository extends
     ReportPortalRepository<GroupProject, GroupProjectId> {
 
   /**
+   * Finds all roles of the user in the project via group membership.
+   *
    * @param userId    user id
    * @param projectId project id
-   * @return all roles of the user in the project via group membership {@link List<ProjectRole>}
+   * @return {@link List} of {@link ProjectRole}
    */
   @Query(value = """
       SELECT DISTINCT gp.project_role
@@ -29,17 +55,22 @@ public interface GroupProjectRepository extends
       """,
       nativeQuery = true
   )
-  @Cacheable(value = "groupUserProjectRolesCache", key = "#userId + '_' + #projectId", cacheManager = "caffeineCacheManager")
+  @Cacheable(
+      value = "groupUserProjectRolesCache",
+      key = "#userId + '_' + #projectId",
+      cacheManager = "caffeineCacheManager"
+  )
   List<ProjectRole> findUserProjectRoles(
       @Param("userId") Long userId,
       @Param("projectId") Long projectId
   );
 
   /**
+   * Finds a raw project details of the user in the project via group membership.
+   *
    * @param userId      user id
    * @param projectName project name
-   * @return project details record of the user in the project via group membership
-   * {@link GroupProjectDetailsRecord}
+   * @return {@link Optional} of {@link GroupProjectDetailsRecord}
    */
 
   @Query(value = """
@@ -61,7 +92,18 @@ public interface GroupProjectRepository extends
       @Param("projectName") String projectName
   );
 
-  @Cacheable(value = "groupProjectDetailsCache", key = "#userId + '_' + #projectName", cacheManager = "caffeineCacheManager")
+  /**
+   * Finds project details of the user in the project via group membership.
+   *
+   * @param userId      user id
+   * @param projectName project name
+   * @return {@link Optional} of {@link ReportPortalUser.ProjectDetails}
+   */
+  @Cacheable(
+      value = "groupProjectDetailsCache",
+      key = "#userId + '_' + #projectName",
+      cacheManager = "caffeineCacheManager"
+  )
   default Optional<ReportPortalUser.ProjectDetails> findProjectDetails(Long userId,
       String projectName) {
     return findProjectDetailsRaw(userId, projectName)
@@ -73,8 +115,10 @@ public interface GroupProjectRepository extends
   }
 
   /**
+   * Finds all projects of the user via group membership.
+   *
    * @param userId user id
-   * @return all projects of the user via group membership {@link List<GroupProject>}
+   * @return {@link List} of {@link GroupProject}
    */
   @Query(value = """
       SELECT gp.project_id, gp.group_id, gp.project_role, gp.created_at, gp.updated_at

@@ -1,3 +1,19 @@
+/*
+ * Copyright 2025 EPAM Systems
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.epam.ta.reportportal.entity.group;
 
 import com.epam.ta.reportportal.entity.project.Project;
@@ -19,6 +35,15 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * GroupProject entity.
+ *
+ * @author <a href="mailto:Reingold_Shekhtel@epam.com">Reingold Shekhtel</a>
+ * @see GroupProjectId
+ * @see Group
+ * @see Project
+ * @see ProjectRole
+ */
 @Getter
 @Setter
 @Entity
@@ -48,6 +73,13 @@ public class GroupProject {
   @MapsId("projectId")
   private Project project;
 
+  /**
+   * Constructor for GroupProject entity.
+   *
+   * @param group       {@link Group}
+   * @param project     {@link Project}
+   * @param projectRole {@link ProjectRole}
+   */
   public GroupProject(
       @NotNull Group group,
       @NotNull Project project,
@@ -60,6 +92,9 @@ public class GroupProject {
     this.createdAt = Instant.now();
   }
 
+  /**
+   * Updates the updated_at field on entity update.
+   */
   @PreUpdate
   protected void onUpdated() {
     this.updatedAt = Instant.now();
