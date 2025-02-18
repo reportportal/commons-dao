@@ -24,30 +24,33 @@ import com.epam.ta.reportportal.entity.project.ProjectRole;
 import com.epam.ta.reportportal.entity.user.UserRole;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
 /**
- * ReportPortal user representation
+ * ReportPortal user representation.
  *
  * @author <a href="mailto:andrei_varabyeu@epam.com">Andrei Varabyeu</a>
  */
+@Setter
+@Getter
 public class ReportPortalUser extends User {
 
-  private boolean active;
-
+  private final boolean active;
   private Long userId;
-
   private UserRole userRole;
-
   private String email;
-
   private Map<String, ProjectDetails> projectDetails;
 
   private ReportPortalUser(String username, String password,
@@ -75,38 +78,7 @@ public class ReportPortalUser extends User {
     return active;
   }
 
-  public Long getUserId() {
-    return userId;
-  }
-
-  public void setUserId(Long userId) {
-    this.userId = userId;
-  }
-
-  public UserRole getUserRole() {
-    return userRole;
-  }
-
-  public void setUserRole(UserRole userRole) {
-    this.userRole = userRole;
-  }
-
-  public String getEmail() {
-    return email;
-  }
-
-  public void setEmail(String email) {
-    this.email = email;
-  }
-
-  public Map<String, ProjectDetails> getProjectDetails() {
-    return projectDetails;
-  }
-
-  public void setProjectDetails(Map<String, ProjectDetails> projectDetails) {
-    this.projectDetails = projectDetails;
-  }
-
+  @Getter
   public static class ProjectDetails implements Serializable {
 
     @JsonProperty(value = "id")
@@ -124,20 +96,23 @@ public class ReportPortalUser extends User {
       this.projectRole = projectRole;
     }
 
+    public ProjectDetails(Long projectId, String projectName, String[] roles) {
+      this.projectId = projectId;
+      this.projectName = projectName;
+
+      List<ProjectRole> projectRoles = new ArrayList<>(Arrays.stream(roles)
+            .map(ProjectRole::valueOf)
+            .toList());
+
+      setHighestRole(projectRoles);
+    }
+
+    public void setHighestRole(List<ProjectRole> roles) {
+      this.projectRole = roles.stream().max(ProjectRole::compareTo).orElse(null);
+    }
+
     public static ProjectDetailsBuilder builder() {
       return new ProjectDetailsBuilder();
-    }
-
-    public Long getProjectId() {
-      return projectId;
-    }
-
-    public String getProjectName() {
-      return projectName;
-    }
-
-    public ProjectRole getProjectRole() {
-      return projectRole;
     }
 
     public static class ProjectDetailsBuilder {

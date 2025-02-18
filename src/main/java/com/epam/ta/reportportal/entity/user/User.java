@@ -17,6 +17,7 @@
 package com.epam.ta.reportportal.entity.user;
 
 import com.epam.ta.reportportal.entity.Metadata;
+import com.epam.ta.reportportal.entity.group.GroupUser;
 import com.google.common.collect.Sets;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -104,6 +105,10 @@ public class User implements Serializable {
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = {CascadeType.PERSIST,
       CascadeType.MERGE, CascadeType.REFRESH})
   private Set<ProjectUser> projects = Sets.newHashSet();
+
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = {CascadeType.PERSIST,
+      CascadeType.MERGE, CascadeType.REFRESH})
+  private Set<GroupUser> groups = Sets.newHashSet();
 
   @Override
   public boolean equals(Object o) {

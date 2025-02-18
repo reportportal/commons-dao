@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.entity.project;
 import com.epam.ta.reportportal.dao.converters.JpaInstantConverter;
 import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.enums.ProjectType;
+import com.epam.ta.reportportal.entity.group.GroupProject;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.pattern.PatternTemplate;
 import com.epam.ta.reportportal.entity.project.email.SenderCase;
@@ -110,6 +111,9 @@ public class Project implements Serializable {
   @JoinColumn(name = "project_id", updatable = false)
   @OrderBy
   private Set<PatternTemplate> patternTemplates = Sets.newHashSet();
+
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "project", cascade = CascadeType.PERSIST)
+  private Set<GroupProject> groups = Sets.newHashSet();
 
   public Project(Long id, String name) {
     this.id = id;
