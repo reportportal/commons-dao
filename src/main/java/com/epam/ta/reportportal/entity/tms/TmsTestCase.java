@@ -39,10 +39,10 @@ public class TmsTestCase implements Serializable {
     private String description;
     
     @OneToMany(mappedBy = "testCase")
-    private Set<TestCaseAttribute> tags;
+    private Set<TmsTestCaseAttribute> tags;
     
     @OneToMany(mappedBy = "testCase", cascade = CascadeType.PERSIST)
-    private Set<TestCaseVersion> versions;
+    private Set<TmsTestCaseVersion> versions;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "test_folder_id", nullable = false)
@@ -54,7 +54,7 @@ public class TmsTestCase implements Serializable {
     //    TODO:many-to-many
     //    private Set<TestPlan> testPlans;
     
-    public void addTestCaseVersion(final TestCaseVersion testCaseVersion) {
+    public void addTestCaseVersion(final TmsTestCaseVersion testCaseVersion) {
         versions.add(testCaseVersion);
         testCaseVersion.setTestCase(this);
     }

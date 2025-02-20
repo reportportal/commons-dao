@@ -20,7 +20,7 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class TestCaseAttribute implements Serializable {
+public class TmsTestCaseAttribute implements Serializable {
     
     @EmbeddedId
     private TmsTestCaseAttributeId id;

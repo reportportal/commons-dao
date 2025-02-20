@@ -21,7 +21,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @NoArgsConstructor
-public class TestCaseVersion implements Serializable {
+public class TmsTestCaseVersion implements Serializable {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,7 +44,7 @@ public class TestCaseVersion implements Serializable {
     @OneToOne(mappedBy = "testCaseVersion", fetch = FetchType.LAZY)
     private TmsManualScenario manualScenario;
     
-    public TestCaseVersion(final Long id,
+    public TmsTestCaseVersion(final Long id,
                            final String name,
                            final boolean isDefault,
                            final boolean isDraft,
