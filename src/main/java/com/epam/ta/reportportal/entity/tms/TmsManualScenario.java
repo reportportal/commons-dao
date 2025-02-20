@@ -41,7 +41,7 @@ public class TmsManualScenario {
     
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "test_case_version_id")
-    private TestCaseVersion testCaseVersion;
+    private TmsTestCaseVersion testCaseVersion;
     
     @OneToMany(mappedBy = "manualScenario")
     private Set<TmsManualScenarioAttribute> attributes;
