@@ -56,8 +56,14 @@ import org.springframework.util.Assert;
  */
 @Configuration
 @EnableJpaAuditing
-@EnableJpaRepositories(basePackages = {
-    "com.epam.ta.reportportal.dao"}, repositoryBaseClass = ReportPortalRepositoryImpl.class, repositoryFactoryBeanClass = DatabaseConfiguration.RpRepoFactoryBean.class)
+@EnableJpaRepositories(
+    basePackages = {
+        "com.epam.ta.reportportal.**.dao",
+        "com.epam.ta.reportportal.**.repository"
+    },
+    repositoryBaseClass = ReportPortalRepositoryImpl.class,
+    repositoryFactoryBeanClass = DatabaseConfiguration.RpRepoFactoryBean.class
+)
 @EnableTransactionManagement
 @EnableCaching
 public class DatabaseConfiguration {
@@ -79,7 +85,7 @@ public class DatabaseConfiguration {
     LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
     factory.setJpaVendorAdapter(vendorAdapter);
     factory.setPackagesToScan("com.epam.ta.reportportal.commons",
-        "com.epam.ta.reportportal.entity");
+        "com.epam.ta.reportportal.**.entity");
     factory.setDataSource(dataSource);
 
     factory.afterPropertiesSet();
