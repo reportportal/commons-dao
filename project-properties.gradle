@@ -7,7 +7,7 @@ project.ext {
     releaseMode = project.hasProperty("releaseMode") ? project.releaseMode.toBoolean() : false
     hasDBSchema = project.hasProperty("DB_SCHEMA_POSTGRES")
     scriptsUrl = commonScriptsUrl + (releaseMode ? getProperty('scripts.version') : 'develop')
-    migrationsUrl = migrationsScriptsUrl + (releaseMode ? getProperty('migrations.version') : 'develop')
+    migrationsUrl = migrationsScriptsUrl + (releaseMode ? getProperty('migrations.version') : 'feature/EPMRPP-migrate-tms')
 
     //TODO refactor with archive download
     testScriptsSrc = [
@@ -82,6 +82,7 @@ project.ext {
             (migrationsUrl + '/migrations/88_analytics_data_table.up.sql')             : 'V088__analytics_data_table.sql',
             (migrationsUrl + '/migrations/90_add_user_fields.up.sql')                  : 'V090__scim_user_fields.sql',
             (migrationsUrl + '/migrations/93_create_groups_tables.up.sql')             : 'V093__create_groups_tables.sql',
+            (migrationsUrl + '/migrations/94_tms_initial.up.sql')                      : 'V094__tms_initial.up.sql',
     ]
     excludeTests = [
             'com/epam/ta/reportportal/jooq/**',
