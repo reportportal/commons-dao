@@ -76,7 +76,7 @@ public class Project implements Serializable {
   @OrderBy("creationDate desc")
   private Set<Integration> integrations = Sets.newHashSet();
 
-  @OneToMany(mappedBy = "project", cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "project", cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
   private Set<ProjectAttribute> projectAttributes = Sets.newHashSet();
 
   @OneToMany(mappedBy = "project", cascade = {CascadeType.PERSIST,
