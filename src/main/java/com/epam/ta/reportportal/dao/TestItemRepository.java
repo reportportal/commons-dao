@@ -46,11 +46,11 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
       "AND ti.type = 'STEP' " +
       "AND l.project_id = :projectId " +
       "ORDER BY ti.start_time DESC " +
-      "LIMIT :limit OFFSET :offset", nativeQuery = true)
+      "LIMIT :pageSize OFFSET :pageOffset", nativeQuery = true)
   List<TestItem> findTestItemsByName(@Param("name") String nameTerm,
       @Param("projectId") Long projectId,
-      @Param("pageSize") Integer limit,
-      @Param("pageOffset") Long offset);
+      @Param("pageSize") Integer pageSize,
+      @Param("pageOffset") Long pageOffset);
 
   @Query(value = "SELECT ti.* FROM test_item ti " +
       "JOIN launch l ON ti.launch_id = l.id " +
@@ -61,13 +61,13 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
       "AND l.project_id = :projectId " +
       "AND ia.key = :key AND ia.value = :value " +
       "ORDER BY ti.start_time DESC " +
-      "LIMIT :limit OFFSET :offset", nativeQuery = true)
+      "LIMIT :pageSize OFFSET :pageOffset", nativeQuery = true)
   List<TestItem> findTestItemsWithAttributes(
       @Param("projectId") Long projectId,
       @Param("key") String attributeKey,
       @Param("value") String attributeValue,
-      @Param("pageSize") Integer limit,
-      @Param("pageOffset") Long offset);
+      @Param("pageSize") Integer pageSize,
+      @Param("pageOffset") Long pageOffset);
 
   /**
    * Retrieve list of test item ids for provided launch
