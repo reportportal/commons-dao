@@ -37,6 +37,38 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
   @Query(value = "SELECT * FROM test_item WHERE item_id = (SELECT parent_id FROM test_item WHERE item_id = :childId)", nativeQuery = true)
   Optional<TestItem> findParentByChildId(@Param("childId") Long childId);
 
+  @Query(value = "SELECT ti.* FROM test_item ti " +
+      "INNER JOIN launch l ON ti.launch_id = l.id " +
+      "WHERE ti.has_children = false " +
+      "AND ti.retry_of IS NULL " +
+      "AND ti.has_stats = true " +
+      "AND ti.name LIKE %:name% " +
+      "AND ti.type = 'STEP' " +
+      "AND l.project_id = :projectId " +
+      "ORDER BY ti.start_time DESC " +
+      "LIMIT :limit OFFSET :offset", nativeQuery = true)
+  List<TestItem> findTestItemsByName(@Param("name") String nameTerm,
+      @Param("projectId") Long projectId,
+      @Param("pageSize") Integer limit,
+      @Param("pageOffset") Long offset);
+
+  @Query(value = "SELECT ti.* FROM test_item ti " +
+      "JOIN launch l ON ti.launch_id = l.id " +
+      "LEFT JOIN item_attribute ia ON ti.item_id = ia.item_id " +
+      "WHERE ti.has_children = false " +
+      "AND ti.has_stats = true " +
+      "AND ti.type = 'STEP' " +
+      "AND l.project_id = :projectId " +
+      "AND ia.key = :key AND ia.value = :value " +
+      "ORDER BY ti.start_time DESC " +
+      "LIMIT :limit OFFSET :offset", nativeQuery = true)
+  List<TestItem> findTestItemsWithAttributes(
+      @Param("projectId") Long projectId,
+      @Param("key") String attributeKey,
+      @Param("value") String attributeValue,
+      @Param("pageSize") Integer limit,
+      @Param("pageOffset") Long offset);
+
   /**
    * Retrieve list of test item ids for provided launch
    *
@@ -351,24 +383,26 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
       @Param("testCaseHash") Integer testCaseHash,
       @Param("launchId") Long launchId);
 
-	/**
-	 * Finds latest {@link TestItem#getItemId()} with specified {@code testCaseHash}, {@code launchId} and {@code parentId}
-	 *
-	 * @param testCaseHash {@link TestItem#getTestCaseHash()}
-	 * @param launchId     {@link TestItem#getLaunchId()}
-	 * @param parentId     {@link TestItem#getParentId()}
-	 * @return {@link Optional} of {@link TestItem#getItemId()} if exists otherwise {@link Optional#empty()}
-	 */
-	@Query(value =
-			"SELECT t.item_id FROM test_item t WHERE t.test_case_hash = :testCaseHash AND t.launch_id = :launchId "
-					+ " AND t.parent_id = :parentId AND t.has_stats AND t.retry_of IS NULL"
-					+ " ORDER BY t.start_time DESC, t.item_id DESC LIMIT 1 FOR UPDATE", nativeQuery = true)
-	Optional<Long> findLatestIdByTestCaseHashAndLaunchIdAndParentId(
-			@Param("testCaseHash") Integer testCaseHash,
-			@Param("launchId") Long launchId, @Param("parentId") Long parentId);
+  /**
+   * Finds latest {@link TestItem#getItemId()} with specified {@code testCaseHash}, {@code launchId}
+   * and {@code parentId}
+   *
+   * @param testCaseHash {@link TestItem#getTestCaseHash()}
+   * @param launchId     {@link TestItem#getLaunchId()}
+   * @param parentId     {@link TestItem#getParentId()}
+   * @return {@link Optional} of {@link TestItem#getItemId()} if exists otherwise
+   * {@link Optional#empty()}
+   */
+  @Query(value =
+      "SELECT t.item_id FROM test_item t WHERE t.test_case_hash = :testCaseHash AND t.launch_id = :launchId "
+          + " AND t.parent_id = :parentId AND t.has_stats AND t.retry_of IS NULL"
+          + " ORDER BY t.start_time DESC, t.item_id DESC LIMIT 1 FOR UPDATE", nativeQuery = true)
+  Optional<Long> findLatestIdByTestCaseHashAndLaunchIdAndParentId(
+      @Param("testCaseHash") Integer testCaseHash,
+      @Param("launchId") Long launchId, @Param("parentId") Long parentId);
 
-	@Query(value = "SELECT t.name FROM test_item t WHERE t.item_id = :itemId", nativeQuery = true)
-	Optional<String> findItemNameByItemId(Long itemId);
+  @Query(value = "SELECT t.name FROM test_item t WHERE t.item_id = :itemId", nativeQuery = true)
+  Optional<String> findItemNameByItemId(Long itemId);
 
   /**
    * Count items by launch id
