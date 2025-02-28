@@ -37,32 +37,37 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
   @Query(value = "SELECT * FROM test_item WHERE item_id = (SELECT parent_id FROM test_item WHERE item_id = :childId)", nativeQuery = true)
   Optional<TestItem> findParentByChildId(@Param("childId") Long childId);
 
-  @Query(value = "SELECT ti.* FROM test_item ti " +
-      "INNER JOIN launch l ON ti.launch_id = l.id " +
-      "WHERE ti.has_children = false " +
-      "AND ti.retry_of IS NULL " +
-      "AND ti.has_stats = true " +
-      "AND ti.name LIKE %:name% " +
-      "AND ti.type = 'STEP' " +
-      "AND l.project_id = :projectId " +
-      "ORDER BY ti.start_time DESC " +
-      "LIMIT :pageSize OFFSET :pageOffset", nativeQuery = true)
-  List<TestItem> findTestItemsByName(@Param("name") String nameTerm,
+  @Query(value = """
+      SELECT ti.* FROM test_item ti
+      INNER JOIN launch l ON ti.launch_id = l.id
+      WHERE ti.has_children = false
+        AND ti.has_stats = true
+        AND ti.retry_of IS NULL
+        AND ti.type = 'STEP'
+        AND l.project_id = :projectId
+        AND ti.name LIKE %:name%
+      ORDER BY ti.start_time DESC
+      LIMIT :pageSize OFFSET :pageOffset
+      """, nativeQuery = true)
+  List<TestItem> findTestItemsContainsName(@Param("name") String nameTerm,
       @Param("projectId") Long projectId,
       @Param("pageSize") Integer pageSize,
       @Param("pageOffset") Long pageOffset);
 
-  @Query(value = "SELECT ti.* FROM test_item ti " +
-      "JOIN launch l ON ti.launch_id = l.id " +
-      "LEFT JOIN item_attribute ia ON ti.item_id = ia.item_id " +
-      "WHERE ti.has_children = false " +
-      "AND ti.has_stats = true " +
-      "AND ti.type = 'STEP' " +
-      "AND l.project_id = :projectId " +
-      "AND ia.key = :key AND ia.value = :value " +
-      "ORDER BY ti.start_time DESC " +
-      "LIMIT :pageSize OFFSET :pageOffset", nativeQuery = true)
-  List<TestItem> findTestItemsWithAttributes(
+  @Query(value = """
+      SELECT ti.* FROM test_item ti
+      JOIN launch l ON ti.launch_id = l.id
+      LEFT JOIN item_attribute ia ON ti.item_id = ia.item_id
+      WHERE ti.has_children = false
+        AND ti.has_stats = true
+        AND ti.retry_of IS NULL
+        AND ti.type = 'STEP'
+        AND l.project_id = :projectId
+        AND ia.key = :key AND ia.value = :value nad ia.system = false
+      ORDER BY ti.start_time DESC
+      LIMIT :pageSize OFFSET :pageOffset
+      """, nativeQuery = true)
+  List<TestItem> findTestItemsByAttribute(
       @Param("projectId") Long projectId,
       @Param("key") String attributeKey,
       @Param("value") String attributeValue,
