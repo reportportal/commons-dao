@@ -62,7 +62,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
         AND ti.retry_of IS NULL
         AND ti.type = 'STEP'
         AND l.project_id = :projectId
-        AND ia.key = :key AND ia.value = :value nad ia.system = false
+        AND ia.key = :key AND ia.value = :value and ia.system = false
       """, nativeQuery = true)
   Slice<TestItem> findTestItemsByAttribute(
       @Param("projectId") Long projectId,
