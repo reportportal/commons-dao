@@ -18,6 +18,9 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.group.Group;
 import java.util.Optional;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * Repository for {@link Group}.
@@ -35,4 +38,12 @@ public interface GroupRepository extends ReportPortalRepository<Group, Long> {
    * @return {@link Optional} of {@link Group}
    */
   Optional<Group> findBySlug(String slug);
+
+  /**
+   * Retrieves a page of groups.
+   *
+   * @param pageable {@link Pageable}
+   * @return {@link Page} of {@link Group}
+   */
+  @NotNull Page<Group> findAll(@NotNull Pageable pageable);
 }
