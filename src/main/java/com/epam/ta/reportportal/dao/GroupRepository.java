@@ -38,12 +38,4 @@ public interface GroupRepository extends ReportPortalRepository<Group, Long> {
    * @return {@link Optional} of {@link Group}
    */
   Optional<Group> findBySlug(String slug);
-
-  /**
-   * Retrieves a page of groups.
-   *
-   * @param pageable {@link Pageable}
-   * @return {@link Page} of {@link Group}
-   */
-  @NotNull Page<Group> findAll(@NotNull Pageable pageable);
 }
