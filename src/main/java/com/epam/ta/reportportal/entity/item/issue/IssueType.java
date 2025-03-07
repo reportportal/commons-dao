@@ -16,6 +16,8 @@
 
 package com.epam.ta.reportportal.entity.item.issue;
 
+import com.epam.ta.reportportal.entity.project.ProjectIssueType;
+import com.google.common.collect.Sets;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -26,9 +28,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -54,6 +58,12 @@ public class IssueType implements Serializable {
   @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
   @JoinColumn(name = "issue_group_id")
   private IssueGroup issueGroup;
+
+  @OneToMany(
+      mappedBy = "issueType",
+      cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+      orphanRemoval = true)
+  private Set<ProjectIssueType> projectIssueTypes = Sets.newHashSet();
 
   @Column(name = "locator", length = 64)
   private String locator;

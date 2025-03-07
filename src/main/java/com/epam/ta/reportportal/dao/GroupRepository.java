@@ -18,9 +18,6 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.group.Group;
 import java.util.Optional;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 /**
  * Repository for {@link Group}.

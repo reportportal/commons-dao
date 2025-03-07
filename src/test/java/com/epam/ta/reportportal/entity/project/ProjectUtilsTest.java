@@ -77,11 +77,11 @@ class ProjectUtilsTest {
     IssueGroup siGroup = new IssueGroup();
     siGroup.setId(5);
     siGroup.setTestItemIssueGroup(TestItemIssueGroup.SYSTEM_ISSUE);
-    return Arrays.asList(new IssueType(901L, tiGroup, "ti001", "To Investigate", "TI", "#ffb743"),
-        new IssueType(902L, abGroup, "ab001", "Automation Bug", "AB", "#f7d63e"),
-        new IssueType(903L, pbGroup, "pb001", "Product Bug", "PB", "#ec3900"),
-        new IssueType(904L, ndGroup, "nd001", "No Defect", "ND", "#777777"),
-        new IssueType(905L, siGroup, "si001", "System Issue", "SI", "#0274d1")
+    return Arrays.asList(new IssueType(tiGroup, "ti001", "To Investigate", "TI", "#ffb743"),
+        new IssueType(abGroup, "ab001", "Automation Bug", "AB", "#f7d63e"),
+        new IssueType(pbGroup, "pb001", "Product Bug", "PB", "#ec3900"),
+        new IssueType(ndGroup, "nd001", "No Defect", "ND", "#777777"),
+        new IssueType(siGroup, "si001", "System Issue", "SI", "#0274d1")
     );
   }
 
