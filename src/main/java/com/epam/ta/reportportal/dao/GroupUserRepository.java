@@ -18,6 +18,9 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.group.GroupUser;
 import com.epam.ta.reportportal.entity.group.GroupUserId;
+import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  * Repository for {@link GroupUser}.
@@ -27,4 +30,7 @@ import com.epam.ta.reportportal.entity.group.GroupUserId;
  */
 public interface GroupUserRepository extends ReportPortalRepository<GroupUser, GroupUserId> {
 
+  List<GroupUser> findAllByGroupId(Long groupId);
+
+  Page<GroupUser> findAllByGroupId(Long groupId, Pageable pageable);
 }
