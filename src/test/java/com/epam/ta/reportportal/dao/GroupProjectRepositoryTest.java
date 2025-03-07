@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.jdbc.Sql;
 
 @Sql("/db/fill/group/group-fill.sql")
@@ -117,5 +118,19 @@ class GroupProjectRepositoryTest extends BaseTest {
     List<GroupProject> groupProjects = groupProjectRepository.findAllUserProjects(
         fakeChubaka.getId());
     assertEquals(4, groupProjects.size());
+  }
+
+  @Test
+  void ShouldFindAllGroupProjects() {
+    var groupProjects = groupProjectRepository.findAllByGroupId(1L);
+    assertEquals(1, groupProjects.size());
+  }
+
+  @Test
+  void shouldFindProjectsPageByGroupId() {
+    var pageable = PageRequest.of(0, 10);
+    var groupProjects = groupProjectRepository.findAllByGroupId(1L, pageable);
+    assertNotNull(groupProjects);
+    assertEquals(1, groupProjects.getTotalElements());
   }
 }

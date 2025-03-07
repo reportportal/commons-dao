@@ -16,14 +16,14 @@ class GroupUserRepositoryTest extends BaseTest {
   private GroupUserRepository groupUserRepository;
 
   @Test
-  void testFindAllUsersByGroupId() {
+  void shouldFindAllUsersByGroupId() {
     var groupUsers = groupUserRepository.findAllByGroupId(1L);
     assertNotNull(groupUsers);
     assertEquals(2, groupUsers.size());
   }
 
   @Test
-  void testFindUsersPageByGroupId() {
+  void shouldFindUsersPageByGroupId() {
     var pageable = PageRequest.of(0, 10);
     var groupUsers = groupUserRepository.findAllByGroupId(1L, pageable);
     assertNotNull(groupUsers);
