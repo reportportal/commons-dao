@@ -24,6 +24,8 @@ import com.epam.ta.reportportal.entity.project.ProjectRole;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -130,4 +132,21 @@ public interface GroupProjectRepository extends
       nativeQuery = true
   )
   List<GroupProject> findAllUserProjects(@Param("user_id") Long userId);
+
+  /**
+   * Finds all projects of the Group.
+   *
+   * @param groupId user id
+   * @return {@link List} of {@link GroupProject}
+   */
+  List<GroupProject> findAllByGroupId(Long groupId);
+
+  /**
+   * Finds all projects of the Group with pagination.
+   *
+   * @param groupId   user id
+   * @param pageable  {@link Pageable}
+   * @return {@link Page} of {@link GroupProject}
+   */
+  Page<GroupProject> findAllByGroupId(Long groupId, Pageable pageable);
 }
