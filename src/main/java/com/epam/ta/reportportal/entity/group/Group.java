@@ -24,6 +24,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import java.io.Serial;
@@ -78,6 +79,28 @@ public class Group implements Serializable {
 
   @OneToMany(mappedBy = "group", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<GroupProject> projects;
+
+  /**
+   * Constructor for creating a new group.
+   *
+   * @param name      Group name
+   * @param slug      Group slug
+   * @param createdBy User ID who created the group
+   */
+  public Group(String name, String slug, Long createdBy) {
+    this.name = name;
+    this.slug = slug;
+    this.createdBy = createdBy;
+  }
+
+  /**
+   * Set the created_at and updated_at fields before persisting the entity.
+   */
+  @PrePersist
+  protected void onCreate() {
+    this.createdAt = Instant.now();
+    this.updatedAt = this.createdAt;
+  }
 
   /**
    * Updates the updated_at field before updating the entity.

@@ -24,6 +24,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -80,7 +81,15 @@ public class GroupUser implements Serializable {
     this.id = new GroupUserId(group.getId(), user.getId());
     this.group = group;
     this.user = user;
+  }
+
+  /**
+   * Set the created at and updated at fields.
+   */
+  @PrePersist
+  protected void onCreate() {
     this.createdAt = Instant.now();
+    this.updatedAt = this.createdAt;
   }
 
   /**
