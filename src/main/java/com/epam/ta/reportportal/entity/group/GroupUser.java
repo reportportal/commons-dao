@@ -17,7 +17,6 @@
 package com.epam.ta.reportportal.entity.group;
 
 import com.epam.ta.reportportal.entity.user.User;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
@@ -60,11 +59,11 @@ public class GroupUser implements Serializable {
   @Column(name = "updated_at")
   private Instant updatedAt;
 
-  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @ManyToOne(fetch = FetchType.LAZY)
   @MapsId("groupId")
   private Group group;
 
-  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @ManyToOne(fetch = FetchType.LAZY)
   @MapsId("userId")
   private User user;
 
