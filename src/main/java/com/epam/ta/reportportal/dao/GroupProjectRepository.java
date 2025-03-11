@@ -136,7 +136,7 @@ public interface GroupProjectRepository extends
   /**
    * Finds all projects of the Group.
    *
-   * @param groupId user id
+   * @param groupId group id
    * @return {@link List} of {@link GroupProject}
    */
   List<GroupProject> findAllByGroupId(Long groupId);
@@ -144,9 +144,26 @@ public interface GroupProjectRepository extends
   /**
    * Finds all projects of the Group with pagination.
    *
-   * @param groupId   user id
+   * @param groupId   group id
    * @param pageable  {@link Pageable}
    * @return {@link Page} of {@link GroupProject}
    */
   Page<GroupProject> findAllByGroupId(Long groupId, Pageable pageable);
+
+
+  /**
+   * Finds all groups of the Project.
+   *
+   * @param projectId project id
+   * @return {@link List} of {@link GroupProject}
+   */
+  List<GroupProject> findAllByProjectId(Long projectId);
+
+  /**
+   * Finds all groups of the Project with pagination.
+   *
+   * @param projectId project id
+   * @return {@link List} of {@link GroupProject}
+   */
+  Page<GroupProject> findAllByProjectId(Long projectId, Pageable pageable);
 }
