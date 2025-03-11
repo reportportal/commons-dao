@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.commons.ReportPortalUser;
+import com.epam.ta.reportportal.entity.group.Group;
 import com.epam.ta.reportportal.entity.group.GroupProject;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.jdbc.Sql;
 
@@ -31,9 +33,12 @@ class GroupProjectRepositoryTest extends BaseTest {
   private UserRepository userRepository;
   @Autowired
   private ProjectRepository projectRepository;
+  @Autowired
+  private GroupRepository groupRepository;
 
   private User fakeChubaka;
   private Project falcon;
+  private Group rebel;
 
   @BeforeEach
   void setUp() {
@@ -41,6 +46,8 @@ class GroupProjectRepositoryTest extends BaseTest {
         .orElseThrow(() -> new RuntimeException("User not found"));
     falcon = projectRepository.findByName("millennium_falcon")
         .orElseThrow(() -> new RuntimeException("Project not found"));
+    rebel = groupRepository.findBySlug("rebel-group")
+        .orElseThrow(() -> new RuntimeException("Group not found"));
   }
 
   @Test
@@ -122,14 +129,14 @@ class GroupProjectRepositoryTest extends BaseTest {
 
   @Test
   void ShouldFindAllGroupProjects() {
-    var groupProjects = groupProjectRepository.findAllByGroupId(1L);
+    List<GroupProject> groupProjects = groupProjectRepository.findAllByGroupId(rebel.getId());
     assertEquals(1, groupProjects.size());
   }
 
   @Test
   void shouldFindProjectsPageByGroupId() {
     var pageable = PageRequest.of(0, 10);
-    var groupProjects = groupProjectRepository.findAllByGroupId(1L, pageable);
+    Page<GroupProject> groupProjects = groupProjectRepository.findAllByGroupId(rebel.getId(), pageable);
     assertNotNull(groupProjects);
     assertEquals(1, groupProjects.getTotalElements());
   }
