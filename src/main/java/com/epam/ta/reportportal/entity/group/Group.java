@@ -27,6 +27,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Pattern;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
@@ -60,6 +61,7 @@ public class Group implements Serializable {
   private Long id;
 
   @Column(name = "slug")
+  @Pattern(regexp = "^[a-z0-9]+(?:-[a-z0-9]+)*$", message = "It must contain lowercase letters, numbers, and hyphens. It should not start or end with a hyphen.")
   private String slug;
 
   @Column(name = "name")
