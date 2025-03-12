@@ -47,7 +47,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
         AND ti.retry_of IS NULL
         AND ti.type = 'STEP'
         AND l.project_id = :projectId
-        AND ti.name ILIKE %:name%
+        AND LOWER(ti.name) LIKE LOWER(CONCAT('%', :name, '%'))
       """, nativeQuery = true)
   Slice<TestItem> findTestItemsContainsName(@Param("name") String nameTerm,
       @Param("projectId") Long projectId,
