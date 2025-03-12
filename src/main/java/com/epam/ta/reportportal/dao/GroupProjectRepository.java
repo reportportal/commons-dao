@@ -20,6 +20,7 @@ import com.epam.ta.reportportal.entity.group.GroupProject;
 import com.epam.ta.reportportal.entity.group.GroupProjectId;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -82,4 +83,14 @@ public interface GroupProjectRepository extends
    * @return {@link List} of {@link GroupProject}
    */
   Page<GroupProject> findAllByProjectName(String projectName, Pageable pageable);
+
+
+  /**
+   * Finds group of the Project by project name and group id.
+   *
+   * @param groupId     group id
+   * @param projectName project name
+   * @return {@link Optional} of {@link GroupProject}
+   */
+  Optional<GroupProject> findByGroupIdAndProjectName(Long groupId, String projectName);
 }
