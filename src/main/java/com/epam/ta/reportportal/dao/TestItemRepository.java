@@ -49,7 +49,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
         AND ti.retry_of IS NULL
         AND ti.type = 'STEP'
         AND l.project_id = :projectId
-        AND LOWER(ti.name) LIKE LOWER(CONCAT('%', :name, '%'))
+        AND ti.name ILIKE %:name%
       """, nativeQuery = true)
   @QueryHints(@QueryHint(name = "javax.persistence.query.timeout", value = "10000"))
   Slice<TestItem> findTestItemsContainsName(@Param("name") String nameTerm,
