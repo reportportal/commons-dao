@@ -32,6 +32,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -59,6 +60,9 @@ public class Group implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
+
+  @Column(name = "uuid")
+  private UUID uuid;
 
   @Column(name = "slug")
   @Pattern(regexp = "^[a-z0-9]+(?:-[a-z0-9]+)*$", message = "It must contain lowercase letters, numbers, and hyphens. It should not start or end with a hyphen.")
@@ -102,6 +106,7 @@ public class Group implements Serializable {
   protected void onCreate() {
     this.createdAt = Instant.now();
     this.updatedAt = this.createdAt;
+    this.uuid = UUID.randomUUID();
   }
 
   /**

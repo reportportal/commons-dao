@@ -23,4 +23,12 @@ public class GroupRepositoryTest extends BaseTest {
     groupRepository.save(group);
     assertNotNull(groupRepository.findBySlug("new-test-group"));
   }
+
+  @Test
+  void testFindByUuid() {
+    var group = new Group("Test group", "test-group", 1L);
+    groupRepository.save(group);
+
+    assertNotNull(groupRepository.findByUuid(group.getUuid()));
+  }
 }
