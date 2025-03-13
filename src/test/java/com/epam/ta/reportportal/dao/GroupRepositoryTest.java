@@ -1,6 +1,6 @@
 package com.epam.ta.reportportal.dao;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.entity.group.Group;
@@ -21,7 +21,7 @@ public class GroupRepositoryTest extends BaseTest {
 
     group.setSlug("new-test-group");
     groupRepository.save(group);
-    assertNotNull(groupRepository.findBySlug("new-test-group"));
+    assertTrue(groupRepository.findBySlug("new-test-group").isPresent());
   }
 
   @Test
@@ -29,6 +29,6 @@ public class GroupRepositoryTest extends BaseTest {
     var group = new Group("Test group", "test-group", 1L);
     groupRepository.save(group);
 
-    assertNotNull(groupRepository.findByUuid(group.getUuid()));
+    assertTrue(groupRepository.findByUuid(group.getUuid()).isPresent());
   }
 }
