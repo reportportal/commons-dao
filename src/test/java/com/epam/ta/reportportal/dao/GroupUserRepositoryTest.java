@@ -5,20 +5,17 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.entity.group.Group;
-import com.epam.ta.reportportal.entity.group.GroupProject;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.jdbc.Sql;
 
 @Sql("/db/fill/group/group-fill.sql")
-class GroupProjectRepositoryTest extends BaseTest {
+class GroupUserRepositoryTest extends BaseTest {
 
   @Autowired
-  private GroupProjectRepository groupProjectRepository;
+  private GroupUserRepository groupUserRepository;
   @Autowired
   private GroupRepository groupRepository;
 
@@ -27,20 +24,21 @@ class GroupProjectRepositoryTest extends BaseTest {
   @BeforeEach
   void setUp() {
     rebel = groupRepository.findBySlug("rebel-group")
-        .orElseThrow(() -> new RuntimeException("Group not found"));
+            .orElseThrow(() -> new RuntimeException("Group not found"));
   }
 
   @Test
-  void ShouldFindAllGroupProjects() {
-    List<GroupProject> groupProjects = groupProjectRepository.findAllByGroupId(rebel.getId());
-    assertEquals(1, groupProjects.size());
+  void shouldFindAllUsersByGroupId() {
+    var groupUsers = groupUserRepository.findAllByGroupId(rebel.getId());
+    assertNotNull(groupUsers);
+    assertEquals(2, groupUsers.size());
   }
 
   @Test
-  void shouldFindProjectsPageByGroupId() {
+  void shouldFindUsersPageByGroupId() {
     var pageable = PageRequest.of(0, 10);
-    Page<GroupProject> groupProjects = groupProjectRepository.findAllByGroupId(rebel.getId(), pageable);
-    assertNotNull(groupProjects);
-    assertEquals(1, groupProjects.getTotalElements());
+    var groupUsers = groupUserRepository.findAllByGroupId(rebel.getId(), pageable);
+    assertNotNull(groupUsers);
+    assertEquals(2, groupUsers.getTotalElements());
   }
 }

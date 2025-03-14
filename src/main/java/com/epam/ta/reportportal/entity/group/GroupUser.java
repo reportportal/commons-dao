@@ -17,13 +17,13 @@
 package com.epam.ta.reportportal.entity.group;
 
 import com.epam.ta.reportportal.entity.user.User;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
@@ -59,11 +59,11 @@ public class GroupUser implements Serializable {
   @Column(name = "updated_at")
   private Instant updatedAt;
 
-  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @ManyToOne(fetch = FetchType.LAZY)
   @MapsId("groupId")
   private Group group;
 
-  @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @ManyToOne(fetch = FetchType.LAZY)
   @MapsId("userId")
   private User user;
 
@@ -80,7 +80,15 @@ public class GroupUser implements Serializable {
     this.id = new GroupUserId(group.getId(), user.getId());
     this.group = group;
     this.user = user;
+  }
+
+  /**
+   * Set the created at and updated at fields.
+   */
+  @PrePersist
+  protected void onCreate() {
     this.createdAt = Instant.now();
+    this.updatedAt = this.createdAt;
   }
 
   /**

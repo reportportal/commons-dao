@@ -18,6 +18,7 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.group.Group;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Repository for {@link Group}.
@@ -35,4 +36,12 @@ public interface GroupRepository extends ReportPortalRepository<Group, Long> {
    * @return {@link Optional} of {@link Group}
    */
   Optional<Group> findBySlug(String slug);
+
+  /**
+   * Retrieves a group by its UUID.
+   *
+   * @param uuid group UUID
+   * @return {@link Optional} of {@link Group}
+   */
+  Optional<Group> findByUuid(UUID uuid);
 }

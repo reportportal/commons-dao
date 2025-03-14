@@ -26,6 +26,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import java.time.Instant;
@@ -89,7 +90,15 @@ public class GroupProject {
     this.group = group;
     this.project = project;
     this.projectRole = projectRole;
+  }
+
+  /**
+   * Set the created_at and updated_at fields on entity creation.
+   */
+  @PrePersist
+  protected void onCreate() {
     this.createdAt = Instant.now();
+    this.updatedAt = this.createdAt;
   }
 
   /**

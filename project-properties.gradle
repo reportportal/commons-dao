@@ -82,6 +82,7 @@ project.ext {
             (migrationsUrl + '/migrations/88_analytics_data_table.up.sql')             : 'V088__analytics_data_table.sql',
             (migrationsUrl + '/migrations/90_add_user_fields.up.sql')                  : 'V090__scim_user_fields.sql',
             (migrationsUrl + '/migrations/93_create_groups_tables.up.sql')             : 'V093__create_groups_tables.sql',
+            (migrationsUrl + '/migrations/95_add_groups_uuid.up.sql')                  : 'V095__add_groups_uuid.up.sql',
     ]
     excludeTests = [
             'com/epam/ta/reportportal/jooq/**',

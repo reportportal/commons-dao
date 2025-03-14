@@ -24,12 +24,15 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Pattern;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -58,7 +61,11 @@ public class Group implements Serializable {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @Column(name = "uuid")
+  private UUID uuid;
+
   @Column(name = "slug")
+  @Pattern(regexp = "^[a-z0-9]+(?:-[a-z0-9]+)*$", message = "It must contain lowercase letters, numbers, and hyphens. It should not start or end with a hyphen.")
   private String slug;
 
   @Column(name = "name")
@@ -78,6 +85,29 @@ public class Group implements Serializable {
 
   @OneToMany(mappedBy = "group", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private List<GroupProject> projects;
+
+  /**
+   * Constructor for creating a new group.
+   *
+   * @param name      Group name
+   * @param slug      Group slug
+   * @param createdBy User ID who created the group
+   */
+  public Group(String name, String slug, Long createdBy) {
+    this.name = name;
+    this.slug = slug;
+    this.createdBy = createdBy;
+  }
+
+  /**
+   * Set the created_at and updated_at fields before persisting the entity.
+   */
+  @PrePersist
+  protected void onCreate() {
+    this.createdAt = Instant.now();
+    this.updatedAt = this.createdAt;
+    this.uuid = UUID.randomUUID();
+  }
 
   /**
    * Updates the updated_at field before updating the entity.

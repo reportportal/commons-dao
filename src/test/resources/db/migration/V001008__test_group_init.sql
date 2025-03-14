@@ -19,24 +19,24 @@ BEGIN
     chubaka := (SELECT u.id FROM users u WHERE login = 'chubaka');
     fake_chubaka := (SELECT u.id FROM users u WHERE login = 'fake_chubaka');
 
-    INSERT INTO groups (name, slug, created_by, created_at)
-    VALUES ('Rebel army', 'rebel-group', 1, now());
+    INSERT INTO groups (name, slug, created_by, created_at, uuid)
+    VALUES ('Rebel army', 'rebel-group', 1, now(), gen_random_uuid());
     rebel := (SELECT currval(pg_get_serial_sequence('groups', 'id')));
 
-    INSERT INTO groups (name, slug, created_by, created_at)
-    VALUES ('Ewoks group', 'ewoks-group', 1, now());
+    INSERT INTO groups (name, slug, created_by, created_at, uuid)
+    VALUES ('Ewoks group', 'ewoks-group', 1, now(), gen_random_uuid());
     ewoks := (SELECT currval(pg_get_serial_sequence('groups', 'id')));
 
-    INSERT INTO groups (name, slug, created_by, created_at)
-    VALUES ('Empire group', 'empire-group', 1, now());
+    INSERT INTO groups (name, slug, created_by, created_at, uuid)
+    VALUES ('Empire group', 'empire-group', 1, now(), gen_random_uuid());
     empire := (SELECT currval(pg_get_serial_sequence('groups', 'id')));
 
-    INSERT INTO groups (name, slug, created_by, created_at)
-    VALUES ('Jedi group', 'jedi-group', 1, now());
+    INSERT INTO groups (name, slug, created_by, created_at, uuid)
+    VALUES ('Jedi group', 'jedi-group', 1, now(), gen_random_uuid());
     jedi := (SELECT currval(pg_get_serial_sequence('groups', 'id')));
 
-    INSERT INTO groups (name, slug, created_by, created_at)
-    VALUES ('Sith order group', 'sith-group', 1, now());
+    INSERT INTO groups (name, slug, created_by, created_at, uuid)
+    VALUES ('Sith order group', 'sith-group', 1, now(), gen_random_uuid());
     sith_order := (SELECT currval(pg_get_serial_sequence('groups', 'id')));
 
     INSERT INTO groups_users (group_id, user_id, created_at)

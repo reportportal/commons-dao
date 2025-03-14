@@ -20,7 +20,9 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import java.io.Serializable;
 import java.util.Objects;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
@@ -31,29 +33,14 @@ import lombok.Setter;
 @Getter
 @Setter
 @Embeddable
+@AllArgsConstructor
+@NoArgsConstructor
 public class GroupProjectId implements Serializable {
 
   @Column(name = "group_id")
   private Long groupId;
   @Column(name = "project_id")
   private Long projectId;
-
-  /**
-   * Default constructor.
-   */
-  public GroupProjectId() {
-  }
-
-  /**
-   * Constructor with parameters.
-   *
-   * @param groupId   Group identifier
-   * @param projectId Project identifier
-   */
-  public GroupProjectId(Long groupId, Long projectId) {
-    this.groupId = groupId;
-    this.projectId = projectId;
-  }
 
   @Override
   public boolean equals(Object o) {
