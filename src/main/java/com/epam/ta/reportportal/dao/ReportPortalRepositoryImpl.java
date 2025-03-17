@@ -18,7 +18,7 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import java.io.Serializable;
-import javax.persistence.EntityManager;
+import jakarta.persistence.EntityManager;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;

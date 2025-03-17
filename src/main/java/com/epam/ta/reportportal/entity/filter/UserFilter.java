@@ -18,36 +18,37 @@ package com.epam.ta.reportportal.entity.filter;
 
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.entity.OwnedEntity;
-import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.google.common.collect.Sets;
 import java.io.Serializable;
 import java.util.Set;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.Table;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
+import jakarta.persistence.Table;
+import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
+
 
 /**
  * @author Pavel Bortnik
  */
 @Entity
 @Table(name = "filter")
-@TypeDef(name = "pgsql_enum", typeClass = PostgreSQLEnumType.class)
+
 public class UserFilter extends OwnedEntity implements Serializable {
 
   @Column(name = "name")
   private String name;
 
   @Enumerated(EnumType.STRING)
-  @Type(type = "pqsql_enum")
+  @JdbcType(PostgreSQLEnumJdbcType.class)
   @Column(name = "target")
   private ObjectType targetClass;
 

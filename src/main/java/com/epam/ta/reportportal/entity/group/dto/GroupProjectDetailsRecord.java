@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 EPAM Systems
+ * Copyright 2025 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,17 @@
  * limitations under the License.
  */
 
-package com.epam.ta.reportportal.commons;
-
-import java.sql.Types;
-import org.hibernate.dialect.PostgreSQL95Dialect;
+package com.epam.ta.reportportal.entity.group.dto;
 
 /**
- * Postgres Dialect aware of JSON/JSONB types
+ * Group project details record.
  *
- * @author Andrei Varabyeu
+ * @author <a href="mailto:Reingold_Shekhtel@epam.com">Reingold Shekhtel</a>
  */
-public class JsonbAwarePostgresDialect extends PostgreSQL95Dialect {
+public record GroupProjectDetailsRecord(
+    Long projectId,
+    String projectName,
+    String[] projectRoles
+) {
 
-  public JsonbAwarePostgresDialect() {
-    super();
-    this.registerColumnType(Types.JAVA_OBJECT, "json");
-  }
 }

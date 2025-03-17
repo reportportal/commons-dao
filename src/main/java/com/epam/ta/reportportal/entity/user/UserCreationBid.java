@@ -21,17 +21,21 @@ import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.Modifiable;
 import java.io.Serializable;
 import java.time.Instant;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
+
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -40,7 +44,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
  */
 @Entity
 @Table(name = "user_creation_bid")
-@TypeDef(name = "json", typeClass = Metadata.class)
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class UserCreationBid implements Serializable, Modifiable {
 
@@ -60,7 +67,7 @@ public class UserCreationBid implements Serializable, Modifiable {
   @JoinColumn(name = "inviting_user_id")
   private User invitingUser;
 
-	@Type(type = "json")
+	@Type(Metadata.class)
 	@Column(name = "metadata")
 	private Metadata metadata;
 

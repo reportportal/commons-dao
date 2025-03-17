@@ -19,15 +19,17 @@ package com.epam.ta.reportportal.entity.dashboard;
 import com.epam.ta.reportportal.dao.converters.JpaInstantConverter;
 import com.epam.ta.reportportal.entity.OwnedEntity;
 import com.google.common.collect.Sets;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.OneToMany;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Set;
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.springframework.data.annotation.CreatedDate;
@@ -38,6 +40,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
  */
 @Entity
 @EntityListeners(AuditingEntityListener.class)
+@Getter
+@Setter
 public class Dashboard extends OwnedEntity implements Serializable {
 
   @Column(name = "name")
@@ -54,34 +58,6 @@ public class Dashboard extends OwnedEntity implements Serializable {
   @OneToMany(fetch = FetchType.EAGER, mappedBy = "dashboard")
   @Fetch(value = FetchMode.JOIN)
   private Set<DashboardWidget> widgets = Sets.newHashSet();
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  public Instant getCreationDate() {
-    return creationDate;
-  }
-
-  public void setCreationDate(Instant creationDate) {
-    this.creationDate = creationDate;
-  }
-
-  public Set<DashboardWidget> getDashboardWidgets() {
-    return widgets;
-  }
 
   public void addWidget(DashboardWidget widget) {
     widgets.add(widget);

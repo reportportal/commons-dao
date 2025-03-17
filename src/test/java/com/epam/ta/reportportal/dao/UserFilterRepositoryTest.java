@@ -107,6 +107,14 @@ class UserFilterRepositoryTest extends BaseTest {
   }
 
   @Test
+  void existsByNameAndProjectIdTest() {
+    assertTrue(
+        userFilterRepository.existsByNameAndProjectId("Admin Filter", 1L));
+    assertFalse(userFilterRepository.existsByNameAndProjectId("DEMO_FILTER", 1L));
+  }
+
+
+  @Test
   void findAllByProjectId() {
     final Long projectId = 1L;
     final List<UserFilter> filters = userFilterRepository.findAllByProjectId(projectId);

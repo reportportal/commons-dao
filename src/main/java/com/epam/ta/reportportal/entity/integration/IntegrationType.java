@@ -19,33 +19,39 @@ package com.epam.ta.reportportal.entity.integration;
 import com.epam.ta.reportportal.dao.converters.JpaInstantConverter;
 import com.epam.ta.reportportal.entity.enums.IntegrationAuthFlowEnum;
 import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
-import com.epam.ta.reportportal.entity.enums.PostgreSQLEnumType;
 import com.google.common.collect.Sets;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Set;
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 import org.springframework.data.annotation.CreatedDate;
 
 /**
  * @author Yauheni_Martynau
  */
 @Entity
-@TypeDef(name = "details", typeClass = IntegrationTypeDetails.class)
-@TypeDef(name = "pgsql_enum", typeClass = PostgreSQLEnumType.class)
 @Table(name = "integration_type", schema = "public")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class IntegrationType implements Serializable {
 
   @Id
@@ -57,7 +63,7 @@ public class IntegrationType implements Serializable {
   private String name;
 
   @Enumerated(EnumType.STRING)
-  @Type(type = "pqsql_enum")
+  @JdbcType(PostgreSQLEnumJdbcType.class)
   @Column(name = "auth_flow")
   private IntegrationAuthFlowEnum authFlow;
 
@@ -67,81 +73,18 @@ public class IntegrationType implements Serializable {
   private Instant creationDate;
 
   @Enumerated(EnumType.STRING)
-  @Type(type = "pqsql_enum")
+  @JdbcType(PostgreSQLEnumJdbcType.class)
   @Column(name = "group_type", nullable = false)
   private IntegrationGroupEnum integrationGroup;
 
   @Column(name = "enabled")
   private boolean enabled;
 
-  @Type(type = "details")
+  @Type(IntegrationTypeDetails.class)
   @Column(name = "details")
   private IntegrationTypeDetails details;
 
   @OneToMany(mappedBy = "type", fetch = FetchType.LAZY, orphanRemoval = true)
   private Set<Integration> integrations = Sets.newHashSet();
 
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public IntegrationAuthFlowEnum getAuthFlow() {
-    return authFlow;
-  }
-
-  public void setAuthFlow(IntegrationAuthFlowEnum authFlow) {
-    this.authFlow = authFlow;
-  }
-
-  public Instant getCreationDate() {
-    return creationDate;
-  }
-
-  public void setCreationDate(Instant creationDate) {
-    this.creationDate = creationDate;
-  }
-
-  public IntegrationGroupEnum getIntegrationGroup() {
-    return integrationGroup;
-  }
-
-  public void setIntegrationGroup(IntegrationGroupEnum integrationGroup) {
-    this.integrationGroup = integrationGroup;
-  }
-
-  public boolean isEnabled() {
-    return enabled;
-  }
-
-  public void setEnabled(boolean enabled) {
-    this.enabled = enabled;
-  }
-
-  public IntegrationTypeDetails getDetails() {
-    return details;
-  }
-
-  public void setDetails(IntegrationTypeDetails details) {
-    this.details = details;
-  }
-
-  public Set<Integration> getIntegrations() {
-    return integrations;
-  }
-
-  public void setIntegrations(Set<Integration> integrations) {
-    this.integrations = integrations;
-  }
 }

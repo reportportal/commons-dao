@@ -18,8 +18,8 @@ package com.epam.ta.reportportal.entity.enums.converter;
 
 import com.epam.reportportal.rules.exception.ReportPortalException;
 import com.epam.ta.reportportal.entity.enums.OrganizationType;
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 
 /**
  * Organization type converter. Converts from ordinal value to String representations

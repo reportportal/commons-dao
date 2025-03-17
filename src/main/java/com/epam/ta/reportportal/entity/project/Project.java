@@ -17,38 +17,41 @@
 package com.epam.ta.reportportal.entity.project;
 
 import com.epam.ta.reportportal.entity.Metadata;
+import com.epam.ta.reportportal.entity.enums.ProjectType;
+import com.epam.ta.reportportal.entity.group.GroupProject;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.pattern.PatternTemplate;
 import com.epam.ta.reportportal.entity.project.email.SenderCase;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.google.common.collect.Sets;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
+import jakarta.persistence.Table;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
 import java.util.Set;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
+import org.hibernate.type.SqlTypes;
 
 /**
  * @author Ivan Budayeu
  */
 @Entity
-@TypeDef(name = "json", typeClass = Metadata.class)
 @Table(name = "project", schema = "public")
 @Getter
 @Setter
@@ -70,7 +73,7 @@ public class Project implements Serializable {
   @OrderBy("creationDate desc")
   private Set<Integration> integrations = Sets.newHashSet();
 
-  @OneToMany(mappedBy = "project", cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "project", cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
   private Set<ProjectAttribute> projectAttributes = Sets.newHashSet();
 
   @OneToMany(mappedBy = "project", cascade = {CascadeType.PERSIST,
@@ -88,8 +91,9 @@ public class Project implements Serializable {
   @Column(name = "updated_at")
   private Instant updatedAt;
 
-  @Type(type = "json")
+  @JdbcTypeCode(SqlTypes.JSON)
   @Column(name = "metadata")
+  @Type(Metadata.class)
   private Metadata metadata;
 
   // TODO: rename to meaningful variable. eg. orgSlug, orgKey or else
@@ -115,6 +119,9 @@ public class Project implements Serializable {
   @JoinColumn(name = "project_id", updatable = false)
   @OrderBy
   private Set<PatternTemplate> patternTemplates = Sets.newHashSet();
+
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "project", cascade = CascadeType.PERSIST)
+  private Set<GroupProject> groups = Sets.newHashSet();
 
   public Project(Long id, String name) {
     this.id = id;
