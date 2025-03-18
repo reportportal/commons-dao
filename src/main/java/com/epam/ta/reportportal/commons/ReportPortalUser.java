@@ -27,11 +27,8 @@ import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.epam.ta.reportportal.entity.user.UserRole;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -46,19 +43,22 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
 /**
- * ReportPortal user representation.
+ * ReportPortal user representation
  *
  * @author <a href="mailto:andrei_varabyeu@epam.com">Andrei Varabyeu</a>
  */
-@Setter
 @Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
 public class ReportPortalUser extends User {
 
-  private final boolean active;
+  private boolean active;
+
   private Long userId;
   private UserRole userRole;
   private String email;
   private Map<String, OrganizationDetails> organizationDetails;
+
 
   private ReportPortalUser(String username, String password,
       Collection<? extends GrantedAuthority> authorities, Long userId,
@@ -81,8 +81,6 @@ public class ReportPortalUser extends User {
     return active;
   }
 
-  @Getter
-  public static class ProjectDetails implements Serializable {
 
   public static ReportPortalUserBuilder userBuilder() {
     return new ReportPortalUserBuilder();
@@ -168,20 +166,7 @@ public class ReportPortalUser extends User {
       private Long organizationId;
 
 
-      public ProjectDetails(Long projectId, String projectName, String[] roles) {
-      this.projectId = projectId;
-      this.projectName = projectName;
-
-      List<ProjectRole> projectRoles = new ArrayList<>(Arrays.stream(roles)
-            .map(ProjectRole::valueOf)
-            .toList());
-
-      setHighestRole(projectRoles);
-    }
-
-    public void setHighestRole(List<ProjectRole> roles) {
-      this.projectRole = roles.stream().max(ProjectRole::compareTo).orElse(null);
-    }public static ProjectDetailsBuilder builder() {
+      public static ProjectDetailsBuilder builder() {
         return new ProjectDetailsBuilder();
       }
 

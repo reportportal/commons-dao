@@ -21,8 +21,8 @@ BEGIN
         VALUES ('millennium_falcon', 'millennium_falcon', 'prj-slug', now(), org_id);
     falcon := (SELECT currval(pg_get_serial_sequence('project', 'id')));
 
-    INSERT INTO project (name, project_type, creation_date)
-    VALUES ('death_star', 'INTERNAL', now());
+    INSERT INTO project (name, key, slug, created_at, organization_id)
+    VALUES ('death_star', 'death_star', 'prj-death-star', now(), org_id);
     death_star := (SELECT currval(pg_get_serial_sequence('project', 'id')));
 
     INSERT INTO users (login, password, email, role, type, full_name, expired, metadata, uuid)

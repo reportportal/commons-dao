@@ -61,19 +61,19 @@ BEGIN
     VALUES (sith_order, fake_chubaka, now());
 
     INSERT INTO groups_projects (group_id, project_id, project_role, created_at)
-    VALUES (rebel, falcon, 'PROJECT_MANAGER', now());
+    VALUES (rebel, falcon, 'EDITOR', now());
 
     INSERT INTO groups_projects (group_id, project_id, project_role, created_at)
-    VALUES (ewoks, falcon, 'MEMBER', now());
+    VALUES (ewoks, falcon, 'VIEWER', now());
 
     INSERT INTO groups_projects (group_id, project_id, project_role, created_at)
-    VALUES (jedi, falcon, 'CUSTOMER', now());
+    VALUES (jedi, falcon, 'VIEWER', now());
 
     INSERT INTO groups_projects (group_id, project_id, project_role, created_at)
-    VALUES (empire, death_star, 'PROJECT_MANAGER', now());
+    VALUES (empire, death_star, 'EDITOR', now());
 
     INSERT INTO groups_projects (group_id, project_id, project_role, created_at)
-    VALUES (sith_order, death_star, 'CUSTOMER', now());
+    VALUES (sith_order, death_star, 'VIEWER', now());
 
 END;
 $$

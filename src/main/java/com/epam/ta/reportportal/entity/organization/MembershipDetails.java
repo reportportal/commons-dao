@@ -2,6 +2,7 @@ package com.epam.ta.reportportal.entity.organization;
 
 import com.epam.ta.reportportal.entity.project.ProjectRole;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

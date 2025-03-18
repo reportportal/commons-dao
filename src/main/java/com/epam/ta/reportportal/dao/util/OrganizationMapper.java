@@ -106,7 +106,6 @@ public class OrganizationMapper {
             JSONObject json = new JSONObject(row.get(USERS.METADATA).data());
             Long millis = json.optJSONObject("metadata", new JSONObject()).optLong("last_login");
             organizationUserProfile.setLastLoginAt(Instant.ofEpochMilli(millis));
-
           });
 
       Optional.ofNullable(row.get(USERS.EXTERNAL_ID))

@@ -38,13 +38,14 @@ import org.springframework.data.repository.query.Param;
 public interface GroupMembershipRepository extends
     ReportPortalRepository<GroupProject, GroupProjectId> {
 
+  // TODO: implement taking into account organizations
   /**
    * Finds all roles of the user in the project via group membership.
    *
    * @param userId    user id
    * @param projectId project id
    * @return {@link List} of {@link ProjectRole}
-   */
+   *//*
   @Query(value = """
       SELECT DISTINCT gp.project_role
       FROM groups_projects gp
@@ -65,13 +66,13 @@ public interface GroupMembershipRepository extends
       @Param("projectId") Long projectId
   );
 
-  /**
+  *//**
    * Finds a raw project details of the user in the project via group membership.
    *
    * @param userId      user id
    * @param projectName project name
    * @return {@link Optional} of {@link GroupProjectDetailsRecord}
-   */
+   *//*
 
   @Query(value = """
       SELECT p.id AS projectId,
@@ -92,13 +93,13 @@ public interface GroupMembershipRepository extends
       @Param("projectName") String projectName
   );
 
-  /**
+  *//**
    * Finds a raw project details of the user in the project via group membership.
    *
    * @param userId    user id
    * @param projectId project id
    * @return {@link Optional} of {@link GroupProjectDetailsRecord}
-   */
+   *//*
   @Query(value = """
       SELECT gp.project_id AS projectId,
         null as projectName,
@@ -117,13 +118,13 @@ public interface GroupMembershipRepository extends
       @Param("projectId") Long projectId
   );
 
-  /**
+  *//**
    * Finds project details of the user in the project via group membership.
    *
    * @param userId      user id
    * @param projectName project name
    * @return {@link Optional} of {@link ReportPortalUser.ProjectDetails}
-   */
+   *//*
   @Cacheable(
       value = "groupProjectDetailsCache",
       key = "#userId + '_' + #projectName",
@@ -141,13 +142,13 @@ public interface GroupMembershipRepository extends
         ));
   }
 
-  /**
+  *//**
    * Finds project details of the user in the project via group membership.
    *
    * @param userId    user id
    * @param projectId project id
    * @return {@link Optional} of {@link ReportPortalUser.ProjectDetails}
-   */
+   *//*
   @Cacheable(
       value = "groupProjectDetailsCache",
       key = "#userId + '_' + #projectId",
@@ -165,12 +166,12 @@ public interface GroupMembershipRepository extends
         ));
   }
 
-  /**
+  *//**
    * Finds all projects of the user via group membership.
    *
    * @param userId user id
    * @return {@link List} of {@link GroupProject}
-   */
+   *//*
   @Query(value = """
       SELECT gp.project_id, gp.group_id, gp.project_role, gp.created_at, gp.updated_at
       FROM groups_projects gp
@@ -180,5 +181,5 @@ public interface GroupMembershipRepository extends
       """,
       nativeQuery = true
   )
-  List<GroupProject> findAllUserProjects(@Param("user_id") Long userId);
+  List<GroupProject> findAllUserProjects(@Param("user_id") Long userId);*/
 }
