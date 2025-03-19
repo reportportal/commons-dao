@@ -74,6 +74,22 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
       @Param("value") String attributeValue,
       Pageable pageable);
 
+
+  @Query(value = """
+      SELECT ti.* FROM test_item ti
+      JOIN launch l ON ti.launch_id = l.id
+      LEFT JOIN item_attribute ia ON ti.item_id = ia.item_id
+      WHERE ti.has_children = false
+        AND ti.has_stats = true
+        AND ti.retry_of IS NULL
+        AND ti.type = 'STEP'
+        AND l.project_id = :projectId
+        AND ia.key is null AND ia.value = :value and ia.system = false
+      """, nativeQuery = true)
+  @QueryHints(@QueryHint(name = "javax.persistence.query.timeout", value = "10000"))
+  Slice<TestItem> findTestItemsByAttribute(@Param("projectId") Long projectId,
+      @Param("value") String attributeValue, Pageable pageable);
+
   /**
    * Retrieve list of test item ids for provided launch
    *
