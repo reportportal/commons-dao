@@ -1501,6 +1501,43 @@ class TestItemRepositoryTest extends BaseTest {
     assertEquals(StatusEnum.FAILED, testItem.getItemResults().getStatus());
   }
 
+  @Test
+  void testFindTestItemsByAttributeAndNullKey() {
+    //given
+    Pageable pageable = Pageable.unpaged();
+
+    //when
+    Slice<TestItem> result = testItemRepository.findTestItemsByAttribute(
+        1L,
+        "value3",
+        pageable
+    );
+
+    //then
+    assertEquals(1, result.getContent().size());
+    assertEquals(2, result.getContent().get(0).getAttributes().size());
+  }
+
+  @Test
+  void testFindTestItemsByAttributeNullKeyAndStatuses() {
+    //given
+    Pageable pageable = PageRequest.of(0, 10);
+
+    //when
+    Slice<TestItem> result = testItemRepository.findTestItemsByAttributeAndStatuses(
+        1L,
+        "value3",
+        List.of("FAILED"),
+        pageable
+    );
+
+    //then
+    assertEquals(1, result.getContent().size());
+    TestItem testItem = result.getContent().get(0);
+    assertEquals(2, testItem.getAttributes().size());
+    assertEquals(StatusEnum.FAILED, testItem.getItemResults().getStatus());
+  }
+
   private void assertIssueExistsAndTicketsEmpty(TestItem testItem, Long expectedId) {
     assertEquals(expectedId, testItem.getItemId());
 

@@ -127,6 +127,8 @@ BEGIN
                     ELSE
                         INSERT INTO item_attribute (key, value, item_id, launch_id, system)
                         VALUES ('step', 'value' || cur_step_id, cur_step_id, NULL, FALSE);
+                        INSERT INTO item_attribute (key, value, item_id, launch_id, system)
+                        VALUES (null, 'value' || cur_step_id, cur_step_id, NULL, FALSE);
                     END IF;
 
                     IF cur_step_id = 3
