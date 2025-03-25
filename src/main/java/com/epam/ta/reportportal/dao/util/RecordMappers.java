@@ -154,34 +154,41 @@ public class RecordMappers {
     return attribute;
   };
 
+  public static final RecordMapper<? super Record, IssueGroup> ISSUE_GROUP_RECORD_MAPPER = r -> {
+    if (r.field(ISSUE_GROUP.ISSUE_GROUP_ID) == null || r.get(ISSUE_GROUP.ISSUE_GROUP_ID) == null) {
+      return null;
+    }
+    IssueGroup issueGroup = new IssueGroup();
+    ofNullable(r.get(ISSUE_GROUP.ISSUE_GROUP_ID))
+        .ifPresent(igId -> issueGroup.setId(r.get(ISSUE_GROUP.ISSUE_GROUP_ID, Integer.class)));
+
+    if (r.field(ISSUE_GROUP.ISSUE_GROUP_) != null && r.get(ISSUE_GROUP.ISSUE_GROUP_) != null) {
+      issueGroup.setTestItemIssueGroup(
+          TestItemIssueGroup.valueOf(r.get(ISSUE_GROUP.ISSUE_GROUP_).getLiteral()));
+    }
+
+    return issueGroup;
+  };
+
   /**
    * Maps record into {@link IssueType} object
    */
   public static final RecordMapper<? super Record, IssueType> ISSUE_TYPE_RECORD_MAPPER = r -> {
+    if (r.field(ISSUE_TYPE.ID) == null || r.get(ISSUE_TYPE.ID) == null) {
+      return null;
+    }
     IssueType type = new IssueType();
-    ofNullable(r.field(ISSUE_TYPE.ID))
+    ofNullable(r.get(ISSUE_TYPE.ID))
         .ifPresent(val -> type.setId(r.get(ISSUE_TYPE.ID)));
-    ofNullable(r.field(ISSUE_TYPE.ISSUE_NAME))
+    ofNullable(r.get(ISSUE_TYPE.ISSUE_NAME))
         .ifPresent(longName -> type.setLongName(r.get(ISSUE_TYPE.ISSUE_NAME)));
-    ofNullable(r.field(ISSUE_TYPE.LOCATOR))
+    ofNullable(r.get(ISSUE_TYPE.LOCATOR))
         .ifPresent(locator -> type.setLocator(r.get(ISSUE_TYPE.LOCATOR)));
-    ofNullable(r.field(ISSUE_TYPE.ABBREVIATION))
+    ofNullable(r.get(ISSUE_TYPE.ABBREVIATION))
         .ifPresent(shortName -> type.setShortName(r.get(ISSUE_TYPE.ABBREVIATION)));
-    ofNullable(r.field(ISSUE_TYPE.HEX_COLOR))
+    ofNullable(r.get(ISSUE_TYPE.HEX_COLOR))
         .ifPresent(hexColor -> type.setHexColor(r.get(ISSUE_TYPE.HEX_COLOR)));
-    ofNullable(r.field(ISSUE_TYPE.ISSUE_GROUP_ID))
-        .ifPresent(grp ->
-            {
-              IssueGroup ig = new IssueGroup();
-              ofNullable(r.field(ISSUE_GROUP.ISSUE_GROUP_)).ifPresent(igName ->
-                  ig.setTestItemIssueGroup(
-                      TestItemIssueGroup.valueOf(r.get(ISSUE_GROUP.ISSUE_GROUP_).getLiteral())));
-              ofNullable(r.field(ISSUE_GROUP.ISSUE_GROUP_ID))
-                  .ifPresent(igId -> ig.setId(r.get(ISSUE_GROUP.ISSUE_GROUP_ID, Integer.class)));
-
-              type.setIssueGroup(ig);
-            }
-        );
+    type.setIssueGroup(ISSUE_GROUP_RECORD_MAPPER.map(r));
 
     return type;
   };
@@ -190,16 +197,19 @@ public class RecordMappers {
    * Maps record into {@link IssueEntity} object
    */
   public static final RecordMapper<? super Record, IssueEntity> ISSUE_RECORD_MAPPER = r -> {
-    IssueEntity issueEntity = r.into(IssueEntity.class);
-    if (r.field(ISSUE.ISSUE_ID) != null) {
-      issueEntity.setIssueType(ISSUE_TYPE_RECORD_MAPPER.map(r));
+    if (r.field(ISSUE.ISSUE_ID) == null || r.get(ISSUE.ISSUE_ID) == null) {
+      return null;
     }
+    IssueEntity issueEntity = r.into(IssueEntity.class);
+    issueEntity.setIssueType(ISSUE_TYPE_RECORD_MAPPER.map(r));
     return issueEntity;
   };
 
-  /**
-   * Maps record into {@link Project} object
-   */
+
+
+    /**
+     * Maps record into {@link Project} object
+     */
   public static final RecordMapper<? super Record, Project> PROJECT_MAPPER = r -> {
     Project project = r.into(PROJECT.ID, PROJECT.NAME, PROJECT.ORGANIZATION, PROJECT.CREATION_DATE,
             PROJECT.PROJECT_TYPE)
