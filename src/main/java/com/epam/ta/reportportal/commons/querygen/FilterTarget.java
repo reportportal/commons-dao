@@ -971,6 +971,7 @@ public enum FilterTarget {
           ISSUE.AUTO_ANALYZED,
           ISSUE.IGNORE_ANALYZER,
           ISSUE.ISSUE_DESCRIPTION,
+          ISSUE_TYPE.ID,
           ISSUE_TYPE.LOCATOR,
           ISSUE_TYPE.ABBREVIATION,
           ISSUE_TYPE.HEX_COLOR,
