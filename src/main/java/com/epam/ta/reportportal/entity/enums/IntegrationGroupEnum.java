@@ -25,8 +25,7 @@ public enum IntegrationGroupEnum {
   NOTIFICATION,
   AUTH,
   OTHER,
-  IMPORT,
-  REMOTE;
+  IMPORT;
 
   public static Optional<IntegrationGroupEnum> findByName(String name) {
     return Arrays.stream(IntegrationGroupEnum.values()).filter(i -> i.name().equalsIgnoreCase(name))
