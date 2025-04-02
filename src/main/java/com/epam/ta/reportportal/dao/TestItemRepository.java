@@ -24,8 +24,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
+import javax.persistence.QueryHint;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 
 /**
@@ -36,6 +40,109 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 
   @Query(value = "SELECT * FROM test_item WHERE item_id = (SELECT parent_id FROM test_item WHERE item_id = :childId)", nativeQuery = true)
   Optional<TestItem> findParentByChildId(@Param("childId") Long childId);
+
+  @Query(value = """
+      SELECT ti.* FROM test_item ti
+      INNER JOIN launch l ON ti.launch_id = l.id
+      WHERE ti.has_children = false
+        AND ti.has_stats = true
+        AND ti.retry_of IS NULL
+        AND ti.type = 'STEP'
+        AND l.project_id = :projectId
+        AND ti.name ILIKE %:name%
+      """, nativeQuery = true)
+  @QueryHints(@QueryHint(name = "javax.persistence.query.timeout", value = "10000"))
+  Slice<TestItem> findTestItemsContainsName(@Param("name") String nameTerm,
+      @Param("projectId") Long projectId,
+      Pageable pageable);
+
+  @Query(value = """
+      SELECT ti.* FROM test_item ti
+      JOIN test_item_results tir on ti.item_id = tir.result_id
+      JOIN launch l ON ti.launch_id = l.id
+      WHERE ti.has_children = false
+        AND ti.has_stats = true
+        AND ti.retry_of IS NULL
+        AND ti.type = 'STEP'
+        AND l.project_id = :projectId
+        AND ti.name ILIKE %:name%
+        AND CAST(tir.status AS VARCHAR) in (:statuses)
+      """, nativeQuery = true)
+  @QueryHints(@QueryHint(name = "javax.persistence.query.timeout", value = "10000"))
+  Slice<TestItem> findTestItemsContainsNameAndStatuses(@Param("name") String nameTerm,
+      @Param("projectId") Long projectId, @Param("statuses") List<String> statuses,
+      Pageable pageable);
+
+  @Query(value = """
+      SELECT ti.* FROM test_item ti
+      JOIN launch l ON ti.launch_id = l.id
+      LEFT JOIN item_attribute ia ON ti.item_id = ia.item_id
+      WHERE ti.has_children = false
+        AND ti.has_stats = true
+        AND ti.retry_of IS NULL
+        AND ti.type = 'STEP'
+        AND l.project_id = :projectId
+        AND ia.key = :key AND ia.value = :value and ia.system = false
+      """, nativeQuery = true)
+  @QueryHints(@QueryHint(name = "javax.persistence.query.timeout", value = "10000"))
+  Slice<TestItem> findTestItemsByAttribute(@Param("projectId") Long projectId,
+      @Param("key") String attributeKey,
+      @Param("value") String attributeValue,
+      Pageable pageable);
+
+  @Query(value = """
+      SELECT ti.* FROM test_item ti
+      JOIN test_item_results tir on ti.item_id = tir.result_id
+      JOIN launch l ON ti.launch_id = l.id
+      LEFT JOIN item_attribute ia ON ti.item_id = ia.item_id
+      WHERE ti.has_children = false
+        AND ti.has_stats = true
+        AND ti.retry_of IS NULL
+        AND ti.type = 'STEP'
+        AND l.project_id = :projectId
+        AND ia.key = :key AND ia.value = :value and ia.system = false
+        AND CAST(tir.status AS VARCHAR) in (:statuses)
+      """, nativeQuery = true)
+  @QueryHints(@QueryHint(name = "javax.persistence.query.timeout", value = "10000"))
+  Slice<TestItem> findTestItemsByAttributeAndStatuses(@Param("projectId") Long projectId,
+      @Param("key") String attributeKey,
+      @Param("value") String attributeValue,
+      @Param("statuses") List<String> statuses,
+      Pageable pageable);
+
+
+  @Query(value = """
+      SELECT ti.* FROM test_item ti
+      JOIN launch l ON ti.launch_id = l.id
+      LEFT JOIN item_attribute ia ON ti.item_id = ia.item_id
+      WHERE ti.has_children = false
+        AND ti.has_stats = true
+        AND ti.retry_of IS NULL
+        AND ti.type = 'STEP'
+        AND l.project_id = :projectId
+        AND ia.key is null AND ia.value = :value and ia.system = false
+      """, nativeQuery = true)
+  @QueryHints(@QueryHint(name = "javax.persistence.query.timeout", value = "10000"))
+  Slice<TestItem> findTestItemsByAttribute(@Param("projectId") Long projectId,
+      @Param("value") String attributeValue, Pageable pageable);
+
+  @Query(value = """
+      SELECT ti.* FROM test_item ti
+      JOIN launch l ON ti.launch_id = l.id
+      JOIN test_item_results tir on ti.item_id = tir.result_id
+      LEFT JOIN item_attribute ia ON ti.item_id = ia.item_id
+      WHERE ti.has_children = false
+        AND ti.has_stats = true
+        AND ti.retry_of IS NULL
+        AND ti.type = 'STEP'
+        AND l.project_id = :projectId
+        AND ia.key is null AND ia.value = :value and ia.system = false
+        AND CAST(tir.status AS VARCHAR) in (:statuses)
+      """, nativeQuery = true)
+  @QueryHints(@QueryHint(name = "javax.persistence.query.timeout", value = "10000"))
+  Slice<TestItem> findTestItemsByAttributeAndStatuses(@Param("projectId") Long projectId,
+      @Param("value") String attributeValue, @Param("statuses") List<String> statuses,
+      Pageable pageable);
 
   /**
    * Retrieve list of test item ids for provided launch
@@ -351,24 +458,26 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
       @Param("testCaseHash") Integer testCaseHash,
       @Param("launchId") Long launchId);
 
-	/**
-	 * Finds latest {@link TestItem#getItemId()} with specified {@code testCaseHash}, {@code launchId} and {@code parentId}
-	 *
-	 * @param testCaseHash {@link TestItem#getTestCaseHash()}
-	 * @param launchId     {@link TestItem#getLaunchId()}
-	 * @param parentId     {@link TestItem#getParentId()}
-	 * @return {@link Optional} of {@link TestItem#getItemId()} if exists otherwise {@link Optional#empty()}
-	 */
-	@Query(value =
-			"SELECT t.item_id FROM test_item t WHERE t.test_case_hash = :testCaseHash AND t.launch_id = :launchId "
-					+ " AND t.parent_id = :parentId AND t.has_stats AND t.retry_of IS NULL"
-					+ " ORDER BY t.start_time DESC, t.item_id DESC LIMIT 1 FOR UPDATE", nativeQuery = true)
-	Optional<Long> findLatestIdByTestCaseHashAndLaunchIdAndParentId(
-			@Param("testCaseHash") Integer testCaseHash,
-			@Param("launchId") Long launchId, @Param("parentId") Long parentId);
+  /**
+   * Finds latest {@link TestItem#getItemId()} with specified {@code testCaseHash}, {@code launchId}
+   * and {@code parentId}
+   *
+   * @param testCaseHash {@link TestItem#getTestCaseHash()}
+   * @param launchId     {@link TestItem#getLaunchId()}
+   * @param parentId     {@link TestItem#getParentId()}
+   * @return {@link Optional} of {@link TestItem#getItemId()} if exists otherwise
+   * {@link Optional#empty()}
+   */
+  @Query(value =
+      "SELECT t.item_id FROM test_item t WHERE t.test_case_hash = :testCaseHash AND t.launch_id = :launchId "
+          + " AND t.parent_id = :parentId AND t.has_stats AND t.retry_of IS NULL"
+          + " ORDER BY t.start_time DESC, t.item_id DESC LIMIT 1 FOR UPDATE", nativeQuery = true)
+  Optional<Long> findLatestIdByTestCaseHashAndLaunchIdAndParentId(
+      @Param("testCaseHash") Integer testCaseHash,
+      @Param("launchId") Long launchId, @Param("parentId") Long parentId);
 
-	@Query(value = "SELECT t.name FROM test_item t WHERE t.item_id = :itemId", nativeQuery = true)
-	Optional<String> findItemNameByItemId(Long itemId);
+  @Query(value = "SELECT t.name FROM test_item t WHERE t.item_id = :itemId", nativeQuery = true)
+  Optional<String> findItemNameByItemId(Long itemId);
 
   /**
    * Count items by launch id
