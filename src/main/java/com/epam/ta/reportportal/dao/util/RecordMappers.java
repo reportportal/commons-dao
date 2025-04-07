@@ -105,10 +105,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -123,7 +120,6 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import org.apache.logging.log4j.util.Strings;
 import org.jooq.Field;
-import org.jooq.JSON;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
 import org.jooq.Result;
@@ -548,20 +544,17 @@ public class RecordMappers {
     List<ItemAttribute> attributeList = new ArrayList<>();
 
     if (r.get(ATTRIBUTE_ALIAS) != null) {
-      List<JSON> attributesArray = r.get(ATTRIBUTE_ALIAS, List.class);
-      Gson gson = new Gson();
-      Type listType = new TypeToken<List<String>>() {
-      }.getType();
+      String[] attributesArray = r.get(ATTRIBUTE_ALIAS, String[].class);
 
-      for (JSON attributeEntry : attributesArray) {
-        if (attributeEntry == null) {
+      for (String attributeString : attributesArray) {
+        if (Strings.isEmpty(attributeString)) {
           continue;
         }
-        String[] attributes = gson.<List<String>>fromJson(attributeEntry.data(), listType)
-            .toArray(new String[0]);
 
-        if (attributes.length > 1 && (Strings.isNotEmpty(attributes[0])
-            || Strings.isNotEmpty(attributes[1]))) {
+        // explode attributes from string "key:value:system"
+        String[] attributes = attributeString.split(":", -1);
+        if (attributes.length > 1 && (Strings.isNotEmpty(attributes[0]) || Strings.isNotEmpty(
+            attributes[1]))) {
           Boolean systemAttribute;
           //Case when system attribute is retrieved as 't' or 'f'
           if ("t".equals(attributes[2]) || "f".equals(attributes[2])) {
@@ -576,7 +569,7 @@ public class RecordMappers {
       }
     }
 
-    if (!attributeList.isEmpty()) {
+    if (attributeList.size() > 0) {
       return Optional.of(attributeList);
     } else {
       return Optional.empty();
