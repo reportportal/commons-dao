@@ -98,6 +98,7 @@ import com.epam.ta.reportportal.entity.user.UserRole;
 import com.epam.ta.reportportal.entity.widget.Widget;
 import com.epam.ta.reportportal.entity.widget.WidgetOptions;
 import com.epam.ta.reportportal.jooq.Tables;
+import com.epam.ta.reportportal.jooq.tables.JIssueType;
 import com.epam.ta.reportportal.jooq.tables.JLog;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -166,26 +167,12 @@ public class RecordMappers {
     return issueGroup;
   };
 
-  /**
-   * Maps record into {@link IssueType} object
-   */
   public static final RecordMapper<? super Record, IssueType> ISSUE_TYPE_RECORD_MAPPER = r -> {
     if (r.field(ISSUE_TYPE.ID) == null || r.get(ISSUE_TYPE.ID) == null) {
       return null;
     }
-    IssueType type = new IssueType();
-    ofNullable(r.get(ISSUE_TYPE.ID))
-        .ifPresent(val -> type.setId(r.get(ISSUE_TYPE.ID)));
-    ofNullable(r.get(ISSUE_TYPE.ISSUE_NAME))
-        .ifPresent(longName -> type.setLongName(r.get(ISSUE_TYPE.ISSUE_NAME)));
-    ofNullable(r.get(ISSUE_TYPE.LOCATOR))
-        .ifPresent(locator -> type.setLocator(r.get(ISSUE_TYPE.LOCATOR)));
-    ofNullable(r.get(ISSUE_TYPE.ABBREVIATION))
-        .ifPresent(shortName -> type.setShortName(r.get(ISSUE_TYPE.ABBREVIATION)));
-    ofNullable(r.get(ISSUE_TYPE.HEX_COLOR))
-        .ifPresent(hexColor -> type.setHexColor(r.get(ISSUE_TYPE.HEX_COLOR)));
-    type.setIssueGroup(ISSUE_GROUP_RECORD_MAPPER.map(r));
-
+    IssueType type = r.into(IssueType.class);
+    type.setIssueGroup(r.into(IssueGroup.class));
     return type;
   };
 
@@ -193,9 +180,6 @@ public class RecordMappers {
    * Maps record into {@link IssueEntity} object
    */
   public static final RecordMapper<? super Record, IssueEntity> ISSUE_RECORD_MAPPER = r -> {
-    if (r.field(ISSUE.ISSUE_ID) == null || r.get(ISSUE.ISSUE_ID) == null) {
-      return null;
-    }
     IssueEntity issueEntity = r.into(IssueEntity.class);
     issueEntity.setIssueType(ISSUE_TYPE_RECORD_MAPPER.map(r));
     return issueEntity;
