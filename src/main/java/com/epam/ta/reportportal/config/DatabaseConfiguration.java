@@ -106,24 +106,6 @@ public class DatabaseConfiguration {
     return new TransactionAwareDataSourceProxy(dataSource);
   }
 
-  @Bean
-  public DataSourceConnectionProvider connectionProvider() {
-    return new DataSourceConnectionProvider(transactionAwareDataSource());
-  }
-
-  @Bean
-  public DefaultConfiguration configuration() {
-    DefaultConfiguration jooqConfiguration = new DefaultConfiguration();
-    jooqConfiguration.set(SQLDialect.POSTGRES);
-    jooqConfiguration.setConnectionProvider(connectionProvider());
-    return jooqConfiguration;
-  }
-
-  @Bean
-  public DefaultDSLContext dsl() {
-    return new DefaultDSLContext(configuration());
-  }
-
   public static class RpRepoFactoryBean<T extends Repository<S, ID>, S, ID> extends
       JpaRepositoryFactoryBean {
 
