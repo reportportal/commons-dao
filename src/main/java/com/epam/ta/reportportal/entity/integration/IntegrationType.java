@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.entity.integration;
 import com.epam.ta.reportportal.dao.converters.JpaInstantConverter;
 import com.epam.ta.reportportal.entity.enums.IntegrationAuthFlowEnum;
 import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
+import com.epam.ta.reportportal.entity.enums.PluginTypeEnum;
 import com.google.common.collect.Sets;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -61,6 +62,10 @@ public class IntegrationType implements Serializable {
 
   @Column(name = "name", nullable = false)
   private String name;
+
+  @Enumerated(EnumType.STRING)
+  @Column(name = "plugin_type", nullable = false)
+  private PluginTypeEnum pluginType;
 
   @Enumerated(EnumType.STRING)
   @JdbcType(PostgreSQLEnumJdbcType.class)
