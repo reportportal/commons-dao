@@ -49,7 +49,6 @@ public interface GroupRepository extends ReportPortalRepository<Group, Long> {
    */
   Optional<Group> findByUuid(UUID uuid);
 
-
   /**
    * Retrieves all group's summaries.
    *
@@ -67,4 +66,23 @@ public interface GroupRepository extends ReportPortalRepository<Group, Long> {
       GROUP BY g.id, g.uuid, g.slug, g.name, g.createdBy, g.createdAt, g.updatedAt
       """)
   Page<GroupSummaryDto> findAllWithSummary(Pageable pageable);
+
+  /**
+   * Retrieves a group summary by ID.
+   *
+   * @param id group ID
+   * @return {@link Optional} of {@link GroupSummaryDto}
+   */
+  @Query("""
+      SELECT new com.epam.ta.reportportal.entity.group.dto.GroupSummaryDto(
+        g.id, g.uuid, g.slug, g.name, g.createdBy, g.createdAt, g.updatedAt,
+        COUNT(DISTINCT u), COUNT(DISTINCT p)
+      )
+      FROM Group g
+      LEFT JOIN g.users u
+      LEFT JOIN g.projects p
+      WHERE g.id = :id
+      GROUP BY g.id, g.uuid, g.slug, g.name, g.createdBy, g.createdAt, g.updatedAt
+      """)
+  Optional<GroupSummaryDto> findSummaryById(Long id);
 }
