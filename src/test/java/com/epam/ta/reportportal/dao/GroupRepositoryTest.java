@@ -38,9 +38,9 @@ public class GroupRepositoryTest extends BaseTest {
   }
 
   @Test
-  void testFindAllWithSummary() {
+  void testFindAllWithStats() {
     var page = PageRequest.ofSize(100);
-    var groupSummary = groupRepository.findAllWithSummary(page);
+    var groupSummary = groupRepository.findAllWithStats(page);
 
     assertFalse(groupSummary.isEmpty());
     assertEquals(2, groupSummary.getContent().getFirst().userCount());
@@ -48,11 +48,11 @@ public class GroupRepositoryTest extends BaseTest {
   }
 
   @Test
-  void testFindSummaryById() {
+  void testFindWithStatsById() {
     var group = groupRepository.findBySlug("rebel-group")
         .orElseThrow(() -> new RuntimeException("Group not found")
         );
-    var groupSummary = groupRepository.findSummaryById(group.getId());
+    var groupSummary = groupRepository.findWithStatsById(group.getId());
 
     assertTrue(groupSummary.isPresent());
     assertEquals(2, groupSummary.get().userCount());

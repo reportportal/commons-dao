@@ -65,7 +65,7 @@ public interface GroupRepository extends ReportPortalRepository<Group, Long> {
       LEFT JOIN g.projects p
       GROUP BY g.id, g.uuid, g.slug, g.name, g.createdBy, g.createdAt, g.updatedAt
       """)
-  Page<GroupSummaryDto> findAllWithSummary(Pageable pageable);
+  Page<GroupSummaryDto> findAllWithStats(Pageable pageable);
 
   /**
    * Retrieves a group summary by ID.
@@ -84,5 +84,5 @@ public interface GroupRepository extends ReportPortalRepository<Group, Long> {
       WHERE g.id = :id
       GROUP BY g.id, g.uuid, g.slug, g.name, g.createdBy, g.createdAt, g.updatedAt
       """)
-  Optional<GroupSummaryDto> findSummaryById(Long id);
+  Optional<GroupSummaryDto> findWithStatsById(Long id);
 }
