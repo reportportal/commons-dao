@@ -78,5 +78,5 @@ public interface WidgetRepository extends ReportPortalRepository<Widget, Long>,
 
   @Query(value = "DROP MATERIALIZED VIEW IF EXISTS :viewName", nativeQuery = true)
   @Modifying
-  void removeWidgetView(String viewName);
+  void removeWidgetView(@Param("viewName") String viewName);
 }
