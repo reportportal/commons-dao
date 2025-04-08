@@ -17,8 +17,12 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.group.Group;
+import com.epam.ta.reportportal.entity.group.dto.GroupSummaryDto;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 
 /**
  * Repository for {@link Group}.
@@ -44,4 +48,23 @@ public interface GroupRepository extends ReportPortalRepository<Group, Long> {
    * @return {@link Optional} of {@link Group}
    */
   Optional<Group> findByUuid(UUID uuid);
+
+
+  /**
+   * Retrieves all group's summaries.
+   *
+   * @param pageable a {@link Pageable} object for pagination
+   * @return {@link Page} of {@link GroupSummaryDto}
+   */
+  @Query("""
+      SELECT new com.epam.ta.reportportal.entity.group.dto.GroupSummaryDto(
+        g.id, g.uuid, g.slug, g.name, g.createdBy, g.createdAt, g.updatedAt,
+        COUNT(DISTINCT u), COUNT(DISTINCT p)
+      )
+      FROM Group g
+      LEFT JOIN g.users u
+      LEFT JOIN g.projects p
+      GROUP BY g.id, g.uuid, g.slug, g.name, g.createdBy, g.createdAt, g.updatedAt
+      """)
+  Page<GroupSummaryDto> findAllWithSummary(Pageable pageable);
 }
