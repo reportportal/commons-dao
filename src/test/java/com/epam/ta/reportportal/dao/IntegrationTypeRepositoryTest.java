@@ -76,7 +76,7 @@ class IntegrationTypeRepositoryTest extends BaseTest {
   }
 
   @Test
-  void shouldFoundAllIntegrationTypesByPluginType() {
+  void shouldFindAllIntegrationTypesByPluginType() {
     List<IntegrationType> integrationTypes = integrationTypeRepository.findAllByPluginType(
         PluginTypeEnum.BUILT_IN);
     assertNotNull(integrationTypes);
