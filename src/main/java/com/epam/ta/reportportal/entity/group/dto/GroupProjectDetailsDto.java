@@ -17,11 +17,11 @@
 package com.epam.ta.reportportal.entity.group.dto;
 
 /**
- * Group project details record.
+ * Group project details DTO.
  *
  * @author <a href="mailto:Reingold_Shekhtel@epam.com">Reingold Shekhtel</a>
  */
-public record GroupProjectDetailsRecord(
+public record GroupProjectDetailsDto(
     Long projectId,
     String projectName,
     String[] projectRoles
