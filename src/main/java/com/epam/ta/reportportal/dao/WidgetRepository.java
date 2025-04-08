@@ -17,6 +17,7 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.widget.Widget;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -74,4 +75,8 @@ public interface WidgetRepository extends ReportPortalRepository<Widget, Long>,
 			+ " WHERE se.project_id = :projectId AND w.widget_type IN :widgetTypes AND cf.field LIKE :contentFieldPart || '%'", nativeQuery = true)
 	List<Widget> findAllByProjectIdAndWidgetTypeInAndContentFieldContaining(@Param("projectId") Long projectId,
 			@Param("widgetTypes") List<String> widgetTypes, @Param("contentFieldPart") String contentFieldPart);
+
+  @Query(value = "DROP MATERIALIZED VIEW IF EXISTS :viewName", nativeQuery = true)
+  @Modifying
+  void removeWidgetView(String viewName);
 }
