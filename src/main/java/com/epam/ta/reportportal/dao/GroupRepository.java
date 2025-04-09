@@ -17,11 +17,12 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.group.Group;
-import com.epam.ta.reportportal.entity.group.dto.GroupSummaryDto;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Query;
 
 /**
@@ -50,39 +51,22 @@ public interface GroupRepository extends ReportPortalRepository<Group, Long> {
   Optional<Group> findByUuid(UUID uuid);
 
   /**
-   * Retrieves all group's summaries.
+   * Retrieves all groups with their users and projects with pagination.
    *
-   * @param pageable a {@link Pageable} object for pagination
-   * @return {@link Page} of {@link GroupSummaryDto}
+   * @param pageable {@link Pageable} object
+   * @return {@link Page} of {@link Group}
    */
-  @Query("""
-      SELECT new com.epam.ta.reportportal.entity.group.dto.GroupSummaryDto(
-        g.id, g.uuid, g.slug, g.name, g.createdBy, g.createdAt, g.updatedAt,
-        COUNT(DISTINCT u), COUNT(DISTINCT p)
-      )
-      FROM Group g
-      LEFT JOIN g.users u
-      LEFT JOIN g.projects p
-      GROUP BY g.id, g.uuid, g.slug, g.name, g.createdBy, g.createdAt, g.updatedAt
-      """)
-  Page<GroupSummaryDto> findAllWithStats(Pageable pageable);
+  @EntityGraph(attributePaths = {"users", "projects"})
+  @Query("SELECT g FROM Group g")
+  Page<Group> findAllWithUsersAndProjects(Pageable pageable);
 
   /**
-   * Retrieves a group summary by ID.
+   * Retrieves a group by its ID with users and projects.
    *
-   * @param id group ID
-   * @return {@link Optional} of {@link GroupSummaryDto}
+   * @param id {@link Long} group ID
+   * @return {@link List} of {@link Group}
    */
-  @Query("""
-      SELECT new com.epam.ta.reportportal.entity.group.dto.GroupSummaryDto(
-        g.id, g.uuid, g.slug, g.name, g.createdBy, g.createdAt, g.updatedAt,
-        COUNT(DISTINCT u), COUNT(DISTINCT p)
-      )
-      FROM Group g
-      LEFT JOIN g.users u
-      LEFT JOIN g.projects p
-      WHERE g.id = :id
-      GROUP BY g.id, g.uuid, g.slug, g.name, g.createdBy, g.createdAt, g.updatedAt
-      """)
-  Optional<GroupSummaryDto> findWithStatsById(Long id);
+  @EntityGraph(attributePaths = {"users", "projects"})
+  @Query("SELECT g FROM Group g WHERE g.id = :id")
+  Optional<Group> findByIdWithUsersAndProjects(Long id);
 }

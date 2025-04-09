@@ -6,9 +6,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.entity.group.Group;
+import jakarta.persistence.EntityManager;
+import org.hibernate.Session;
+import org.hibernate.stat.Statistics;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.jdbc.Sql;
 
 @Sql("/db/fill/group/group-fill.sql")
@@ -16,6 +19,23 @@ public class GroupRepositoryTest extends BaseTest {
 
   @Autowired
   private GroupRepository groupRepository;
+
+  @Autowired
+  private EntityManager entityManager;
+
+  private Statistics statistics;
+
+  private Group rebelGroup;
+
+  @BeforeEach
+  void setUp() {
+    rebelGroup = groupRepository.findBySlug("rebel-group")
+        .orElseThrow(() -> new RuntimeException("Group not found"));
+    Session session = entityManager.unwrap(Session.class);
+    statistics = session.getSessionFactory().getStatistics();
+    statistics.setStatisticsEnabled(true);
+    statistics.clear();
+  }
 
   @Test
   void testGroupCreation() {
@@ -31,31 +51,33 @@ public class GroupRepositoryTest extends BaseTest {
 
   @Test
   void testFindByUuid() {
-    var group = new Group("Test group", "test-group", 1L);
-    groupRepository.save(group);
-
-    assertTrue(groupRepository.findByUuid(group.getUuid()).isPresent());
+    assertTrue(groupRepository.findByUuid(rebelGroup.getUuid()).isPresent());
   }
 
   @Test
-  void testFindAllWithStats() {
-    var page = PageRequest.ofSize(100);
-    var groupSummary = groupRepository.findAllWithStats(page);
+  void testFindAllWithUsersAndProjects() {
+    var groups = groupRepository.findAllWithUsersAndProjects(null);
+    assertEquals(5, groups.getContent().size());
 
-    assertFalse(groupSummary.isEmpty());
-    assertEquals(2, groupSummary.getContent().getFirst().userCount());
-    assertEquals(1, groupSummary.getContent().getFirst().projectCount());
+    groups.forEach(group -> {
+      assert(!group.getUsers().isEmpty());
+      assert(!group.getProjects().isEmpty());
+    });
+
+    assertEquals(1, statistics.getQueryExecutionCount());
+    assertEquals(1, statistics.getPrepareStatementCount());
   }
 
   @Test
-  void testFindWithStatsById() {
-    var group = groupRepository.findBySlug("rebel-group")
+  void testFindByIdWithUsersAndProjects() {
+    var group = groupRepository.findByIdWithUsersAndProjects(rebelGroup.getId())
         .orElseThrow(() -> new RuntimeException("Group not found")
         );
-    var groupSummary = groupRepository.findWithStatsById(group.getId());
 
-    assertTrue(groupSummary.isPresent());
-    assertEquals(2, groupSummary.get().userCount());
-    assertEquals(1, groupSummary.get().projectCount());
+    assertFalse(group.getUsers().isEmpty());
+    assertFalse(group.getProjects().isEmpty());
+
+    assertEquals(1, statistics.getQueryExecutionCount());
+    assertEquals(1, statistics.getPrepareStatementCount());
   }
 }
