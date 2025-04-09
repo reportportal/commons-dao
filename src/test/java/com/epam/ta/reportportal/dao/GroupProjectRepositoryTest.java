@@ -22,7 +22,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.entity.group.Group;
 import com.epam.ta.reportportal.entity.group.GroupProject;
+import jakarta.persistence.EntityManager;
 import java.util.List;
+import org.hibernate.Session;
+import org.hibernate.stat.Statistics;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,25 +46,64 @@ class GroupProjectRepositoryTest extends BaseTest {
   @Autowired
   private GroupRepository groupRepository;
 
+  @Autowired
+  private EntityManager entityManager;
+
+  private Statistics statistics;
+
   private Group rebel;
 
   @BeforeEach
   void setUp() {
     rebel = groupRepository.findBySlug("rebel-group")
         .orElseThrow(() -> new RuntimeException("Group not found"));
+    Session session = entityManager.unwrap(Session.class);
+    statistics = session.getSessionFactory().getStatistics();
+    statistics.setStatisticsEnabled(true);
+    statistics.clear();
   }
 
   @Test
-  void ShouldFindAllGroupProjects() {
+  void testFindAllGroupProjects() {
     List<GroupProject> groupProjects = groupProjectRepository.findAllByGroupId(rebel.getId());
     assertEquals(1, groupProjects.size());
   }
 
   @Test
-  void shouldFindProjectsPageByGroupId() {
+  void testFindProjectsPageByGroupId() {
     var pageable = PageRequest.of(0, 10);
-    Page<GroupProject> groupProjects = groupProjectRepository.findAllByGroupId(rebel.getId(), pageable);
+    Page<GroupProject> groupProjects = groupProjectRepository.findAllByGroupId(rebel.getId(),
+        pageable);
     assertNotNull(groupProjects);
     assertEquals(1, groupProjects.getTotalElements());
+  }
+
+  @Test
+  void testFindAllByProjectName() {
+    var groupProjectsPage = groupProjectRepository.findAllByProjectName(
+        "millennium_falcon",
+        null
+    );
+    groupProjectsPage.forEach(g ->
+      System.out.println("Group slug: " + g.getGroup().getSlug())
+    );
+
+    assertEquals(1, statistics.getQueryExecutionCount());
+    assertEquals(1, statistics.getPrepareStatementCount());
+    assertEquals(3, groupProjectsPage.getContent().size());
+  }
+
+  @Test
+  void testFindByGroupIdAndProjectName() {
+    var group = groupProjectRepository.findByGroupIdAndProjectName(
+        rebel.getId(),
+        "millennium_falcon"
+    ).orElseThrow(
+        () -> new RuntimeException("Group project not found")
+    );
+    System.out.println("Group slug: " + group.getGroup().getSlug());
+
+    assertEquals(1, statistics.getQueryExecutionCount());
+    assertEquals(1, statistics.getPrepareStatementCount());
   }
 }
