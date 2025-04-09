@@ -85,7 +85,10 @@ class GroupProjectRepositoryTest extends BaseTest {
         null
     );
     groupProjectsPage.forEach(g ->
-      System.out.println("Group slug: " + g.getGroup().getSlug())
+        {
+          System.out.println("Group slug: " + g.getGroup().getSlug());
+          System.out.println("Group users count: " + g.getGroup().getUsers().size());
+        }
     );
 
     assertEquals(1, statistics.getQueryExecutionCount());
@@ -102,6 +105,7 @@ class GroupProjectRepositoryTest extends BaseTest {
         () -> new RuntimeException("Group project not found")
     );
     System.out.println("Group slug: " + group.getGroup().getSlug());
+    System.out.println("Group users count: " + group.getGroup().getUsers().size());
 
     assertEquals(1, statistics.getQueryExecutionCount());
     assertEquals(1, statistics.getPrepareStatementCount());

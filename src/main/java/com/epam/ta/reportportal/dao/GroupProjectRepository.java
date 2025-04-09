@@ -75,7 +75,7 @@ public interface GroupProjectRepository extends
    * @param projectName project name
    * @return {@link List} of {@link GroupProject}
    */
-  @EntityGraph(attributePaths = {"group"})
+  @EntityGraph(attributePaths = {"group", "group.users"})
   List<GroupProject> findAllByProjectName(String projectName);
 
   /**
@@ -84,7 +84,7 @@ public interface GroupProjectRepository extends
    * @param projectName project name
    * @return {@link List} of {@link GroupProject}
    */
-  @EntityGraph(attributePaths = {"group"})
+  @EntityGraph(attributePaths = {"group", "group.users"})
   Page<GroupProject> findAllByProjectName(String projectName, Pageable pageable);
 
 
@@ -95,6 +95,6 @@ public interface GroupProjectRepository extends
    * @param projectName project name
    * @return {@link Optional} of {@link GroupProject}
    */
-  @EntityGraph(attributePaths = {"group"})
+  @EntityGraph(attributePaths = {"group", "group.users"})
   Optional<GroupProject> findByGroupIdAndProjectName(Long groupId, String projectName);
 }
