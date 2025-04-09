@@ -51,12 +51,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.epam.reportportal.model.analyzer.IndexTestItem;
 import com.epam.reportportal.rules.exception.ErrorType;
+import com.epam.reportportal.rules.exception.ReportPortalException;
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.ConvertibleCondition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.commons.querygen.FilterTarget;
+import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.enums.LogLevel;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
@@ -71,7 +73,6 @@ import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.statistics.Statistics;
-import com.epam.reportportal.rules.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.google.common.collect.Comparators;
@@ -95,6 +96,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.util.Pair;
 import org.springframework.test.context.jdbc.Sql;
@@ -1377,6 +1380,169 @@ class TestItemRepositoryTest extends BaseTest {
         .build());
 
     assertFalse(items.isEmpty());
+  }
+
+
+  @Test
+  void testFindTestItemsContainsName() {
+    //given
+    Pageable pageable = PageRequest.of(0, 10);
+
+    //when
+    Slice<TestItem> result = testItemRepository.findTestItemsContainsName("Ste", 1L, pageable);
+
+    //then
+    List<String> names = result.getContent().stream().map(TestItem::getName).toList();
+    assertEquals(10, result.getContent().size());
+    assertTrue(names.contains("Step"));
+  }
+
+  @Test
+  void testFindTestItemsContainsNameNotExists() {
+    //given
+    Pageable pageable = PageRequest.of(0, 10);
+
+    //when
+    Slice<TestItem> result = testItemRepository.findTestItemsContainsName("Not exists", 1L,
+        pageable);
+
+    //then
+    assertEquals(0, result.getContent().size());
+  }
+
+  @Test
+  void testFindTestItemsContainsNameAndStatuses() {
+    //given
+    Pageable pageable = Pageable.unpaged();
+
+    //when
+    Slice<TestItem> result = testItemRepository.findTestItemsContainsNameAndStatuses(
+        "Step",
+        1L,
+        List.of("FAILED"),
+        pageable
+    );
+
+    //then
+    assertEquals(12, result.getContent().size());
+    result.getContent()
+        .forEach(it -> assertEquals(it.getItemResults().getStatus(), StatusEnum.FAILED));
+  }
+
+  @Test
+  void testFindTestItemsWithNameAndMultipleStatuses() {
+    //given
+    Pageable pageable = Pageable.unpaged();
+
+    //when
+    Slice<TestItem> result = testItemRepository.findTestItemsContainsNameAndStatuses(
+        "Step", 1L, List.of("FAILED", "IN_PROGRESS"), pageable);
+
+    //then
+    assertEquals(78, result.getContent().size());
+    result.getContent()
+        .forEach(it -> {
+          assertTrue(it.getItemResults().getStatus().equals(StatusEnum.FAILED) ||
+              it.getItemResults().getStatus().equals(StatusEnum.IN_PROGRESS));
+        });
+  }
+
+  @Test
+  void testFindTestItemsContainsNameAndStatusesNotExists() {
+    //given
+    Pageable pageable = Pageable.unpaged();
+
+    //when
+    Slice<TestItem> result = testItemRepository.findTestItemsContainsNameAndStatuses(
+        "Step",
+        1L,
+        List.of("PASSED"),
+        pageable
+    );
+
+    //then
+    assertEquals(0, result.getContent().size());
+  }
+
+  @Test
+  void testFindTestItemsByAttribute() {
+    //given
+    Pageable pageable = Pageable.unpaged();
+
+    //when
+    Slice<TestItem> result = testItemRepository.findTestItemsByAttribute(
+        1L,
+        "step",
+        "value3",
+        pageable
+    );
+
+    //then
+    assertEquals(1, result.getContent().size());
+    ItemAttribute itemAttribute = result.getContent().get(0).getAttributes().stream().iterator()
+        .next();
+    assertEquals("step", itemAttribute.getKey());
+    assertEquals("value3", itemAttribute.getValue());
+  }
+
+  @Test
+  void testFindTestItemsByAttributeAndStatuses() {
+    //given
+    Pageable pageable = PageRequest.of(0, 10);
+
+    //when
+    Slice<TestItem> result = testItemRepository.findTestItemsByAttributeAndStatuses(
+        1L,
+        "step",
+        "value3",
+        List.of("FAILED"),
+        pageable
+    );
+
+    //then
+    assertEquals(1, result.getContent().size());
+    TestItem testItem = result.getContent().get(0);
+    ItemAttribute itemAttribute = testItem.getAttributes().stream().iterator().next();
+    assertEquals("step", itemAttribute.getKey());
+    assertEquals("value3", itemAttribute.getValue());
+    assertEquals(StatusEnum.FAILED, testItem.getItemResults().getStatus());
+  }
+
+  @Test
+  void testFindTestItemsByAttributeAndNullKey() {
+    //given
+    Pageable pageable = Pageable.unpaged();
+
+    //when
+    Slice<TestItem> result = testItemRepository.findTestItemsByAttribute(
+        1L,
+        "value3",
+        pageable
+    );
+
+    //then
+    assertEquals(1, result.getContent().size());
+    assertEquals(2, result.getContent().get(0).getAttributes().size());
+  }
+
+  @Test
+  void testFindTestItemsByAttributeNullKeyAndStatuses() {
+    //given
+    Pageable pageable = PageRequest.of(0, 10);
+
+    //when
+    Slice<TestItem> result = testItemRepository.findTestItemsByAttributeAndStatuses(
+        1L,
+        "value3",
+        List.of("FAILED"),
+        pageable
+    );
+
+    //then
+    assertEquals(1, result.getContent().size());
+    TestItem testItem = result.getContent().get(0);
+    assertEquals(2, testItem.getAttributes().size());
+    assertEquals(StatusEnum.FAILED, testItem.getItemResults().getStatus());
   }
 
   private void assertIssueExistsAndTicketsEmpty(TestItem testItem, Long expectedId) {
