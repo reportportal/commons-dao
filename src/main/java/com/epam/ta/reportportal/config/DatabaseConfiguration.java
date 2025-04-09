@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
+import java.util.Properties;
 import javax.sql.DataSource;
 import org.flywaydb.core.Flyway;
 import org.jooq.SQLDialect;
@@ -87,6 +88,10 @@ public class DatabaseConfiguration {
     factory.setPackagesToScan("com.epam.ta.reportportal.commons",
         "com.epam.ta.reportportal.**.entity");
     factory.setDataSource(dataSource);
+
+    Properties jpaProperties = new Properties();
+    jpaProperties.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
+    factory.setJpaProperties(jpaProperties);
 
     factory.afterPropertiesSet();
 

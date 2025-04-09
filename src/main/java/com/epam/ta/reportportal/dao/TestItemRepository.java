@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.dao;
 
+import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.TestItemResults;
@@ -404,4 +405,41 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
    */
   @Query(value = "SELECT t.item_id FROM test_item t WHERE t.retry_of = :retryOf", nativeQuery = true)
   List<Long> findIdsByRetryOf(@Param("retryOf") Long retryOf);
+
+  /**
+   * @param launchId {@link TestItem#getLaunchId()}
+   * @param issueGroupId   {@link Queryable} for additional dynamic filtering
+   * @param limit    query limit
+   * @param offset   query offset
+   * @return {@link List} of {@link TestItem#getItemId()}
+   */
+  @Query(value = """
+      select "items"."id"
+      from (
+        select "public"."test_item"."item_id" as "id"
+        from "test_item"
+          left outer join "launch" on "test_item"."launch_id" = "launch"."id"
+          left outer join "item_attribute" on "test_item"."item_id" = "item_attribute"."item_id"
+          left outer join "item_attribute" as "launchAttribute" on "launch"."id" = "launchAttribute"."launch_id"
+          left outer join "test_item_results" on "test_item"."item_id" = "test_item_results"."result_id"
+          left outer join "issue" on "test_item_results"."result_id" = "issue"."issue_id"
+          left outer join "issue_type" on "issue"."issue_type" = "issue_type"."id"
+        where ("issue_type"."issue_group_id" = :issueGroupId and "test_item"."launch_id" = :launchId)
+        group by "test_item"."item_id"
+        having not (
+                  array_agg(distinct ("launchAttribute"."key" || ':')) filter (where "launchAttribute"."system" = true)::varchar[] || 
+                  array_agg(distinct "launchAttribute"."value") filter (where "launchAttribute"."system" = true)::varchar[] || 
+                  array_agg(((coalesce("launchAttribute"."key", '') || ':') || "launchAttribute"."value")) filter (where "launchAttribute"."system" = true)::varchar[] || 
+                  array_agg(distinct ("item_attribute"."key" || ':')) filter (where "item_attribute"."system" = true)::varchar[] || 
+                  array_agg(distinct "item_attribute"."value") filter (where "item_attribute"."system" = true)::varchar[] || 
+                  array_agg(((coalesce("item_attribute"."key", '') || ':') || "item_attribute"."value")) filter (where "item_attribute"."system" = true)::varchar[] 
+                    @> cast(cast('{"immediatePatternAnalysis:true"}' as varchar[]) as varchar[]))
+        order by "test_item"."item_id" asc
+        offset 0 rows
+        fetch next 100 rows only
+      ) as "items"
+      """, nativeQuery = true)
+  List<Long> selectIdsByLaunchAndGroupAgg(@Param("launchId") Long launchId, @Param("issueGroupId") Long issueGroupId,
+      @Param("limit") int limit, @Param("offset") int offset);
+
 }
