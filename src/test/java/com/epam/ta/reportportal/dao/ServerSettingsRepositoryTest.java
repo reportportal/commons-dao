@@ -38,7 +38,7 @@ class ServerSettingsRepositoryTest extends BaseTest {
   @Test
   public void findSettings() {
     final List<ServerSettings> settings = repository.selectServerSettings();
-    assertEquals(3L, settings.size());
+    assertEquals(4L, settings.size());
     settings.forEach(setting -> assertTrue(setting.getKey().startsWith(SERVER_SETTING_KEY)));
   }
 
