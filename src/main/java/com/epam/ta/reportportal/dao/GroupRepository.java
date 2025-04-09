@@ -17,8 +17,13 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.group.Group;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.Query;
 
 /**
  * Repository for {@link Group}.
@@ -44,4 +49,24 @@ public interface GroupRepository extends ReportPortalRepository<Group, Long> {
    * @return {@link Optional} of {@link Group}
    */
   Optional<Group> findByUuid(UUID uuid);
+
+  /**
+   * Retrieves all groups with their users and projects with pagination.
+   *
+   * @param pageable {@link Pageable} object
+   * @return {@link Page} of {@link Group}
+   */
+  @EntityGraph(attributePaths = {"users", "projects"})
+  @Query("SELECT g FROM Group g")
+  Page<Group> findAllWithUsersAndProjects(Pageable pageable);
+
+  /**
+   * Retrieves a group by its ID with users and projects.
+   *
+   * @param id {@link Long} group ID
+   * @return {@link List} of {@link Group}
+   */
+  @EntityGraph(attributePaths = {"users", "projects"})
+  @Query("SELECT g FROM Group g WHERE g.id = :id")
+  Optional<Group> findByIdWithUsersAndProjects(Long id);
 }

@@ -31,12 +31,14 @@ import jakarta.validation.constraints.Pattern;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.BatchSize;
 
 
 /**
@@ -81,10 +83,12 @@ public class Group implements Serializable {
   private Instant updatedAt;
 
   @OneToMany(mappedBy = "group", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  private List<GroupUser> users;
+  @BatchSize(size = 50)
+  private Set<GroupUser> users = new HashSet<>();
 
   @OneToMany(mappedBy = "group", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  private List<GroupProject> projects;
+  @BatchSize(size = 50)
+  private Set<GroupProject> projects = new HashSet<>();
 
   /**
    * Constructor for creating a new group.
