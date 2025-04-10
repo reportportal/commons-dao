@@ -29,13 +29,11 @@ import org.springframework.data.domain.Pageable;
 public interface ItemAttributeRepositoryCustom {
 
   /**
-   * Retrieves {@link com.epam.ta.reportportal.entity.launch.Launch} and
-   * {@link com.epam.ta.reportportal.entity.item.TestItem} {@link ItemAttribute#getKey()} by project
-   * id and part of the {@link ItemAttribute#getKey()}.
+   * Retrieves {@link com.epam.ta.reportportal.entity.launch.Launch} and {@link
+   * com.epam.ta.reportportal.entity.item.TestItem} {@link ItemAttribute#getKey()} by project id and
+   * part of the {@link ItemAttribute#getKey()}.
    *
-   * @param launchFilter   {@link Queryable} with
-   *                       {@link
-   *                       com.epam.ta.reportportal.commons.querygen.FilterTarget#LAUNCH_TARGET}
+   * @param launchFilter   {@link Queryable} with {@link com.epam.ta.reportportal.commons.querygen.FilterTarget#LAUNCH_TARGET}
    * @param launchPageable {@link Pageable} for launches sorting and limitation
    * @param isLatest       Flag defines whether all or latest launches launches will be included in
    *                       the query condition
@@ -105,8 +103,8 @@ public interface ItemAttributeRepositoryCustom {
    * are found matching the criteria, an empty list is returned.
    * @throws IllegalArgumentException if `projectId` is null or if `valuePart` is null or empty.
    */
-  List<String> findUniqueAttributeValuesByPart(Long projectId, String valuePart, Long launchId,
-      boolean system);
+  List<String> findUniqueAttributeValuesByPart(Long projectId, String key, String valuePart,
+      Long launchId, boolean system);
 
   /**
    * Retrieves test item attribute values by launch, specified key and part of value. Used for

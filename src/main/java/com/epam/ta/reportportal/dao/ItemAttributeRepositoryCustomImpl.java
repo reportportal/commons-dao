@@ -42,6 +42,7 @@ import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
@@ -141,10 +142,9 @@ public class ItemAttributeRepositoryCustomImpl implements ItemAttributeRepositor
   }
 
   @Override
-  public List<String> findUniqueAttributeValuesByPart(Long projectId, String valuePart,
-      Long launchId,
-      boolean system) {
-    SelectConditionStep<Record1<String>> conditionStep = dslContext.selectDistinct(
+  public List<String> findUniqueAttributeValuesByPart(Long projectId, String key, String valuePart,
+      Long launchId, boolean system) {
+    SelectConditionStep<Record1<String>> condition = dslContext.selectDistinct(
             ITEM_ATTRIBUTE.VALUE)
         .from(ITEM_ATTRIBUTE)
         .leftJoin(TEST_ITEM)
@@ -155,9 +155,12 @@ public class ItemAttributeRepositoryCustomImpl implements ItemAttributeRepositor
         .and(ITEM_ATTRIBUTE.VALUE.likeIgnoreCase("%" + DSL.escape(valuePart, '\\') + "%"))
         .and(ITEM_ATTRIBUTE.SYSTEM.eq(system));
     if (launchId != null) {
-      conditionStep = conditionStep.and(LAUNCH.ID.eq(launchId));
+      condition = condition.and(LAUNCH.ID.eq(launchId));
     }
-    return conditionStep.fetch(ITEM_ATTRIBUTE.VALUE);
+    if (StringUtils.hasText(key)) {
+      condition = condition.and(ITEM_ATTRIBUTE.KEY.eq(key));
+    }
+    return condition.fetch(ITEM_ATTRIBUTE.VALUE);
   }
 
   @Override

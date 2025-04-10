@@ -115,7 +115,7 @@ class ItemAttributeRepositoryTest extends BaseTest {
     final Long projectId = 1L;
     final String valuePart = "val";
 
-    final List<String> values = repository.findUniqueAttributeValuesByPart(projectId,
+    final List<String> values = repository.findUniqueAttributeValuesByPart(projectId, null,
         valuePart, null, false);
     assertNotNull(values, "Should not be null");
     assertTrue(!values.isEmpty(), "Should not be empty");
