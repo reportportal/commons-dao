@@ -35,6 +35,8 @@ import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.InsertValuesStep4;
 import org.jooq.Record;
+import org.jooq.Record1;
+import org.jooq.SelectConditionStep;
 import org.jooq.TableField;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,17 +122,42 @@ public class ItemAttributeRepositoryCustomImpl implements ItemAttributeRepositor
   }
 
   @Override
-  public List<String> findTestItemAttributeKeys(Long launchId, String value, boolean system) {
-    return dslContext.selectDistinct(ITEM_ATTRIBUTE.KEY)
+  public List<String> findUniqueAttributeKeysByPart(Long projectId, String keyPart, Long launchId,
+      boolean system) {
+    SelectConditionStep<Record1<String>> conditionStep = dslContext.selectDistinct(
+            ITEM_ATTRIBUTE.KEY)
         .from(ITEM_ATTRIBUTE)
         .leftJoin(TEST_ITEM)
         .on(ITEM_ATTRIBUTE.ITEM_ID.eq(TEST_ITEM.ITEM_ID))
         .leftJoin(LAUNCH)
         .on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
-        .where(LAUNCH.ID.eq(launchId))
-        .and(ITEM_ATTRIBUTE.SYSTEM.eq(system))
-        .and(ITEM_ATTRIBUTE.KEY.likeIgnoreCase("%" + DSL.escape(value, '\\') + "%"))
-        .fetch(ITEM_ATTRIBUTE.KEY);
+        .where(LAUNCH.PROJECT_ID.eq(projectId))
+        .and(ITEM_ATTRIBUTE.KEY.likeIgnoreCase("%" + DSL.escape(keyPart, '\\') + "%"))
+        .and(ITEM_ATTRIBUTE.SYSTEM.eq(system));
+    if (launchId != null) {
+      conditionStep = conditionStep.and(LAUNCH.ID.eq(launchId));
+    }
+    return conditionStep.fetch(ITEM_ATTRIBUTE.KEY);
+  }
+
+  @Override
+  public List<String> findUniqueAttributeValuesByPart(Long projectId, String valuePart,
+      Long launchId,
+      boolean system) {
+    SelectConditionStep<Record1<String>> conditionStep = dslContext.selectDistinct(
+            ITEM_ATTRIBUTE.VALUE)
+        .from(ITEM_ATTRIBUTE)
+        .leftJoin(TEST_ITEM)
+        .on(ITEM_ATTRIBUTE.ITEM_ID.eq(TEST_ITEM.ITEM_ID))
+        .leftJoin(LAUNCH)
+        .on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
+        .where(LAUNCH.PROJECT_ID.eq(projectId))
+        .and(ITEM_ATTRIBUTE.VALUE.likeIgnoreCase("%" + DSL.escape(valuePart, '\\') + "%"))
+        .and(ITEM_ATTRIBUTE.SYSTEM.eq(system));
+    if (launchId != null) {
+      conditionStep = conditionStep.and(LAUNCH.ID.eq(launchId));
+    }
+    return conditionStep.fetch(ITEM_ATTRIBUTE.VALUE);
   }
 
   @Override

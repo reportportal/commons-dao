@@ -97,7 +97,7 @@ class ItemAttributeRepositoryTest extends BaseTest {
   }
 
   @Test
-  void findTestItemValuesByProjectId() {
+  void findTestItemValuesByProjectIdAndName() {
     final Long projectId = 1L;
     final String launchName = "name 1";
     final String stepKey = "step";
@@ -111,14 +111,28 @@ class ItemAttributeRepositoryTest extends BaseTest {
   }
 
   @Test
-  void findTestItemAttributeKeys() {
-    final Long launchId = 1L;
-    final String partOfItemKey = "st";
+  void findUniqueAttributeValuesByPart() {
+    final Long projectId = 1L;
+    final String valuePart = "val";
 
-    final List<String> keys = repository.findTestItemAttributeKeys(launchId, partOfItemKey, false);
+    final List<String> values = repository.findUniqueAttributeValuesByPart(projectId,
+        valuePart, null, false);
+    assertNotNull(values, "Should not be null");
+    assertTrue(!values.isEmpty(), "Should not be empty");
+    values.forEach(it -> assertTrue(it.contains(valuePart), "Value not matches"));
+  }
+
+  @Test
+  void findUniqueAttributeKeysByPart() {
+    var projectId = 1L;
+    var launchId = 1L;
+    var keyPart = "st";
+
+    final List<String> keys = repository.findUniqueAttributeKeysByPart(projectId, keyPart, launchId,
+        false);
     assertNotNull(keys, "Should not be null");
     assertTrue(!keys.isEmpty(), "Should not be empty");
-    keys.forEach(it -> assertTrue(it.contains(partOfItemKey), "Key not matches"));
+    keys.forEach(it -> assertTrue(it.contains(keyPart), "Key not matches"));
   }
 
   @Test
@@ -151,7 +165,7 @@ class ItemAttributeRepositoryTest extends BaseTest {
 
     Assertions.assertEquals(1, result);
 
-    List<String> attributeKeys = repository.findTestItemAttributeKeys(1L, "new", false);
+    List<String> attributeKeys = repository.findUniqueAttributeKeysByPart(1L, "new", 1L, false);
 
     Assertions.assertNotNull(attributeKeys);
     Assertions.assertFalse(attributeKeys.isEmpty());

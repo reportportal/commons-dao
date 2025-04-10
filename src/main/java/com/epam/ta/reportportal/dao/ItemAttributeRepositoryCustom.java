@@ -69,14 +69,44 @@ public interface ItemAttributeRepositoryCustom {
   List<String> findLaunchAttributeValues(Long projectId, String key, String value, boolean system);
 
   /**
-   * Retrieves test item attribute keys by launch and part of value. Used for autocompletion
-   * functionality
+   * Finds all unique attribute keys that contain the specified part of the key (`keyPart`) for a
+   * given project or a specific launch.
    *
-   * @param launchId Id of launch
-   * @param value    part of key
-   * @return List of matched attribute keys
+   * @param projectId the ID of the project within which the search will be conducted; this
+   *                  parameter is mandatory and cannot be null.
+   * @param keyPart   the part of the attribute key to search for; only keys containing this
+   *                  substring will be included in the results. Cannot be null or empty.
+   * @param launchId  the ID of the specific launch to restrict the search to. If null, the search
+   *                  will include all launches within the project.
+   * @param system    determines whether to filter the results by system attributes: - {@code true}
+   *                  to include only system attributes. - {@code false} to include only non-system
+   *                  attributes.
+   * @return a list of unique attribute keys containing `keyPart` as a substring. If no keys are
+   * found matching the criteria, an empty list is returned.
+   * @throws IllegalArgumentException if `projectId` is null or if `keyPart` is null or empty.
    */
-  List<String> findTestItemAttributeKeys(Long launchId, String value, boolean system);
+  List<String> findUniqueAttributeKeysByPart(Long projectId, String keyPart, Long launchId,
+      boolean system);
+
+  /**
+   * Finds all unique attribute values that contain the specified part of the value (`valuePart`)
+   * for a given project or a specific launch.
+   *
+   * @param projectId the ID of the project within which the search will be conducted; this
+   *                  parameter is mandatory and cannot be null.
+   * @param valuePart the part of the attribute value to search for; only values containing this
+   *                  substring will be included in the results. Cannot be null or empty.
+   * @param launchId  the ID of the specific launch to restrict the search to. If null, the search
+   *                  will include all launches within the project.
+   * @param system    determines whether to filter the results by system attributes: - {@code true}
+   *                  to include only system attributes. - {@code false} to include only non-system
+   *                  attributes.
+   * @return a list of unique attribute values containing `valuePart` as a substring. If no values
+   * are found matching the criteria, an empty list is returned.
+   * @throws IllegalArgumentException if `projectId` is null or if `valuePart` is null or empty.
+   */
+  List<String> findUniqueAttributeValuesByPart(Long projectId, String valuePart, Long launchId,
+      boolean system);
 
   /**
    * Retrieves test item attribute values by launch, specified key and part of value. Used for
