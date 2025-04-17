@@ -215,8 +215,9 @@ public class ProjectUtils {
 
   public static boolean isPersonalForUser(ProjectType projectType, String projectName,
       String username) {
+    var normalizedUsername = username.replaceAll("[.@\\-+]", "_");
     return projectType == ProjectType.PERSONAL && Pattern.compile(
-            LINE_START_SYMBOL + Pattern.quote(username) + PERSONAL_PROJECT_POSTFIX_REGEX)
+            LINE_START_SYMBOL + normalizedUsername + PERSONAL_PROJECT_POSTFIX_REGEX)
         .matcher(projectName)
         .matches();
   }

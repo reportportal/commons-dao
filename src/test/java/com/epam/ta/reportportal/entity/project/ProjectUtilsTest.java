@@ -252,8 +252,8 @@ class ProjectUtilsTest {
 
   @Test
   void isPersonalForUserPositive() {
-    assertTrue(ProjectUtils.isPersonalForUser(ProjectType.PERSONAL, "qwe_personal_1234", "qwe"));
-    assertTrue(ProjectUtils.isPersonalForUser(ProjectType.PERSONAL, "qwe_personal", "qwe"));
+    assertTrue(ProjectUtils.isPersonalForUser(ProjectType.PERSONAL, "qwe_foo_bar_example_com_personal_1234", "qwe.foo-bar@example.com"));
+    assertTrue(ProjectUtils.isPersonalForUser(ProjectType.PERSONAL, "qwe_example_com_personal", "qwe@example.com"));
   }
 
   @Test
