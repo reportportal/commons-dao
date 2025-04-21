@@ -18,6 +18,7 @@ package com.epam.ta.reportportal.dao;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.entity.user.ApiKey;
@@ -49,6 +50,7 @@ public class ApiKeyRepositoryTest extends BaseTest {
 
     ApiKey saved = apiKeyRepository.save(apiKey);
 
+    assertTrue(apiKeyRepository.existsByIdAndUserId(saved.getId(), 1L));
     assertNotNull(saved.getId());
   }
 

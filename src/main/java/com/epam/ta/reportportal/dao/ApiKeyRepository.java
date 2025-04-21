@@ -47,6 +47,13 @@ public interface ApiKeyRepository
   boolean existsByNameAndUserId(String name, Long userId);
 
   /**
+   * @param id     id of the Api key
+   * @param userId {@link com.epam.ta.reportportal.entity.user.User#id}
+   * @return if exists 'true' else 'false'
+   */
+  boolean existsByIdAndUserId(Long id, Long userId);
+
+  /**
    * @param userId {@link com.epam.ta.reportportal.entity.user.User#id}
    * @return list of user api keys
    */
