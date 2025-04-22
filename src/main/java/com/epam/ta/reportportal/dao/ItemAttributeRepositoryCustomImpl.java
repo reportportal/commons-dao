@@ -51,6 +51,7 @@ import org.springframework.util.StringUtils;
 public class ItemAttributeRepositoryCustomImpl implements ItemAttributeRepositoryCustom {
 
   public static final Integer ATTRIBUTES_LIMIT = 50;
+  private static final int TIMEOUT_SEC = 10;
 
   private final DSLContext dslContext;
 
@@ -138,7 +139,7 @@ public class ItemAttributeRepositoryCustomImpl implements ItemAttributeRepositor
     if (launchId != null) {
       conditionStep = conditionStep.and(LAUNCH.ID.eq(launchId));
     }
-    return conditionStep.fetch(ITEM_ATTRIBUTE.KEY);
+    return conditionStep.queryTimeout(TIMEOUT_SEC).fetch(ITEM_ATTRIBUTE.KEY);
   }
 
   @Override
@@ -160,7 +161,7 @@ public class ItemAttributeRepositoryCustomImpl implements ItemAttributeRepositor
     if (StringUtils.hasText(key)) {
       condition = condition.and(ITEM_ATTRIBUTE.KEY.eq(key));
     }
-    return condition.fetch(ITEM_ATTRIBUTE.VALUE);
+    return condition.queryTimeout(TIMEOUT_SEC).fetch(ITEM_ATTRIBUTE.VALUE);
   }
 
   @Override
