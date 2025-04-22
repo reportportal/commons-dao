@@ -19,7 +19,7 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.commons.ReportPortalUser;
 import com.epam.ta.reportportal.entity.group.GroupProject;
 import com.epam.ta.reportportal.entity.group.GroupProjectId;
-import com.epam.ta.reportportal.entity.group.dto.GroupProjectDetailsRecord;
+import com.epam.ta.reportportal.entity.group.dto.GroupProjectDetailsDto;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
 import java.util.List;
 import java.util.Optional;
@@ -71,7 +71,7 @@ public interface GroupMembershipRepository extends
    *
    * @param userId      user id
    * @param projectName project name
-   * @return {@link Optional} of {@link GroupProjectDetailsRecord}
+   * @return {@link Optional} of {@link GroupProjectDetailsDto}
    *//*
 
   @Query(value = """
@@ -88,7 +88,7 @@ public interface GroupMembershipRepository extends
       """,
       nativeQuery = true
   )
-  Optional<GroupProjectDetailsRecord> findProjectDetailsRaw(
+  Optional<GroupProjectDetailsDto> findProjectDetailsRaw(
       @Param("userId") Long userId,
       @Param("projectName") String projectName
   );
@@ -98,7 +98,7 @@ public interface GroupMembershipRepository extends
    *
    * @param userId    user id
    * @param projectId project id
-   * @return {@link Optional} of {@link GroupProjectDetailsRecord}
+   * @return {@link Optional} of {@link GroupProjectDetailsDto}
    *//*
   @Query(value = """
       SELECT gp.project_id AS projectId,
@@ -113,7 +113,7 @@ public interface GroupMembershipRepository extends
       """,
       nativeQuery = true
   )
-  Optional<GroupProjectDetailsRecord> findProjectDetailsRaw(
+  Optional<GroupProjectDetailsDto> findProjectDetailsRaw(
       @Param("userId") Long userId,
       @Param("projectId") Long projectId
   );

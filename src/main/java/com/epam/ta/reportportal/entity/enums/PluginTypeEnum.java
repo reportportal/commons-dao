@@ -14,17 +14,31 @@
  * limitations under the License.
  */
 
-package com.epam.ta.reportportal.entity.group.dto;
+package com.epam.ta.reportportal.entity.enums;
+
+import java.util.Arrays;
+import java.util.Optional;
+import lombok.Getter;
 
 /**
- * Group project details record.
+ * The enum Plugin type enum.
  *
  * @author <a href="mailto:Reingold_Shekhtel@epam.com">Reingold Shekhtel</a>
  */
-public record GroupProjectDetailsRecord(
-    Long projectId,
-    String projectName,
-    String[] projectRoles
-) {
+@Getter
+public enum PluginTypeEnum {
 
+  BUILT_IN("BUILT_IN"),
+  EXTENSION("EXTENSION"),
+  REMOTE("REMOTE");
+
+  private final String value;
+
+  PluginTypeEnum(String value) {
+    this.value = value;
+  }
+
+  public static Optional<PluginTypeEnum> fromString(String value) {
+    return Arrays.stream(PluginTypeEnum.values()).filter(it -> it.value.equalsIgnoreCase(value)).findAny();
+  }
 }

@@ -28,6 +28,7 @@ import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteri
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_SUBJECT_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_SUBJECT_NAME;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_SUBJECT_TYPE;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_CREATION_DATE;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_DESCRIPTION;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_END_TIME;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_ID;
@@ -1024,6 +1025,7 @@ public enum FilterTarget {
           ISSUE.AUTO_ANALYZED,
           ISSUE.IGNORE_ANALYZER,
           ISSUE.ISSUE_DESCRIPTION,
+          ISSUE_TYPE.ID,
           ISSUE_TYPE.LOCATOR,
           ISSUE_TYPE.ABBREVIATION,
           ISSUE_TYPE.HEX_COLOR,
@@ -1298,6 +1300,8 @@ public enum FilterTarget {
 
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ID, DASHBOARD.ID, Long.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_NAME, DASHBOARD.NAME, String.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_CREATION_DATE, DASHBOARD.CREATION_DATE,
+          Timestamp.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ID, OWNED_ENTITY.PROJECT_ID,
               Long.class)
           .withAggregateCriteria(DSL.max(OWNED_ENTITY.PROJECT_ID).toString())

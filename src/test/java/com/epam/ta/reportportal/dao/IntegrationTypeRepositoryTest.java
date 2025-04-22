@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
+import com.epam.ta.reportportal.entity.enums.PluginTypeEnum;
 import com.epam.ta.reportportal.entity.integration.IntegrationType;
 import java.util.List;
 import java.util.Optional;
@@ -36,7 +37,6 @@ class IntegrationTypeRepositoryTest extends BaseTest {
 
   private final static String JIRA_INTEGRATION_TYPE_NAME = "jira";
   private final static String ACCESS_TYPE_NAME = "public";
-  private final static String WRONG_INTEGRATION_TYPE_NAME = "WRONG";
   private static final long BTS_INTEGRATIONS_COUNT = 2L;
   private static final long PUBLIC_INTEGRATIONS_COUNT = 1L;
 
@@ -75,4 +75,11 @@ class IntegrationTypeRepositoryTest extends BaseTest {
     assertEquals(PUBLIC_INTEGRATIONS_COUNT, integrationTypes.size());
   }
 
+  @Test
+  void shouldFindAllIntegrationTypesByPluginType() {
+    List<IntegrationType> integrationTypes = integrationTypeRepository.findAllByPluginType(
+        PluginTypeEnum.BUILT_IN);
+    assertNotNull(integrationTypes);
+    assertEquals(4, integrationTypes.size());
+  }
 }
