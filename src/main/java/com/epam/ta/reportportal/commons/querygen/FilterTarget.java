@@ -819,15 +819,15 @@ public enum FilterTarget {
                       LAUNCH.ID.eq(LAUNCH_ATTRIBUTE.LAUNCH_ID))
               )).withAggregateCriteria(DSL.field(
               "{0}::varchar[] || {1}::varchar[] || {2}::varchar[] || {3}::varchar[] || {4}::varchar[] || {5}::varchar[]",
-              DSL.arrayAggDistinct(DSL.concat(LAUNCH_ATTRIBUTE.KEY, ":"))
-                  .filterWhere(LAUNCH_ATTRIBUTE.SYSTEM.eq(true)),
-              DSL.arrayAggDistinct(DSL.concat(LAUNCH_ATTRIBUTE.VALUE))
-                  .filterWhere(LAUNCH_ATTRIBUTE.SYSTEM.eq(true)),
+              DSL.arrayAggDistinct(DSL.concat(DSL.coalesce(LAUNCH_ATTRIBUTE.KEY, ""), ":"))
+                  .filterWhere(DSL.coalesce(LAUNCH_ATTRIBUTE.SYSTEM, true).eq(true)),
+              DSL.arrayAggDistinct(DSL.concat(DSL.coalesce(LAUNCH_ATTRIBUTE.VALUE, "")))
+                  .filterWhere(DSL.coalesce(LAUNCH_ATTRIBUTE.SYSTEM, true).eq(true)),
               DSL.arrayAgg(DSL.concat(DSL.coalesce(LAUNCH_ATTRIBUTE.KEY, ""),
                       DSL.val(KEY_VALUE_SEPARATOR),
-                      LAUNCH_ATTRIBUTE.VALUE
+                      DSL.coalesce(LAUNCH_ATTRIBUTE.SYSTEM, true)
                   ))
-                  .filterWhere(LAUNCH_ATTRIBUTE.SYSTEM.eq(true)),
+                  .filterWhere(DSL.coalesce(LAUNCH_ATTRIBUTE.SYSTEM, true).eq(true)),
               DSL.arrayAggDistinct(DSL.concat(ITEM_ATTRIBUTE.KEY, ":"))
                   .filterWhere(ITEM_ATTRIBUTE.SYSTEM.eq(true)),
               DSL.arrayAggDistinct(DSL.concat(ITEM_ATTRIBUTE.VALUE))
