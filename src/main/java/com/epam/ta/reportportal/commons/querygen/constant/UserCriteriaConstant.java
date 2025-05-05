@@ -40,6 +40,8 @@ public final class UserCriteriaConstant {
   public static final String CRITERIA_USER_PROJECT = "project";
   public static final String CRITERIA_USER_CREATED_AT = "created_at";
   public static final String CRITERIA_USER_UPDATED_AT = "updated_at";
+  public static final String CRITERIA_USER_ORGANIZATION_ID = "organization_id";
+
 
   private UserCriteriaConstant() {
     //static only
