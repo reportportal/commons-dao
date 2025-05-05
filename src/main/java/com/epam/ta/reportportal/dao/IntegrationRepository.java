@@ -125,6 +125,10 @@ public interface IntegrationRepository extends ReportPortalRepository<Integratio
   List<Integration> findAllGlobalByGroup(
       @Param("integrationGroup") IntegrationGroupEnum integrationGroup);
 
+  @Query(value = "SELECT i FROM Integration i JOIN i.type t WHERE i.project IS NULL AND t.integrationGroup = :integrationGroup order by i.creationDate desc")
+  List<Integration> findAllGlobalByGroup2(
+      @Param("integrationGroup") String integrationGroup);
+
   /**
    * Retrieve all {@link Integration} with {@link Integration#project} == null
    *
@@ -184,6 +188,6 @@ public interface IntegrationRepository extends ReportPortalRepository<Integratio
   void updateEnabledStateByIntegrationTypeId(@Param("enabled") boolean enabled,
       @Param("integrationTypeId") Long integrationTypeId);
 
-  @Query(value = "SELECT * FROM integration i LEFT OUTER JOIN integration_type it ON i.type = it.id WHERE it.name IN (:types) order by i.creation_date desc", nativeQuery = true)
+  @Query(value = "SELECT i.* FROM integration i LEFT OUTER JOIN integration_type it ON i.type = it.id WHERE it.name IN (:types) order by i.creation_date desc", nativeQuery = true)
   List<Integration> findAllByTypeIn(@Param("types") String... types);
 }

@@ -17,8 +17,8 @@
 package com.epam.ta.reportportal.entity.item;
 
 import java.io.Serializable;
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 
 /**
  * @author Pavel Bortnik

@@ -19,9 +19,8 @@ package com.epam.ta.reportportal.config;
 import com.epam.ta.reportportal.dao.ReportPortalRepositoryImpl;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Properties;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import org.flywaydb.core.Flyway;
 import org.jooq.SQLDialect;
@@ -57,8 +56,14 @@ import org.springframework.util.Assert;
  */
 @Configuration
 @EnableJpaAuditing
-@EnableJpaRepositories(basePackages = {
-    "com.epam.ta.reportportal.dao"}, repositoryBaseClass = ReportPortalRepositoryImpl.class, repositoryFactoryBeanClass = DatabaseConfiguration.RpRepoFactoryBean.class)
+@EnableJpaRepositories(
+    basePackages = {
+        "com.epam.ta.reportportal.**.dao",
+        "com.epam.ta.reportportal.**.repository"
+    },
+    repositoryBaseClass = ReportPortalRepositoryImpl.class,
+    repositoryFactoryBeanClass = DatabaseConfiguration.RpRepoFactoryBean.class
+)
 @EnableTransactionManagement
 @EnableCaching
 public class DatabaseConfiguration {
@@ -74,20 +79,14 @@ public class DatabaseConfiguration {
 
   @Bean
   public EntityManagerFactory entityManagerFactory() {
-
     HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
     vendorAdapter.setGenerateDdl(false);
 
     LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
     factory.setJpaVendorAdapter(vendorAdapter);
     factory.setPackagesToScan("com.epam.ta.reportportal.commons",
-        "com.epam.ta.reportportal.entity");
+        "com.epam.ta.reportportal.**.entity");
     factory.setDataSource(dataSource);
-
-    Properties jpaProperties = new Properties();
-    jpaProperties.setProperty("hibernate.dialect",
-        "com.epam.ta.reportportal.commons.JsonbAwarePostgresDialect");
-    factory.setJpaProperties(jpaProperties);
 
     factory.afterPropertiesSet();
 

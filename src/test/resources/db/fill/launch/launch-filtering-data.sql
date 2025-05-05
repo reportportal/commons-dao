@@ -10,6 +10,8 @@ INSERT INTO item_attribute(key, value, launch_id)
 VALUES ('key2', 'value2', 1);
 INSERT INTO item_attribute(key, value, launch_id)
 VALUES ('key3', 'value3', 1);
+INSERT INTO item_attribute(key, value, launch_id)
+VALUES ('key:semi', 'value:colon', 1);
 
 INSERT INTO launch(id, uuid, project_id, user_id, name, start_time, end_time, last_modified, mode,
                    status)

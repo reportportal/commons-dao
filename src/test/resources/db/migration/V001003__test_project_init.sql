@@ -3,6 +3,7 @@ CREATE OR REPLACE FUNCTION test_project_init()
 $$
 DECLARE
     falcon       BIGINT;
+    death_star   BIGINT;
     han_solo     BIGINT;
     chubaka      BIGINT;
     fake_chubaka BIGINT;
@@ -13,6 +14,10 @@ BEGIN
     INSERT INTO project (name, project_type, creation_date)
     VALUES ('millennium_falcon', 'INTERNAL', now());
     falcon := (SELECT currval(pg_get_serial_sequence('project', 'id')));
+
+    INSERT INTO project (name, project_type, creation_date)
+    VALUES ('death_star', 'INTERNAL', now());
+    death_star := (SELECT currval(pg_get_serial_sequence('project', 'id')));
 
     INSERT INTO users (login, password, email, role, type, full_name, expired, metadata, uuid)
     VALUES ('han_solo', '3531f6f9b0538fd347f4c95bd2af9d01', 'han_solo@domain.com', 'ADMINISTRATOR',

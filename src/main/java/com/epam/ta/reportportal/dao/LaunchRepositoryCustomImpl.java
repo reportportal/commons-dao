@@ -67,13 +67,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.jooq.DSLContext;
 import org.jooq.Field;
+import org.jooq.JSON;
 import org.jooq.SortField;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.repository.support.PageableExecutionUtils;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -186,7 +187,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
     List<Field<?>> simpleSelectedFields = getLaunchSimpleSelectedFields();
 
     List<Field<?>> selectFields = new ArrayList<>(simpleSelectedFields);
-    selectFields.add(getAttributeConcatedFields());
+    selectFields.addAll(getAttributeConcatenatedFields());
 
     List<Field<?>> groupFields = new ArrayList<>(simpleSelectedFields);
     for (SortField<?> sortField : sortFieldList) {
@@ -223,11 +224,14 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
     );
   }
 
-  private Field<String[]> getAttributeConcatedFields() {
-    return DSL.arrayAgg(DSL.concat(
-        ITEM_ATTRIBUTE.KEY, DSL.val(":"),
-        ITEM_ATTRIBUTE.VALUE, DSL.val(":"),
-        ITEM_ATTRIBUTE.SYSTEM)).as(ATTRIBUTE_ALIAS);
+  private ArrayList<Field<JSON[]>> getAttributeConcatenatedFields() {
+    return Lists.newArrayList(
+        DSL.arrayAgg(DSL.jsonArray(
+                coalesce(ITEM_ATTRIBUTE.KEY, ""),
+                coalesce(ITEM_ATTRIBUTE.VALUE, ""),
+                ITEM_ATTRIBUTE.SYSTEM
+            ))
+            .as(ATTRIBUTE_ALIAS));
   }
 
   private ArrayList<Field<?>> getLaunchSimpleSelectedFields() {
@@ -263,7 +267,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
     List<Field<?>> simpleSelectedFields = getLaunchSimpleSelectedFields();
 
     List<Field<?>> selectFields = new ArrayList<>(simpleSelectedFields);
-    selectFields.add(getAttributeConcatedFields());
+    selectFields.addAll(getAttributeConcatenatedFields());
 
     return LAUNCH_FETCHER.apply(dsl.fetch(dsl.with(FILTERED_QUERY)
         .as(dsl.select(LAUNCH.ID)

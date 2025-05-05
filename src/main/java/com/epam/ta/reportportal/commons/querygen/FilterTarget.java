@@ -28,6 +28,7 @@ import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteri
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_SUBJECT_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_SUBJECT_NAME;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_SUBJECT_TYPE;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_CREATION_DATE;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_DESCRIPTION;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_END_TIME;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_ID;
@@ -139,6 +140,7 @@ import static com.epam.ta.reportportal.jooq.Tables.USERS;
 import static com.epam.ta.reportportal.jooq.Tables.WIDGET;
 import static com.epam.ta.reportportal.jooq.tables.JOwnedEntity.OWNED_ENTITY;
 import static org.jooq.impl.DSL.choose;
+import static org.jooq.impl.DSL.coalesce;
 import static org.jooq.impl.DSL.field;
 
 import com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant;
@@ -550,15 +552,13 @@ public enum FilterTarget {
     }
 
     private List<Field<?>> getSelectAggregatedFields() {
-      return Lists.newArrayList(DSL.arrayAgg(
-          DSL.field("concat({0}, {1}, {2}, {3}, {4})",
-              ITEM_ATTRIBUTE.KEY,
-              KEY_VALUE_SEPARATOR,
-              ITEM_ATTRIBUTE.VALUE,
-              KEY_VALUE_SEPARATOR,
-              ITEM_ATTRIBUTE.SYSTEM
-          )).as(ATTRIBUTE_ALIAS)
-      );
+      return Lists.newArrayList(
+          DSL.arrayAgg(DSL.jsonArray(
+                  coalesce(ITEM_ATTRIBUTE.KEY, ""),
+                  coalesce(ITEM_ATTRIBUTE.VALUE, ""),
+                  ITEM_ATTRIBUTE.SYSTEM
+              ))
+              .as(ATTRIBUTE_ALIAS));
     }
   },
 
@@ -819,15 +819,15 @@ public enum FilterTarget {
                       LAUNCH.ID.eq(LAUNCH_ATTRIBUTE.LAUNCH_ID))
               )).withAggregateCriteria(DSL.field(
               "{0}::varchar[] || {1}::varchar[] || {2}::varchar[] || {3}::varchar[] || {4}::varchar[] || {5}::varchar[]",
-              DSL.arrayAggDistinct(DSL.concat(LAUNCH_ATTRIBUTE.KEY, ":"))
-                  .filterWhere(LAUNCH_ATTRIBUTE.SYSTEM.eq(true)),
-              DSL.arrayAggDistinct(DSL.concat(LAUNCH_ATTRIBUTE.VALUE))
-                  .filterWhere(LAUNCH_ATTRIBUTE.SYSTEM.eq(true)),
+              DSL.arrayAggDistinct(DSL.concat(DSL.coalesce(LAUNCH_ATTRIBUTE.KEY, ""), ":"))
+                  .filterWhere(DSL.coalesce(LAUNCH_ATTRIBUTE.SYSTEM, true).eq(true)),
+              DSL.arrayAggDistinct(DSL.concat(DSL.coalesce(LAUNCH_ATTRIBUTE.VALUE, "")))
+                  .filterWhere(DSL.coalesce(LAUNCH_ATTRIBUTE.SYSTEM, true).eq(true)),
               DSL.arrayAgg(DSL.concat(DSL.coalesce(LAUNCH_ATTRIBUTE.KEY, ""),
                       DSL.val(KEY_VALUE_SEPARATOR),
-                      LAUNCH_ATTRIBUTE.VALUE
+                      DSL.coalesce(LAUNCH_ATTRIBUTE.VALUE, "")
                   ))
-                  .filterWhere(LAUNCH_ATTRIBUTE.SYSTEM.eq(true)),
+                  .filterWhere(DSL.coalesce(LAUNCH_ATTRIBUTE.SYSTEM, true).eq(true)),
               DSL.arrayAggDistinct(DSL.concat(ITEM_ATTRIBUTE.KEY, ":"))
                   .filterWhere(ITEM_ATTRIBUTE.SYSTEM.eq(true)),
               DSL.arrayAggDistinct(DSL.concat(ITEM_ATTRIBUTE.VALUE))
@@ -972,6 +972,7 @@ public enum FilterTarget {
           ISSUE.AUTO_ANALYZED,
           ISSUE.IGNORE_ANALYZER,
           ISSUE.ISSUE_DESCRIPTION,
+          ISSUE_TYPE.ID,
           ISSUE_TYPE.LOCATOR,
           ISSUE_TYPE.ABBREVIATION,
           ISSUE_TYPE.HEX_COLOR,
@@ -989,15 +990,13 @@ public enum FilterTarget {
     }
 
     private List<Field<?>> getSelectAggregatedFields() {
-      return Lists.newArrayList(DSL.arrayAgg(
-          DSL.field("concat({0}, {1}, {2}, {3}, {4})",
-              ITEM_ATTRIBUTE.KEY,
-              KEY_VALUE_SEPARATOR,
-              ITEM_ATTRIBUTE.VALUE,
-              KEY_VALUE_SEPARATOR,
-              ITEM_ATTRIBUTE.SYSTEM
-          )).as(ATTRIBUTE_ALIAS)
-      );
+      return Lists.newArrayList(
+          DSL.arrayAgg(DSL.jsonArray(
+                  coalesce(ITEM_ATTRIBUTE.KEY, ""),
+                  coalesce(ITEM_ATTRIBUTE.VALUE, ""),
+                  ITEM_ATTRIBUTE.SYSTEM
+              ))
+              .as(ATTRIBUTE_ALIAS));
     }
   },
 
@@ -1243,6 +1242,8 @@ public enum FilterTarget {
 
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ID, DASHBOARD.ID, Long.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_NAME, DASHBOARD.NAME, String.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_CREATION_DATE, DASHBOARD.CREATION_DATE,
+          Timestamp.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ID, OWNED_ENTITY.PROJECT_ID,
               Long.class)
           .withAggregateCriteria(DSL.max(OWNED_ENTITY.PROJECT_ID).toString())

@@ -798,6 +798,13 @@ class TestItemRepositoryTest extends BaseTest {
   }
 
   @Test
+  void selectTestItemsProjection() {
+    List<TestItem> withToInvestigate = testItemRepository.selectTestItemsProjection(3L);
+    Assertions.assertFalse(withToInvestigate.isEmpty());
+  }
+
+
+  @Test
   void searchByPatternNameTest() {
 
     Filter filter = Filter.builder()

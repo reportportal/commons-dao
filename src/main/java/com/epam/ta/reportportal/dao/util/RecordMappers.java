@@ -30,6 +30,7 @@ import static com.epam.ta.reportportal.jooq.Tables.FILTER;
 import static com.epam.ta.reportportal.jooq.Tables.INTEGRATION;
 import static com.epam.ta.reportportal.jooq.Tables.INTEGRATION_TYPE;
 import static com.epam.ta.reportportal.jooq.Tables.ISSUE;
+import static com.epam.ta.reportportal.jooq.Tables.ISSUE_GROUP;
 import static com.epam.ta.reportportal.jooq.Tables.ISSUE_TYPE;
 import static com.epam.ta.reportportal.jooq.Tables.LAUNCH;
 import static com.epam.ta.reportportal.jooq.Tables.LOG;
@@ -71,6 +72,7 @@ import com.epam.ta.reportportal.entity.enums.IntegrationAuthFlowEnum;
 import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
 import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
+import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
 import com.epam.ta.reportportal.entity.filter.UserFilter;
 import com.epam.ta.reportportal.entity.integration.Integration;
@@ -103,7 +105,10 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -118,6 +123,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import org.apache.logging.log4j.util.Strings;
 import org.jooq.Field;
+import org.jooq.JSON;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
 import org.jooq.Result;
@@ -148,12 +154,42 @@ public class RecordMappers {
     return attribute;
   };
 
+  public static final RecordMapper<? super Record, IssueGroup> ISSUE_GROUP_RECORD_MAPPER = r -> {
+    if (r.field(ISSUE_GROUP.ISSUE_GROUP_ID) == null || r.get(ISSUE_GROUP.ISSUE_GROUP_ID) == null) {
+      return null;
+    }
+    IssueGroup issueGroup = new IssueGroup();
+    ofNullable(r.get(ISSUE_GROUP.ISSUE_GROUP_ID))
+        .ifPresent(igId -> issueGroup.setId(r.get(ISSUE_GROUP.ISSUE_GROUP_ID, Integer.class)));
+
+    if (r.field(ISSUE_GROUP.ISSUE_GROUP_) != null && r.get(ISSUE_GROUP.ISSUE_GROUP_) != null) {
+      issueGroup.setTestItemIssueGroup(
+          TestItemIssueGroup.valueOf(r.get(ISSUE_GROUP.ISSUE_GROUP_).getLiteral()));
+    }
+
+    return issueGroup;
+  };
+
   /**
    * Maps record into {@link IssueType} object
    */
   public static final RecordMapper<? super Record, IssueType> ISSUE_TYPE_RECORD_MAPPER = r -> {
-    IssueType type = r.into(IssueType.class);
-    type.setIssueGroup(r.into(IssueGroup.class));
+    if (r.field(ISSUE_TYPE.ID) == null || r.get(ISSUE_TYPE.ID) == null) {
+      return null;
+    }
+    IssueType type = new IssueType();
+    ofNullable(r.get(ISSUE_TYPE.ID))
+        .ifPresent(val -> type.setId(r.get(ISSUE_TYPE.ID)));
+    ofNullable(r.get(ISSUE_TYPE.ISSUE_NAME))
+        .ifPresent(longName -> type.setLongName(r.get(ISSUE_TYPE.ISSUE_NAME)));
+    ofNullable(r.get(ISSUE_TYPE.LOCATOR))
+        .ifPresent(locator -> type.setLocator(r.get(ISSUE_TYPE.LOCATOR)));
+    ofNullable(r.get(ISSUE_TYPE.ABBREVIATION))
+        .ifPresent(shortName -> type.setShortName(r.get(ISSUE_TYPE.ABBREVIATION)));
+    ofNullable(r.get(ISSUE_TYPE.HEX_COLOR))
+        .ifPresent(hexColor -> type.setHexColor(r.get(ISSUE_TYPE.HEX_COLOR)));
+    type.setIssueGroup(ISSUE_GROUP_RECORD_MAPPER.map(r));
+
     return type;
   };
 
@@ -161,14 +197,19 @@ public class RecordMappers {
    * Maps record into {@link IssueEntity} object
    */
   public static final RecordMapper<? super Record, IssueEntity> ISSUE_RECORD_MAPPER = r -> {
+    if (r.field(ISSUE.ISSUE_ID) == null || r.get(ISSUE.ISSUE_ID) == null) {
+      return null;
+    }
     IssueEntity issueEntity = r.into(IssueEntity.class);
     issueEntity.setIssueType(ISSUE_TYPE_RECORD_MAPPER.map(r));
     return issueEntity;
   };
 
-  /**
-   * Maps record into {@link Project} object
-   */
+
+
+    /**
+     * Maps record into {@link Project} object
+     */
   public static final RecordMapper<? super Record, Project> PROJECT_MAPPER = r -> {
     Project project = r.into(PROJECT.ID, PROJECT.NAME, PROJECT.ORGANIZATION, PROJECT.CREATION_DATE,
             PROJECT.PROJECT_TYPE)
@@ -324,8 +365,8 @@ public class RecordMappers {
   );
 
   /**
-   * Maps record into {@link PatternTemplate} object (only {@link PatternTemplate#id} and {@link
-   * PatternTemplate#name} fields)
+   * Maps record into {@link PatternTemplate} object (only {@link PatternTemplate#id} and
+   * {@link PatternTemplate#name} fields)
    */
   public static final Function<? super Record, Optional<PatternTemplate>> PATTERN_TEMPLATE_NAME_RECORD_MAPPER = r -> ofNullable(
       r.get(
@@ -351,7 +392,7 @@ public class RecordMappers {
     final IndexLaunch indexLaunch = new IndexLaunch();
     indexLaunch.setLaunchId(record.get(LAUNCH.ID));
     indexLaunch.setLaunchName(record.get(LAUNCH.NAME));
-    indexLaunch.setLaunchStartTime(record.get(LAUNCH.START_TIME, LocalDateTime.class ));
+    indexLaunch.setLaunchStartTime(record.get(LAUNCH.START_TIME, LocalDateTime.class));
     indexLaunch.setProjectId(record.get(LAUNCH.PROJECT_ID));
     indexLaunch.setLaunchNumber(
         (record.get(LAUNCH.NUMBER) != null) ? record.get(LAUNCH.NUMBER).longValue() : null);
@@ -507,17 +548,20 @@ public class RecordMappers {
     List<ItemAttribute> attributeList = new ArrayList<>();
 
     if (r.get(ATTRIBUTE_ALIAS) != null) {
-      String[] attributesArray = r.get(ATTRIBUTE_ALIAS, String[].class);
+      List<JSON> attributesArray = r.get(ATTRIBUTE_ALIAS, List.class);
+      Gson gson = new Gson();
+      Type listType = new TypeToken<List<String>>() {
+      }.getType();
 
-      for (String attributeString : attributesArray) {
-        if (Strings.isEmpty(attributeString)) {
+      for (JSON attributeEntry : attributesArray) {
+        if (attributeEntry == null) {
           continue;
         }
+        String[] attributes = gson.<List<String>>fromJson(attributeEntry.data(), listType)
+            .toArray(new String[0]);
 
-        // explode attributes from string "key:value:system"
-        String[] attributes = attributeString.split(":", -1);
-        if (attributes.length > 1 && (Strings.isNotEmpty(attributes[0]) || Strings.isNotEmpty(
-            attributes[1]))) {
+        if (attributes.length > 1 && (Strings.isNotEmpty(attributes[0])
+            || Strings.isNotEmpty(attributes[1]))) {
           Boolean systemAttribute;
           //Case when system attribute is retrieved as 't' or 'f'
           if ("t".equals(attributes[2]) || "f".equals(attributes[2])) {
@@ -532,7 +576,7 @@ public class RecordMappers {
       }
     }
 
-    if (attributeList.size() > 0) {
+    if (!attributeList.isEmpty()) {
       return Optional.of(attributeList);
     } else {
       return Optional.empty();

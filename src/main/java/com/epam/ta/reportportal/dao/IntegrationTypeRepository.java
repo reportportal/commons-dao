@@ -17,6 +17,7 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
+import com.epam.ta.reportportal.entity.enums.PluginTypeEnum;
 import com.epam.ta.reportportal.entity.integration.IntegrationType;
 import java.util.List;
 import java.util.Optional;
@@ -62,4 +63,12 @@ public interface IntegrationTypeRepository extends ReportPortalRepository<Integr
    */
   @Query(value = "SELECT it.* FROM integration_type it WHERE (it.details -> 'details'->>'accessType' = :accessType)", nativeQuery = true)
   List<IntegrationType> findAllByAccessType(@Param("accessType") String accessType);
+
+  /**
+   * Retrieve all {@link IntegrationType} by {@link PluginTypeEnum}
+   *
+   * @param pluginType {@link PluginTypeEnum}
+   * @return The {@link List} of the {@link IntegrationType}
+   */
+  List<IntegrationType> findAllByPluginType(PluginTypeEnum pluginType);
 }
