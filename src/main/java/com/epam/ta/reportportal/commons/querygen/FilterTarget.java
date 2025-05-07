@@ -121,6 +121,9 @@ import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaCon
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_SYNCHRONIZATION_DATE;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_TYPE;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER;
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER_CREATED_AT;
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER_ORGANIZATION_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER_UPDATED_AT;
 import static com.epam.ta.reportportal.entity.organization.OrganizationFilter.PROJECTS_QUANTITY;
 import static com.epam.ta.reportportal.entity.project.ProjectInfo.LAST_RUN;
 import static com.epam.ta.reportportal.entity.project.ProjectInfo.LAUNCHES_QUANTITY;
@@ -394,6 +397,8 @@ public enum FilterTarget {
           .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_FULLNAME, USERS.FULL_NAME, String.class)
           .get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_USER_CREATED_AT, USERS.CREATED_AT, Timestamp.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_USER_UPDATED_AT, USERS.UPDATED_AT, Timestamp.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ROLE, USERS.ROLE, String.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_INSTANCE_ROLE, USERS.ROLE, String.class)
           .get(),
@@ -406,9 +411,7 @@ public enum FilterTarget {
           .withAggregateCriteria(DSL.arrayAgg(PROJECT.NAME).toString())
           .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_KEY, PROJECT.KEY, String.class).get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ORGANIZATION_ID, PROJECT.ORGANIZATION_ID, List.class)
-          .withAggregateCriteria(DSL.arrayAgg(PROJECT.ORGANIZATION_ID).toString())
-          .get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_USER_ORGANIZATION_ID, ORGANIZATION_USER.ORGANIZATION_ID, Long.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_LAST_LOGIN,
           "(" + USERS.METADATA + "-> 'metadata' ->> 'last_login')::DOUBLE PRECISION ",
           Long.class
