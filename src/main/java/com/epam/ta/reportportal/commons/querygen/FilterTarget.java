@@ -741,7 +741,7 @@ public enum FilterTarget {
                   ))
               )
               .withAggregateCriteria(DSL.arrayAggDistinct(ITEM_ATTRIBUTE.KEY)
-                  .filterWhere(ITEM_ATTRIBUTE.SYSTEM.eq(false))
+                  .filterWhere(DSL.coalesce(ITEM_ATTRIBUTE.SYSTEM, false).eq(false))
                   .toString())
               .get(),
 
