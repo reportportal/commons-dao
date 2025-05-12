@@ -12,9 +12,9 @@ on:
 env:
   GH_USER_NAME: github.actor
   SCRIPTS_VERSION: 5.14.0
-  BOM_VERSION: 5.14.0
+  BOM_VERSION: 5.14.1
   MIGRATIONS_VERSION: 5.14.0
-  RELEASE_VERSION: 5.14.0
+  RELEASE_VERSION: 5.14.1
 
 jobs:
   release:
@@ -42,7 +42,7 @@ jobs:
       - name: Release with Gradle
         id: release
         run: |
-          ./gradlew release -PreleaseMode -Pscripts.version=${{env.SCRIPTS_VERSION}} \
+          ./gradlew release -PreleaseMode=true -Pscripts.version=${{env.SCRIPTS_VERSION}} \
           -Pbom.version=${{env.BOM_VERSION}} -Pmigrations.version=${{env.MIGRATIONS_VERSION}} \
           -PgithubUserName=${{env.GH_USER_NAME}} -PgithubToken=${{secrets.GITHUB_TOKEN}} \
           -PgpgPassphrase=${{secrets.GPG_PASSPHRASE}} -PgpgPrivateKey="${{secrets.GPG_PRIVATE_KEY}}" \
