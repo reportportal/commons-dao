@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.entity.project.Project;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -27,9 +28,9 @@ public interface ProjectRepository extends ReportPortalRepository<Project, Long>
 
   Optional<Project> findByName(String name);
 
-	Optional<Project> findByKey(String key);
+  Optional<Project> findByKey(String key);
 
-	boolean existsByName(String name);
+  boolean existsByName(String name);
 
   Optional<Project> findByNameAndOrganizationId(String name, Long organizationId);
 
@@ -39,5 +40,19 @@ public interface ProjectRepository extends ReportPortalRepository<Project, Long>
   @Query(value = "SELECT p.* FROM project p JOIN project_user pu on p.id = pu.project_id JOIN users u on pu.user_id = u.id WHERE u.login = :login AND p.project_type = :projectType", nativeQuery = true)
   List<Project> findUserProjects(@Param("login") String login,
       @Param("projectType") String projectType);
+
+
+  /**
+   * Deletes project user records for all projects belonging to the specified organization.
+   *
+   * @param orgId The organization ID
+   * @param userId The user ID
+   */
+  @Modifying
+  @Query(value = """
+      DELETE FROM project_user pu WHERE pu.user_id = :userId AND pu.project_id IN (SELECT id FROM project WHERE organization_id = :orgId)
+      """,
+      nativeQuery = true)
+  void deleteProjectUserByProjectOrganizationId(@Param("orgId") Long orgId, @Param("userId") Long userId);
 
 }
