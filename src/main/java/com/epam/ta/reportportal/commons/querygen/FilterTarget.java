@@ -836,7 +836,7 @@ public enum FilterTarget {
                       DSL.val(KEY_VALUE_SEPARATOR),
                       DSL.coalesce(ITEM_ATTRIBUTE.VALUE, "")
                   ))
-                  .filterWhere(DSL.coalesce(ITEM_ATTRIBUTE.SYSTEM, "").eq(true))
+                  .filterWhere(DSL.coalesce(ITEM_ATTRIBUTE.SYSTEM, true).eq(true))
           ).toString()).get(),
 
           new CriteriaHolderBuilder().newBuilder(CRITERIA_PATTERN_TEMPLATE_NAME,
