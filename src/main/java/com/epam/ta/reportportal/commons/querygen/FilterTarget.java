@@ -831,7 +831,7 @@ public enum FilterTarget {
               DSL.arrayAggDistinct(DSL.concat((DSL.coalesce(ITEM_ATTRIBUTE.KEY, "")), ":"))
                   .filterWhere(DSL.coalesce(ITEM_ATTRIBUTE.SYSTEM.eq(true), true)),
               DSL.arrayAggDistinct(DSL.concat(DSL.coalesce(ITEM_ATTRIBUTE.VALUE, "")))
-                  .filterWhere(DSL.coalesce(ITEM_ATTRIBUTE.SYSTEM, "").eq(true)),
+                  .filterWhere(DSL.coalesce(ITEM_ATTRIBUTE.SYSTEM, true).eq(true)),
               DSL.arrayAgg(DSL.concat(DSL.coalesce(ITEM_ATTRIBUTE.KEY, ""),
                       DSL.val(KEY_VALUE_SEPARATOR),
                       DSL.coalesce(ITEM_ATTRIBUTE.VALUE, "")
