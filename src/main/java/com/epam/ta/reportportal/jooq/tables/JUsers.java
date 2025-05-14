@@ -4,16 +4,22 @@
 package com.epam.ta.reportportal.jooq.tables;
 
 
+import com.epam.ta.reportportal.dao.converters.JooqInstantConverter;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.JApiKeys.JApiKeysPath;
+import com.epam.ta.reportportal.jooq.tables.JGroups.JGroupsPath;
+import com.epam.ta.reportportal.jooq.tables.JGroupsUsers.JGroupsUsersPath;
 import com.epam.ta.reportportal.jooq.tables.JLaunch.JLaunchPath;
+import com.epam.ta.reportportal.jooq.tables.JOrganization.JOrganizationPath;
+import com.epam.ta.reportportal.jooq.tables.JOrganizationUser.JOrganizationUserPath;
 import com.epam.ta.reportportal.jooq.tables.JProject.JProjectPath;
 import com.epam.ta.reportportal.jooq.tables.JProjectUser.JProjectUserPath;
 import com.epam.ta.reportportal.jooq.tables.JUserCreationBid.JUserCreationBidPath;
 import com.epam.ta.reportportal.jooq.tables.JUserPreference.JUserPreferencePath;
 import com.epam.ta.reportportal.jooq.tables.records.JUsersRecord;
 
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -119,6 +125,21 @@ public class JUsers extends TableImpl<JUsersRecord> {
     public final TableField<JUsersRecord, JSONB> METADATA = createField(DSL.name("metadata"), SQLDataType.JSONB, this, "");
 
     /**
+     * The column <code>public.users.created_at</code>.
+     */
+    public final TableField<JUsersRecord, Instant> CREATED_AT = createField(DSL.name("created_at"), SQLDataType.LOCALDATETIME(6).nullable(false).defaultValue(DSL.field(DSL.raw("now()"), SQLDataType.LOCALDATETIME)), this, "", new JooqInstantConverter());
+
+    /**
+     * The column <code>public.users.updated_at</code>.
+     */
+    public final TableField<JUsersRecord, Instant> UPDATED_AT = createField(DSL.name("updated_at"), SQLDataType.LOCALDATETIME(6).nullable(false).defaultValue(DSL.field(DSL.raw("now()"), SQLDataType.LOCALDATETIME)), this, "", new JooqInstantConverter());
+
+    /**
+     * The column <code>public.users.active</code>.
+     */
+    public final TableField<JUsersRecord, Boolean> ACTIVE = createField(DSL.name("active"), SQLDataType.BOOLEAN.defaultValue(DSL.field(DSL.raw("true"), SQLDataType.BOOLEAN)), this, "");
+
+    /**
      * The column <code>public.users.uuid</code>.
      */
     public final TableField<JUsersRecord, java.util.UUID> UUID = createField(DSL.name("uuid"), SQLDataType.UUID.nullable(false).defaultValue(DSL.field(DSL.raw("gen_random_uuid()"), SQLDataType.UUID)), this, "");
@@ -127,11 +148,6 @@ public class JUsers extends TableImpl<JUsersRecord> {
      * The column <code>public.users.external_id</code>.
      */
     public final TableField<JUsersRecord, String> EXTERNAL_ID = createField(DSL.name("external_id"), SQLDataType.VARCHAR, this, "");
-
-    /**
-     * The column <code>public.users.active</code>.
-     */
-    public final TableField<JUsersRecord, Boolean> ACTIVE = createField(DSL.name("active"), SQLDataType.BOOLEAN.defaultValue(DSL.field(DSL.raw("true"), SQLDataType.BOOLEAN)), this, "");
 
     private JUsers(Name alias, Table<JUsersRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);
@@ -228,6 +244,32 @@ public class JUsers extends TableImpl<JUsersRecord> {
         return _apiKeys;
     }
 
+    private transient JGroupsPath _groups;
+
+    /**
+     * Get the implicit to-many join path to the <code>public.groups</code>
+     * table
+     */
+    public JGroupsPath groups() {
+        if (_groups == null)
+            _groups = new JGroupsPath(this, null, Keys.GROUPS__GROUPS_CREATED_BY_FKEY.getInverseKey());
+
+        return _groups;
+    }
+
+    private transient JGroupsUsersPath _groupsUsers;
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>public.groups_users</code> table
+     */
+    public JGroupsUsersPath groupsUsers() {
+        if (_groupsUsers == null)
+            _groupsUsers = new JGroupsUsersPath(this, null, Keys.GROUPS_USERS__GROUPS_USERS_USER_ID_FKEY.getInverseKey());
+
+        return _groupsUsers;
+    }
+
     private transient JLaunchPath _launch;
 
     /**
@@ -239,6 +281,19 @@ public class JUsers extends TableImpl<JUsersRecord> {
             _launch = new JLaunchPath(this, null, Keys.LAUNCH__LAUNCH_USER_ID_FKEY.getInverseKey());
 
         return _launch;
+    }
+
+    private transient JOrganizationUserPath _organizationUser;
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>public.organization_user</code> table
+     */
+    public JOrganizationUserPath organizationUser() {
+        if (_organizationUser == null)
+            _organizationUser = new JOrganizationUserPath(this, null, Keys.ORGANIZATION_USER__ORGANIZATION_USER_USER_ID_FKEY.getInverseKey());
+
+        return _organizationUser;
     }
 
     private transient JProjectUserPath _projectUser;
@@ -278,6 +333,14 @@ public class JUsers extends TableImpl<JUsersRecord> {
             _userPreference = new JUserPreferencePath(this, null, Keys.USER_PREFERENCE__USER_PREFERENCE_USER_ID_FKEY.getInverseKey());
 
         return _userPreference;
+    }
+
+    /**
+     * Get the implicit many-to-many join path to the
+     * <code>public.organization</code> table
+     */
+    public JOrganizationPath organization() {
+        return organizationUser().organization();
     }
 
     /**

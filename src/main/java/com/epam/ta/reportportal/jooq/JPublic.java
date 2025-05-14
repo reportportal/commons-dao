@@ -18,6 +18,9 @@ import com.epam.ta.reportportal.jooq.tables.JDashboardWidget;
 import com.epam.ta.reportportal.jooq.tables.JFilter;
 import com.epam.ta.reportportal.jooq.tables.JFilterCondition;
 import com.epam.ta.reportportal.jooq.tables.JFilterSort;
+import com.epam.ta.reportportal.jooq.tables.JGroups;
+import com.epam.ta.reportportal.jooq.tables.JGroupsProjects;
+import com.epam.ta.reportportal.jooq.tables.JGroupsUsers;
 import com.epam.ta.reportportal.jooq.tables.JIntegration;
 import com.epam.ta.reportportal.jooq.tables.JIntegrationType;
 import com.epam.ta.reportportal.jooq.tables.JIssue;
@@ -34,7 +37,8 @@ import com.epam.ta.reportportal.jooq.tables.JLog;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
-import com.epam.ta.reportportal.jooq.tables.JOnboarding;
+import com.epam.ta.reportportal.jooq.tables.JOrganization;
+import com.epam.ta.reportportal.jooq.tables.JOrganizationUser;
 import com.epam.ta.reportportal.jooq.tables.JOwnedEntity;
 import com.epam.ta.reportportal.jooq.tables.JParameter;
 import com.epam.ta.reportportal.jooq.tables.JPatternTemplate;
@@ -157,6 +161,21 @@ public class JPublic extends SchemaImpl {
     public final JFilterSort FILTER_SORT = JFilterSort.FILTER_SORT;
 
     /**
+     * The table <code>public.groups</code>.
+     */
+    public final JGroups GROUPS = JGroups.GROUPS;
+
+    /**
+     * The table <code>public.groups_projects</code>.
+     */
+    public final JGroupsProjects GROUPS_PROJECTS = JGroupsProjects.GROUPS_PROJECTS;
+
+    /**
+     * The table <code>public.groups_users</code>.
+     */
+    public final JGroupsUsers GROUPS_USERS = JGroupsUsers.GROUPS_USERS;
+
+    /**
      * The table <code>public.integration</code>.
      */
     public final JIntegration INTEGRATION = JIntegration.INTEGRATION;
@@ -237,9 +256,14 @@ public class JPublic extends SchemaImpl {
     public final JOauthRegistrationScope OAUTH_REGISTRATION_SCOPE = JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE;
 
     /**
-     * The table <code>public.onboarding</code>.
+     * The table <code>public.organization</code>.
      */
-    public final JOnboarding ONBOARDING = JOnboarding.ONBOARDING;
+    public final JOrganization ORGANIZATION = JOrganization.ORGANIZATION;
+
+    /**
+     * The table <code>public.organization_user</code>.
+     */
+    public final JOrganizationUser ORGANIZATION_USER = JOrganizationUser.ORGANIZATION_USER;
 
     /**
      * The table <code>public.owned_entity</code>.
@@ -432,6 +456,9 @@ public class JPublic extends SchemaImpl {
             JFilter.FILTER,
             JFilterCondition.FILTER_CONDITION,
             JFilterSort.FILTER_SORT,
+            JGroups.GROUPS,
+            JGroupsProjects.GROUPS_PROJECTS,
+            JGroupsUsers.GROUPS_USERS,
             JIntegration.INTEGRATION,
             JIntegrationType.INTEGRATION_TYPE,
             JIssue.ISSUE,
@@ -448,7 +475,8 @@ public class JPublic extends SchemaImpl {
             JOauthRegistration.OAUTH_REGISTRATION,
             JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION,
             JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE,
-            JOnboarding.ONBOARDING,
+            JOrganization.ORGANIZATION,
+            JOrganizationUser.ORGANIZATION_USER,
             JOwnedEntity.OWNED_ENTITY,
             JParameter.PARAMETER,
             JPatternTemplate.PATTERN_TEMPLATE,

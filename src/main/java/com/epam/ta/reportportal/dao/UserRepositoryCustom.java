@@ -44,6 +44,9 @@ public interface UserRepositoryCustom extends FilterableRepository<User> {
    */
   Page<User> findByFilterExcluding(Queryable filter, Pageable pageable, String... exclude);
 
+  Page<User> findProjectUsersByFilterExcluding(String projectKey, Queryable filter,
+      Pageable pageable, String... exclude);
+
   Map<String, ProjectRole> findUsernamesWithProjectRolesByProjectId(Long projectId);
 
   /**

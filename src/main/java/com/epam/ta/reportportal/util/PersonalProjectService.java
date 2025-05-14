@@ -24,7 +24,6 @@ import com.epam.ta.reportportal.dao.AttributeRepository;
 import com.epam.ta.reportportal.dao.IssueTypeRepository;
 import com.epam.ta.reportportal.dao.ProjectRepository;
 import com.epam.ta.reportportal.entity.Metadata;
-import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
@@ -85,12 +84,13 @@ public final class PersonalProjectService {
    */
   public Project generatePersonalProject(User user) {
     Project project = new Project();
+    Instant now = Instant.now();
     project.setName(generatePersonalProjectName(user.getLogin()));
-    project.setCreationDate(Instant.now());
-    project.setProjectType(ProjectType.PERSONAL);
+    project.setCreationDate(now);
+    project.setUpdatedAt(now);
 
     ProjectUser projectUser = new ProjectUser().withUser(user)
-        .withProjectRole(ProjectRole.PROJECT_MANAGER).withProject(project);
+        .withProjectRole(ProjectRole.EDITOR).withProject(project);
     project.setUsers(Sets.newHashSet(projectUser));
 
     project.setMetadata(new Metadata(Collections.singletonMap("additional_info",
@@ -113,7 +113,7 @@ public final class PersonalProjectService {
    * @return Prefix
    */
   public String getProjectPrefix(String username) {
-    String projectName = username.replaceAll("\\.", "_");
+    String projectName = username.replaceAll("[.@\\-+_%!#$&'*/=?^`{|}~]", "_");
     return (projectName + PERSONAL_PROJECT_POSTFIX).toLowerCase();
   }
 }

@@ -18,6 +18,9 @@ import com.epam.ta.reportportal.jooq.tables.JDashboardWidget;
 import com.epam.ta.reportportal.jooq.tables.JFilter;
 import com.epam.ta.reportportal.jooq.tables.JFilterCondition;
 import com.epam.ta.reportportal.jooq.tables.JFilterSort;
+import com.epam.ta.reportportal.jooq.tables.JGroups;
+import com.epam.ta.reportportal.jooq.tables.JGroupsProjects;
+import com.epam.ta.reportportal.jooq.tables.JGroupsUsers;
 import com.epam.ta.reportportal.jooq.tables.JIntegration;
 import com.epam.ta.reportportal.jooq.tables.JIntegrationType;
 import com.epam.ta.reportportal.jooq.tables.JIssue;
@@ -34,7 +37,8 @@ import com.epam.ta.reportportal.jooq.tables.JLog;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
-import com.epam.ta.reportportal.jooq.tables.JOnboarding;
+import com.epam.ta.reportportal.jooq.tables.JOrganization;
+import com.epam.ta.reportportal.jooq.tables.JOrganizationUser;
 import com.epam.ta.reportportal.jooq.tables.JOwnedEntity;
 import com.epam.ta.reportportal.jooq.tables.JParameter;
 import com.epam.ta.reportportal.jooq.tables.JPatternTemplate;
@@ -143,6 +147,21 @@ public class Tables {
     public static final JFilterSort FILTER_SORT = JFilterSort.FILTER_SORT;
 
     /**
+     * The table <code>public.groups</code>.
+     */
+    public static final JGroups GROUPS = JGroups.GROUPS;
+
+    /**
+     * The table <code>public.groups_projects</code>.
+     */
+    public static final JGroupsProjects GROUPS_PROJECTS = JGroupsProjects.GROUPS_PROJECTS;
+
+    /**
+     * The table <code>public.groups_users</code>.
+     */
+    public static final JGroupsUsers GROUPS_USERS = JGroupsUsers.GROUPS_USERS;
+
+    /**
      * The table <code>public.integration</code>.
      */
     public static final JIntegration INTEGRATION = JIntegration.INTEGRATION;
@@ -223,9 +242,14 @@ public class Tables {
     public static final JOauthRegistrationScope OAUTH_REGISTRATION_SCOPE = JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE;
 
     /**
-     * The table <code>public.onboarding</code>.
+     * The table <code>public.organization</code>.
      */
-    public static final JOnboarding ONBOARDING = JOnboarding.ONBOARDING;
+    public static final JOrganization ORGANIZATION = JOrganization.ORGANIZATION;
+
+    /**
+     * The table <code>public.organization_user</code>.
+     */
+    public static final JOrganizationUser ORGANIZATION_USER = JOrganizationUser.ORGANIZATION_USER;
 
     /**
      * The table <code>public.owned_entity</code>.
