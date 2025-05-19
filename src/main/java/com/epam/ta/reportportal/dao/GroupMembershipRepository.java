@@ -159,7 +159,7 @@ public interface GroupMembershipRepository extends
     return findMembershipRaw(userId, projectId)
         .map(record -> MembershipDetails.builder()
             .withProjectId(record.projectId())
-            .withProjectName(record.projectName())
+            .withProjectName(Optional.ofNullable(record.projectName()).orElse(""))
             .withProjectRole(record.projectRoles())
             .build()
         );

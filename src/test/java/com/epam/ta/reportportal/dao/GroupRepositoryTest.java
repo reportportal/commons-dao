@@ -59,7 +59,7 @@ public class GroupRepositoryTest extends BaseTest {
 
   @Test
   void testGroupCreation() {
-    groupRepository.save(new Group("Test group", "test-group", 1L));
+    groupRepository.save(new Group("Test group", "test-group", 1L, 1L));
     var group = groupRepository.findBySlug("test-group")
         .orElseThrow(() -> new RuntimeException("Group not found")
         );
