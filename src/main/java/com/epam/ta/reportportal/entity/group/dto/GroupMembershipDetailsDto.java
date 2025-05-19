@@ -23,7 +23,7 @@ package com.epam.ta.reportportal.entity.group.dto;
  */
 public record GroupMembershipDetailsDto(
     Long projectId,
-    String projectName,
+    String projectKey,
     String[] projectRoles
 ) {
 

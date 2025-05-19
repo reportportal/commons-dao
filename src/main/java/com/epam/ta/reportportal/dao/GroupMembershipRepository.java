@@ -69,12 +69,12 @@ public interface GroupMembershipRepository extends
    * Finds a raw project details of the user in the project via group membership.
    *
    * @param userId      user id
-   * @param projectName project name
+   * @param projectKey project key
    * @return {@link Optional} of {@link GroupMembershipDetailsDto}
    */
   @Query(value = """
       SELECT p.id AS projectId,
-        p.name AS projectName,
+        p.key AS projectKey,
         array_agg(gp.project_role) AS projectRoles
       FROM groups_projects gp
       JOIN groups_users gu
@@ -82,13 +82,13 @@ public interface GroupMembershipRepository extends
           AND gu.user_id = :userId
       JOIN Project p
         ON gp.project_id = p.id
-          AND p.name = :projectName group by p.id
+          AND p.name = :projectKey group by p.id
       """,
       nativeQuery = true
   )
   Optional<GroupMembershipDetailsDto> findMembershipRaw(
       @Param("userId") Long userId,
-      @Param("projectName") String projectName
+      @Param("projectKey") String projectKey
   );
 
   /**
@@ -100,7 +100,7 @@ public interface GroupMembershipRepository extends
    */
   @Query(value = """
       SELECT gp.project_id AS projectId,
-        null as projectName,
+        null as projectKey,
         array_agg(gp.project_role) AS projectRoles
       FROM groups_projects gp
       JOIN groups_users gu
@@ -119,22 +119,22 @@ public interface GroupMembershipRepository extends
    * Finds project details of the user in the project via group membership.
    *
    * @param userId      user id
-   * @param projectName project name
+   * @param projectKey project key
    * @return {@link Optional} of {@link MembershipDetails}
    */
   @Cacheable(
       value = "groupProjectDetailsCache",
-      key = "#userId + '_' + #projectName",
+      key = "#userId + '_' + #projectKey",
       cacheManager = "caffeineCacheManager"
   )
   default Optional<MembershipDetails> findMembershipDetails(
       Long userId,
-      String projectName
+      String projectKey
   ) {
-    return findMembershipRaw(userId, projectName)
+    return findMembershipRaw(userId, projectKey)
         .map(record -> MembershipDetails.builder()
             .withProjectId(record.projectId())
-            .withProjectName(record.projectName())
+            .withProjectKey(record.projectKey())
             .withProjectRole(record.projectRoles())
             .build()
         );
@@ -159,7 +159,7 @@ public interface GroupMembershipRepository extends
     return findMembershipRaw(userId, projectId)
         .map(record -> MembershipDetails.builder()
             .withProjectId(record.projectId())
-            .withProjectName(Optional.ofNullable(record.projectName()).orElse(""))
+            .withProjectKey(Optional.ofNullable(record.projectKey()).orElse(""))
             .withProjectRole(record.projectRoles())
             .build()
         );
