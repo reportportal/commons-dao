@@ -18,16 +18,14 @@ package com.epam.ta.reportportal.dao;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.epam.ta.reportportal.BaseTest;
-import com.epam.ta.reportportal.commons.ReportPortalUser;
 import com.epam.ta.reportportal.entity.group.GroupProject;
+import com.epam.ta.reportportal.entity.organization.MembershipDetails;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
 import com.epam.ta.reportportal.entity.user.User;
 import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,21 +50,24 @@ class GroupMembershipRepositoryTest extends BaseTest {
   @Autowired
   private ProjectRepository projectRepository;
 
+  private User chubaka;
   private User fakeChubaka;
   private Project falcon;
 
   @BeforeEach
   void setUp() {
+    chubaka = userRepository.findByLogin("chubaka")
+        .orElseThrow(() -> new RuntimeException("User not found"));
     fakeChubaka = userRepository.findByLogin("fake_chubaka")
         .orElseThrow(() -> new RuntimeException("User not found"));
     falcon = projectRepository.findByName("millennium_falcon")
         .orElseThrow(() -> new RuntimeException("Project not found"));
   }
 
-/*  @Test
+  @Test
   void shouldReturnUserGroupProjectRoles() {
     final List<ProjectRole> projectRoles = groupMembershipRepository.findUserProjectRoles(
-        fakeChubaka.getId(),
+        chubaka.getId(),
         falcon.getId()
     );
     assertEquals(2, projectRoles.size());
@@ -75,69 +76,63 @@ class GroupMembershipRepositoryTest extends BaseTest {
   @Test
   void shouldGetMaxUserProjectRole() {
     final List<ProjectRole> projectRoles = groupMembershipRepository.findUserProjectRoles(
-        fakeChubaka.getId(),
+        chubaka.getId(),
         falcon.getId()
     );
 
-    ReportPortalUser.OrganizationDetails.ProjectDetails projectDetails = new ReportPortalUser.OrganizationDetails.ProjectDetails(
-        falcon.getId(),
-        falcon.getName(),
-        ProjectRole.VIEWER
-    );
+    var membershipDetails = MembershipDetails.builder()
+        .withProjectRole(projectRoles)
+        .build();
 
-    projectDetails.setHighestRole(projectRoles);
-
-    assertEquals(ProjectRole.VIEWER, projectDetails.getProjectRole());
+    assertEquals(ProjectRole.EDITOR, membershipDetails.getProjectRole());
   }
 
   @Test
-  void shouldReturnUserProjectDetails() {
-    Long userId = fakeChubaka.getId();
-    String projectName = falcon.getName();
+  void shouldReturnMembershipDetails() {
+    final var membershipDetails = groupMembershipRepository
+        .findMembershipDetails(chubaka.getId(), falcon.getName())
+        .orElseThrow(() -> new RuntimeException("Membership details not found"));
 
-    final Optional<ReportPortalUser.OrganizationDetails.ProjectDetails> projectDetails = groupMembershipRepository
-        .findProjectDetails(userId, projectName);
-
-    assertTrue(projectDetails.isPresent());
-    assertEquals(falcon.getId(), projectDetails.get().getProjectId());
-    assertEquals(ProjectRole.VIEWER, projectDetails.get().getProjectRole());
+    assertEquals(falcon.getId(), membershipDetails.getProjectId());
+    assertEquals(ProjectRole.EDITOR, membershipDetails.getProjectRole());
   }
 
   @Test
-  void shouldReturnProjectDetailsByProjectId() {
+  void shouldReturnMembershipDetailsByProjectId() {
 
-    final Optional<ReportPortalUser.OrganizationDetails.ProjectDetails> projectDetails = groupMembershipRepository
-        .findProjectDetails(fakeChubaka.getId(), falcon.getId());
+    final var membershipDetails = groupMembershipRepository
+        .findMembershipDetails(chubaka.getId(), falcon.getId())
+        .orElseThrow(() -> new RuntimeException("Membership details not found"));
 
-    assertTrue(projectDetails.isPresent());
-    assertEquals(falcon.getId(), projectDetails.get().getProjectId());
-    assertEquals(ProjectRole.VIEWER, projectDetails.get().getProjectRole());
+    assertEquals(falcon.getId(), membershipDetails.getProjectId());
+    assertEquals(ProjectRole.EDITOR, membershipDetails.getProjectRole());
   }
 
   @Test
   void ShouldCacheUserProjectRoles() {
+    final Long userId = chubaka.getId();
+    final Long projectId = falcon.getId();
+
     final List<ProjectRole> projectRoles = groupMembershipRepository.findUserProjectRoles(
-        fakeChubaka.getId(),
-        falcon.getId()
+        userId,
+        projectId
     );
     assertNotNull(projectRoles);
 
     Cache cache = cacheManager.getCache("groupUserProjectRolesCache");
     assertNotNull(cache);
 
-    Cache.ValueWrapper valueWrapper = cache.get(fakeChubaka.getId() + "_" + falcon.getId());
+    Cache.ValueWrapper valueWrapper = cache.get(userId + "_" + projectId);
     assertNotNull(valueWrapper);
   }
 
   @Test
-  void ShouldCacheProjectDetails() {
-    final Long userId = fakeChubaka.getId();
+  void ShouldCacheMembershipDetails() {
+    final Long userId = chubaka.getId();
     final String projectName = falcon.getName();
-    final Optional<ReportPortalUser.OrganizationDetails.ProjectDetails> projectDetails = groupMembershipRepository.findProjectDetails(
-        userId,
-        projectName
-    );
-    assertTrue(projectDetails.isPresent());
+    groupMembershipRepository.findMembershipDetails(userId, projectName)
+        .orElseThrow(() -> new RuntimeException("Membership details not found"));
+
     Cache cache = cacheManager.getCache("groupProjectDetailsCache");
     assertNotNull(cache);
     Cache.ValueWrapper valueWrapper = cache.get(userId + "_" + projectName);
@@ -149,5 +144,5 @@ class GroupMembershipRepositoryTest extends BaseTest {
     List<GroupProject> groupProjects = groupMembershipRepository.findAllUserProjects(
         fakeChubaka.getId());
     assertEquals(4, groupProjects.size());
-  }*/
+  }
 }

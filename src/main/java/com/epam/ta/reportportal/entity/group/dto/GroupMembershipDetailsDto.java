@@ -21,7 +21,7 @@ package com.epam.ta.reportportal.entity.group.dto;
  *
  * @author <a href="mailto:Reingold_Shekhtel@epam.com">Reingold Shekhtel</a>
  */
-public record GroupProjectDetailsDto(
+public record GroupMembershipDetailsDto(
     Long projectId,
     String projectName,
     String[] projectRoles

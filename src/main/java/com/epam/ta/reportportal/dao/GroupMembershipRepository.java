@@ -16,10 +16,10 @@
 
 package com.epam.ta.reportportal.dao;
 
-import com.epam.ta.reportportal.commons.ReportPortalUser;
+import com.epam.ta.reportportal.entity.organization.MembershipDetails;
 import com.epam.ta.reportportal.entity.group.GroupProject;
 import com.epam.ta.reportportal.entity.group.GroupProjectId;
-import com.epam.ta.reportportal.entity.group.dto.GroupProjectDetailsDto;
+import com.epam.ta.reportportal.entity.group.dto.GroupMembershipDetailsDto;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
 import java.util.List;
 import java.util.Optional;
@@ -32,20 +32,19 @@ import org.springframework.data.repository.query.Param;
  *
  * @author <a href="mailto:Reingold_Shekhtel@epam.com">Reingold Shekhtel</a>
  * @see GroupProject
- * @see ReportPortalUser.ProjectDetails
+ * @see MembershipDetails
  * @see ProjectRole
  */
 public interface GroupMembershipRepository extends
     ReportPortalRepository<GroupProject, GroupProjectId> {
 
-  // TODO: implement taking into account organizations
   /**
    * Finds all roles of the user in the project via group membership.
    *
    * @param userId    user id
    * @param projectId project id
    * @return {@link List} of {@link ProjectRole}
-   *//*
+   */
   @Query(value = """
       SELECT DISTINCT gp.project_role
       FROM groups_projects gp
@@ -66,18 +65,17 @@ public interface GroupMembershipRepository extends
       @Param("projectId") Long projectId
   );
 
-  *//**
+  /**
    * Finds a raw project details of the user in the project via group membership.
    *
    * @param userId      user id
    * @param projectName project name
-   * @return {@link Optional} of {@link GroupProjectDetailsDto}
-   *//*
-
+   * @return {@link Optional} of {@link GroupMembershipDetailsDto}
+   */
   @Query(value = """
       SELECT p.id AS projectId,
         p.name AS projectName,
-        array_agg(gp.project_role) AS projectRole
+        array_agg(gp.project_role) AS projectRoles
       FROM groups_projects gp
       JOIN groups_users gu
         ON gp.group_id = gu.group_id
@@ -88,22 +86,22 @@ public interface GroupMembershipRepository extends
       """,
       nativeQuery = true
   )
-  Optional<GroupProjectDetailsDto> findProjectDetailsRaw(
+  Optional<GroupMembershipDetailsDto> findMembershipRaw(
       @Param("userId") Long userId,
       @Param("projectName") String projectName
   );
 
-  *//**
+  /**
    * Finds a raw project details of the user in the project via group membership.
    *
    * @param userId    user id
    * @param projectId project id
-   * @return {@link Optional} of {@link GroupProjectDetailsDto}
-   *//*
+   * @return {@link Optional} of {@link GroupMembershipDetailsDto}
+   */
   @Query(value = """
       SELECT gp.project_id AS projectId,
         null as projectName,
-        array_agg(gp.project_role) AS projectRole
+        array_agg(gp.project_role) AS projectRoles
       FROM groups_projects gp
       JOIN groups_users gu
         ON gp.group_id = gu.group_id
@@ -113,65 +111,66 @@ public interface GroupMembershipRepository extends
       """,
       nativeQuery = true
   )
-  Optional<GroupProjectDetailsDto> findProjectDetailsRaw(
+  Optional<GroupMembershipDetailsDto> findMembershipRaw(
       @Param("userId") Long userId,
       @Param("projectId") Long projectId
   );
-
-  *//**
+  /**
    * Finds project details of the user in the project via group membership.
    *
    * @param userId      user id
    * @param projectName project name
-   * @return {@link Optional} of {@link ReportPortalUser.ProjectDetails}
-   *//*
+   * @return {@link Optional} of {@link MembershipDetails}
+   */
   @Cacheable(
       value = "groupProjectDetailsCache",
       key = "#userId + '_' + #projectName",
       cacheManager = "caffeineCacheManager"
   )
-  default Optional<ReportPortalUser.ProjectDetails> findProjectDetails(
+  default Optional<MembershipDetails> findMembershipDetails(
       Long userId,
       String projectName
   ) {
-    return findProjectDetailsRaw(userId, projectName)
-        .map(record -> new ReportPortalUser.ProjectDetails(
-            record.projectId(),
-            record.projectName(),
-            record.projectRoles()
-        ));
+    return findMembershipRaw(userId, projectName)
+        .map(record -> MembershipDetails.builder()
+            .withProjectId(record.projectId())
+            .withProjectName(record.projectName())
+            .withProjectRole(record.projectRoles())
+            .build()
+        );
   }
 
-  *//**
+  /**
    * Finds project details of the user in the project via group membership.
    *
    * @param userId    user id
    * @param projectId project id
-   * @return {@link Optional} of {@link ReportPortalUser.ProjectDetails}
-   *//*
+   * @return {@link Optional} of {@link MembershipDetails}
+   */
   @Cacheable(
       value = "groupProjectDetailsCache",
       key = "#userId + '_' + #projectId",
       cacheManager = "caffeineCacheManager"
   )
-  default Optional<ReportPortalUser.ProjectDetails> findProjectDetails(
+  default Optional<MembershipDetails> findMembershipDetails(
       Long userId,
       Long projectId
   ) {
-    return findProjectDetailsRaw(userId, projectId)
-        .map(record -> new ReportPortalUser.ProjectDetails(
-            record.projectId(),
-            "",
-            record.projectRoles()
-        ));
+    return findMembershipRaw(userId, projectId)
+        .map(record -> MembershipDetails.builder()
+            .withProjectId(record.projectId())
+            .withProjectName(record.projectName())
+            .withProjectRole(record.projectRoles())
+            .build()
+        );
   }
 
-  *//**
+  /**
    * Finds all projects of the user via group membership.
    *
    * @param userId user id
    * @return {@link List} of {@link GroupProject}
-   *//*
+   */
   @Query(value = """
       SELECT gp.project_id, gp.group_id, gp.project_role, gp.created_at, gp.updated_at
       FROM groups_projects gp
@@ -181,5 +180,5 @@ public interface GroupMembershipRepository extends
       """,
       nativeQuery = true
   )
-  List<GroupProject> findAllUserProjects(@Param("user_id") Long userId);*/
+  List<GroupProject> findAllUserProjects(@Param("user_id") Long userId);
 }
