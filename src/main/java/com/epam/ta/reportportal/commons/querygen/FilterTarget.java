@@ -121,6 +121,9 @@ import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaCon
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_SYNCHRONIZATION_DATE;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_TYPE;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER;
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER_CREATED_AT;
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER_ORGANIZATION_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER_UPDATED_AT;
 import static com.epam.ta.reportportal.entity.organization.OrganizationFilter.PROJECTS_QUANTITY;
 import static com.epam.ta.reportportal.entity.project.ProjectInfo.LAST_RUN;
 import static com.epam.ta.reportportal.entity.project.ProjectInfo.LAUNCHES_QUANTITY;
@@ -394,6 +397,8 @@ public enum FilterTarget {
           .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_FULLNAME, USERS.FULL_NAME, String.class)
           .get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_USER_CREATED_AT, USERS.CREATED_AT, Timestamp.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_USER_UPDATED_AT, USERS.UPDATED_AT, Timestamp.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ROLE, USERS.ROLE, String.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_INSTANCE_ROLE, USERS.ROLE, String.class)
           .get(),
@@ -406,9 +411,7 @@ public enum FilterTarget {
           .withAggregateCriteria(DSL.arrayAgg(PROJECT.NAME).toString())
           .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_KEY, PROJECT.KEY, String.class).get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ORGANIZATION_ID, PROJECT.ORGANIZATION_ID, List.class)
-          .withAggregateCriteria(DSL.arrayAgg(PROJECT.ORGANIZATION_ID).toString())
-          .get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_USER_ORGANIZATION_ID, ORGANIZATION_USER.ORGANIZATION_ID, Long.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_LAST_LOGIN,
           "(" + USERS.METADATA + "-> 'metadata' ->> 'last_login')::DOUBLE PRECISION ",
           Long.class
@@ -794,7 +797,7 @@ public enum FilterTarget {
                   ))
               )
               .withAggregateCriteria(DSL.arrayAggDistinct(ITEM_ATTRIBUTE.KEY)
-                  .filterWhere(ITEM_ATTRIBUTE.SYSTEM.eq(false))
+                  .filterWhere(DSL.coalesce(ITEM_ATTRIBUTE.SYSTEM, false).eq(false))
                   .toString())
               .get(),
 
@@ -807,7 +810,7 @@ public enum FilterTarget {
                   ))
               )
               .withAggregateCriteria(DSL.arrayAggDistinct(ITEM_ATTRIBUTE.VALUE)
-                  .filterWhere(ITEM_ATTRIBUTE.SYSTEM.eq(false))
+                  .filterWhere(DSL.coalesce(ITEM_ATTRIBUTE.SYSTEM, false).eq(false))
                   .toString())
               .get(),
 
@@ -872,15 +875,15 @@ public enum FilterTarget {
                       LAUNCH.ID.eq(LAUNCH_ATTRIBUTE.LAUNCH_ID))
               )).withAggregateCriteria(DSL.field(
               "{0}::varchar[] || {1}::varchar[] || {2}::varchar[] || {3}::varchar[] || {4}::varchar[] || {5}::varchar[]",
-              DSL.arrayAggDistinct(DSL.concat(LAUNCH_ATTRIBUTE.KEY, ":"))
-                  .filterWhere(LAUNCH_ATTRIBUTE.SYSTEM.eq(true)),
-              DSL.arrayAggDistinct(DSL.concat(LAUNCH_ATTRIBUTE.VALUE))
-                  .filterWhere(LAUNCH_ATTRIBUTE.SYSTEM.eq(true)),
+              DSL.arrayAggDistinct(DSL.concat(DSL.coalesce(LAUNCH_ATTRIBUTE.KEY, ""), ":"))
+                  .filterWhere(DSL.coalesce(LAUNCH_ATTRIBUTE.SYSTEM, true).eq(true)),
+              DSL.arrayAggDistinct(DSL.concat(DSL.coalesce(LAUNCH_ATTRIBUTE.VALUE, "")))
+                  .filterWhere(DSL.coalesce(LAUNCH_ATTRIBUTE.SYSTEM, true).eq(true)),
               DSL.arrayAgg(DSL.concat(DSL.coalesce(LAUNCH_ATTRIBUTE.KEY, ""),
                       DSL.val(KEY_VALUE_SEPARATOR),
-                      LAUNCH_ATTRIBUTE.VALUE
+                      DSL.coalesce(LAUNCH_ATTRIBUTE.VALUE, "")
                   ))
-                  .filterWhere(LAUNCH_ATTRIBUTE.SYSTEM.eq(true)),
+                  .filterWhere(DSL.coalesce(LAUNCH_ATTRIBUTE.SYSTEM, true).eq(true)),
               DSL.arrayAggDistinct(DSL.concat(ITEM_ATTRIBUTE.KEY, ":"))
                   .filterWhere(ITEM_ATTRIBUTE.SYSTEM.eq(true)),
               DSL.arrayAggDistinct(DSL.concat(ITEM_ATTRIBUTE.VALUE))
