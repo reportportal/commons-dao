@@ -51,6 +51,7 @@ dependencies {
     jooqCodegen "org.postgresql:postgresql:${jdbcDriverVersion}"
 
     implementation 'jakarta.xml.bind:jakarta.xml.bind-api:4.0.2'
+    implementation 'jakarta.mail:jakarta.mail-api:2.1.3'
     implementation 'javax.xml.bind:jaxb-api:2.4.0-b180830.0359'
 
     implementation 'io.swagger.core.v3:swagger-annotations:2.2.9'
