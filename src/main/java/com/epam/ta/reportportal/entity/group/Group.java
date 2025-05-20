@@ -73,6 +73,9 @@ public class Group implements Serializable {
   @Column(name = "name")
   private String name;
 
+  @Column(name = "org_id")
+  private Long organizationId;
+
   @Column(name = "created_by")
   private Long createdBy;
 
@@ -97,9 +100,10 @@ public class Group implements Serializable {
    * @param slug      Group slug
    * @param createdBy User ID who created the group
    */
-  public Group(String name, String slug, Long createdBy) {
+  public Group(String name, String slug, Long orgId, Long createdBy) {
     this.name = name;
     this.slug = slug;
+    this.organizationId = orgId;
     this.createdBy = createdBy;
   }
 

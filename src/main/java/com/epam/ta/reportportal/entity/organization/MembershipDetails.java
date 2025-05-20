@@ -1,8 +1,10 @@
 package com.epam.ta.reportportal.entity.organization;
 
 import com.epam.ta.reportportal.entity.project.ProjectRole;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -73,6 +75,21 @@ public class MembershipDetails {
 
     public MembershipDetails.MembershipDetailsBuilder withProjectRole(ProjectRole projectRole) {
       this.projectRole = projectRole;
+      return this;
+    }
+
+    public MembershipDetails.MembershipDetailsBuilder withProjectRole(Collection<ProjectRole> roles) {
+      this.projectRole = new ArrayList<>(roles).stream()
+          .max(ProjectRole::compareTo)
+          .orElse(null);
+      return this;
+    }
+
+    public MembershipDetails.MembershipDetailsBuilder withProjectRole(String[] roles) {
+      var projectRoles = Arrays.stream(roles)
+          .map(ProjectRole::valueOf)
+          .toList();
+      this.withProjectRole(projectRoles);
       return this;
     }
 
