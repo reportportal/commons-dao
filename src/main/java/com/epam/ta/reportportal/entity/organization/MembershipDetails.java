@@ -78,18 +78,18 @@ public class MembershipDetails {
       return this;
     }
 
-    public MembershipDetails.MembershipDetailsBuilder withProjectRole(Collection<ProjectRole> roles) {
+    public MembershipDetails.MembershipDetailsBuilder withProjectHighestRole(Collection<ProjectRole> roles) {
       this.projectRole = new ArrayList<>(roles).stream()
           .max(ProjectRole::compareTo)
           .orElse(null);
       return this;
     }
 
-    public MembershipDetails.MembershipDetailsBuilder withProjectRole(String[] roles) {
+    public MembershipDetails.MembershipDetailsBuilder withProjectHighestRole(String[] roles) {
       var projectRoles = Arrays.stream(roles)
           .map(ProjectRole::valueOf)
           .toList();
-      this.withProjectRole(projectRoles);
+      this.withProjectHighestRole(projectRoles);
       return this;
     }
 

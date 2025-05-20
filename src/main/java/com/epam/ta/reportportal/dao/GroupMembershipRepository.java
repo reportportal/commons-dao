@@ -135,7 +135,7 @@ public interface GroupMembershipRepository extends
         .map(record -> MembershipDetails.builder()
             .withProjectId(record.projectId())
             .withProjectKey(record.projectKey())
-            .withProjectRole(record.projectRoles())
+            .withProjectHighestRole(record.projectRoles())
             .build()
         );
   }
@@ -160,7 +160,7 @@ public interface GroupMembershipRepository extends
         .map(record -> MembershipDetails.builder()
             .withProjectId(record.projectId())
             .withProjectKey(Optional.ofNullable(record.projectKey()).orElse(""))
-            .withProjectRole(record.projectRoles())
+            .withProjectHighestRole(record.projectRoles())
             .build()
         );
   }

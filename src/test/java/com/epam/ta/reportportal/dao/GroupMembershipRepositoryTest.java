@@ -81,7 +81,7 @@ class GroupMembershipRepositoryTest extends BaseTest {
     );
 
     var membershipDetails = MembershipDetails.builder()
-        .withProjectRole(projectRoles)
+        .withProjectHighestRole(projectRoles)
         .build();
 
     assertEquals(ProjectRole.EDITOR, membershipDetails.getProjectRole());
