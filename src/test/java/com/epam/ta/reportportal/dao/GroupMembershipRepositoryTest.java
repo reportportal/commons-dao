@@ -145,4 +145,13 @@ class GroupMembershipRepositoryTest extends BaseTest {
         fakeChubaka.getId());
     assertEquals(4, groupProjects.size());
   }
+
+  @Test
+  void ShouldReturnAllUserProjectsInOrganization() {
+    var groupProjects = groupMembershipRepository.findAllUserProjectsInOrganization(
+        fakeChubaka.getId(),
+        1L
+    );
+    assertEquals(4, groupProjects.size());
+  }
 }
