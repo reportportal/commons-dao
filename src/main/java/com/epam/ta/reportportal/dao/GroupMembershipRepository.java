@@ -177,8 +177,34 @@ public interface GroupMembershipRepository extends
       JOIN groups_users gu
         ON gp.group_id = gu.group_id
       WHERE gu.user_id = :user_id
+      ORDER BY gp.project_id
       """,
       nativeQuery = true
   )
   List<GroupProject> findAllUserProjects(@Param("user_id") Long userId);
+
+  /**
+   * Finds all projects of the user via group membership in the organization.
+   *
+   * @param userId user id
+   * @param orgId organization id
+   * @return {@link List} of {@link GroupProject}
+   */
+  @Query(value = """
+      SELECT gp.project_id, gp.group_id, gp.project_role, gp.created_at, gp.updated_at
+      FROM groups_projects gp
+      JOIN groups_users gu
+        ON gp.group_id = gu.group_id
+      JOIN groups g
+        ON g.id = gp.group_id
+      WHERE gu.user_id = :userId
+        AND g.org_id = :orgId
+      ORDER BY gp.project_id
+      """,
+      nativeQuery = true
+  )
+  List<GroupProject> findAllUserProjectsInOrganization(
+      @Param("userId") Long userId,
+      @Param("orgId") Long orgId
+  );
 }
