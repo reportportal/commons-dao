@@ -24,6 +24,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 /**
  * Repository for {@link Group}.
@@ -59,6 +60,17 @@ public interface GroupRepository extends ReportPortalRepository<Group, Long> {
   @EntityGraph(attributePaths = {"users", "projects"})
   @Query("SELECT g FROM Group g")
   Page<Group> findAllWithUsersAndProjects(Pageable pageable);
+
+  /**
+   * Retrieves all groups with their users and projects with pagination.
+   *
+   * @param pageable {@link Pageable} object
+   * @param orgId Organization identifier
+   * @return {@link Page} of {@link Group}
+   */
+  @EntityGraph(attributePaths = {"users", "projects"})
+  @Query("SELECT g FROM Group g WHERE g.organizationId = :orgId")
+  Page<Group> findAllWithUsersAndProjects(@Param("orgId") Long orgId, Pageable pageable);
 
   /**
    * Retrieves a group by its ID with users and projects.

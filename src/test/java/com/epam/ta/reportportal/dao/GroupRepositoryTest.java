@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.entity.group.Group;
 import jakarta.persistence.EntityManager;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.stat.Statistics;
 import org.junit.jupiter.api.BeforeEach;
@@ -80,8 +81,22 @@ public class GroupRepositoryTest extends BaseTest {
     assertEquals(5, groups.getContent().size());
 
     groups.forEach(group -> {
-      System.out.println("Group users: " + group.getUsers().size());
-      System.out.println("Group projects: " + group.getProjects().size());
+      Hibernate.initialize(group.getUsers().size());
+      Hibernate.initialize(group.getProjects().size());
+    });
+
+    assertEquals(1, statistics.getQueryExecutionCount());
+    assertEquals(1, statistics.getPrepareStatementCount());
+  }
+
+  @Test
+  void testFindAllWithUsersAndProjectsFilteredByOrgId() {
+    var groups = groupRepository.findAllWithUsersAndProjects(1L, null);
+    assertEquals(5, groups.getContent().size());
+
+    groups.forEach(group -> {
+      Hibernate.initialize(group.getUsers().size());
+      Hibernate.initialize(group.getProjects().size());
     });
 
     assertEquals(1, statistics.getQueryExecutionCount());
@@ -94,8 +109,8 @@ public class GroupRepositoryTest extends BaseTest {
         .orElseThrow(() -> new RuntimeException("Group not found")
         );
 
-    System.out.println("Group users: " + group.getUsers().size());
-    System.out.println("Group projects: " + group.getProjects().size());
+    Hibernate.initialize(group.getUsers().size());
+    Hibernate.initialize(group.getProjects().size());
 
     assertEquals(1, statistics.getQueryExecutionCount());
     assertEquals(1, statistics.getPrepareStatementCount());
