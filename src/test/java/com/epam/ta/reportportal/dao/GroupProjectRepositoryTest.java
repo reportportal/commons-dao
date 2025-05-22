@@ -90,8 +90,8 @@ class GroupProjectRepositoryTest extends BaseTest {
     );
     groupProjectsPage.forEach(g ->
         {
-          Hibernate.initialize(g.getGroup());
-          Hibernate.initialize(g.getGroup().getUsers());
+          Hibernate.initialize(g.getGroup().getSlug());
+          Hibernate.initialize(g.getGroup().getUsers().size());
         }
     );
 
