@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.entity.project.Project;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -33,6 +34,10 @@ public interface ProjectRepository extends ReportPortalRepository<Project, Long>
 
   Optional<Project> findByNameAndOrganizationId(String name, Long organizationId);
 
+  Optional<Project> findByIdAndOrganizationId(Long projectId, Long organizationId);
+
+  boolean existsByIdAndOrganizationId(Long projectId, Long organizationId);
+
   @Query(value = "SELECT p.* FROM project p JOIN project_user pu on p.id = pu.project_id JOIN users u on pu.user_id = u.id WHERE u.login = :login", nativeQuery = true)
   List<Project> findUserProjects(@Param("login") String login);
 
@@ -40,4 +45,11 @@ public interface ProjectRepository extends ReportPortalRepository<Project, Long>
   List<Project> findUserProjects(@Param("login") String login,
       @Param("projectType") String projectType);
 
+  @Modifying
+  @Query(value = "UPDATE project SET name = :projectName WHERE id = :projectId", nativeQuery = true)
+  void updateProjectName(@Param("projectName") String projectName, @Param("projectId") Long projectId);
+
+  @Modifying
+  @Query(value = "UPDATE project SET slug = :projectSlug WHERE id = :projectId", nativeQuery = true)
+  void updateProjectSlug(@Param("projectSlug") String projectSlug, @Param("projectId") Long projectId);
 }
