@@ -90,7 +90,7 @@ public class GroupRepositoryTest extends BaseTest {
 
   @Test
   void testFindAllWithUsersAndProjectsFilteredByOrgId() {
-    var groups = groupRepository.findAllWithUsersAndProjects(null, 1L);
+    var groups = groupRepository.findAllWithUsersAndProjects(1L, null);
     assertEquals(5, groups.getContent().size());
 
     groups.forEach(group -> {

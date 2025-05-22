@@ -65,11 +65,12 @@ public interface GroupRepository extends ReportPortalRepository<Group, Long> {
    * Retrieves all groups with their users and projects with pagination.
    *
    * @param pageable {@link Pageable} object
+   * @param orgId Organization identifier
    * @return {@link Page} of {@link Group}
    */
   @EntityGraph(attributePaths = {"users", "projects"})
   @Query("SELECT g FROM Group g WHERE g.organizationId = :orgId")
-  Page<Group> findAllWithUsersAndProjects(Pageable pageable, @Param("orgId") Long orgId);
+  Page<Group> findAllWithUsersAndProjects(@Param("orgId") Long orgId, Pageable pageable);
 
   /**
    * Retrieves a group by its ID with users and projects.
