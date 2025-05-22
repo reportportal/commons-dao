@@ -89,6 +89,20 @@ public class GroupRepositoryTest extends BaseTest {
   }
 
   @Test
+  void testFindAllWithUsersAndProjectsFilteredByOrgId() {
+    var groups = groupRepository.findAllWithUsersAndProjects(null, 1L);
+    assertEquals(5, groups.getContent().size());
+
+    groups.forEach(group -> {
+      System.out.println("Group users: " + group.getUsers().size());
+      System.out.println("Group projects: " + group.getProjects().size());
+    });
+
+    assertEquals(1, statistics.getQueryExecutionCount());
+    assertEquals(1, statistics.getPrepareStatementCount());
+  }
+
+  @Test
   void testFindByIdWithUsersAndProjects() {
     var group = groupRepository.findByIdWithUsersAndProjects(rebelGroup.getId())
         .orElseThrow(() -> new RuntimeException("Group not found")
