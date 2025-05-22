@@ -24,6 +24,8 @@ import com.epam.ta.reportportal.entity.group.Group;
 import com.epam.ta.reportportal.entity.group.GroupProject;
 import jakarta.persistence.EntityManager;
 import java.util.List;
+
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.stat.Statistics;
 import org.junit.jupiter.api.BeforeEach;
@@ -65,15 +67,17 @@ class GroupProjectRepositoryTest extends BaseTest {
 
   @Test
   void testFindAllGroupProjects() {
-    List<GroupProject> groupProjects = groupProjectRepository.findAllByGroupId(rebel.getId());
+    List<GroupProject> groupProjects =
+        groupProjectRepository.findAllByGroupId(rebel.getId());
     assertEquals(1, groupProjects.size());
   }
 
   @Test
   void testFindProjectsPageByGroupId() {
     var pageable = PageRequest.of(0, 10);
-    Page<GroupProject> groupProjects = groupProjectRepository.findAllByGroupId(rebel.getId(),
-        pageable);
+    Page<GroupProject> groupProjects =
+        groupProjectRepository.findAllByGroupId(rebel.getId(),
+            pageable);
     assertNotNull(groupProjects);
     assertEquals(1, groupProjects.getTotalElements());
   }
@@ -86,8 +90,8 @@ class GroupProjectRepositoryTest extends BaseTest {
     );
     groupProjectsPage.forEach(g ->
         {
-          System.out.println("Group slug: " + g.getGroup().getSlug());
-          System.out.println("Group users count: " + g.getGroup().getUsers().size());
+          Hibernate.initialize(g.getGroup());
+          Hibernate.initialize(g.getGroup().getUsers());
         }
     );
 
@@ -104,8 +108,8 @@ class GroupProjectRepositoryTest extends BaseTest {
     ).orElseThrow(
         () -> new RuntimeException("Group project not found")
     );
-    System.out.println("Group slug: " + group.getGroup().getSlug());
-    System.out.println("Group users count: " + group.getGroup().getUsers().size());
+    Hibernate.initialize(group.getGroup().getSlug());
+    Hibernate.initialize(group.getGroup().getUsers().size());
 
     assertEquals(1, statistics.getQueryExecutionCount());
     assertEquals(1, statistics.getPrepareStatementCount());
