@@ -49,10 +49,13 @@ class ItemAttributeRepositoryTest extends BaseTest {
 
     Filter filter = Filter.builder()
         .withTarget(Launch.class)
-        .withCondition(FilterCondition.builder().eq(CRITERIA_PROJECT_ID, "1").build())
+        .withCondition(
+            FilterCondition.builder().eq(CRITERIA_PROJECT_ID, "1").build())
         .build();
-    List<String> keys = repository.findAllKeysByLaunchFilter(filter, PageRequest.of(0, 600), false,
-        "step", false);
+    List<String> keys =
+        repository.findAllKeysByLaunchFilter(filter, PageRequest.of(0, 600),
+            false,
+            "step", false);
 
     assertFalse(keys.isEmpty());
   }
@@ -62,10 +65,12 @@ class ItemAttributeRepositoryTest extends BaseTest {
     final String launchKeyName = "key1";
     final Long launchId = 1L;
 
-    final Optional<ItemAttribute> optionalAttr = repository.findByLaunchIdAndKeyAndSystem(launchId,
-        launchKeyName, false);
+    final Optional<ItemAttribute> optionalAttr =
+        repository.findByLaunchIdAndKeyAndSystem(launchId,
+            launchKeyName, false);
     assertTrue(optionalAttr.isPresent(), "Should be present");
-    assertEquals(launchId, optionalAttr.get().getLaunch().getId(), "Unexpected launch id");
+    assertEquals(launchId, optionalAttr.get().getLaunch().getId(),
+        "Unexpected launch id");
     assertEquals(launchKeyName, optionalAttr.get().getKey(), "Unexpected key");
   }
 
@@ -75,12 +80,13 @@ class ItemAttributeRepositoryTest extends BaseTest {
     final String stepKey = "step";
     final String partOfItemValue = "val";
 
-    final List<String> values = repository.findTestItemAttributeValues(launchId, stepKey,
-        partOfItemValue, false);
-    System.out.println();
+    final List<String> values =
+        repository.findTestItemAttributeValues(launchId, stepKey,
+            partOfItemValue, false);
     assertNotNull(values, "Should not be null");
-    assertTrue(!values.isEmpty(), "Should not be empty");
-    values.forEach(it -> assertTrue(it.contains(partOfItemValue), "Value not matches"));
+    assertFalse(values.isEmpty(), "Should not be empty");
+    values.forEach(
+        it -> assertTrue(it.contains(partOfItemValue), "Value not matches"));
   }
 
   @Test
@@ -89,11 +95,13 @@ class ItemAttributeRepositoryTest extends BaseTest {
     final String launchName = "name 1";
     final String partOfItemKey = "st";
 
-    final List<String> keys = repository.findTestItemKeysByProjectIdAndLaunchName(projectId,
-        launchName, partOfItemKey, false);
+    final List<String> keys =
+        repository.findTestItemKeysByProjectIdAndLaunchName(projectId,
+            launchName, partOfItemKey, false);
     assertNotNull(keys, "Should not be null");
-    assertTrue(!keys.isEmpty(), "Should not be empty");
-    keys.forEach(it -> assertTrue(it.contains(partOfItemKey), "Key not matches"));
+    assertFalse(keys.isEmpty(), "Should not be empty");
+    keys.forEach(
+        it -> assertTrue(it.contains(partOfItemKey), "Key not matches"));
   }
 
   @Test
@@ -103,11 +111,13 @@ class ItemAttributeRepositoryTest extends BaseTest {
     final String stepKey = "step";
     final String partOfItemValue = "val";
 
-    final List<String> values = repository.findTestItemValuesByProjectIdAndLaunchName(projectId,
-        launchName, stepKey, partOfItemValue, false);
+    final List<String> values =
+        repository.findTestItemValuesByProjectIdAndLaunchName(projectId,
+            launchName, stepKey, partOfItemValue, false);
     assertNotNull(values, "Should not be null");
-    assertTrue(!values.isEmpty(), "Should not be empty");
-    values.forEach(it -> assertTrue(it.contains(partOfItemValue), "Value not matches"));
+    assertFalse(values.isEmpty(), "Should not be empty");
+    values.forEach(
+        it -> assertTrue(it.contains(partOfItemValue), "Value not matches"));
   }
 
   @Test
@@ -115,11 +125,13 @@ class ItemAttributeRepositoryTest extends BaseTest {
     final Long projectId = 1L;
     final String valuePart = "val";
 
-    final List<String> values = repository.findUniqueAttributeValuesByPart(projectId, null,
-        valuePart, null, false);
+    final List<String> values =
+        repository.findUniqueAttributeValuesByPart(projectId, null,
+            valuePart, null, false);
     assertNotNull(values, "Should not be null");
-    assertTrue(!values.isEmpty(), "Should not be empty");
-    values.forEach(it -> assertTrue(it.contains(valuePart), "Value not matches"));
+    assertFalse(values.isEmpty(), "Should not be empty");
+    values.forEach(
+        it -> assertTrue(it.contains(valuePart), "Value not matches"));
   }
 
   @Test
@@ -128,10 +140,11 @@ class ItemAttributeRepositoryTest extends BaseTest {
     var launchId = 1L;
     var keyPart = "st";
 
-    final List<String> keys = repository.findUniqueAttributeKeysByPart(projectId, keyPart, launchId,
-        false);
+    final List<String> keys =
+        repository.findUniqueAttributeKeysByPart(projectId, keyPart, launchId,
+            false);
     assertNotNull(keys, "Should not be null");
-    assertTrue(!keys.isEmpty(), "Should not be empty");
+    assertFalse(keys.isEmpty(), "Should not be empty");
     keys.forEach(it -> assertTrue(it.contains(keyPart), "Key not matches"));
   }
 
@@ -140,10 +153,12 @@ class ItemAttributeRepositoryTest extends BaseTest {
     final Long projectId = 1L;
     final String partOfLaunchKey = "ke";
 
-    final List<String> keys = repository.findLaunchAttributeKeys(projectId, partOfLaunchKey, false);
+    final List<String> keys =
+        repository.findLaunchAttributeKeys(projectId, partOfLaunchKey, false);
     assertNotNull(keys, "Should not be null");
-    assertTrue(!keys.isEmpty(), "Should not be empty");
-    keys.forEach(it -> assertTrue(it.contains(partOfLaunchKey), "Key not matches"));
+    assertFalse(keys.isEmpty(), "Should not be empty");
+    keys.forEach(
+        it -> assertTrue(it.contains(partOfLaunchKey), "Key not matches"));
   }
 
   @Test
@@ -152,11 +167,13 @@ class ItemAttributeRepositoryTest extends BaseTest {
     final String launchKeyName = "key1";
     final String partOfItemValue = "val";
 
-    final List<String> values = repository.findLaunchAttributeValues(projectId, launchKeyName,
-        partOfItemValue, false);
+    final List<String> values =
+        repository.findLaunchAttributeValues(projectId, launchKeyName,
+            partOfItemValue, false);
     assertNotNull(values, "Should not be null");
-    assertTrue(!values.isEmpty(), "Should not be empty");
-    values.forEach(it -> assertTrue(it.contains(partOfItemValue), "Value not matches"));
+    assertFalse(values.isEmpty(), "Should not be empty");
+    values.forEach(
+        it -> assertTrue(it.contains(partOfItemValue), "Value not matches"));
   }
 
   @Test
@@ -165,11 +182,13 @@ class ItemAttributeRepositoryTest extends BaseTest {
 
     Assertions.assertEquals(1, result);
 
-    List<String> attributeKeys = repository.findUniqueAttributeKeysByPart(1L, "new", 1L, false);
+    List<String> attributeKeys =
+        repository.findUniqueAttributeKeysByPart(1L, "new", 1L, false);
 
     Assertions.assertNotNull(attributeKeys);
     Assertions.assertFalse(attributeKeys.isEmpty());
-    Assertions.assertTrue(attributeKeys.stream().anyMatch(k -> k.equals("new key")));
+    Assertions.assertTrue(
+        attributeKeys.stream().anyMatch(k -> k.equals("new key")));
   }
 
   @Test
@@ -178,8 +197,9 @@ class ItemAttributeRepositoryTest extends BaseTest {
 
     Assertions.assertEquals(1, result);
 
-    final Optional<ItemAttribute> attribute = repository.findByLaunchIdAndKeyAndSystem(1L, "new",
-        false);
+    final Optional<ItemAttribute> attribute =
+        repository.findByLaunchIdAndKeyAndSystem(1L, "new",
+            false);
 
     Assertions.assertTrue(attribute.isPresent());
     Assertions.assertEquals("new", attribute.get().getKey());
@@ -192,10 +212,12 @@ class ItemAttributeRepositoryTest extends BaseTest {
     repository.saveByLaunchId(1L, "first", "first", true);
     repository.saveByLaunchId(1L, "second", "second", false);
 
-    final Optional<ItemAttribute> first = repository.findByLaunchIdAndKeyAndSystem(1L, "first",
-        true);
-    final Optional<ItemAttribute> second = repository.findByLaunchIdAndKeyAndSystem(1L, "second",
-        false);
+    final Optional<ItemAttribute> first =
+        repository.findByLaunchIdAndKeyAndSystem(1L, "first",
+            true);
+    final Optional<ItemAttribute> second =
+        repository.findByLaunchIdAndKeyAndSystem(1L, "second",
+            false);
 
     Assertions.assertTrue(first.isPresent());
     Assertions.assertTrue(second.isPresent());
@@ -203,10 +225,12 @@ class ItemAttributeRepositoryTest extends BaseTest {
     repository.deleteAllByLaunchIdAndKeyAndSystem(1L, "first", true);
     repository.deleteAllByLaunchIdAndKeyAndSystem(1L, "second", false);
 
-    final Optional<ItemAttribute> firstAfterRemove = repository.findByLaunchIdAndKeyAndSystem(1L,
-        "first", true);
-    final Optional<ItemAttribute> secondAfterRemove = repository.findByLaunchIdAndKeyAndSystem(1L,
-        "second", false);
+    final Optional<ItemAttribute> firstAfterRemove =
+        repository.findByLaunchIdAndKeyAndSystem(1L,
+            "first", true);
+    final Optional<ItemAttribute> secondAfterRemove =
+        repository.findByLaunchIdAndKeyAndSystem(1L,
+            "second", false);
 
     Assertions.assertFalse(firstAfterRemove.isPresent());
     Assertions.assertFalse(secondAfterRemove.isPresent());

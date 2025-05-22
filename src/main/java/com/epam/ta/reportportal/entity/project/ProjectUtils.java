@@ -24,7 +24,6 @@ import static java.util.stream.StreamSupport.stream;
 import com.epam.reportportal.rules.commons.validation.Suppliers;
 import com.epam.ta.reportportal.entity.attribute.Attribute;
 import com.epam.ta.reportportal.entity.enums.ProjectAttributeEnum;
-import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
 import com.epam.ta.reportportal.entity.project.email.SenderCase;
@@ -44,7 +43,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * Project related utility methods
@@ -211,14 +210,6 @@ public class ProjectUtils {
             .filter(pa -> pa.getAttribute().getName().startsWith(prefix))
             .collect(Collectors.toMap(pa -> pa.getAttribute().getName(), ProjectAttribute::getValue)))
         .orElseGet(Collections::emptyMap);
-  }
-
-  public static boolean isPersonalForUser(ProjectType projectType, String projectName,
-      String username) {
-    return projectType == ProjectType.PERSONAL && Pattern.compile(
-            LINE_START_SYMBOL + username + PERSONAL_PROJECT_POSTFIX_REGEX)
-        .matcher(projectName)
-        .matches();
   }
 
   public static Optional<ProjectAttribute> extractAttribute(Project project,

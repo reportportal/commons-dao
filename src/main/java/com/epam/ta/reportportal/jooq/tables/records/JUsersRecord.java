@@ -6,6 +6,7 @@ package com.epam.ta.reportportal.jooq.tables.records;
 
 import com.epam.ta.reportportal.jooq.tables.JUsers;
 
+import java.time.Instant;
 import java.util.UUID;
 
 import org.jooq.JSONB;
@@ -176,31 +177,31 @@ public class JUsersRecord extends UpdatableRecordImpl<JUsersRecord> {
     }
 
     /**
-     * Setter for <code>public.users.uuid</code>.
+     * Setter for <code>public.users.created_at</code>.
      */
-    public void setUuid(UUID value) {
+    public void setCreatedAt(Instant value) {
         set(11, value);
     }
 
     /**
-     * Getter for <code>public.users.uuid</code>.
+     * Getter for <code>public.users.created_at</code>.
      */
-    public UUID getUuid() {
-        return (UUID) get(11);
+    public Instant getCreatedAt() {
+        return (Instant) get(11);
     }
 
     /**
-     * Setter for <code>public.users.external_id</code>.
+     * Setter for <code>public.users.updated_at</code>.
      */
-    public void setExternalId(String value) {
+    public void setUpdatedAt(Instant value) {
         set(12, value);
     }
 
     /**
-     * Getter for <code>public.users.external_id</code>.
+     * Getter for <code>public.users.updated_at</code>.
      */
-    public String getExternalId() {
-        return (String) get(12);
+    public Instant getUpdatedAt() {
+        return (Instant) get(12);
     }
 
     /**
@@ -215,6 +216,34 @@ public class JUsersRecord extends UpdatableRecordImpl<JUsersRecord> {
      */
     public Boolean getActive() {
         return (Boolean) get(13);
+    }
+
+    /**
+     * Setter for <code>public.users.uuid</code>.
+     */
+    public void setUuid(UUID value) {
+        set(14, value);
+    }
+
+    /**
+     * Getter for <code>public.users.uuid</code>.
+     */
+    public UUID getUuid() {
+        return (UUID) get(14);
+    }
+
+    /**
+     * Setter for <code>public.users.external_id</code>.
+     */
+    public void setExternalId(String value) {
+        set(15, value);
+    }
+
+    /**
+     * Getter for <code>public.users.external_id</code>.
+     */
+    public String getExternalId() {
+        return (String) get(15);
     }
 
     // -------------------------------------------------------------------------
@@ -240,7 +269,7 @@ public class JUsersRecord extends UpdatableRecordImpl<JUsersRecord> {
     /**
      * Create a detached, initialised JUsersRecord
      */
-    public JUsersRecord(Long id, String login, String password, String email, String attachment, String attachmentThumbnail, String role, String type, Boolean expired, String fullName, JSONB metadata, UUID uuid, String externalId, Boolean active) {
+    public JUsersRecord(Long id, String login, String password, String email, String attachment, String attachmentThumbnail, String role, String type, Boolean expired, String fullName, JSONB metadata, Instant createdAt, Instant updatedAt, Boolean active, UUID uuid, String externalId) {
         super(JUsers.USERS);
 
         setId(id);
@@ -254,9 +283,11 @@ public class JUsersRecord extends UpdatableRecordImpl<JUsersRecord> {
         setExpired(expired);
         setFullName(fullName);
         setMetadata(metadata);
+        setCreatedAt(createdAt);
+        setUpdatedAt(updatedAt);
+        setActive(active);
         setUuid(uuid);
         setExternalId(externalId);
-        setActive(active);
         resetChangedOnNotNull();
     }
 }

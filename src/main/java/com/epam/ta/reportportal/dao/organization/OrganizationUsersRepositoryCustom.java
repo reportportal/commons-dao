@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 EPAM Systems
+ * Copyright 2024 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package com.epam.ta.reportportal.entity.group.dto;
+package com.epam.ta.reportportal.dao.organization;
+
+import com.epam.ta.reportportal.dao.FilterableRepository;
+import com.epam.ta.reportportal.entity.organization.OrganizationUserAccount;
 
 /**
- * Group project details DTO.
+ * Repository interface for searching and filtering organization records.
  *
- * @author <a href="mailto:Reingold_Shekhtel@epam.com">Reingold Shekhtel</a>
+ * @author Siarhei Hrabko
  */
-public record GroupProjectDetailsDto(
-    Long projectId,
-    String projectName,
-    String[] projectRoles
-) {
+public interface OrganizationUsersRepositoryCustom extends
+    FilterableRepository<OrganizationUserAccount> {
 
 }

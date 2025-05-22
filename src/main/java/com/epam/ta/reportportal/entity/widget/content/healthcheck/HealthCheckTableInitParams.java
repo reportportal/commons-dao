@@ -1,7 +1,7 @@
 package com.epam.ta.reportportal.entity.widget.content.healthcheck;
 
 import java.util.List;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
