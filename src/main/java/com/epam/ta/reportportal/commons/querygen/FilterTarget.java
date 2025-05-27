@@ -828,15 +828,12 @@ public enum FilterTarget {
                       DSL.coalesce(LAUNCH_ATTRIBUTE.VALUE, "")
                   ))
                   .filterWhere(DSL.coalesce(LAUNCH_ATTRIBUTE.SYSTEM, true).eq(true)),
-              DSL.arrayAggDistinct(DSL.concat(ITEM_ATTRIBUTE.KEY, ":"))
-                  .filterWhere(ITEM_ATTRIBUTE.SYSTEM.eq(true)),
-              DSL.arrayAggDistinct(DSL.concat(ITEM_ATTRIBUTE.VALUE))
-                  .filterWhere(ITEM_ATTRIBUTE.SYSTEM.eq(true)),
+              DSL.arrayAggDistinct(DSL.concat((DSL.coalesce(ITEM_ATTRIBUTE.KEY, "")), ":")),
+              DSL.arrayAggDistinct(DSL.concat(DSL.coalesce(ITEM_ATTRIBUTE.VALUE, ""))),
               DSL.arrayAgg(DSL.concat(DSL.coalesce(ITEM_ATTRIBUTE.KEY, ""),
                       DSL.val(KEY_VALUE_SEPARATOR),
-                      ITEM_ATTRIBUTE.VALUE
+                      DSL.coalesce(ITEM_ATTRIBUTE.VALUE, "")
                   ))
-                  .filterWhere(ITEM_ATTRIBUTE.SYSTEM.eq(true))
           ).toString()).get(),
 
           new CriteriaHolderBuilder().newBuilder(CRITERIA_PATTERN_TEMPLATE_NAME,
