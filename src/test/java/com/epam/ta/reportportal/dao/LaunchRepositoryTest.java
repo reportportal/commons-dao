@@ -40,6 +40,7 @@ import com.epam.ta.reportportal.commons.querygen.ConvertibleCondition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
+import com.epam.ta.reportportal.entity.enums.RetentionPolicyEnum;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
@@ -76,6 +77,12 @@ class LaunchRepositoryTest extends BaseTest {
 
   @Autowired
   private LaunchRepository launchRepository;
+
+  @Test
+  void updateRetentionPolicy() {
+    var updatedCount = launchRepository.updateLaunchesRetentionPolicy(RetentionPolicyEnum.REGULAR);
+    System.out.println(updatedCount);
+  }
 
   @Test
   void deleteByProjectId() {
