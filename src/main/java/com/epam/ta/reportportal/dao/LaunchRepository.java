@@ -58,7 +58,7 @@ public interface LaunchRepository extends ReportPortalRepository<Launch, Long>,
       SET l.retentionPolicy = :policy
       WHERE l.retentionPolicy <> :policy
       """)
-  long updateLaunchesRetentionPolicy(RetentionPolicyEnum policy);
+  int updateLaunchesRetentionPolicy(RetentionPolicyEnum policy);
 
   /**
    * Finds launch by {@link Launch#id} and sets a lock on the found launch row in the database.
