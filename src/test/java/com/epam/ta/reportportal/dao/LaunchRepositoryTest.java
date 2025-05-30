@@ -81,7 +81,7 @@ class LaunchRepositoryTest extends BaseTest {
   @Test
   void updateRetentionPolicy() {
     var updatedCount = launchRepository.updateLaunchesRetentionPolicy(RetentionPolicyEnum.REGULAR);
-    System.out.println(updatedCount);
+    assertEquals(1, updatedCount);
   }
 
   @Test

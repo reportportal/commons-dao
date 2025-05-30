@@ -54,10 +54,10 @@ public interface LaunchRepository extends ReportPortalRepository<Launch, Long>,
    */
   @Modifying
   @Query(value = """
-      UPDATE launch
-      SET retention_policy = :#{#policy.name()}
-      WHERE retention_policy != :#{#policy.name()}
-      """, nativeQuery = true)
+      UPDATE Launch l
+      SET l.retentionPolicy = :policy
+      WHERE l.retentionPolicy <> :policy
+      """)
   long updateLaunchesRetentionPolicy(RetentionPolicyEnum policy);
 
   /**
