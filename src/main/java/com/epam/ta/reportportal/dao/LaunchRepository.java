@@ -19,19 +19,21 @@ package com.epam.ta.reportportal.dao;
 import static org.hibernate.jpa.QueryHints.HINT_FETCH_SIZE;
 
 import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
+import com.epam.ta.reportportal.entity.enums.RetentionPolicyEnum;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.TestItemResults;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.project.Project;
+import jakarta.persistence.LockModeType;
+import jakarta.persistence.QueryHint;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
-import jakarta.persistence.LockModeType;
-import jakarta.persistence.QueryHint;
 import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
@@ -41,6 +43,22 @@ import org.springframework.data.repository.query.Param;
  */
 public interface LaunchRepository extends ReportPortalRepository<Launch, Long>,
     LaunchRepositoryCustom {
+
+  /**
+   * Updates the launches table setting the retention_policy column according to the provided
+   * retention policy. Only updates records where the current retention_policy differs from the
+   * provided one.
+   *
+   * @param policy the retention policy to set
+   * @return the number of rows updated
+   */
+  @Modifying
+  @Query(value = """
+      UPDATE Launch l
+      SET l.retentionPolicy = :policy
+      WHERE l.retentionPolicy <> :policy
+      """)
+  int updateLaunchesRetentionPolicy(RetentionPolicyEnum policy);
 
   /**
    * Finds launch by {@link Launch#id} and sets a lock on the found launch row in the database.
@@ -119,10 +137,10 @@ public interface LaunchRepository extends ReportPortalRepository<Launch, Long>,
 
   /**
    * @param launchId {@link Launch#getId()}
-   * @param statuses   {@link TestItemResults#getStatus()}
-   * @return `true` if {@link TestItem#getLaunchId()} equal to provided `launchId`,
-   * {@link TestItem#getParentId()} equal to `NULL` and {@link TestItemResults#getStatus()} is not
-   * equal to provided `status`, otherwise return `false`
+   * @param statuses {@link TestItemResults#getStatus()}
+   * @return `true` if {@link TestItem#getLaunchId()} equal to provided `launchId`, {@link
+   * TestItem#getParentId()} equal to `NULL` and {@link TestItemResults#getStatus()} is not equal to
+   * provided `status`, otherwise return `false`
    */
   @Query(value =
       "SELECT exists(SELECT 1 FROM test_item ti JOIN test_item_results tir ON ti.item_id = tir.result_id "
