@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.dao;
 
+import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_ACTIVITY_ORG_NAME;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_CREATED_AT;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_OBJECT_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_OBJECT_NAME;
@@ -274,6 +275,22 @@ class ActivityRepositoryTest extends BaseTest {
 		assertFalse(activities.isEmpty());
 		activities.forEach(it -> assertTrue(it.getObjectName().contains(term)));
 	}
+
+  @Test
+  void orgNameCriteriaTest() {
+    String term = "my";
+
+    List<Activity> activities = repository.findByFilter(Filter.builder()
+        .withTarget(Activity.class)
+        .withCondition(FilterCondition.builder()
+            .withCondition(Condition.CONTAINS)
+            .withSearchCriteria(CRITERIA_ACTIVITY_ORG_NAME)
+            .withValue(term)
+            .build())
+        .build());
+
+    assertEquals(3, activities.size());
+  }
 
 	private Activity generateActivity() {
 		Activity activity = new Activity();
