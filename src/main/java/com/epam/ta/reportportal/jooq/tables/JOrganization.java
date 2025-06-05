@@ -8,6 +8,8 @@ import com.epam.ta.reportportal.dao.converters.JooqInstantConverter;
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
+import com.epam.ta.reportportal.jooq.tables.JActivity.JActivityPath;
+import com.epam.ta.reportportal.jooq.tables.JGroups.JGroupsPath;
 import com.epam.ta.reportportal.jooq.tables.JOrganizationUser.JOrganizationUserPath;
 import com.epam.ta.reportportal.jooq.tables.JProject.JProjectPath;
 import com.epam.ta.reportportal.jooq.tables.JUsers.JUsersPath;
@@ -185,6 +187,19 @@ public class JOrganization extends TableImpl<JOrganizationRecord> {
         return Arrays.asList(Keys.ORGANIZATION_EXTERNAL_ID_KEY, Keys.ORGANIZATION_NAME_KEY, Keys.ORGANIZATION_SLUG_KEY);
     }
 
+    private transient JActivityPath _activity;
+
+    /**
+     * Get the implicit to-many join path to the <code>public.activity</code>
+     * table
+     */
+    public JActivityPath activity() {
+        if (_activity == null)
+            _activity = new JActivityPath(this, null, Keys.ACTIVITY__ACTIVITY_ORGANIZATION_ID_FKEY.getInverseKey());
+
+        return _activity;
+    }
+
     private transient JProjectPath _project;
 
     /**
@@ -196,6 +211,19 @@ public class JOrganization extends TableImpl<JOrganizationRecord> {
             _project = new JProjectPath(this, null, Keys.PROJECT__FK_PROJECT_ORGANIZATION.getInverseKey());
 
         return _project;
+    }
+
+    private transient JGroupsPath _groups;
+
+    /**
+     * Get the implicit to-many join path to the <code>public.groups</code>
+     * table
+     */
+    public JGroupsPath groups() {
+        if (_groups == null)
+            _groups = new JGroupsPath(this, null, Keys.GROUPS__GROUPS_ORG_ID_FKEY.getInverseKey());
+
+        return _groups;
     }
 
     private transient JOrganizationUserPath _organizationUser;

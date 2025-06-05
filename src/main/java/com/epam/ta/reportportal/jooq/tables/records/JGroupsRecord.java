@@ -7,6 +7,7 @@ package com.epam.ta.reportportal.jooq.tables.records;
 import com.epam.ta.reportportal.jooq.tables.JGroups;
 
 import java.time.Instant;
+import java.util.UUID;
 
 import org.jooq.Record1;
 import org.jooq.impl.UpdatableRecordImpl;
@@ -104,6 +105,34 @@ public class JGroupsRecord extends UpdatableRecordImpl<JGroupsRecord> {
         return (Instant) get(5);
     }
 
+    /**
+     * Setter for <code>public.groups.org_id</code>.
+     */
+    public void setOrgId(Integer value) {
+        set(6, value);
+    }
+
+    /**
+     * Getter for <code>public.groups.org_id</code>.
+     */
+    public Integer getOrgId() {
+        return (Integer) get(6);
+    }
+
+    /**
+     * Setter for <code>public.groups.uuid</code>.
+     */
+    public void setUuid(UUID value) {
+        set(7, value);
+    }
+
+    /**
+     * Getter for <code>public.groups.uuid</code>.
+     */
+    public UUID getUuid() {
+        return (UUID) get(7);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -127,7 +156,7 @@ public class JGroupsRecord extends UpdatableRecordImpl<JGroupsRecord> {
     /**
      * Create a detached, initialised JGroupsRecord
      */
-    public JGroupsRecord(Long id, String slug, String name, Long createdBy, Instant createdAt, Instant updatedAt) {
+    public JGroupsRecord(Long id, String slug, String name, Long createdBy, Instant createdAt, Instant updatedAt, Integer orgId, UUID uuid) {
         super(JGroups.GROUPS);
 
         setId(id);
@@ -136,6 +165,8 @@ public class JGroupsRecord extends UpdatableRecordImpl<JGroupsRecord> {
         setCreatedBy(createdBy);
         setCreatedAt(createdAt);
         setUpdatedAt(updatedAt);
+        setOrgId(orgId);
+        setUuid(uuid);
         resetChangedOnNotNull();
     }
 }

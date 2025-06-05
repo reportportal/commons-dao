@@ -97,6 +97,11 @@ public class JIntegrationType extends TableImpl<JIntegrationTypeRecord> {
      */
     public final TableField<JIntegrationTypeRecord, JSONB> DETAILS = createField(DSL.name("details"), SQLDataType.JSONB, this, "");
 
+    /**
+     * The column <code>public.integration_type.plugin_type</code>.
+     */
+    public final TableField<JIntegrationTypeRecord, String> PLUGIN_TYPE = createField(DSL.name("plugin_type"), SQLDataType.VARCHAR(128).nullable(false).defaultValue(DSL.field(DSL.raw("'EXTENSION'::character varying"), SQLDataType.VARCHAR)), this, "");
+
     private JIntegrationType(Name alias, Table<JIntegrationTypeRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);
     }

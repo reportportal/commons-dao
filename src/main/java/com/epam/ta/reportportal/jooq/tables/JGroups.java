@@ -9,6 +9,7 @@ import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.JGroupsProjects.JGroupsProjectsPath;
 import com.epam.ta.reportportal.jooq.tables.JGroupsUsers.JGroupsUsersPath;
+import com.epam.ta.reportportal.jooq.tables.JOrganization.JOrganizationPath;
 import com.epam.ta.reportportal.jooq.tables.JProject.JProjectPath;
 import com.epam.ta.reportportal.jooq.tables.JUsers.JUsersPath;
 import com.epam.ta.reportportal.jooq.tables.records.JGroupsRecord;
@@ -92,6 +93,16 @@ public class JGroups extends TableImpl<JGroupsRecord> {
      */
     public final TableField<JGroupsRecord, Instant> UPDATED_AT = createField(DSL.name("updated_at"), SQLDataType.LOCALDATETIME(6).nullable(false).defaultValue(DSL.field(DSL.raw("now()"), SQLDataType.LOCALDATETIME)), this, "", new JooqInstantConverter());
 
+    /**
+     * The column <code>public.groups.org_id</code>.
+     */
+    public final TableField<JGroupsRecord, Integer> ORG_ID = createField(DSL.name("org_id"), SQLDataType.INTEGER, this, "");
+
+    /**
+     * The column <code>public.groups.uuid</code>.
+     */
+    public final TableField<JGroupsRecord, java.util.UUID> UUID = createField(DSL.name("uuid"), SQLDataType.UUID.nullable(false).defaultValue(DSL.field(DSL.raw("gen_random_uuid()"), SQLDataType.UUID)), this, "");
+
     private JGroups(Name alias, Table<JGroupsRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);
     }
@@ -171,12 +182,12 @@ public class JGroups extends TableImpl<JGroupsRecord> {
 
     @Override
     public List<UniqueKey<JGroupsRecord>> getUniqueKeys() {
-        return Arrays.asList(Keys.GROUPS_SLUG_KEY);
+        return Arrays.asList(Keys.GROUPS_SLUG_ORG_ID_KEY, Keys.GROUPS_UUID_KEY);
     }
 
     @Override
     public List<ForeignKey<JGroupsRecord, ?>> getReferences() {
-        return Arrays.asList(Keys.GROUPS__GROUPS_CREATED_BY_FKEY);
+        return Arrays.asList(Keys.GROUPS__GROUPS_CREATED_BY_FKEY, Keys.GROUPS__GROUPS_ORG_ID_FKEY);
     }
 
     private transient JUsersPath _users;
@@ -189,6 +200,18 @@ public class JGroups extends TableImpl<JGroupsRecord> {
             _users = new JUsersPath(this, Keys.GROUPS__GROUPS_CREATED_BY_FKEY, null);
 
         return _users;
+    }
+
+    private transient JOrganizationPath _organization;
+
+    /**
+     * Get the implicit join path to the <code>public.organization</code> table.
+     */
+    public JOrganizationPath organization() {
+        if (_organization == null)
+            _organization = new JOrganizationPath(this, Keys.GROUPS__GROUPS_ORG_ID_FKEY, null);
+
+        return _organization;
     }
 
     private transient JGroupsProjectsPath _groupsProjects;

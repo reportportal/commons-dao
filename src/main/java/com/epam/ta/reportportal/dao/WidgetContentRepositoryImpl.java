@@ -88,6 +88,7 @@ import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConst
 import static com.epam.ta.reportportal.dao.constant.WidgetRepositoryConstants.ID;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.dao.util.QueryUtils.collectJoinFields;
+import static com.epam.ta.reportportal.dao.util.ResultFetchers.ACTIVITY_FETCHER;
 import static com.epam.ta.reportportal.dao.util.WidgetContentUtil.ACTIVITY_MAPPER;
 import static com.epam.ta.reportportal.dao.util.WidgetContentUtil.BUG_TREND_STATISTICS_FETCHER;
 import static com.epam.ta.reportportal.dao.util.WidgetContentUtil.CASES_GROWTH_TREND_FETCHER;
@@ -110,6 +111,8 @@ import static com.epam.ta.reportportal.dao.util.WidgetContentUtil.TOP_PATTERN_TE
 import static com.epam.ta.reportportal.dao.util.WidgetContentUtil.UNIQUE_BUG_CONTENT_FETCHER;
 import static com.epam.ta.reportportal.jooq.Tables.FILTER;
 import static com.epam.ta.reportportal.jooq.Tables.ITEM_ATTRIBUTE;
+import static com.epam.ta.reportportal.jooq.Tables.ORGANIZATION;
+import static com.epam.ta.reportportal.jooq.Tables.ORGANIZATION_USER;
 import static com.epam.ta.reportportal.jooq.Tables.PATTERN_TEMPLATE;
 import static com.epam.ta.reportportal.jooq.Tables.PATTERN_TEMPLATE_TEST_ITEM;
 import static com.epam.ta.reportportal.jooq.Tables.STATISTICS;
@@ -173,6 +176,7 @@ import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTab
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableGetParams;
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableInitParams;
 import com.epam.reportportal.rules.exception.ReportPortalException;
+import com.epam.ta.reportportal.jooq.Tables;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.epam.ta.reportportal.jooq.tables.JItemAttribute;
@@ -217,6 +221,7 @@ import org.jooq.impl.DSL;
 import org.jooq.util.postgres.PostgresDSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
 /**
