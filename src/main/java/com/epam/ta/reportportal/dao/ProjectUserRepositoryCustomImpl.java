@@ -12,6 +12,9 @@ import java.util.Optional;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -62,4 +65,23 @@ public class ProjectUserRepositoryCustomImpl implements ProjectUserRepositoryCus
         .fetchOptional(ASSIGNMENT_DETAILS_MAPPER);
   }
 
+  public Page<MembershipDetails> findUserProjectsInOrganization(Long userId, Long organizationId, Pageable pageable) {
+    var query = dsl.select(PROJECT.fields())
+        .from(PROJECT)
+        .join(ORGANIZATION_USER)
+        .on(PROJECT.ORGANIZATION_ID.eq(ORGANIZATION_USER.ORGANIZATION_ID))
+        .join(PROJECT_USER)
+        .on(PROJECT.ID.eq(PROJECT_USER.PROJECT_ID))
+        .where(ORGANIZATION_USER.USER_ID.eq(userId))
+        .and(ORGANIZATION_USER.ORGANIZATION_ID.eq(organizationId))
+        .and(PROJECT_USER.USER_ID.eq(userId));
+
+    var result = query
+        .limit(pageable.getPageSize())
+        .offset(pageable.getOffset())
+        .fetch(ASSIGNMENT_DETAILS_MAPPER);
+
+    return PageableExecutionUtils.getPage(result, pageable,
+        () -> dsl.fetchCount(query));
+  }
 }
