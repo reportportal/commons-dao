@@ -65,6 +65,7 @@ public class ProjectUserRepositoryCustomImpl implements ProjectUserRepositoryCus
         .fetchOptional(ASSIGNMENT_DETAILS_MAPPER);
   }
 
+  @Override
   public Page<MembershipDetails> findUserProjectsInOrganization(Long userId, Long organizationId, Pageable pageable) {
     var query = dsl.select(PROJECT.fields())
         .from(PROJECT)
