@@ -90,7 +90,6 @@ import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.organization.MembershipDetails;
 import com.epam.ta.reportportal.entity.organization.Organization;
-import com.epam.ta.reportportal.entity.organization.OrganizationProfile;
 import com.epam.ta.reportportal.entity.organization.OrganizationRole;
 import com.epam.ta.reportportal.entity.pattern.PatternTemplate;
 import com.epam.ta.reportportal.entity.project.Project;
@@ -495,6 +494,7 @@ public class RecordMappers {
         .ifPresent(projectRole -> md.setProjectRole(r.into(PROJECT_USER.PROJECT_ROLE)
             .into(ProjectRole.class)));
     ofNullable(r.get(PROJECT.KEY)).ifPresent(md::setProjectKey);
+    ofNullable(r.get(PROJECT.SLUG)).ifPresent(md::setProjectSlug);
 
     return md;
   };

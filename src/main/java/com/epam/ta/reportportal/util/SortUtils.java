@@ -24,16 +24,17 @@ import static java.util.stream.Collectors.toList;
 import static org.jooq.impl.DSL.field;
 
 import com.epam.reportportal.rules.commons.validation.BusinessRule;
+import com.epam.reportportal.rules.exception.ErrorType;
+import com.epam.reportportal.rules.exception.ReportPortalException;
 import com.epam.ta.reportportal.commons.querygen.CriteriaHolder;
 import com.epam.ta.reportportal.commons.querygen.FilterTarget;
-import com.epam.reportportal.rules.exception.ReportPortalException;
-
-import com.epam.reportportal.rules.exception.ErrorType;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.stream.StreamSupport;
+import org.jooq.Field;
+import org.jooq.SelectQuery;
 import org.jooq.SortField;
 import org.jooq.SortOrder;
 import org.springframework.data.domain.Sort;
@@ -64,6 +65,33 @@ public final class SortUtils {
         }
       })
       .collect(toList())).orElseGet(Collections::emptyList);
+
+  public static final BiFunction<Sort, SelectQuery<?>, List<SortField<?>>> RESOLVE_SORT_FIELDS  = (sort, query) ->
+      ofNullable(sort)
+          .filter(Sort::isSorted)
+          .map(s -> s.stream()
+              .map(order -> {
+                Field<?> field = findFieldInQuery(query, order.getProperty());
+                if (field == null) {
+                  throw new IllegalArgumentException("Unknown sort property: " + order.getProperty());
+                }
+                return order.isAscending() ? field.asc() : field.desc();
+              })
+              .collect(toList()))
+          .orElse(Collections.emptyList());
+
+  private static Field<?> findFieldInQuery(SelectQuery<?> query, String property) {
+    return query.getSelect().stream()
+        .filter(f -> matchesField(f, property))
+        .findFirst()
+        .orElse(null);
+  }
+
+  private static boolean matchesField(Field<?> field, String property) {
+    String fieldName = field.getName();
+
+    return property.equalsIgnoreCase(fieldName);
+  }
 
   private SortUtils() {
     //static only
