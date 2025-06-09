@@ -893,7 +893,6 @@ class WidgetContentRepositoryTest extends BaseTest {
   }
 
   @Test
-  @Disabled
   void activityStatisticsSorting() {
     Filter filter = buildDefaultActivityFilter(1L);
     List<Sort.Order> orders = filter.getTarget()

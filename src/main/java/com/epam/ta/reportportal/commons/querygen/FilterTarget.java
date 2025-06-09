@@ -126,7 +126,6 @@ import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaCon
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER_CREATED_AT;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER_ORGANIZATION_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER_UPDATED_AT;
-import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.entity.organization.OrganizationFilter.PROJECTS_QUANTITY;
 import static com.epam.ta.reportportal.entity.project.ProjectInfo.LAST_RUN;
 import static com.epam.ta.reportportal.entity.project.ProjectInfo.LAUNCHES_QUANTITY;
@@ -1214,8 +1213,12 @@ public enum FilterTarget {
           .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_EVENT_NAME, ACTIVITY.EVENT_NAME, String.class)
           .get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_ACTIVITY_ORG_ID, ORGANIZATION.ID, Long.class).get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_ACTIVITY_ORG_NAME, ORGANIZATION.NAME, String.class).get()
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_ACTIVITY_ORG_ID, ORGANIZATION.ID, Long.class)
+          .withAggregateCriteria(DSL.max(ORGANIZATION.ID).toString())
+          .get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_ACTIVITY_ORG_NAME, ORGANIZATION.NAME, String.class)
+          .withAggregateCriteria(DSL.max(ORGANIZATION.NAME).toString())
+          .get()
 
   )) {
     @Override
@@ -1235,6 +1238,7 @@ public enum FilterTarget {
           ACTIVITY.SUBJECT_TYPE,
           USERS.LOGIN,
           PROJECT.NAME,
+          ORGANIZATION.ID,
           ORGANIZATION.NAME
       );
     }

@@ -872,16 +872,16 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						ACTIVITY.OBJECT_NAME,
 						ACTIVITY.SUBJECT_NAME,
 						USERS.LOGIN,
+            ORGANIZATION.ID,
+            ORGANIZATION.NAME,
 						PROJECT.NAME,
 						PROJECT.KEY
 				)
         .from(ACTIVITY)
-        .join(ACTIVITIES)
-        .on(fieldName(ACTIVITIES, ID).cast(Long.class).eq(ACTIVITY.ID))
-        .leftJoin(USERS)
-        .on(ACTIVITY.SUBJECT_ID.eq(USERS.ID))
-				.join(PROJECT)
-				.on(ACTIVITY.PROJECT_ID.eq(PROJECT.ID))
+        .join(ACTIVITIES).on(fieldName(ACTIVITIES, ID).cast(Long.class).eq(ACTIVITY.ID))
+        .leftJoin(USERS).on(ACTIVITY.SUBJECT_ID.eq(USERS.ID))
+        .leftJoin(ORGANIZATION).on(ACTIVITY.ORGANIZATION_ID.eq(ORGANIZATION.ID))
+				.join(PROJECT).on(ACTIVITY.PROJECT_ID.eq(PROJECT.ID))
 				.orderBy(WidgetSortUtils.sortingTransformer(filter.getTarget()).apply(sort, ACTIVITIES))
 				.fetch()
 				.map(ACTIVITY_MAPPER);
