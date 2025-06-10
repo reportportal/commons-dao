@@ -18,7 +18,6 @@ package com.epam.ta.reportportal.dao.organization;
 
 
 import com.epam.ta.reportportal.entity.organization.OrganizationSetting;
-import com.epam.ta.reportportal.entity.organization.OrganizationSettingId;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -27,7 +26,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  *
  * @author <a href="mailto:pavel_bortnik@epam.com">Pavel Bortnik</a>
  */
-public interface OrganizationSettingsRepository extends JpaRepository<OrganizationSetting, OrganizationSettingId> {
+public interface OrganizationSettingsRepository extends JpaRepository<OrganizationSetting, Long> {
 
   /**
    * Retrieves all settings for the specified organization.
