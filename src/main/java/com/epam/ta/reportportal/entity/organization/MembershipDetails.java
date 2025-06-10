@@ -23,6 +23,7 @@ public class MembershipDetails {
   private Long projectId;
   private String projectName;
   private String projectKey;
+  private String projectSlug;
   private ProjectRole projectRole;
 
   public static MembershipDetailsBuilder builder() {
@@ -37,6 +38,7 @@ public class MembershipDetails {
     private Long projectId;
     private String projectName;
     private String projectKey;
+    private String projectSlug;
     private ProjectRole projectRole;
 
     public MembershipDetailsBuilder() {
@@ -72,6 +74,10 @@ public class MembershipDetails {
       return this;
     }
 
+    public MembershipDetails.MembershipDetailsBuilder withProjectSlug(String projectSlug) {
+      this.projectSlug = projectSlug;
+      return this;
+    }
 
     public MembershipDetails.MembershipDetailsBuilder withProjectRole(ProjectRole projectRole) {
       this.projectRole = projectRole;
@@ -95,7 +101,7 @@ public class MembershipDetails {
 
     public MembershipDetails build() {
       return new MembershipDetails(orgId, orgName, orgRole, projectId, projectName, projectKey,
-          projectRole);
+          projectSlug, projectRole);
     }
   }
 

@@ -8,10 +8,16 @@ import static com.epam.ta.reportportal.jooq.Tables.PROJECT_USER;
 
 import com.epam.ta.reportportal.entity.organization.MembershipDetails;
 import com.epam.ta.reportportal.jooq.enums.JOrganizationRoleEnum;
+import com.epam.ta.reportportal.util.SortUtils;
+import java.util.List;
 import java.util.Optional;
 import org.jooq.DSLContext;
+import org.jooq.SortField;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -32,6 +38,7 @@ public class ProjectUserRepositoryCustomImpl implements ProjectUserRepositoryCus
             PROJECT_USER.PROJECT_ROLE,
             PROJECT.NAME,
             PROJECT.KEY,
+            PROJECT.SLUG,
             PROJECT.ORGANIZATION_ID,
             ORGANIZATION_USER.ORGANIZATION_ROLE,
             ORGANIZATION.NAME)
@@ -54,6 +61,7 @@ public class ProjectUserRepositoryCustomImpl implements ProjectUserRepositoryCus
             DSL.val(JOrganizationRoleEnum.MANAGER).as(ORGANIZATION_USER.ORGANIZATION_ROLE),
             PROJECT.NAME,
             PROJECT.KEY,
+            PROJECT.SLUG,
             PROJECT.ORGANIZATION_ID,
             ORGANIZATION.NAME)
         .from(PROJECT)
@@ -62,4 +70,39 @@ public class ProjectUserRepositoryCustomImpl implements ProjectUserRepositoryCus
         .fetchOptional(ASSIGNMENT_DETAILS_MAPPER);
   }
 
+  @Override
+  public Page<MembershipDetails> findUserProjectsInOrganization(Long userId, Long organizationId, Pageable pageable) {
+    pageable.getSort();
+    var query = dsl.select(
+            PROJECT.ID,
+            ORGANIZATION_USER.ORGANIZATION_ROLE,
+            PROJECT.NAME,
+            PROJECT.KEY,
+            PROJECT.SLUG,
+            PROJECT.ORGANIZATION_ID,
+            PROJECT_USER.PROJECT_ROLE
+        )
+        .from(PROJECT)
+        .join(ORGANIZATION_USER)
+        .on(PROJECT.ORGANIZATION_ID.eq(ORGANIZATION_USER.ORGANIZATION_ID))
+        .join(PROJECT_USER)
+        .on(PROJECT.ID.eq(PROJECT_USER.PROJECT_ID))
+        .where(ORGANIZATION_USER.USER_ID.eq(userId))
+        .and(ORGANIZATION_USER.ORGANIZATION_ID.eq(organizationId))
+        .and(PROJECT_USER.USER_ID.eq(userId));
+
+    List<SortField<?>> sortFields = SortUtils.RESOLVE_SORT_FIELDS.apply(
+        pageable.getSort(),
+        query.getQuery()
+    );
+
+    var result = query
+        .orderBy(sortFields)
+        .limit(pageable.getPageSize())
+        .offset(pageable.getOffset())
+        .fetch(ASSIGNMENT_DETAILS_MAPPER);
+
+    return PageableExecutionUtils.getPage(result, pageable,
+        () -> dsl.fetchCount(query));
+  }
 }
