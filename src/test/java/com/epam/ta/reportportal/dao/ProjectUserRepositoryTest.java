@@ -1,5 +1,7 @@
 package com.epam.ta.reportportal.dao;
 
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_NAME;
+
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.entity.organization.MembershipDetails;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
@@ -7,6 +9,10 @@ import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 class ProjectUserRepositoryTest extends BaseTest {
 
@@ -37,5 +43,15 @@ class ProjectUserRepositoryTest extends BaseTest {
         projectUserRepository.findDetailsByUserIdAndProjectKey(2L, projectKey);
 
     Assertions.assertFalse(projectDetails.isPresent());
+  }
+
+  @Test
+  void findUserProjectsInOrganization() {
+
+    Pageable pageable = PageRequest.of(0, 50, Sort.by(Sort.Order.by(CRITERIA_NAME)));
+    final Page<MembershipDetails> memberDetails =
+        projectUserRepository.findUserProjectsInOrganization(1L, 1L, pageable);
+
+    Assertions.assertEquals(1, memberDetails.getNumberOfElements());
   }
 }
