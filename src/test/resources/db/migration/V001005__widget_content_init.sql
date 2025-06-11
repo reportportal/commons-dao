@@ -278,17 +278,17 @@ BEGIN
     INSERT INTO statistics (launch_id, statistics_field_id, s_counter) VALUES (launch4, 14, 6);
 
     INSERT INTO activity (action, event_name,  created_at, details, object_id, object_name, object_type, priority,
-    project_id, subject_id, subject_name, subject_type)
-    VALUES ('CREATE', 'createLaunch', now(), null, null, 'objectName', 'LAUNCH', 'MEDIUM', 1, 1, 'superadmin', 'USER');
+    project_id, organization_id, subject_id, subject_name, subject_type)
+    VALUES ('CREATE', 'createLaunch', now(), null, null, 'objectName', 'LAUNCH', 'MEDIUM', 1, 1, 1, 'superadmin', 'USER');
     INSERT INTO activity (action, event_name, created_at, details, object_id, object_name, object_type, priority,
-    project_id, subject_id, subject_name, subject_type)
-    VALUES ('CREATE', 'createLaunch', now(), null, null, 'objectName', 'LAUNCH', 'MEDIUM', 1, 1, 'superadmin', 'USER');
+    project_id, organization_id, subject_id, subject_name, subject_type)
+    VALUES ('CREATE', 'createLaunch', now(), null, null, 'objectName', 'LAUNCH', 'MEDIUM', 1, 1, 1, 'superadmin', 'USER');
     INSERT INTO activity (action, event_name, created_at, details, object_id, object_name, object_type, priority,
-    project_id, subject_id, subject_name, subject_type)
-    VALUES ('CREATE', 'createLaunch', now(), null, null, 'objectName', 'LAUNCH', 'MEDIUM', 1, 1, 'superadmin', 'USER');
+    project_id, organization_id, subject_id, subject_name, subject_type)
+    VALUES ('CREATE', 'createLaunch', now(), null, null, 'objectName', 'LAUNCH', 'MEDIUM', 1, 1, 1, 'superadmin', 'USER');
     INSERT INTO activity (action, event_name, created_at, details, object_id, object_name, object_type, priority,
-    project_id, subject_id, subject_name, subject_type)
-    VALUES ('CREATE', 'createLaunch', now(), null, null, 'objectName', 'LAUNCH', 'MEDIUM', 1, 1, 'superadmin', 'USER');
+    project_id, organization_id, subject_id, subject_name, subject_type)
+    VALUES ('CREATE', 'createLaunch', now(), null, null, 'objectName', 'LAUNCH', 'MEDIUM', 1, 1, 1, 'superadmin', 'USER');
 
 END;
 $$

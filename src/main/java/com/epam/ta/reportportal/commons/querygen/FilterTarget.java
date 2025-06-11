@@ -18,6 +18,8 @@ package com.epam.ta.reportportal.commons.querygen;
 
 import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.STATISTICS_KEY;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_ACTION;
+import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_ACTIVITY_ORG_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_ACTIVITY_ORG_NAME;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_ACTIVITY_PROJECT_NAME;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_CREATED_AT;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_EVENT_NAME;
@@ -1210,7 +1212,14 @@ public enum FilterTarget {
           .withAggregateCriteria(DSL.max(USERS.LOGIN).toString())
           .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_EVENT_NAME, ACTIVITY.EVENT_NAME, String.class)
+          .get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_ACTIVITY_ORG_ID, ORGANIZATION.ID, Long.class)
+          .withAggregateCriteria(DSL.max(ORGANIZATION.ID).toString())
+          .get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_ACTIVITY_ORG_NAME, ORGANIZATION.NAME, String.class)
+          .withAggregateCriteria(DSL.max(ORGANIZATION.NAME).toString())
           .get()
+
   )) {
     @Override
     protected Collection<? extends SelectField> selectFields() {
@@ -1228,7 +1237,9 @@ public enum FilterTarget {
           ACTIVITY.SUBJECT_NAME,
           ACTIVITY.SUBJECT_TYPE,
           USERS.LOGIN,
-          PROJECT.NAME
+          PROJECT.NAME,
+          ORGANIZATION.ID,
+          ORGANIZATION.NAME
       );
     }
 
@@ -1241,6 +1252,7 @@ public enum FilterTarget {
     protected void joinTables(QuerySupplier query) {
       query.addJoin(USERS, JoinType.LEFT_OUTER_JOIN, ACTIVITY.SUBJECT_ID.eq(USERS.ID));
       query.addJoin(PROJECT, JoinType.JOIN, ACTIVITY.PROJECT_ID.eq(PROJECT.ID));
+      query.addJoin(ORGANIZATION, JoinType.JOIN, ACTIVITY.ORGANIZATION_ID.eq(ORGANIZATION.ID));
     }
 
     @Override

@@ -8,6 +8,7 @@ import com.epam.ta.reportportal.dao.converters.JooqInstantConverter;
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
+import com.epam.ta.reportportal.jooq.tables.JOrganization.JOrganizationPath;
 import com.epam.ta.reportportal.jooq.tables.JProject.JProjectPath;
 import com.epam.ta.reportportal.jooq.tables.records.JActivityRecord;
 
@@ -127,6 +128,11 @@ public class JActivity extends TableImpl<JActivityRecord> {
      */
     public final TableField<JActivityRecord, String> SUBJECT_TYPE = createField(DSL.name("subject_type"), SQLDataType.VARCHAR(32).nullable(false), this, "");
 
+    /**
+     * The column <code>public.activity.organization_id</code>.
+     */
+    public final TableField<JActivityRecord, Long> ORGANIZATION_ID = createField(DSL.name("organization_id"), SQLDataType.BIGINT, this, "");
+
     private JActivity(Name alias, Table<JActivityRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);
     }
@@ -196,7 +202,7 @@ public class JActivity extends TableImpl<JActivityRecord> {
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.asList(Indexes.ACTIVITY_CREATED_AT_IDX, Indexes.ACTIVITY_OBJECT_IDX, Indexes.ACTIVITY_PROJECT_IDX);
+        return Arrays.asList(Indexes.ACTIVITY_CREATED_AT_IDX, Indexes.ACTIVITY_OBJECT_IDX, Indexes.ACTIVITY_PROJECT_IDX, Indexes.ORG_ID_IDX);
     }
 
     @Override
@@ -211,7 +217,19 @@ public class JActivity extends TableImpl<JActivityRecord> {
 
     @Override
     public List<ForeignKey<JActivityRecord, ?>> getReferences() {
-        return Arrays.asList(Keys.ACTIVITY__ACTIVITY_PROJECT_ID_FKEY);
+        return Arrays.asList(Keys.ACTIVITY__ACTIVITY_ORGANIZATION_ID_FKEY, Keys.ACTIVITY__ACTIVITY_PROJECT_ID_FKEY);
+    }
+
+    private transient JOrganizationPath _organization;
+
+    /**
+     * Get the implicit join path to the <code>public.organization</code> table.
+     */
+    public JOrganizationPath organization() {
+        if (_organization == null)
+            _organization = new JOrganizationPath(this, Keys.ACTIVITY__ACTIVITY_ORGANIZATION_ID_FKEY, null);
+
+        return _organization;
     }
 
     private transient JProjectPath _project;

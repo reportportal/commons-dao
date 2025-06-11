@@ -102,6 +102,11 @@ public class ActivityBuilder implements Supplier<Activity> {
     return this;
   }
 
+  public ActivityBuilder addOrganizationId(Long orgId) {
+    activity.setOrganizationId(orgId);
+    return this;
+  }
+
   public ActivityBuilder addPriority(EventPriority priority) {
     activity.setPriority(priority);
     return this;

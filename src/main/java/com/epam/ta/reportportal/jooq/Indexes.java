@@ -81,6 +81,7 @@ public class Indexes {
     public static final Index LOG_PROJECT_ID_LOG_TIME_IDX = Internal.createIndex(DSL.name("log_project_id_log_time_idx"), JLog.LOG, new OrderField[] { JLog.LOG.PROJECT_ID, JLog.LOG.LOG_TIME }, false);
     public static final Index LOG_PROJECT_IDX = Internal.createIndex(DSL.name("log_project_idx"), JLog.LOG, new OrderField[] { JLog.LOG.PROJECT_ID }, false);
     public static final Index LOG_TI_IDX = Internal.createIndex(DSL.name("log_ti_idx"), JLog.LOG, new OrderField[] { JLog.LOG.ITEM_ID }, false);
+    public static final Index ORG_ID_IDX = Internal.createIndex(DSL.name("org_id_idx"), JActivity.ACTIVITY, new OrderField[] { JActivity.ACTIVITY.ORGANIZATION_ID }, false);
     public static final Index ORGANIZATION_SLUG_IDX = Internal.createIndex(DSL.name("organization_slug_idx"), JOrganization.ORGANIZATION, new OrderField[] { JOrganization.ORGANIZATION.SLUG }, false);
     public static final Index PARAMETER_TI_IDX = Internal.createIndex(DSL.name("parameter_ti_idx"), JParameter.PARAMETER, new OrderField[] { JParameter.PARAMETER.ITEM_ID }, false);
     public static final Index PATH_GIST_IDX = Internal.createIndex(DSL.name("path_gist_idx"), JTestItem.TEST_ITEM, new OrderField[] { JTestItem.TEST_ITEM.PATH }, false);
