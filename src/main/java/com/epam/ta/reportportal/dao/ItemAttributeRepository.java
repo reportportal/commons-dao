@@ -29,4 +29,6 @@ public interface ItemAttributeRepository extends ReportPortalRepository<ItemAttr
       boolean isSystem);
 
   int deleteAllByLaunchIdAndKeyAndSystem(Long launchId, String key, boolean isSystem);
+
+  int deleteAllByKeyAndSystem(String key, boolean isSystem);
 }

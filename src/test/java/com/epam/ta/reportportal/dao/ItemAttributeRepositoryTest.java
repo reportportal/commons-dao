@@ -208,7 +208,7 @@ class ItemAttributeRepositoryTest extends BaseTest {
   }
 
   @Test
-  void deleteByKeyAndSystem() {
+  void deleteByLaunchIdAndKeyAndSystem() {
     repository.saveByLaunchId(1L, "first", "first", true);
     repository.saveByLaunchId(1L, "second", "second", false);
 
@@ -231,6 +231,33 @@ class ItemAttributeRepositoryTest extends BaseTest {
     final Optional<ItemAttribute> secondAfterRemove =
         repository.findByLaunchIdAndKeyAndSystem(1L,
             "second", false);
+
+    Assertions.assertFalse(firstAfterRemove.isPresent());
+    Assertions.assertFalse(secondAfterRemove.isPresent());
+
+
+  }
+
+  @Test
+  void deleteByKeyAndSystem() {
+    repository.saveByLaunchId(1L, "first", "first", true);
+    repository.saveByLaunchId(1L, "second", "second", false);
+
+    final Optional<ItemAttribute> first = repository.findByLaunchIdAndKeyAndSystem(1L, "first",
+        true);
+    final Optional<ItemAttribute> second = repository.findByLaunchIdAndKeyAndSystem(1L, "second",
+        false);
+
+    Assertions.assertTrue(first.isPresent());
+    Assertions.assertTrue(second.isPresent());
+
+    repository.deleteAllByKeyAndSystem("first", true);
+    repository.deleteAllByKeyAndSystem("second", false);
+
+    final Optional<ItemAttribute> firstAfterRemove = repository.findByLaunchIdAndKeyAndSystem(1L,
+        "first", true);
+    final Optional<ItemAttribute> secondAfterRemove = repository.findByLaunchIdAndKeyAndSystem(1L,
+        "second", false);
 
     Assertions.assertFalse(firstAfterRemove.isPresent());
     Assertions.assertFalse(secondAfterRemove.isPresent());
