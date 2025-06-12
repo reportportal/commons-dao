@@ -257,9 +257,9 @@ public class QueryBuilder {
         sortingSelect.add(sorting);
       }
       query.addOrderBy(
-          field(criteria.getAggregateCriteria()).sort(order.getDirection().isDescending() ?
-              SortOrder.DESC :
-              SortOrder.ASC));
+          field(criteria.getAggregateCriteria())
+              .lower()
+              .sort(order.getDirection().isDescending() ? SortOrder.DESC : SortOrder.ASC));
     }));
     return this;
   }

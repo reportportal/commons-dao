@@ -18,6 +18,8 @@ package com.epam.ta.reportportal.commons.querygen;
 
 import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.STATISTICS_KEY;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_ACTION;
+import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_ACTIVITY_ORG_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_ACTIVITY_ORG_NAME;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_ACTIVITY_PROJECT_NAME;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_CREATED_AT;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_EVENT_NAME;
@@ -38,6 +40,7 @@ import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteria
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_OWNER;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PROJECT;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PROJECT_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_SLUG;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_START_TIME;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_USER_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.IntegrationCriteriaConstant.CRITERIA_INTEGRATION_TYPE;
@@ -66,12 +69,24 @@ import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaCons
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_LOG_PROJECT_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_LOG_TIME;
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_TEST_ITEM_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.OrganizationCriteriaConstant.CRITERIA_ORG_CREATED_AT;
+import static com.epam.ta.reportportal.commons.querygen.constant.OrganizationCriteriaConstant.CRITERIA_ORG_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.OrganizationCriteriaConstant.CRITERIA_ORG_LAST_LAUNCH_RUN;
+import static com.epam.ta.reportportal.commons.querygen.constant.OrganizationCriteriaConstant.CRITERIA_ORG_LAUNCHES;
+import static com.epam.ta.reportportal.commons.querygen.constant.OrganizationCriteriaConstant.CRITERIA_ORG_NAME;
+import static com.epam.ta.reportportal.commons.querygen.constant.OrganizationCriteriaConstant.CRITERIA_ORG_PROJECTS;
+import static com.epam.ta.reportportal.commons.querygen.constant.OrganizationCriteriaConstant.CRITERIA_ORG_SLUG;
+import static com.epam.ta.reportportal.commons.querygen.constant.OrganizationCriteriaConstant.CRITERIA_ORG_TYPE;
+import static com.epam.ta.reportportal.commons.querygen.constant.OrganizationCriteriaConstant.CRITERIA_ORG_UPDATED_AT;
+import static com.epam.ta.reportportal.commons.querygen.constant.OrganizationCriteriaConstant.CRITERIA_ORG_USERS;
+import static com.epam.ta.reportportal.commons.querygen.constant.OrganizationCriteriaConstant.CRITERIA_ORG_USER_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_ALLOCATED_STORAGE;
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_ATTRIBUTE_NAME;
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_CREATION_DATE;
+import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_KEY;
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_NAME;
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_ORGANIZATION;
-import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_TYPE;
+import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_ORGANIZATION_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_CLUSTER_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_DURATION;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_HAS_CHILDREN;
@@ -94,16 +109,24 @@ import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteri
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_UNIQUE_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_UUID;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.RETRY_PARENT;
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_ACCOUNT_TYPE;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_ACTIVE;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_EMAIL;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_EXPIRED;
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_EXTERNALID;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_EXTERNAL_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_FULLNAME;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_FULL_NAME;
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_INSTANCE_ROLE;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_LAST_LOGIN;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_ROLE;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_SYNCHRONIZATION_DATE;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_TYPE;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER;
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER_CREATED_AT;
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER_ORGANIZATION_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER_UPDATED_AT;
+import static com.epam.ta.reportportal.entity.organization.OrganizationFilter.PROJECTS_QUANTITY;
 import static com.epam.ta.reportportal.entity.project.ProjectInfo.LAST_RUN;
 import static com.epam.ta.reportportal.entity.project.ProjectInfo.LAUNCHES_QUANTITY;
 import static com.epam.ta.reportportal.entity.project.ProjectInfo.USERS_QUANTITY;
@@ -125,6 +148,8 @@ import static com.epam.ta.reportportal.jooq.Tables.ISSUE_TYPE;
 import static com.epam.ta.reportportal.jooq.Tables.ITEM_ATTRIBUTE;
 import static com.epam.ta.reportportal.jooq.Tables.LAUNCH;
 import static com.epam.ta.reportportal.jooq.Tables.LOG;
+import static com.epam.ta.reportportal.jooq.Tables.ORGANIZATION;
+import static com.epam.ta.reportportal.jooq.Tables.ORGANIZATION_USER;
 import static com.epam.ta.reportportal.jooq.Tables.PARAMETER;
 import static com.epam.ta.reportportal.jooq.Tables.PATTERN_TEMPLATE;
 import static com.epam.ta.reportportal.jooq.Tables.PATTERN_TEMPLATE_TEST_ITEM;
@@ -154,8 +179,11 @@ import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.log.Log;
+import com.epam.ta.reportportal.entity.organization.OrganizationFilter;
+import com.epam.ta.reportportal.entity.organization.OrganizationUserFilter;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectInfo;
+import com.epam.ta.reportportal.entity.project.ProjectProfile;
 import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.entity.widget.Widget;
 import com.epam.ta.reportportal.jooq.enums.JIntegrationGroupEnum;
@@ -187,10 +215,13 @@ public enum FilterTarget {
               PROJECT.ALLOCATED_STORAGE, Long.class).get(),
           new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_NAME, PROJECT.NAME, String.class)
               .get(),
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_KEY, PROJECT.KEY, String.class)
+              .get(),
           new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ORGANIZATION,
               PROJECT.ORGANIZATION, String.class).get(),
-          new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_TYPE, PROJECT.PROJECT_TYPE,
-              String.class).get(),
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_SLUG, PROJECT.SLUG, String.class).get(),
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ORGANIZATION_ID,
+              PROJECT.ORGANIZATION_ID, Long.class).get(),
           new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ATTRIBUTE_NAME,
               ATTRIBUTE.NAME,
               String.class,
@@ -215,8 +246,9 @@ public enum FilterTarget {
                       JoinEntity.of(LAUNCH, JoinType.LEFT_OUTER_JOIN, PROJECT.ID.eq(LAUNCH.PROJECT_ID)))
               )
               .withAggregateCriteria(
-                  DSL.countDistinct(choose().when(LAUNCH.MODE.eq(JLaunchModeEnum.DEFAULT)
-                      .and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS)), LAUNCH.ID)).toString())
+                  DSL.countDistinct(
+                          choose().when(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS), LAUNCH.ID))
+                      .toString())
               .get()
       )
   ) {
@@ -224,9 +256,11 @@ public enum FilterTarget {
     protected Collection<? extends SelectField> selectFields() {
       return Lists.newArrayList(PROJECT.ID,
           PROJECT.NAME,
+          PROJECT.KEY,
+          PROJECT.SLUG,
           PROJECT.ORGANIZATION,
-          PROJECT.PROJECT_TYPE,
-          PROJECT.CREATION_DATE,
+          PROJECT.ORGANIZATION_ID,
+          PROJECT.CREATED_AT,
           PROJECT.METADATA,
           PROJECT_ATTRIBUTE.VALUE,
           ATTRIBUTE.NAME,
@@ -269,14 +303,16 @@ public enum FilterTarget {
           new CriteriaHolderBuilder().newBuilder(CRITERIA_ID, PROJECT.ID, Long.class).get(),
           new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_NAME, PROJECT.NAME, String.class)
               .get(),
-          new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_TYPE, PROJECT.PROJECT_TYPE,
-              String.class).get(),
-
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_KEY, PROJECT.KEY, String.class)
+              .get(),
           new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ORGANIZATION,
               PROJECT.ORGANIZATION, String.class).get(),
 
           new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_CREATION_DATE,
-              PROJECT.CREATION_DATE, Timestamp.class).get(),
+              PROJECT.CREATED_AT, Timestamp.class).get(),
+
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_ID,
+              PROJECT.ORGANIZATION_ID, Long.class).get(),
 
           new CriteriaHolderBuilder().newBuilder(USERS_QUANTITY, USERS_QUANTITY, Long.class)
               .withAggregateCriteria(DSL.countDistinct(PROJECT_USER.USER_ID).toString())
@@ -288,8 +324,9 @@ public enum FilterTarget {
 
           new CriteriaHolderBuilder().newBuilder(LAUNCHES_QUANTITY, LAUNCHES_QUANTITY, Long.class)
               .withAggregateCriteria(
-                  DSL.countDistinct(choose().when(LAUNCH.MODE.eq(JLaunchModeEnum.DEFAULT)
-                      .and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS)), LAUNCH.ID)).toString())
+                  DSL.countDistinct(
+                          choose().when(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS), LAUNCH.ID))
+                      .toString())
               .get()
       )
   ) {
@@ -297,7 +334,7 @@ public enum FilterTarget {
     public QuerySupplier getQuery() {
       SelectQuery<? extends Record> query = DSL.select(selectFields()).getQuery();
       addFrom(query);
-      query.addGroupBy(PROJECT.ID, PROJECT.CREATION_DATE, PROJECT.NAME, PROJECT.PROJECT_TYPE);
+      query.addGroupBy(PROJECT.ID, PROJECT.CREATED_AT, PROJECT.KEY);
       QuerySupplier querySupplier = new QuerySupplier(query);
       joinTables(querySupplier);
       return querySupplier;
@@ -306,16 +343,16 @@ public enum FilterTarget {
     @Override
     protected Collection<? extends SelectField> selectFields() {
       return Lists.newArrayList(DSL.countDistinct(PROJECT_USER.USER_ID).as(USERS_QUANTITY),
-          DSL.countDistinct(choose().when(LAUNCH.MODE.eq(JLaunchModeEnum.DEFAULT)
-                  .and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS)),
-              LAUNCH.ID
-          )).as(LAUNCHES_QUANTITY),
+          DSL.countDistinct(choose().when(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS), LAUNCH.ID))
+              .as(LAUNCHES_QUANTITY),
           DSL.max(LAUNCH.START_TIME).as(LAST_RUN),
           PROJECT.ID,
-          PROJECT.CREATION_DATE,
+          PROJECT.CREATED_AT,
+          PROJECT.KEY,
+          PROJECT.SLUG,
           PROJECT.NAME,
-          PROJECT.PROJECT_TYPE,
-          PROJECT.ORGANIZATION
+          PROJECT.ORGANIZATION,
+          PROJECT.ORGANIZATION_ID
       );
     }
 
@@ -352,20 +389,31 @@ public enum FilterTarget {
       new CriteriaHolderBuilder().newBuilder(CRITERIA_UUID, USERS.UUID, UUID.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_EXTERNAL_ID, USERS.EXTERNAL_ID, String.class)
           .get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_EXTERNALID, USERS.EXTERNAL_ID, String.class)
+          .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ACTIVE, USERS.ACTIVE, Boolean.class)
           .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_USER, USERS.LOGIN, String.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_EMAIL, USERS.EMAIL, String.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_FULL_NAME, USERS.FULL_NAME, String.class)
           .get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_FULLNAME, USERS.FULL_NAME, String.class)
+          .get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_USER_CREATED_AT, USERS.CREATED_AT, Timestamp.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_USER_UPDATED_AT, USERS.UPDATED_AT, Timestamp.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ROLE, USERS.ROLE, String.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_INSTANCE_ROLE, USERS.ROLE, String.class)
+          .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_TYPE, USERS.TYPE, String.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_ACCOUNT_TYPE, USERS.TYPE, String.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_EXPIRED, USERS.EXPIRED, Boolean.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ID, PROJECT_USER.PROJECT_ID,
           Long.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT, PROJECT.NAME, List.class)
           .withAggregateCriteria(DSL.arrayAgg(PROJECT.NAME).toString())
           .get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_KEY, PROJECT.KEY, String.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_USER_ORGANIZATION_ID, ORGANIZATION_USER.ORGANIZATION_ID, Long.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_LAST_LOGIN,
           "(" + USERS.METADATA + "-> 'metadata' ->> 'last_login')::DOUBLE PRECISION ",
           Long.class
@@ -386,6 +434,8 @@ public enum FilterTarget {
           USERS.ACTIVE,
           USERS.FULL_NAME,
           USERS.TYPE,
+          USERS.CREATED_AT,
+          USERS.UPDATED_AT,
           USERS.ATTACHMENT,
           USERS.ATTACHMENT_THUMBNAIL,
           USERS.EMAIL,
@@ -394,10 +444,15 @@ public enum FilterTarget {
           USERS.ROLE,
           USERS.METADATA,
           PROJECT.NAME,
-          PROJECT.PROJECT_TYPE,
+          PROJECT.KEY,
+          PROJECT.SLUG,
           PROJECT_USER.PROJECT_ID,
           PROJECT_USER.PROJECT_ROLE,
-          PROJECT_USER.USER_ID
+          PROJECT_USER.USER_ID,
+          ORGANIZATION.ID,
+          ORGANIZATION.SLUG,
+          ORGANIZATION.NAME,
+          ORGANIZATION_USER.ORGANIZATION_ROLE
       );
     }
 
@@ -408,7 +463,10 @@ public enum FilterTarget {
 
     @Override
     protected void joinTables(QuerySupplier query) {
-      query.addJoin(PROJECT_USER, JoinType.LEFT_OUTER_JOIN, USERS.ID.eq(PROJECT_USER.USER_ID));
+      query.addJoin(ORGANIZATION_USER, JoinType.LEFT_OUTER_JOIN, ORGANIZATION_USER.USER_ID.eq(USERS.ID));
+      query.addJoin(ORGANIZATION, JoinType.LEFT_OUTER_JOIN, ORGANIZATION.ID.eq(ORGANIZATION_USER.ORGANIZATION_ID));
+
+      query.addJoin(PROJECT_USER, JoinType.LEFT_OUTER_JOIN, ORGANIZATION_USER.USER_ID.eq(PROJECT_USER.USER_ID));
       query.addJoin(PROJECT, JoinType.LEFT_OUTER_JOIN, PROJECT_USER.PROJECT_ID.eq(PROJECT.ID));
     }
 
@@ -1151,7 +1209,14 @@ public enum FilterTarget {
           .withAggregateCriteria(DSL.max(USERS.LOGIN).toString())
           .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_EVENT_NAME, ACTIVITY.EVENT_NAME, String.class)
+          .get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_ACTIVITY_ORG_ID, ORGANIZATION.ID, Long.class)
+          .withAggregateCriteria(DSL.max(ORGANIZATION.ID).toString())
+          .get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_ACTIVITY_ORG_NAME, ORGANIZATION.NAME, String.class)
+          .withAggregateCriteria(DSL.max(ORGANIZATION.NAME).toString())
           .get()
+
   )) {
     @Override
     protected Collection<? extends SelectField> selectFields() {
@@ -1169,7 +1234,9 @@ public enum FilterTarget {
           ACTIVITY.SUBJECT_NAME,
           ACTIVITY.SUBJECT_TYPE,
           USERS.LOGIN,
-          PROJECT.NAME
+          PROJECT.NAME,
+          ORGANIZATION.ID,
+          ORGANIZATION.NAME
       );
     }
 
@@ -1182,6 +1249,7 @@ public enum FilterTarget {
     protected void joinTables(QuerySupplier query) {
       query.addJoin(USERS, JoinType.LEFT_OUTER_JOIN, ACTIVITY.SUBJECT_ID.eq(USERS.ID));
       query.addJoin(PROJECT, JoinType.JOIN, ACTIVITY.PROJECT_ID.eq(PROJECT.ID));
+      query.addJoin(ORGANIZATION, JoinType.JOIN, ACTIVITY.ORGANIZATION_ID.eq(ORGANIZATION.ID));
     }
 
     @Override
@@ -1201,6 +1269,8 @@ public enum FilterTarget {
       new CriteriaHolderBuilder().newBuilder(CRITERIA_NAME, INTEGRATION_TYPE.NAME, String.class)
           .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_NAME, PROJECT.NAME, String.class)
+          .get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_KEY, PROJECT.KEY, String.class)
           .get()
   )) {
     @Override
@@ -1214,7 +1284,10 @@ public enum FilterTarget {
           INTEGRATION.CREATION_DATE,
           INTEGRATION_TYPE.NAME,
           INTEGRATION_TYPE.GROUP_TYPE,
-          PROJECT.NAME
+          PROJECT.NAME,
+          PROJECT.KEY,
+          PROJECT.SLUG,
+          PROJECT.ORGANIZATION_ID
       );
     }
 
@@ -1381,7 +1454,256 @@ public enum FilterTarget {
     protected Field<Long> idField() {
       return FILTER.ID;
     }
+  },
+
+  ORGANIZATION_TARGET(OrganizationFilter.class, Arrays.asList(
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_ID, ORGANIZATION.ID, Long.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_NAME, ORGANIZATION.NAME, String.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_SLUG, ORGANIZATION.SLUG, String.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_CREATED_AT, ORGANIZATION.CREATED_AT,
+          Timestamp.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_UPDATED_AT, ORGANIZATION.UPDATED_AT,
+          Timestamp.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_TYPE, ORGANIZATION.ORGANIZATION_TYPE,
+          String.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_USERS, USERS_QUANTITY, Long.class)
+          .withAggregateCriteria(DSL.countDistinct(ORGANIZATION_USER.USER_ID).toString())
+          .get(),
+      new CriteriaHolderBuilder()
+          .newBuilder(CRITERIA_ORG_USER_ID, ORGANIZATION_USER.USER_ID, Long.class)
+          .get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_PROJECTS, PROJECTS_QUANTITY, Long.class)
+          .withAggregateCriteria(DSL.countDistinct(PROJECT.ID).toString()).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_LAST_LAUNCH_RUN, LAST_RUN, Timestamp.class)
+          .withAggregateCriteria(DSL.max(LAUNCH.START_TIME).toString())
+          .get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_LAUNCHES, LAUNCHES_QUANTITY, Long.class)
+          .withAggregateCriteria(
+              DSL.countDistinct(choose().when(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS), LAUNCH.ID))
+                  .toString())
+          .get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_USER, USERS.LOGIN, String.class)
+          .get()
+
+  )) {
+    @Override
+    public QuerySupplier getQuery() {
+      SelectQuery<? extends Record> query = DSL.select(selectFields()).getQuery();
+      addFrom(query);
+      query.addGroupBy(ORGANIZATION.ID);
+      QuerySupplier querySupplier = new QuerySupplier(query);
+      joinTables(querySupplier);
+      return querySupplier;
+    }
+
+    @Override
+    protected Collection<? extends SelectField> selectFields() {
+      return Lists.newArrayList(ORGANIZATION.ID,
+          ORGANIZATION.NAME,
+          ORGANIZATION.SLUG,
+          ORGANIZATION.CREATED_AT,
+          ORGANIZATION.UPDATED_AT,
+          ORGANIZATION.EXTERNAL_ID,
+          ORGANIZATION.ORGANIZATION_TYPE,
+          DSL.countDistinct(ORGANIZATION_USER.USER_ID).as(USERS_QUANTITY),
+          DSL.countDistinct(PROJECT.ID).as(PROJECTS_QUANTITY),
+          DSL.countDistinct(choose().when(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS), LAUNCH.ID))
+              .as(LAUNCHES_QUANTITY),
+          DSL.max(LAUNCH.START_TIME).as(LAST_RUN)
+      );
+    }
+
+    @Override
+    protected void addFrom(SelectQuery<? extends Record> query) {
+      query.addFrom(ORGANIZATION);
+    }
+
+    @Override
+    protected void joinTables(QuerySupplier query) {
+      query.addJoin(ORGANIZATION_USER,
+          JoinType.LEFT_OUTER_JOIN,
+          ORGANIZATION_USER.ORGANIZATION_ID.eq(ORGANIZATION.ID));
+
+      query.addJoin(PROJECT,
+          JoinType.LEFT_OUTER_JOIN,
+          PROJECT.ORGANIZATION_ID.eq(ORGANIZATION.ID));
+
+      query.addJoin(USERS,
+          JoinType.LEFT_OUTER_JOIN,
+          ORGANIZATION_USER.USER_ID.eq(USERS.ID));
+
+      query.addJoin(LAUNCH,
+          JoinType.LEFT_OUTER_JOIN,
+          PROJECT.ID.eq(LAUNCH.PROJECT_ID));
+    }
+
+    @Override
+    protected Field<Long> idField() {
+      return ORGANIZATION.ID.cast(Long.class);
+    }
+
+  },
+
+  PROJECT_PROFILE(ProjectProfile.class,
+      Arrays.asList(
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_ID, PROJECT.ORGANIZATION_ID,
+                  Long.class)
+              .get(),
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_USER_ID, PROJECT_USER.USER_ID, Long.class)
+              .get(),
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ID, PROJECT.ID, Long.class).get(),
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_NAME, PROJECT.NAME, String.class).get(),
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_SLUG, PROJECT.SLUG, String.class).get(),
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_KEY, PROJECT.KEY, String.class).get(),
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_CREATED_AT, PROJECT.CREATED_AT,
+              Timestamp.class).get(),
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_UPDATED_AT, PROJECT.UPDATED_AT,
+              Timestamp.class).get(),
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_USERS, USERS_QUANTITY, Long.class)
+              .withAggregateCriteria(DSL.countDistinct(PROJECT_USER.USER_ID).toString())
+              .get(),
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_LAST_LAUNCH_RUN, LAST_RUN,
+                  Timestamp.class)
+              .withAggregateCriteria(DSL.max(LAUNCH.START_TIME).toString())
+              .get(),
+          new CriteriaHolderBuilder()
+              .newBuilder(CRITERIA_ORG_LAUNCHES, LAUNCHES_QUANTITY, Long.class)
+              .withAggregateCriteria(
+                  DSL.countDistinct(
+                          choose()
+                              .when(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS), LAUNCH.ID))
+                      .toString())
+              .get()
+      )
+  ) {
+    @Override
+    public QuerySupplier getQuery() {
+      SelectQuery<? extends Record> query = DSL.select(selectFields()).getQuery();
+      addFrom(query);
+      query.addGroupBy(PROJECT.ID, PROJECT.CREATED_AT, PROJECT.KEY);
+      QuerySupplier querySupplier = new QuerySupplier(query);
+      joinTables(querySupplier);
+      return querySupplier;
+    }
+
+    @Override
+    protected Collection<? extends SelectField> selectFields() {
+      return Lists.newArrayList(DSL.countDistinct(PROJECT_USER.USER_ID).as(USERS_QUANTITY),
+          DSL.countDistinct(choose().when(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS), LAUNCH.ID
+          )).as(LAUNCHES_QUANTITY),
+          DSL.max(LAUNCH.START_TIME).as(LAST_RUN),
+          PROJECT.ID,
+          PROJECT.CREATED_AT,
+          PROJECT.UPDATED_AT,
+          PROJECT.KEY,
+          PROJECT.SLUG,
+          PROJECT.NAME,
+          PROJECT.ORGANIZATION_ID
+      );
+    }
+
+    @Override
+    protected void addFrom(SelectQuery<? extends Record> query) {
+      query.addFrom(PROJECT);
+    }
+
+    @Override
+    protected void joinTables(QuerySupplier query) {
+      query.addJoin(PROJECT_USER, JoinType.LEFT_OUTER_JOIN, PROJECT.ID.eq(PROJECT_USER.PROJECT_ID));
+      query.addJoin(LAUNCH, JoinType.LEFT_OUTER_JOIN, PROJECT.ID.eq(LAUNCH.PROJECT_ID));
+    }
+
+    @Override
+    public QuerySupplier wrapQuery(SelectQuery<? extends Record> query) {
+      throw new UnsupportedOperationException("Operation not supported for ProjectProfile query");
+    }
+
+    @Override
+    public QuerySupplier wrapQuery(SelectQuery<? extends Record> query, String... excluding) {
+      throw new UnsupportedOperationException("Operation not supported for ProjectProfile query");
+    }
+
+    @Override
+    protected Field<Long> idField() {
+      return PROJECT.ID;
+    }
+  },
+
+  ORGANIZATION_USERS(OrganizationUserFilter.class,
+      Arrays.asList(
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_ID, ORGANIZATION_USER.ORGANIZATION_ID,
+              Long.class).get(),
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_FULL_NAME, USERS.FULL_NAME, String.class).get(),
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ID, PROJECT.ID, Long.class).get()
+      )
+  ) {
+    @Override
+    public QuerySupplier getQuery() {
+      SelectQuery<? extends Record> query = DSL.select(selectFields()).getQuery();
+      addFrom(query);
+      query.addGroupBy(
+          ORGANIZATION_USER.USER_ID,
+          USERS.METADATA,
+          USERS.EMAIL,
+          USERS.TYPE,
+          USERS.ROLE,
+          USERS.CREATED_AT,
+          USERS.UPDATED_AT,
+          USERS.FULL_NAME,
+          USERS.EXTERNAL_ID,
+          USERS.UUID,
+          ORGANIZATION_USER.ORGANIZATION_ROLE);
+      QuerySupplier querySupplier = new QuerySupplier(query);
+      joinTables(querySupplier);
+      return querySupplier;
+    }
+
+    @Override
+    protected Collection<? extends SelectField> selectFields() {
+      return Lists.newArrayList(DSL.countDistinct(PROJECT.ID).as(PROJECTS_QUANTITY),
+          ORGANIZATION_USER.USER_ID,
+          USERS.METADATA,
+          USERS.EMAIL,
+          USERS.TYPE,
+          USERS.ROLE,
+          USERS.CREATED_AT,
+          USERS.UPDATED_AT,
+          USERS.FULL_NAME,
+          USERS.EXTERNAL_ID,
+          USERS.UUID,
+          ORGANIZATION_USER.ORGANIZATION_ROLE
+      );
+    }
+
+    @Override
+    protected void addFrom(SelectQuery<? extends Record> query) {
+      query.addFrom(ORGANIZATION_USER);
+    }
+
+    @Override
+    protected void joinTables(QuerySupplier query) {
+      query.addJoin(USERS, JoinType.LEFT_OUTER_JOIN, USERS.ID.eq(ORGANIZATION_USER.USER_ID));
+      query.addJoin(PROJECT_USER, JoinType.LEFT_OUTER_JOIN, PROJECT_USER.USER_ID.eq(ORGANIZATION_USER.USER_ID));
+      query.addJoin(PROJECT, JoinType.LEFT_OUTER_JOIN, PROJECT.ID.eq(PROJECT_USER.PROJECT_ID)
+          .and(PROJECT.ORGANIZATION_ID.eq(ORGANIZATION_USER.ORGANIZATION_ID)));
+    }
+
+    @Override
+    public QuerySupplier wrapQuery(SelectQuery<? extends Record> query) {
+      throw new UnsupportedOperationException("Operation not supported for OrganizationUserFilter query");
+    }
+
+    @Override
+    public QuerySupplier wrapQuery(SelectQuery<? extends Record> query, String... excluding) {
+      throw new UnsupportedOperationException("Operation not supported for OrganizationUserFilter query");
+    }
+
+    @Override
+    protected Field<Long> idField() {
+      return ORGANIZATION_USER.ORGANIZATION_ID;
+    }
   };
+
 
   public static final String FILTERED_QUERY = "filtered";
   public static final String ATTRIBUTE_ALIAS = "attribute";

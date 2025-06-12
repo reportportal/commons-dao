@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 EPAM Systems
+ * Copyright 2024 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,27 +18,29 @@ package com.epam.ta.reportportal.entity.enums.converter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.epam.ta.reportportal.entity.enums.ProjectType;
+import com.epam.ta.reportportal.entity.enums.OrganizationType;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeEach;
 
 /**
- * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
+ * Organization type converter. Converts from ordinal value to String representations
+ *
+ * @author Siarhei Hrabko
  */
-public class ProjectTypeConverterTest extends AttributeConverterTest {
+public class OrganizationTypeConverterTest extends AttributeConverterTest {
 
   @BeforeEach
-  void setUp() throws Exception {
-    this.converter = new ProjectTypeConverter();
-    allowedValues = Arrays.stream(ProjectType.values())
+  void setUp() {
+    this.converter = new OrganizationTypeConverter();
+    allowedValues = Arrays.stream(OrganizationType.values())
         .collect(Collectors.toMap(it -> it,
             it -> Arrays.asList(it.name(), it.name().toUpperCase(), it.name().toLowerCase())));
   }
 
   @Override
   protected void convertToColumnTest() {
-    Arrays.stream(ProjectType.values())
+    Arrays.stream(OrganizationType.values())
         .forEach(it -> assertEquals(it.name(), converter.convertToDatabaseColumn(it)));
   }
 }

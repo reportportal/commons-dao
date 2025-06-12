@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.dao;
 
+import static com.epam.ta.reportportal.commons.querygen.constant.OrganizationCriteriaConstant.CRITERIA_ORG_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_NAME;
 import static com.epam.ta.reportportal.entity.project.ProjectInfo.USERS_QUANTITY;
 import static java.util.Optional.ofNullable;
@@ -29,7 +30,6 @@ import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.entity.enums.ProjectAttributeEnum;
-import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectInfo;
 import java.time.Instant;
@@ -82,6 +82,16 @@ class ProjectRepositoryTest extends BaseTest {
   }
 
   @Test
+  void findByKey() {
+    final String projectKey = "default_personal";
+
+    final Optional<Project> projectOptional = projectRepository.findByKey(projectKey);
+
+    assertTrue(projectOptional.isPresent());
+    assertEquals(projectKey, projectOptional.get().getKey());
+  }
+
+  @Test
   void existsByName() {
     assertTrue(projectRepository.existsByName("default_personal"));
     assertTrue(projectRepository.existsByName("superadmin_personal"));
@@ -118,13 +128,6 @@ class ProjectRepositoryTest extends BaseTest {
     assertEquals(1, projects.size());
   }
 
-  @Test
-  void findUserProjectByLoginAndType() {
-    List<Project> userProjects = projectRepository.findUserProjects("superadmin", "PERSONAL");
-    assertNotNull(userProjects);
-    assertEquals(1, userProjects.size());
-    assertEquals(ProjectType.PERSONAL, userProjects.get(0).getProjectType());
-  }
 
   @Test
   void shouldFindProjectByName() {
@@ -148,6 +151,15 @@ class ProjectRepositoryTest extends BaseTest {
             USERS_QUANTITY
         ));
     assertEquals(2, projectInfos.size());
+    var keyNotNull = projectInfos
+        .stream()
+        .allMatch(prInfo -> prInfo.getKey() != null);
+    assertTrue(keyNotNull);
+
+    var slugNotNull = projectInfos
+        .stream()
+        .allMatch(prInfo -> prInfo.getSlug() != null);
+    assertTrue(slugNotNull);
   }
 
   @Test
@@ -162,12 +174,16 @@ class ProjectRepositoryTest extends BaseTest {
     assertEquals(1, projectInfoPage.getTotalElements());
   }
 
-  @Sql("/db/fill/project/expired-project-fill.sql")
   @Test
-  void deleteOneByTypeAndLastRunBefore() {
-    int count = projectRepository.deleteByTypeAndLastLaunchRunBefore(ProjectType.UPSA,
-        Instant.now().minus(10, ChronoUnit.DAYS), 1);
-    assertEquals(1, count);
-    assertFalse(projectRepository.findById(100L).isPresent());
+  void findProjectInfoByOrgIdFilterWithPagination() {
+    final Page<ProjectInfo> projectInfoPage = projectRepository.findProjectInfoByFilter(
+        new Filter(ProjectInfo.class,
+            Condition.EQUALS,
+            false,
+            "1",
+            CRITERIA_ORG_ID
+        ), PageRequest.of(0, 10));
+    assertEquals(2, projectInfoPage.getTotalElements());
   }
+
 }

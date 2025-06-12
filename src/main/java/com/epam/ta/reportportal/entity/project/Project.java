@@ -16,9 +16,7 @@
 
 package com.epam.ta.reportportal.entity.project;
 
-import com.epam.ta.reportportal.dao.converters.JpaInstantConverter;
 import com.epam.ta.reportportal.entity.Metadata;
-import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.group.GroupProject;
 import com.epam.ta.reportportal.entity.integration.Integration;
 import com.epam.ta.reportportal.entity.pattern.PatternTemplate;
@@ -70,9 +68,6 @@ public class Project implements Serializable {
   @Column(name = "name")
   private String name;
 
-  @Column(name = "project_type")
-  private ProjectType projectType;
-
   @OneToMany(mappedBy = "project", cascade = {CascadeType.PERSIST}, fetch = FetchType.LAZY)
   @OrderBy("creationDate desc")
   private Set<Integration> integrations = Sets.newHashSet();
@@ -89,17 +84,29 @@ public class Project implements Serializable {
       CascadeType.PERSIST}, fetch = FetchType.EAGER, orphanRemoval = true)
   private Set<SenderCase> senderCases = Sets.newHashSet();
 
-  @Column(name = "creation_date")
-  @Convert(converter = JpaInstantConverter.class)
+  @Column(name = "created_at")
   private Instant creationDate;
+
+  @Column(name = "updated_at")
+  private Instant updatedAt;
 
   @JdbcTypeCode(SqlTypes.JSON)
   @Column(name = "metadata")
   @Type(Metadata.class)
   private Metadata metadata;
 
+  // TODO: rename to meaningful variable. eg. orgSlug, orgKey or else
   @Column(name = "organization")
-  private String organization;
+  private String org;
+
+  @Column(name = "organization_id", nullable = false)
+  private Long organizationId;
+
+  @Column(name = "key")
+  private String key;
+
+  @Column(name = "slug")
+  private String slug;
 
   @Column(name = "allocated_storage", updatable = false)
   private long allocatedStorage;
@@ -130,11 +137,12 @@ public class Project implements Serializable {
       return false;
     }
     Project project = (Project) o;
-    return Objects.equals(name, project.name) && Objects.equals(allocatedStorage,
-        project.allocatedStorage) && Objects.equals(
-        creationDate,
-        project.creationDate
-    ) && Objects.equals(metadata, project.metadata);
+    return Objects.equals(name, project.name)
+        && Objects.equals(key, project.key)
+        && Objects.equals(organizationId, project.organizationId)
+        && Objects.equals(allocatedStorage, project.allocatedStorage)
+        && Objects.equals(creationDate, project.creationDate)
+        && Objects.equals(metadata, project.metadata);
   }
 
   @Override

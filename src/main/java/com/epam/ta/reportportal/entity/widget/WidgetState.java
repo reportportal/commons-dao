@@ -2,7 +2,7 @@ package com.epam.ta.reportportal.entity.widget;
 
 import java.util.Arrays;
 import java.util.Optional;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>

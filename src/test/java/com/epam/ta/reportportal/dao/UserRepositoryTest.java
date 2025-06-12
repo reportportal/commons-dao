@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.dao;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PROJECT;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PROJECT_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.ProjectCriteriaConstant.CRITERIA_PROJECT_KEY;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_EMAIL;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_FULL_NAME;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_LAST_LOGIN;
@@ -36,6 +37,7 @@ import com.epam.ta.reportportal.commons.querygen.CompositeFilterCondition;
 import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
+import com.epam.ta.reportportal.dao.organization.OrganizationRepositoryCustom;
 import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
@@ -50,6 +52,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import org.assertj.core.util.Lists;
 import java.util.UUID;
 import org.assertj.core.util.Sets;
 import org.hamcrest.Matchers;
@@ -66,12 +69,13 @@ import org.springframework.test.context.jdbc.Sql;
 /**
  * @author Ivan Budaev
  */
-@Sql("/db/fill/user/user-fill.sql")
+@Sql({"/db/fill/user/user-fill.sql"})
 class UserRepositoryTest extends BaseTest {
 
   @Autowired
   private UserRepository userRepository;
-
+  @Autowired
+  OrganizationRepositoryCustom organizationRepositoryCustom;
   @Autowired
   private ProjectRepository projectRepository;
 
@@ -161,12 +165,14 @@ class UserRepositoryTest extends BaseTest {
     assertThat(chubaka.get().getPassword(), Matchers.equalTo("601c4731aeff3b84f76672ad024bb2a0"));
     assertThat(chubaka.get().getEmail(), Matchers.equalTo("chybaka@domain.com"));
     assertThat(chubaka.get().getUserRole(), Matchers.equalTo(UserRole.USER));
-    assertThat(chubaka.get().getProjectDetails(), Matchers.hasKey("millennium_falcon"));
-    ReportPortalUser.ProjectDetails project = chubaka.get().getProjectDetails()
-        .get("millennium_falcon");
-    assertThat(project.getProjectId(), Matchers.equalTo(3L));
-    assertThat(project.getProjectName(), Matchers.equalTo("millennium_falcon"));
-    assertThat(project.getProjectRole(), Matchers.equalTo(ProjectRole.MEMBER));
+
+    var orgDetails = chubaka.get().getOrganizationDetails().get("Test organization");
+    assertNotNull(orgDetails);
+
+    var projectDetails = orgDetails.getProjectDetails().get("millennium_falcon");
+    assertThat(projectDetails.getProjectId(), Matchers.equalTo(3L));
+    assertThat(projectDetails.getProjectKey(), Matchers.equalTo("millennium_falcon"));
+    assertThat(projectDetails.getProjectRole(), Matchers.equalTo(ProjectRole.VIEWER));
   }
 
   @Test
@@ -357,7 +363,7 @@ class UserRepositoryTest extends BaseTest {
     Project defaultProject = projectRepository.findByName("superadmin_personal").get();
     Set<ProjectUser> projectUsers = defaultProject.getUsers();
 
-    projectUsers.add(new ProjectUser().withProjectRole(ProjectRole.CUSTOMER).withUser(reg)
+    projectUsers.add(new ProjectUser().withProjectRole(ProjectRole.EDITOR).withUser(reg)
         .withProject(defaultProject));
     defaultProject.setUsers(projectUsers);
 
@@ -382,14 +388,13 @@ class UserRepositoryTest extends BaseTest {
 
   @Test
   void findAllMembersByProjectManagerRole() {
-    List<String> emails = userRepository.findEmailsByProjectAndRole(1L,
-        ProjectRole.PROJECT_MANAGER);
+    List<String> emails = userRepository.findEmailsByProjectAndRole(1L, ProjectRole.EDITOR);
 
     assertFalse(emails.isEmpty());
 
     emails.forEach(e -> {
       User user = userRepository.findByEmail(e).get();
-      assertEquals(ProjectRole.PROJECT_MANAGER,
+      assertEquals(ProjectRole.EDITOR,
           user.getProjects()
               .stream()
               .filter(it -> it.getId().getProjectId().equals(1L))
@@ -401,8 +406,8 @@ class UserRepositoryTest extends BaseTest {
   }
 
   @Test
-  void findAllMembersByMemberRole() {
-    List<String> emails = userRepository.findEmailsByProjectAndRole(1L, ProjectRole.MEMBER);
+  void findAllMembersByViewerRole() {
+    List<String> emails = userRepository.findEmailsByProjectAndRole(1L, ProjectRole.VIEWER);
 
     assertTrue(emails.isEmpty());
   }
@@ -414,6 +419,28 @@ class UserRepositoryTest extends BaseTest {
     assertFalse(emails.isEmpty());
     assertEquals(1, emails.size());
   }
+
+
+  @Test
+  void findProjectUsers() {
+    PageRequest pageRequest = PageRequest.of(0, 300);
+    Filter filter = new Filter(User.class, Lists.newArrayList());
+    filter.withCondition(
+        new FilterCondition(Condition.EQUALS, false, "millennium_falcon", CRITERIA_PROJECT_KEY));
+    Page<User> result = userRepository.findProjectUsersByFilterExcluding("millennium_falcon",
+        filter, pageRequest, "email");
+    assertEquals(3, result.getTotalElements());
+
+    result.getContent().forEach(user -> assertFalse(user.getOrganizationUsers().isEmpty()));
+
+    result.getContent().stream().flatMap(user -> user.getOrganizationUsers().stream())
+        .forEach(orgUser -> {
+          assertNotNull(orgUser.getOrganizationRole());
+        });
+
+    result.getContent().forEach(user -> assertNull(user.getEmail()));
+  }
+
 
   private Filter buildDefaultUserFilter() {
     return Filter.builder()

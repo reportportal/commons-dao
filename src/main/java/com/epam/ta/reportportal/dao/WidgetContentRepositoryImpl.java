@@ -88,6 +88,7 @@ import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConst
 import static com.epam.ta.reportportal.dao.constant.WidgetRepositoryConstants.ID;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.dao.util.QueryUtils.collectJoinFields;
+import static com.epam.ta.reportportal.dao.util.ResultFetchers.ACTIVITY_FETCHER;
 import static com.epam.ta.reportportal.dao.util.WidgetContentUtil.ACTIVITY_MAPPER;
 import static com.epam.ta.reportportal.dao.util.WidgetContentUtil.BUG_TREND_STATISTICS_FETCHER;
 import static com.epam.ta.reportportal.dao.util.WidgetContentUtil.CASES_GROWTH_TREND_FETCHER;
@@ -110,6 +111,8 @@ import static com.epam.ta.reportportal.dao.util.WidgetContentUtil.TOP_PATTERN_TE
 import static com.epam.ta.reportportal.dao.util.WidgetContentUtil.UNIQUE_BUG_CONTENT_FETCHER;
 import static com.epam.ta.reportportal.jooq.Tables.FILTER;
 import static com.epam.ta.reportportal.jooq.Tables.ITEM_ATTRIBUTE;
+import static com.epam.ta.reportportal.jooq.Tables.ORGANIZATION;
+import static com.epam.ta.reportportal.jooq.Tables.ORGANIZATION_USER;
 import static com.epam.ta.reportportal.jooq.Tables.PATTERN_TEMPLATE;
 import static com.epam.ta.reportportal.jooq.Tables.PATTERN_TEMPLATE_TEST_ITEM;
 import static com.epam.ta.reportportal.jooq.Tables.STATISTICS;
@@ -173,6 +176,7 @@ import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTab
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableGetParams;
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableInitParams;
 import com.epam.reportportal.rules.exception.ReportPortalException;
+import com.epam.ta.reportportal.jooq.Tables;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.epam.ta.reportportal.jooq.tables.JItemAttribute;
@@ -192,7 +196,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
@@ -217,6 +221,7 @@ import org.jooq.impl.DSL;
 import org.jooq.util.postgres.PostgresDSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -867,15 +872,16 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						ACTIVITY.OBJECT_NAME,
 						ACTIVITY.SUBJECT_NAME,
 						USERS.LOGIN,
-						PROJECT.NAME
+            ORGANIZATION.ID,
+            ORGANIZATION.NAME,
+						PROJECT.NAME,
+						PROJECT.KEY
 				)
         .from(ACTIVITY)
-        .join(ACTIVITIES)
-        .on(fieldName(ACTIVITIES, ID).cast(Long.class).eq(ACTIVITY.ID))
-        .leftJoin(USERS)
-        .on(ACTIVITY.SUBJECT_ID.eq(USERS.ID))
-				.join(PROJECT)
-				.on(ACTIVITY.PROJECT_ID.eq(PROJECT.ID))
+        .join(ACTIVITIES).on(fieldName(ACTIVITIES, ID).cast(Long.class).eq(ACTIVITY.ID))
+        .leftJoin(USERS).on(ACTIVITY.SUBJECT_ID.eq(USERS.ID))
+        .leftJoin(ORGANIZATION).on(ACTIVITY.ORGANIZATION_ID.eq(ORGANIZATION.ID))
+				.join(PROJECT).on(ACTIVITY.PROJECT_ID.eq(PROJECT.ID))
 				.orderBy(WidgetSortUtils.sortingTransformer(filter.getTarget()).apply(sort, ACTIVITIES))
 				.fetch()
 				.map(ACTIVITY_MAPPER);

@@ -24,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.epam.ta.reportportal.entity.attribute.Attribute;
 import com.epam.ta.reportportal.entity.enums.ProjectAttributeEnum;
-import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueGroup;
 import com.epam.ta.reportportal.entity.item.issue.IssueType;
@@ -89,11 +88,10 @@ class ProjectUtilsTest {
     Project project = new Project();
     project.setId(1L);
     project.setName("test_project");
-    project.setProjectType(ProjectType.PERSONAL);
     project.setCreationDate(Instant.now());
     project.setUsers(Sets.newHashSet(new ProjectUser().withUser(getTestUser())
         .withProject(project)
-        .withProjectRole(ProjectRole.PROJECT_MANAGER)));
+        .withProjectRole(ProjectRole.EDITOR)));
     return project;
   }
 
@@ -195,7 +193,7 @@ class ProjectUtilsTest {
     assertNotNull(projectUser);
     assertEquals(getTestUser(), projectUser.getUser());
     assertEquals(project, projectUser.getProject());
-    assertEquals(ProjectRole.PROJECT_MANAGER, projectUser.getProjectRole());
+    assertEquals(ProjectRole.EDITOR, projectUser.getProjectRole());
   }
 
   @Test
@@ -250,25 +248,6 @@ class ProjectUtilsTest {
 
   }
 
-  @Test
-  void isPersonalForUserPositive() {
-    assertTrue(ProjectUtils.isPersonalForUser(ProjectType.PERSONAL, "qwe_personal_1234", "qwe"));
-    assertTrue(ProjectUtils.isPersonalForUser(ProjectType.PERSONAL, "qwe_personal", "qwe"));
-  }
-
-  @Test
-  void isPersonalForUserNegative() {
-    assertFalse(
-        ProjectUtils.isPersonalForUser(ProjectType.PERSONAL, "qwe_personal_1234", "qwe_personal"));
-    assertFalse(ProjectUtils.isPersonalForUser(ProjectType.PERSONAL, "qwe_personal_", "qwe"));
-  }
-
-  @Test
-  void isPersonalForUserNegativeWithProjectType() {
-    boolean isPersonal = ProjectUtils.isPersonalForUser(ProjectType.INTERNAL, "qwe_personal_1234",
-        "qwe");
-    assertFalse(isPersonal);
-  }
 
   @Test
   void isAssignedPositiveTest() {

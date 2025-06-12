@@ -80,19 +80,9 @@ public class JUserCreationBid extends TableImpl<JUserCreationBidRecord> {
     public final TableField<JUserCreationBidRecord, Long> INVITING_USER_ID = createField(DSL.name("inviting_user_id"), SQLDataType.BIGINT, this, "");
 
     /**
-     * The column <code>public.user_creation_bid.project_name</code>.
-     */
-    public final TableField<JUserCreationBidRecord, String> PROJECT_NAME = createField(DSL.name("project_name"), SQLDataType.VARCHAR.nullable(false), this, "");
-
-    /**
      * The column <code>public.user_creation_bid.metadata</code>.
      */
     public final TableField<JUserCreationBidRecord, JSONB> METADATA = createField(DSL.name("metadata"), SQLDataType.JSONB, this, "");
-
-    /**
-     * The column <code>public.user_creation_bid.role</code>.
-     */
-    public final TableField<JUserCreationBidRecord, String> ROLE = createField(DSL.name("role"), SQLDataType.VARCHAR.nullable(false), this, "");
 
     private JUserCreationBid(Name alias, Table<JUserCreationBidRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);

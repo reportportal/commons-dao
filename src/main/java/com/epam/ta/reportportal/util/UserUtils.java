@@ -16,10 +16,11 @@
 
 package com.epam.ta.reportportal.util;
 
-import org.apache.commons.validator.routines.EmailValidator;
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
 
 /**
- * @author Ivan Budaev
+ * @author Reingold Shekhtel
  */
 public final class UserUtils {
 
@@ -28,12 +29,18 @@ public final class UserUtils {
   }
 
   /**
-   * Validate email format against RFC822
+   * Validate email format against <a href="http://www.ietf.org/rfc/rfc822.txt" target="_top">RFC822</a>.
    *
    * @param email Email to be validated
    * @return TRUE of email is valid
    */
   public static boolean isEmailValid(String email) {
-    return EmailValidator.getInstance().isValid(email);
+    try{
+      var internetAddress = new InternetAddress(email);
+      internetAddress.validate();
+      return true;
+    } catch (AddressException e) {
+      return false;
+    }
   }
 }

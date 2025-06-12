@@ -16,26 +16,28 @@
 
 package com.epam.ta.reportportal.entity.enums.converter;
 
-import com.epam.ta.reportportal.entity.enums.ProjectType;
 import com.epam.reportportal.rules.exception.ReportPortalException;
+import com.epam.ta.reportportal.entity.enums.OrganizationType;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
 /**
- * @author Pavel Bortnik
+ * Organization type converter. Converts from ordinal value to String representations
+ *
+ * @author Siarhei Hrabko
  */
 @Converter(autoApply = true)
-public class ProjectTypeConverter implements AttributeConverter<ProjectType, String> {
+public class OrganizationTypeConverter implements AttributeConverter<OrganizationType, String> {
 
   @Override
-  public String convertToDatabaseColumn(ProjectType attribute) {
+  public String convertToDatabaseColumn(OrganizationType attribute) {
     return attribute.toString();
   }
 
   @Override
-  public ProjectType convertToEntityAttribute(String dbProjectRoleName) {
-    return ProjectType.findByName(dbProjectRoleName)
+  public OrganizationType convertToEntityAttribute(String orgType) {
+    return OrganizationType.findByName(orgType)
         .orElseThrow(
-            () -> new ReportPortalException("Can not convert project type name from database."));
+            () -> new ReportPortalException("Can not convert organization type from database."));
   }
 }

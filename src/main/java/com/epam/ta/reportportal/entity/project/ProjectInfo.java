@@ -18,12 +18,20 @@ package com.epam.ta.reportportal.entity.project;
 
 import java.io.Serializable;
 import java.time.Instant;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * Not database object. Representation of the result of project info query
  *
  * @author Pavel Bortnik
  */
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class ProjectInfo implements Serializable {
 
   public static final String USERS_QUANTITY = "usersQuantity";
@@ -38,7 +46,11 @@ public class ProjectInfo implements Serializable {
 
   private String projectType;
 
-  private String organization;
+  private String organizationId;
+
+  private String key;
+
+  private String slug;
 
   private int usersQuantity;
 
@@ -46,67 +58,4 @@ public class ProjectInfo implements Serializable {
 
   private Instant lastRun;
 
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
-
-  public Instant getCreationDate() {
-    return creationDate;
-  }
-
-  public void setCreationDate(Instant creationDate) {
-    this.creationDate = creationDate;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public String getProjectType() {
-    return projectType;
-  }
-
-  public void setProjectType(String projectType) {
-    this.projectType = projectType;
-  }
-
-  public String getOrganization() {
-    return organization;
-  }
-
-  public void setOrganization(String organization) {
-    this.organization = organization;
-  }
-
-  public int getUsersQuantity() {
-    return usersQuantity;
-  }
-
-  public void setUsersQuantity(int usersQuantity) {
-    this.usersQuantity = usersQuantity;
-  }
-
-  public int getLaunchesQuantity() {
-    return launchesQuantity;
-  }
-
-  public void setLaunchesQuantity(int launchesQuantity) {
-    this.launchesQuantity = launchesQuantity;
-  }
-
-  public Instant getLastRun() {
-    return lastRun;
-  }
-
-  public void setLastRun(Instant lastRun) {
-    this.lastRun = lastRun;
-  }
 }

@@ -5,15 +5,19 @@ package com.epam.ta.reportportal.jooq.tables;
 
 
 import com.epam.ta.reportportal.dao.converters.JooqInstantConverter;
+import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.JActivity.JActivityPath;
 import com.epam.ta.reportportal.jooq.tables.JAttribute.JAttributePath;
+import com.epam.ta.reportportal.jooq.tables.JGroups.JGroupsPath;
+import com.epam.ta.reportportal.jooq.tables.JGroupsProjects.JGroupsProjectsPath;
 import com.epam.ta.reportportal.jooq.tables.JIntegration.JIntegrationPath;
 import com.epam.ta.reportportal.jooq.tables.JIssueType.JIssueTypePath;
 import com.epam.ta.reportportal.jooq.tables.JIssueTypeProject.JIssueTypeProjectPath;
 import com.epam.ta.reportportal.jooq.tables.JLaunch.JLaunchPath;
 import com.epam.ta.reportportal.jooq.tables.JLaunchNumber.JLaunchNumberPath;
+import com.epam.ta.reportportal.jooq.tables.JOrganization.JOrganizationPath;
 import com.epam.ta.reportportal.jooq.tables.JOwnedEntity.JOwnedEntityPath;
 import com.epam.ta.reportportal.jooq.tables.JPatternTemplate.JPatternTemplatePath;
 import com.epam.ta.reportportal.jooq.tables.JProjectAttribute.JProjectAttributePath;
@@ -32,6 +36,7 @@ import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.ForeignKey;
 import org.jooq.Identity;
+import org.jooq.Index;
 import org.jooq.InverseForeignKey;
 import org.jooq.JSONB;
 import org.jooq.Name;
@@ -84,19 +89,14 @@ public class JProject extends TableImpl<JProjectRecord> {
     public final TableField<JProjectRecord, String> NAME = createField(DSL.name("name"), SQLDataType.VARCHAR.nullable(false), this, "");
 
     /**
-     * The column <code>public.project.project_type</code>.
-     */
-    public final TableField<JProjectRecord, String> PROJECT_TYPE = createField(DSL.name("project_type"), SQLDataType.VARCHAR.nullable(false), this, "");
-
-    /**
      * The column <code>public.project.organization</code>.
      */
     public final TableField<JProjectRecord, String> ORGANIZATION = createField(DSL.name("organization"), SQLDataType.VARCHAR, this, "");
 
     /**
-     * The column <code>public.project.creation_date</code>.
+     * The column <code>public.project.created_at</code>.
      */
-    public final TableField<JProjectRecord, Instant> CREATION_DATE = createField(DSL.name("creation_date"), SQLDataType.LOCALDATETIME(6).nullable(false).defaultValue(DSL.field(DSL.raw("now()"), SQLDataType.LOCALDATETIME)), this, "", new JooqInstantConverter());
+    public final TableField<JProjectRecord, Instant> CREATED_AT = createField(DSL.name("created_at"), SQLDataType.LOCALDATETIME(6).nullable(false).defaultValue(DSL.field(DSL.raw("now()"), SQLDataType.LOCALDATETIME)), this, "", new JooqInstantConverter());
 
     /**
      * The column <code>public.project.metadata</code>.
@@ -107,6 +107,26 @@ public class JProject extends TableImpl<JProjectRecord> {
      * The column <code>public.project.allocated_storage</code>.
      */
     public final TableField<JProjectRecord, Long> ALLOCATED_STORAGE = createField(DSL.name("allocated_storage"), SQLDataType.BIGINT.nullable(false).defaultValue(DSL.field(DSL.raw("0"), SQLDataType.BIGINT)), this, "");
+
+    /**
+     * The column <code>public.project.organization_id</code>.
+     */
+    public final TableField<JProjectRecord, Long> ORGANIZATION_ID = createField(DSL.name("organization_id"), SQLDataType.BIGINT, this, "");
+
+    /**
+     * The column <code>public.project.slug</code>.
+     */
+    public final TableField<JProjectRecord, String> SLUG = createField(DSL.name("slug"), SQLDataType.CLOB, this, "");
+
+    /**
+     * The column <code>public.project.key</code>.
+     */
+    public final TableField<JProjectRecord, String> KEY = createField(DSL.name("key"), SQLDataType.CLOB, this, "");
+
+    /**
+     * The column <code>public.project.updated_at</code>.
+     */
+    public final TableField<JProjectRecord, Instant> UPDATED_AT = createField(DSL.name("updated_at"), SQLDataType.LOCALDATETIME(6).nullable(false).defaultValue(DSL.field(DSL.raw("now()"), SQLDataType.LOCALDATETIME)), this, "", new JooqInstantConverter());
 
     private JProject(Name alias, Table<JProjectRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);
@@ -176,6 +196,11 @@ public class JProject extends TableImpl<JProjectRecord> {
     }
 
     @Override
+    public List<Index> getIndexes() {
+        return Arrays.asList(Indexes.PROJECT_KEY_IDX);
+    }
+
+    @Override
     public Identity<JProjectRecord, Long> getIdentity() {
         return (Identity<JProjectRecord, Long>) super.getIdentity();
     }
@@ -187,7 +212,24 @@ public class JProject extends TableImpl<JProjectRecord> {
 
     @Override
     public List<UniqueKey<JProjectRecord>> getUniqueKeys() {
-        return Arrays.asList(Keys.PROJECT_NAME_KEY);
+        return Arrays.asList(Keys.PROJECT_KEY_KEY);
+    }
+
+    @Override
+    public List<ForeignKey<JProjectRecord, ?>> getReferences() {
+        return Arrays.asList(Keys.PROJECT__FK_PROJECT_ORGANIZATION);
+    }
+
+    private transient JOrganizationPath _organization;
+
+    /**
+     * Get the implicit join path to the <code>public.organization</code> table.
+     */
+    public JOrganizationPath organization() {
+        if (_organization == null)
+            _organization = new JOrganizationPath(this, Keys.PROJECT__FK_PROJECT_ORGANIZATION, null);
+
+        return _organization;
     }
 
     private transient JActivityPath _activity;
@@ -201,6 +243,19 @@ public class JProject extends TableImpl<JProjectRecord> {
             _activity = new JActivityPath(this, null, Keys.ACTIVITY__ACTIVITY_PROJECT_ID_FKEY.getInverseKey());
 
         return _activity;
+    }
+
+    private transient JGroupsProjectsPath _groupsProjects;
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>public.groups_projects</code> table
+     */
+    public JGroupsProjectsPath groupsProjects() {
+        if (_groupsProjects == null)
+            _groupsProjects = new JGroupsProjectsPath(this, null, Keys.GROUPS_PROJECTS__GROUPS_PROJECTS_PROJECT_ID_FKEY.getInverseKey());
+
+        return _groupsProjects;
     }
 
     private transient JIntegrationPath _integration;
@@ -331,6 +386,14 @@ public class JProject extends TableImpl<JProjectRecord> {
             _userPreference = new JUserPreferencePath(this, null, Keys.USER_PREFERENCE__USER_PREFERENCE_PROJECT_ID_FKEY.getInverseKey());
 
         return _userPreference;
+    }
+
+    /**
+     * Get the implicit many-to-many join path to the <code>public.groups</code>
+     * table
+     */
+    public JGroupsPath groups() {
+        return groupsProjects().groups();
     }
 
     /**

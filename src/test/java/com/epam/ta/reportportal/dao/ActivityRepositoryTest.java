@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.dao;
 
+import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_ACTIVITY_ORG_NAME;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_CREATED_AT;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_OBJECT_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.ActivityCriteriaConstant.CRITERIA_OBJECT_NAME;
@@ -52,6 +53,8 @@ import java.util.Optional;
 import org.apache.commons.compress.utils.Lists;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -64,14 +67,14 @@ class ActivityRepositoryTest extends BaseTest {
 	private static final int ACTIVITIES_COUNT = 7;
 
 	@Autowired
-	private ActivityRepository repository;
+	private ActivityRepository activityRepository;
 
 	//	JPA
 
 	@Test
 	@DisplayName("Should find Activity by id")
 	void findByIdTest() {
-		final Optional<Activity> activityOptional = repository.findById(1L);
+		final Optional<Activity> activityOptional = activityRepository.findById(1L);
 
 		assertTrue(activityOptional.isPresent());
 		assertEquals(1L, (long) activityOptional.get().getId());
@@ -80,7 +83,7 @@ class ActivityRepositoryTest extends BaseTest {
 	@Test
 	@DisplayName("Should find all Activities")
 	void findAllTest() {
-		final List<Activity> activities = repository.findAll();
+		final List<Activity> activities = activityRepository.findAll();
 
 		assertFalse(activities.isEmpty());
 		assertEquals(ACTIVITIES_COUNT, activities.size());
@@ -90,9 +93,9 @@ class ActivityRepositoryTest extends BaseTest {
 	@DisplayName("Should create Activity")
 	void createTest() {
 		final Activity entity = generateActivity();
-		final Activity saved = repository.save(entity);
+		final Activity saved = activityRepository.save(entity);
 		entity.setId(saved.getId());
-		final List<Activity> all = repository.findAll();
+		final List<Activity> all = activityRepository.findAll();
 
 		assertEquals(saved, entity);
 		assertEquals(ACTIVITIES_COUNT + 1, all.size());
@@ -103,7 +106,7 @@ class ActivityRepositoryTest extends BaseTest {
 	@Test
 	@DisplayName("Should update Activity")
 	void updateTest() {
-		Activity activity = repository.findById(1L).get();
+		Activity activity = activityRepository.findById(1L).get();
 		final Instant now = Instant.now();
 		final ActivityDetails details = generateDetails();
 		final EventAction action = EventAction.CREATE;
@@ -112,7 +115,7 @@ class ActivityRepositoryTest extends BaseTest {
 		activity.setAction(action);
 		activity.setDetails(details);
 
-		final Activity updated = repository.save(activity);
+		final Activity updated = activityRepository.save(activity);
 
 		assertEquals(now, updated.getCreatedAt());
 		assertThat(updated.getDetails()).isEqualToIgnoringGivenFields(details, "mapper");
@@ -123,25 +126,25 @@ class ActivityRepositoryTest extends BaseTest {
 	@Test
 	@DisplayName("Should delete Activity")
 	void deleteTest() {
-		final Activity activity = repository.findById(1L).get();
-		repository.delete(activity);
+		final Activity activity = activityRepository.findById(1L).get();
+		activityRepository.delete(activity);
 
-		assertEquals(ACTIVITIES_COUNT - 1, repository.findAll().size());
+		assertEquals(ACTIVITIES_COUNT - 1, activityRepository.findAll().size());
 	}
 
 	@Test
 	@DisplayName("Should delete Activity by id")
 	void deleteById() {
-		repository.deleteById(1L);
-		assertEquals(ACTIVITIES_COUNT - 1, repository.findAll().size());
+		activityRepository.deleteById(1L);
+		assertEquals(ACTIVITIES_COUNT - 1, activityRepository.findAll().size());
 	}
 
 	@Test
 	@DisplayName("Should check existence of Activity")
 	void existsTest() {
-		assertTrue(repository.existsById(1L));
-		assertFalse(repository.existsById(100L));
-		assertTrue(repository.exists(defaultFilter()));
+		assertTrue(activityRepository.existsById(1L));
+		assertFalse(activityRepository.existsById(100L));
+		assertTrue(activityRepository.exists(defaultFilter()));
 	}
 
 	//	Custom Repositories
@@ -151,15 +154,15 @@ class ActivityRepositoryTest extends BaseTest {
 		Duration period = Duration.ofDays(10);
     Instant bound = Instant.now().minus(period);
 
-		repository.deleteModifiedLaterAgo(1L, period);
-		List<Activity> all = repository.findAll();
+		activityRepository.deleteModifiedLaterAgo(1L, period);
+		List<Activity> all = activityRepository.findAll();
 		all.stream().filter(a -> a.getProjectId().equals(1L))
 				.forEach(a -> assertTrue(a.getCreatedAt().isAfter(bound)));
 	}
 
 	@Test
 	void findByFilterWithSortingAndLimit() {
-		List<Activity> activities = repository.findByFilterWithSortingAndLimit(defaultFilter(),
+		List<Activity> activities = activityRepository.findByFilterWithSortingAndLimit(defaultFilter(),
 				Sort.by(Sort.Direction.DESC, CRITERIA_CREATED_AT),
 				2
 		);
@@ -173,7 +176,7 @@ class ActivityRepositoryTest extends BaseTest {
 	@Test
 	@DisplayName("Should find Activities by filter")
 	void findByFilter() {
-		List<Activity> activities = repository.findByFilter(filterById(1));
+		List<Activity> activities = activityRepository.findByFilter(filterById(1));
 
 		assertEquals(1, activities.size());
 		assertNotNull(activities.get(0));
@@ -181,7 +184,7 @@ class ActivityRepositoryTest extends BaseTest {
 
 	@Test
 	void findByFilterPageable() {
-		Page<Activity> page = repository.findByFilter(filterById(1), PageRequest.of(0, 10));
+		Page<Activity> page = activityRepository.findByFilter(filterById(1), PageRequest.of(0, 10));
 		ArrayList<Object> activities = Lists.newArrayList();
 		page.forEach(activities::add);
 
@@ -191,7 +194,7 @@ class ActivityRepositoryTest extends BaseTest {
 
 	@Test
 	void findByProjectId() {
-		final List<Activity> activities = repository.findByFilter(new Filter(Activity.class,
+		final List<Activity> activities = activityRepository.findByFilter(new Filter(Activity.class,
 				Condition.EQUALS,
 				false,
 				String.valueOf(1),
@@ -204,7 +207,7 @@ class ActivityRepositoryTest extends BaseTest {
 
 	@Test
 	void findByEntityType() {
-		final List<Activity> activities = repository.findByFilter(new Filter(Activity.class,
+		final List<Activity> activities = activityRepository.findByFilter(new Filter(Activity.class,
 				Condition.EQUALS,
 				false,
 				"LAUNCH",
@@ -220,7 +223,7 @@ class ActivityRepositoryTest extends BaseTest {
 	void findByCreationDate() {
     Instant to = Instant.now();
     Instant from = to.minus(7, ChronoUnit.DAYS);
-		final List<Activity> activities = repository.findByFilter(new Filter(Activity.class,
+		final List<Activity> activities = activityRepository.findByFilter(new Filter(Activity.class,
 				Condition.BETWEEN,
 				false,
 				from + "," + to,
@@ -234,7 +237,7 @@ class ActivityRepositoryTest extends BaseTest {
 
 	@Test
 	void findByUserLogin() {
-		final List<Activity> activities = repository.findByFilter(new Filter(Activity.class,
+		final List<Activity> activities = activityRepository.findByFilter(new Filter(Activity.class,
 				Condition.EQUALS,
 				false,
 				"superadmin",
@@ -247,7 +250,7 @@ class ActivityRepositoryTest extends BaseTest {
 
 	@Test
 	void findByObjectIdTest() {
-		final List<Activity> activities = repository.findByFilter(new Filter(Activity.class,
+		final List<Activity> activities = activityRepository.findByFilter(new Filter(Activity.class,
 				Condition.EQUALS,
 				false,
 				"4",
@@ -262,7 +265,7 @@ class ActivityRepositoryTest extends BaseTest {
 	void objectNameCriteriaTest() {
 		String term = "filter";
 
-		List<Activity> activities = repository.findByFilter(Filter.builder()
+		List<Activity> activities = activityRepository.findByFilter(Filter.builder()
 				.withTarget(Activity.class)
 				.withCondition(FilterCondition.builder()
 						.withCondition(Condition.CONTAINS)
@@ -274,6 +277,24 @@ class ActivityRepositoryTest extends BaseTest {
 		assertFalse(activities.isEmpty());
 		activities.forEach(it -> assertTrue(it.getObjectName().contains(term)));
 	}
+
+  @ParameterizedTest
+  @CsvSource(value = {
+      "my|7",
+      "notmy|0"
+  }, delimiter = '|')
+    void orgNameCriteriaTest(String term, int expectedAmount) {
+    List<Activity> activities = activityRepository.findByFilter(Filter.builder()
+        .withTarget(Activity.class)
+        .withCondition(FilterCondition.builder()
+            .withCondition(Condition.CONTAINS)
+            .withSearchCriteria(CRITERIA_ACTIVITY_ORG_NAME)
+            .withValue(term)
+            .build())
+        .build());
+
+    assertEquals(expectedAmount, activities.size());
+  }
 
 	private Activity generateActivity() {
 		Activity activity = new Activity();
@@ -302,7 +323,7 @@ class ActivityRepositoryTest extends BaseTest {
 	@Test
 	void sortingByJoinedColumnTest() {
 		PageRequest pageRequest = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, CRITERIA_USER));
-		Page<Activity> activitiesPage = repository.findByFilter(defaultFilter(), pageRequest);
+		Page<Activity> activitiesPage = activityRepository.findByFilter(defaultFilter(), pageRequest);
 
 		assertTrue(Comparators.isInOrder(activitiesPage.getContent(),
 				Comparator.comparing(Activity::getSubjectName).reversed()));

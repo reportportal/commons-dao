@@ -203,6 +203,20 @@ public class JActivityRecord extends UpdatableRecordImpl<JActivityRecord> {
         return (String) get(12);
     }
 
+    /**
+     * Setter for <code>public.activity.organization_id</code>.
+     */
+    public void setOrganizationId(Long value) {
+        set(13, value);
+    }
+
+    /**
+     * Getter for <code>public.activity.organization_id</code>.
+     */
+    public Long getOrganizationId() {
+        return (Long) get(13);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -226,7 +240,7 @@ public class JActivityRecord extends UpdatableRecordImpl<JActivityRecord> {
     /**
      * Create a detached, initialised JActivityRecord
      */
-    public JActivityRecord(Long id, Instant createdAt, String action, String eventName, String priority, Long objectId, String objectName, String objectType, Long projectId, JSONB details, Long subjectId, String subjectName, String subjectType) {
+    public JActivityRecord(Long id, Instant createdAt, String action, String eventName, String priority, Long objectId, String objectName, String objectType, Long projectId, JSONB details, Long subjectId, String subjectName, String subjectType, Long organizationId) {
         super(JActivity.ACTIVITY);
 
         setId(id);
@@ -242,6 +256,7 @@ public class JActivityRecord extends UpdatableRecordImpl<JActivityRecord> {
         setSubjectId(subjectId);
         setSubjectName(subjectName);
         setSubjectType(subjectType);
+        setOrganizationId(organizationId);
         resetChangedOnNotNull();
     }
 }

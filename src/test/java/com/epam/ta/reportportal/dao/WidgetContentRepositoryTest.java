@@ -92,6 +92,7 @@ import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -907,8 +908,7 @@ class WidgetContentRepositoryTest extends BaseTest {
         .withCondition(new FilterCondition(Condition.IN, false, String.join(",", "LAUNCH", "ITEM"),
             CRITERIA_OBJECT_TYPE));
 
-    List<ActivityResource> activityContentList = widgetContentRepository.activityStatistics(filter,
-        sort, 4);
+    List<ActivityResource> activityContentList = widgetContentRepository.activityStatistics(filter, sort, 4);
 
     assertNotNull(activityContentList);
     assertEquals(4, activityContentList.size());

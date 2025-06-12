@@ -78,45 +78,17 @@ public class JUserCreationBidRecord extends UpdatableRecordImpl<JUserCreationBid
     }
 
     /**
-     * Setter for <code>public.user_creation_bid.project_name</code>.
-     */
-    public void setProjectName(String value) {
-        set(4, value);
-    }
-
-    /**
-     * Getter for <code>public.user_creation_bid.project_name</code>.
-     */
-    public String getProjectName() {
-        return (String) get(4);
-    }
-
-    /**
      * Setter for <code>public.user_creation_bid.metadata</code>.
      */
     public void setMetadata(JSONB value) {
-        set(5, value);
+        set(4, value);
     }
 
     /**
      * Getter for <code>public.user_creation_bid.metadata</code>.
      */
     public JSONB getMetadata() {
-        return (JSONB) get(5);
-    }
-
-    /**
-     * Setter for <code>public.user_creation_bid.role</code>.
-     */
-    public void setRole(String value) {
-        set(6, value);
-    }
-
-    /**
-     * Getter for <code>public.user_creation_bid.role</code>.
-     */
-    public String getRole() {
-        return (String) get(6);
+        return (JSONB) get(4);
     }
 
     // -------------------------------------------------------------------------
@@ -142,16 +114,14 @@ public class JUserCreationBidRecord extends UpdatableRecordImpl<JUserCreationBid
     /**
      * Create a detached, initialised JUserCreationBidRecord
      */
-    public JUserCreationBidRecord(String uuid, Instant lastModified, String email, Long invitingUserId, String projectName, JSONB metadata, String role) {
+    public JUserCreationBidRecord(String uuid, Instant lastModified, String email, Long invitingUserId, JSONB metadata) {
         super(JUserCreationBid.USER_CREATION_BID);
 
         setUuid(uuid);
         setLastModified(lastModified);
         setEmail(email);
         setInvitingUserId(invitingUserId);
-        setProjectName(projectName);
         setMetadata(metadata);
-        setRole(role);
         resetChangedOnNotNull();
     }
 }

@@ -86,6 +86,9 @@ public class Activity implements Serializable {
   @Column(name = "project_id")
   private Long projectId;
 
+  @Column(name = "organization_id")
+  private Long organizationId;
+
   @Transient
   private String projectName;
 

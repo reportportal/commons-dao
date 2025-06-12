@@ -50,73 +50,115 @@ public class JProjectRecord extends UpdatableRecordImpl<JProjectRecord> {
     }
 
     /**
-     * Setter for <code>public.project.project_type</code>.
-     */
-    public void setProjectType(String value) {
-        set(2, value);
-    }
-
-    /**
-     * Getter for <code>public.project.project_type</code>.
-     */
-    public String getProjectType() {
-        return (String) get(2);
-    }
-
-    /**
      * Setter for <code>public.project.organization</code>.
      */
     public void setOrganization(String value) {
-        set(3, value);
+        set(2, value);
     }
 
     /**
      * Getter for <code>public.project.organization</code>.
      */
     public String getOrganization() {
-        return (String) get(3);
+        return (String) get(2);
     }
 
     /**
-     * Setter for <code>public.project.creation_date</code>.
+     * Setter for <code>public.project.created_at</code>.
      */
-    public void setCreationDate(Instant value) {
-        set(4, value);
+    public void setCreatedAt(Instant value) {
+        set(3, value);
     }
 
     /**
-     * Getter for <code>public.project.creation_date</code>.
+     * Getter for <code>public.project.created_at</code>.
      */
-    public Instant getCreationDate() {
-        return (Instant) get(4);
+    public Instant getCreatedAt() {
+        return (Instant) get(3);
     }
 
     /**
      * Setter for <code>public.project.metadata</code>.
      */
     public void setMetadata(JSONB value) {
-        set(5, value);
+        set(4, value);
     }
 
     /**
      * Getter for <code>public.project.metadata</code>.
      */
     public JSONB getMetadata() {
-        return (JSONB) get(5);
+        return (JSONB) get(4);
     }
 
     /**
      * Setter for <code>public.project.allocated_storage</code>.
      */
     public void setAllocatedStorage(Long value) {
-        set(6, value);
+        set(5, value);
     }
 
     /**
      * Getter for <code>public.project.allocated_storage</code>.
      */
     public Long getAllocatedStorage() {
+        return (Long) get(5);
+    }
+
+    /**
+     * Setter for <code>public.project.organization_id</code>.
+     */
+    public void setOrganizationId(Long value) {
+        set(6, value);
+    }
+
+    /**
+     * Getter for <code>public.project.organization_id</code>.
+     */
+    public Long getOrganizationId() {
         return (Long) get(6);
+    }
+
+    /**
+     * Setter for <code>public.project.slug</code>.
+     */
+    public void setSlug(String value) {
+        set(7, value);
+    }
+
+    /**
+     * Getter for <code>public.project.slug</code>.
+     */
+    public String getSlug() {
+        return (String) get(7);
+    }
+
+    /**
+     * Setter for <code>public.project.key</code>.
+     */
+    public void setKey(String value) {
+        set(8, value);
+    }
+
+    /**
+     * Getter for <code>public.project.key</code>.
+     */
+    public String getKey() {
+        return (String) get(8);
+    }
+
+    /**
+     * Setter for <code>public.project.updated_at</code>.
+     */
+    public void setUpdatedAt(Instant value) {
+        set(9, value);
+    }
+
+    /**
+     * Getter for <code>public.project.updated_at</code>.
+     */
+    public Instant getUpdatedAt() {
+        return (Instant) get(9);
     }
 
     // -------------------------------------------------------------------------
@@ -142,16 +184,19 @@ public class JProjectRecord extends UpdatableRecordImpl<JProjectRecord> {
     /**
      * Create a detached, initialised JProjectRecord
      */
-    public JProjectRecord(Long id, String name, String projectType, String organization, Instant creationDate, JSONB metadata, Long allocatedStorage) {
+    public JProjectRecord(Long id, String name, String organization, Instant createdAt, JSONB metadata, Long allocatedStorage, Long organizationId, String slug, String key, Instant updatedAt) {
         super(JProject.PROJECT);
 
         setId(id);
         setName(name);
-        setProjectType(projectType);
         setOrganization(organization);
-        setCreationDate(creationDate);
+        setCreatedAt(createdAt);
         setMetadata(metadata);
         setAllocatedStorage(allocatedStorage);
+        setOrganizationId(organizationId);
+        setSlug(slug);
+        setKey(key);
+        setUpdatedAt(updatedAt);
         resetChangedOnNotNull();
     }
 }

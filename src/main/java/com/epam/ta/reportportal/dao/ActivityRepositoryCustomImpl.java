@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.dao;
 
+import static com.epam.ta.reportportal.commons.EntityUtils.INSTANT_TO_TIMESTAMP;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.ACTIVITY_MAPPER;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.ACTIVITY_FETCHER;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
