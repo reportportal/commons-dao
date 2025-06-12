@@ -62,7 +62,7 @@ public class UserCreationBid implements Serializable, Modifiable {
   @Column(name = "email")
   private String email;
 
-  @OneToOne(cascade = CascadeType.REFRESH)
+  @OneToOne
   @JoinColumn(name = "inviting_user_id")
   private User invitingUser;
 
