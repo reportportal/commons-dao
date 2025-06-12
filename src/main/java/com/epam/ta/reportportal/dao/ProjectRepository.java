@@ -34,6 +34,10 @@ public interface ProjectRepository extends ReportPortalRepository<Project, Long>
 
   Optional<Project> findByNameAndOrganizationId(String name, Long organizationId);
 
+  Optional<Project> findBySlugAndOrganizationId(String slug, Long organizationId);
+
+  boolean existsBySlugAndOrganizationId(String slug, Long organizationId);
+
   Optional<Project> findByIdAndOrganizationId(Long projectId, Long organizationId);
 
   boolean existsByIdAndOrganizationId(Long projectId, Long organizationId);
