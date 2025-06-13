@@ -19,8 +19,6 @@ package com.epam.ta.reportportal.entity.user;
 import com.epam.ta.reportportal.dao.converters.JpaInstantConverter;
 import com.epam.ta.reportportal.entity.Metadata;
 import com.epam.ta.reportportal.entity.Modifiable;
-import java.io.Serializable;
-import java.time.Instant;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -30,12 +28,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.io.Serializable;
+import java.time.Instant;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Type;
-
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -63,52 +62,17 @@ public class UserCreationBid implements Serializable, Modifiable {
   @Column(name = "email")
   private String email;
 
-  @OneToOne(cascade = CascadeType.ALL)
+  @OneToOne
   @JoinColumn(name = "inviting_user_id")
   private User invitingUser;
 
-	@Type(Metadata.class)
-	@Column(name = "metadata")
-	private Metadata metadata;
-
-  public String getUuid() {
-    return uuid;
-  }
-
-  public void setUuid(String uuid) {
-    this.uuid = uuid;
-  }
-
-  public String getEmail() {
-    return email;
-  }
-
-  public void setEmail(String email) {
-    this.email = email;
-  }
+  @Type(Metadata.class)
+  @Column(name = "metadata")
+  private Metadata metadata;
 
   @Override
   public Instant getLastModified() {
     return lastModified;
   }
 
-	public void setLastModified(Instant lastModified) {
-		this.lastModified = lastModified;
-	}
-
-	public Metadata getMetadata() {
-		return metadata;
-	}
-
-	public void setMetadata(Metadata metadata) {
-		this.metadata = metadata;
-	}
-
-  public User getInvitingUser() {
-    return invitingUser;
-  }
-
-  public void setInvitingUser(User invitingUser) {
-    this.invitingUser = invitingUser;
-  }
 }

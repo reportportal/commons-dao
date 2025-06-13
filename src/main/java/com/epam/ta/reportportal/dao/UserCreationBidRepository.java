@@ -38,4 +38,6 @@ public interface UserCreationBidRepository extends ReportPortalRepository<UserCr
   int expireBidsOlderThan(@Param("date") Instant date);
 
   Optional<UserCreationBid> findFirstByEmailOrderByLastModifiedDesc(String email);
+
+  void deleteByUuid(String uuid);
 }
