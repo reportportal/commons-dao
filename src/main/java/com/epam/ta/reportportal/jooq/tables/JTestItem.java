@@ -17,15 +17,12 @@ import com.epam.ta.reportportal.jooq.tables.JPatternTemplate.JPatternTemplatePat
 import com.epam.ta.reportportal.jooq.tables.JPatternTemplateTestItem.JPatternTemplateTestItemPath;
 import com.epam.ta.reportportal.jooq.tables.JStatistics.JStatisticsPath;
 import com.epam.ta.reportportal.jooq.tables.JStatisticsField.JStatisticsFieldPath;
-import com.epam.ta.reportportal.jooq.tables.JTestItem.JTestItemPath;
 import com.epam.ta.reportportal.jooq.tables.JTestItemResults.JTestItemResultsPath;
 import com.epam.ta.reportportal.jooq.tables.records.JTestItemRecord;
-
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.ForeignKey;
@@ -231,7 +228,7 @@ public class JTestItem extends TableImpl<JTestItemRecord> {
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.asList(Indexes.ITEM_TEST_CASE_ID_LAUNCH_ID_IDX, Indexes.PATH_GIST_IDX, Indexes.TEST_CASE_HASH_LAUNCH_ID_IDX, Indexes.TEST_ITEM_UNIQUE_ID_LAUNCH_ID_IDX, Indexes.TI_LAUNCH_IDX, Indexes.TI_PARENT_IDX, Indexes.TI_RETRY_OF_IDX);
+        return Arrays.asList(Indexes.IDX_TEST_ITEM_NAME_TRGM, Indexes.ITEM_TEST_CASE_ID_LAUNCH_ID_IDX, Indexes.PATH_GIST_IDX, Indexes.TEST_CASE_HASH_LAUNCH_ID_IDX, Indexes.TEST_ITEM_START_TIME_IDX, Indexes.TEST_ITEM_UNIQUE_ID_LAUNCH_ID_IDX, Indexes.TI_LAUNCH_IDX, Indexes.TI_PARENT_IDX, Indexes.TI_RETRY_OF_IDX);
     }
 
     @Override

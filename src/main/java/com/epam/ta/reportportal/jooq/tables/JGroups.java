@@ -94,14 +94,14 @@ public class JGroups extends TableImpl<JGroupsRecord> {
     public final TableField<JGroupsRecord, Instant> UPDATED_AT = createField(DSL.name("updated_at"), SQLDataType.LOCALDATETIME(6).nullable(false).defaultValue(DSL.field(DSL.raw("now()"), SQLDataType.LOCALDATETIME)), this, "", new JooqInstantConverter());
 
     /**
-     * The column <code>public.groups.org_id</code>.
-     */
-    public final TableField<JGroupsRecord, Integer> ORG_ID = createField(DSL.name("org_id"), SQLDataType.INTEGER, this, "");
-
-    /**
      * The column <code>public.groups.uuid</code>.
      */
     public final TableField<JGroupsRecord, java.util.UUID> UUID = createField(DSL.name("uuid"), SQLDataType.UUID.nullable(false).defaultValue(DSL.field(DSL.raw("gen_random_uuid()"), SQLDataType.UUID)), this, "");
+
+    /**
+     * The column <code>public.groups.org_id</code>.
+     */
+    public final TableField<JGroupsRecord, Integer> ORG_ID = createField(DSL.name("org_id"), SQLDataType.INTEGER, this, "");
 
     private JGroups(Name alias, Table<JGroupsRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);

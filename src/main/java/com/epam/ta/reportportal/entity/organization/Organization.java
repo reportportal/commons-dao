@@ -29,6 +29,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * @author Siarhei Hrabko
@@ -39,6 +40,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class Organization implements Serializable {
 
   @Id
@@ -64,17 +66,6 @@ public class Organization implements Serializable {
   @Column(name = "external_id")
   private String externalId;
 
-
-  @Override
-  public String toString() {
-    return "Organization{" +
-        "id=" + id +
-        ", creationDate=" + createdAt +
-        ", updatedAt=" + updatedAt +
-        ", externalId=" + externalId +
-        ", name='" + name + '\'' +
-        ", organizationType=" + organizationType +
-        ", slug='" + slug + '\'' +
-        '}';
-  }
+  @Column(name = "user_id")
+  private Long userId;
 }

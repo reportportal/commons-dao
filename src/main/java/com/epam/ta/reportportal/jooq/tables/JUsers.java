@@ -125,21 +125,6 @@ public class JUsers extends TableImpl<JUsersRecord> {
     public final TableField<JUsersRecord, JSONB> METADATA = createField(DSL.name("metadata"), SQLDataType.JSONB, this, "");
 
     /**
-     * The column <code>public.users.created_at</code>.
-     */
-    public final TableField<JUsersRecord, Instant> CREATED_AT = createField(DSL.name("created_at"), SQLDataType.LOCALDATETIME(6).nullable(false).defaultValue(DSL.field(DSL.raw("now()"), SQLDataType.LOCALDATETIME)), this, "", new JooqInstantConverter());
-
-    /**
-     * The column <code>public.users.updated_at</code>.
-     */
-    public final TableField<JUsersRecord, Instant> UPDATED_AT = createField(DSL.name("updated_at"), SQLDataType.LOCALDATETIME(6).nullable(false).defaultValue(DSL.field(DSL.raw("now()"), SQLDataType.LOCALDATETIME)), this, "", new JooqInstantConverter());
-
-    /**
-     * The column <code>public.users.active</code>.
-     */
-    public final TableField<JUsersRecord, Boolean> ACTIVE = createField(DSL.name("active"), SQLDataType.BOOLEAN.defaultValue(DSL.field(DSL.raw("true"), SQLDataType.BOOLEAN)), this, "");
-
-    /**
      * The column <code>public.users.uuid</code>.
      */
     public final TableField<JUsersRecord, java.util.UUID> UUID = createField(DSL.name("uuid"), SQLDataType.UUID.nullable(false).defaultValue(DSL.field(DSL.raw("gen_random_uuid()"), SQLDataType.UUID)), this, "");
@@ -148,6 +133,26 @@ public class JUsers extends TableImpl<JUsersRecord> {
      * The column <code>public.users.external_id</code>.
      */
     public final TableField<JUsersRecord, String> EXTERNAL_ID = createField(DSL.name("external_id"), SQLDataType.VARCHAR, this, "");
+
+    /**
+     * The column <code>public.users.active</code>.
+     */
+    public final TableField<JUsersRecord, Boolean> ACTIVE = createField(DSL.name("active"), SQLDataType.BOOLEAN.defaultValue(DSL.field(DSL.raw("true"), SQLDataType.BOOLEAN)), this, "");
+
+    /**
+     * The column <code>public.users.login_backup</code>.
+     */
+    public final TableField<JUsersRecord, String> LOGIN_BACKUP = createField(DSL.name("login_backup"), SQLDataType.VARCHAR(255).defaultValue(DSL.field(DSL.raw("NULL::character varying"), SQLDataType.VARCHAR)), this, "");
+
+    /**
+     * The column <code>public.users.created_at</code>.
+     */
+    public final TableField<JUsersRecord, Instant> CREATED_AT = createField(DSL.name("created_at"), SQLDataType.LOCALDATETIME(6).nullable(false).defaultValue(DSL.field(DSL.raw("now()"), SQLDataType.LOCALDATETIME)), this, "", new JooqInstantConverter());
+
+    /**
+     * The column <code>public.users.updated_at</code>.
+     */
+    public final TableField<JUsersRecord, Instant> UPDATED_AT = createField(DSL.name("updated_at"), SQLDataType.LOCALDATETIME(6).nullable(false).defaultValue(DSL.field(DSL.raw("now()"), SQLDataType.LOCALDATETIME)), this, "", new JooqInstantConverter());
 
     private JUsers(Name alias, Table<JUsersRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);
@@ -244,6 +249,19 @@ public class JUsers extends TableImpl<JUsersRecord> {
         return _apiKeys;
     }
 
+    private transient JOrganizationPath _organization;
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>public.organization</code> table
+     */
+    public JOrganizationPath organization() {
+        if (_organization == null)
+            _organization = new JOrganizationPath(this, null, Keys.ORGANIZATION__FK_ORGANIZATION_USER.getInverseKey());
+
+        return _organization;
+    }
+
     private transient JGroupsPath _groups;
 
     /**
@@ -333,14 +351,6 @@ public class JUsers extends TableImpl<JUsersRecord> {
             _userPreference = new JUserPreferencePath(this, null, Keys.USER_PREFERENCE__USER_PREFERENCE_USER_ID_FKEY.getInverseKey());
 
         return _userPreference;
-    }
-
-    /**
-     * Get the implicit many-to-many join path to the
-     * <code>public.organization</code> table
-     */
-    public JOrganizationPath organization() {
-        return organizationUser().organization();
     }
 
     /**

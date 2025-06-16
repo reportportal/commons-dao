@@ -38,6 +38,7 @@ import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
 import com.epam.ta.reportportal.jooq.tables.JOrganization;
+import com.epam.ta.reportportal.jooq.tables.JOrganizationSettings;
 import com.epam.ta.reportportal.jooq.tables.JOrganizationUser;
 import com.epam.ta.reportportal.jooq.tables.JOwnedEntity;
 import com.epam.ta.reportportal.jooq.tables.JParameter;
@@ -245,6 +246,11 @@ public class Tables {
      * The table <code>public.organization</code>.
      */
     public static final JOrganization ORGANIZATION = JOrganization.ORGANIZATION;
+
+    /**
+     * The table <code>public.organization_settings</code>.
+     */
+    public static final JOrganizationSettings ORGANIZATION_SETTINGS = JOrganizationSettings.ORGANIZATION_SETTINGS;
 
     /**
      * The table <code>public.organization_user</code>.

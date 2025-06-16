@@ -76,6 +76,11 @@ public class JOrganization extends TableImpl<JOrganizationRecord> {
     public final TableField<JOrganizationRecord, Instant> CREATED_AT = createField(DSL.name("created_at"), SQLDataType.LOCALDATETIME(6).nullable(false).defaultValue(DSL.field(DSL.raw("now()"), SQLDataType.LOCALDATETIME)), this, "", new JooqInstantConverter());
 
     /**
+     * The column <code>public.organization.updated_at</code>.
+     */
+    public final TableField<JOrganizationRecord, Instant> UPDATED_AT = createField(DSL.name("updated_at"), SQLDataType.LOCALDATETIME(6).nullable(false).defaultValue(DSL.field(DSL.raw("now()"), SQLDataType.LOCALDATETIME)), this, "", new JooqInstantConverter());
+
+    /**
      * The column <code>public.organization.name</code>.
      */
     public final TableField<JOrganizationRecord, String> NAME = createField(DSL.name("name"), SQLDataType.CLOB.nullable(false), this, "");
@@ -86,19 +91,19 @@ public class JOrganization extends TableImpl<JOrganizationRecord> {
     public final TableField<JOrganizationRecord, String> ORGANIZATION_TYPE = createField(DSL.name("organization_type"), SQLDataType.CLOB.nullable(false), this, "");
 
     /**
+     * The column <code>public.organization.external_id</code>.
+     */
+    public final TableField<JOrganizationRecord, String> EXTERNAL_ID = createField(DSL.name("external_id"), SQLDataType.CLOB, this, "");
+
+    /**
      * The column <code>public.organization.slug</code>.
      */
     public final TableField<JOrganizationRecord, String> SLUG = createField(DSL.name("slug"), SQLDataType.CLOB.nullable(false), this, "");
 
     /**
-     * The column <code>public.organization.updated_at</code>.
+     * The column <code>public.organization.user_id</code>.
      */
-    public final TableField<JOrganizationRecord, Instant> UPDATED_AT = createField(DSL.name("updated_at"), SQLDataType.LOCALDATETIME(6).nullable(false).defaultValue(DSL.field(DSL.raw("now()"), SQLDataType.LOCALDATETIME)), this, "", new JooqInstantConverter());
-
-    /**
-     * The column <code>public.organization.external_id</code>.
-     */
-    public final TableField<JOrganizationRecord, String> EXTERNAL_ID = createField(DSL.name("external_id"), SQLDataType.CLOB, this, "");
+    public final TableField<JOrganizationRecord, Integer> USER_ID = createField(DSL.name("user_id"), SQLDataType.INTEGER, this, "");
 
     private JOrganization(Name alias, Table<JOrganizationRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);
@@ -184,7 +189,24 @@ public class JOrganization extends TableImpl<JOrganizationRecord> {
 
     @Override
     public List<UniqueKey<JOrganizationRecord>> getUniqueKeys() {
-        return Arrays.asList(Keys.ORGANIZATION_EXTERNAL_ID_KEY, Keys.ORGANIZATION_NAME_KEY, Keys.ORGANIZATION_SLUG_KEY);
+        return Arrays.asList(Keys.ORGANIZATION_EXTERNAL_ID_KEY, Keys.ORGANIZATION_NAME_KEY, Keys.ORGANIZATION_SLUG_KEY, Keys.UQ_ORGANIZATION_USER_ID);
+    }
+
+    @Override
+    public List<ForeignKey<JOrganizationRecord, ?>> getReferences() {
+        return Arrays.asList(Keys.ORGANIZATION__FK_ORGANIZATION_USER);
+    }
+
+    private transient JUsersPath _users;
+
+    /**
+     * Get the implicit join path to the <code>public.users</code> table.
+     */
+    public JUsersPath users() {
+        if (_users == null)
+            _users = new JUsersPath(this, Keys.ORGANIZATION__FK_ORGANIZATION_USER, null);
+
+        return _users;
     }
 
     private transient JActivityPath _activity;
@@ -237,14 +259,6 @@ public class JOrganization extends TableImpl<JOrganizationRecord> {
             _organizationUser = new JOrganizationUserPath(this, null, Keys.ORGANIZATION_USER__ORGANIZATION_USER_ORGANIZATION_ID_FKEY.getInverseKey());
 
         return _organizationUser;
-    }
-
-    /**
-     * Get the implicit many-to-many join path to the <code>public.users</code>
-     * table
-     */
-    public JUsersPath users() {
-        return organizationUser().users();
     }
 
     @Override
