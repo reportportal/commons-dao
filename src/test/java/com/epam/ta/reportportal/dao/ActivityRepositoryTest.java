@@ -296,6 +296,26 @@ class ActivityRepositoryTest extends BaseTest {
     assertEquals(expectedAmount, activities.size());
   }
 
+  @ParameterizedTest
+  @CsvSource(value = {
+      "objectType|FILTER|3",
+      "objectName|filter new test|2",
+      "subjectType|USER|7"
+  }, delimiter = '|')
+  void searchActivitiesByFields(String field, String term, int expectedAmount) {
+    List<Activity> activities = activityRepository.findByFilter(Filter.builder()
+        .withTarget(Activity.class)
+        .withCondition(FilterCondition.builder()
+            .withCondition(Condition.EQUALS)
+            .withSearchCriteria(field)
+            .withValue(term)
+            .build())
+        .build());
+
+    assertEquals(expectedAmount, activities.size());
+  }
+
+
 	private Activity generateActivity() {
 		Activity activity = new Activity();
 		activity.setAction(EventAction.CREATE);
