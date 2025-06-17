@@ -1405,7 +1405,7 @@ public enum FilterTarget {
   }
 
   public QuerySupplier getQuery() {
-    SelectQuery<? extends Record> query = DSL.select(idField().as(FILTERED_ID)).getQuery();
+    SelectQuery<? extends Record> query = DSL.using(SQLDialect.POSTGRES).select(idField().as(FILTERED_ID)).getQuery();
     addFrom(query);
     query.addGroupBy(idField());
 
