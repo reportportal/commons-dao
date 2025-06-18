@@ -174,7 +174,6 @@ import java.util.stream.Collectors;
 import org.jooq.Field;
 import org.jooq.JoinType;
 import org.jooq.Record;
-import org.jooq.SQLDialect;
 import org.jooq.SelectField;
 import org.jooq.SelectQuery;
 import org.jooq.impl.DSL;
@@ -296,7 +295,7 @@ public enum FilterTarget {
   ) {
     @Override
     public QuerySupplier getQuery() {
-      SelectQuery<? extends Record> query = DSL.using(SQLDialect.POSTGRES).select(selectFields()).getQuery();
+      SelectQuery<? extends Record> query = DSL.select(selectFields()).getQuery();
       addFrom(query);
       query.addGroupBy(PROJECT.ID, PROJECT.CREATION_DATE, PROJECT.NAME, PROJECT.PROJECT_TYPE);
       QuerySupplier querySupplier = new QuerySupplier(query);
@@ -1405,7 +1404,7 @@ public enum FilterTarget {
   }
 
   public QuerySupplier getQuery() {
-    SelectQuery<? extends Record> query = DSL.using(SQLDialect.POSTGRES).select(idField().as(FILTERED_ID)).getQuery();
+    SelectQuery<? extends Record> query = DSL.select(idField().as(FILTERED_ID)).getQuery();
     addFrom(query);
     query.addGroupBy(idField());
 
