@@ -140,7 +140,6 @@ import static org.jooq.impl.DSL.name;
 import static org.jooq.impl.DSL.nullif;
 import static org.jooq.impl.DSL.orderBy;
 import static org.jooq.impl.DSL.round;
-import static org.jooq.impl.DSL.select;
 import static org.jooq.impl.DSL.selectDistinct;
 import static org.jooq.impl.DSL.sum;
 import static org.jooq.impl.DSL.timestampDiff;
@@ -149,6 +148,8 @@ import static org.jooq.impl.DSL.when;
 
 import com.epam.reportportal.model.ActivityResource;
 import com.epam.reportportal.rules.commons.validation.Suppliers;
+import com.epam.reportportal.rules.exception.ErrorType;
+import com.epam.reportportal.rules.exception.ReportPortalException;
 import com.epam.ta.reportportal.commons.querygen.CriteriaHolder;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
@@ -172,13 +173,10 @@ import com.epam.ta.reportportal.entity.widget.content.healthcheck.ComponentHealt
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableContent;
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableGetParams;
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableInitParams;
-import com.epam.reportportal.rules.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.epam.ta.reportportal.jooq.tables.JItemAttribute;
 import com.epam.ta.reportportal.util.WidgetSortUtils;
-
-import com.epam.reportportal.rules.exception.ErrorType;
 import com.google.common.collect.Lists;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -204,7 +202,6 @@ import org.jooq.Record1;
 import org.jooq.Record2;
 import org.jooq.Record4;
 import org.jooq.Record5;
-import org.jooq.SQL;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectHavingStep;
