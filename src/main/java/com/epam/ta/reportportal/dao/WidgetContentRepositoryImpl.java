@@ -204,6 +204,7 @@ import org.jooq.Record1;
 import org.jooq.Record2;
 import org.jooq.Record4;
 import org.jooq.Record5;
+import org.jooq.SQL;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectHavingStep;
@@ -1304,9 +1305,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
             .or(TEST_ITEM.LAUNCH_ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID))).and(
             ITEM_ATTRIBUTE.KEY.in(params.getAttributeKeys())).and(ITEM_ATTRIBUTE.SYSTEM.isFalse()));
 
-    dsl.execute(DSL.sql(Suppliers.formattedSupplier("CREATE MATERIALIZED VIEW {} AS ({})",
-        DSL.name(params.getViewName()),
-        ofNullable(params.getCustomKey()).map(key -> {
+    dsl.execute(dsl.renderInlined(dsl.createMaterializedView(params.getViewName())
+        .as(ofNullable(params.getCustomKey()).map(key -> {
               JItemAttribute customAttribute = ITEM_ATTRIBUTE.as(CUSTOM_ATTRIBUTE);
               return baseQuery.leftJoin(customAttribute)
                   .on(DSL.condition(Operator.OR,
@@ -1321,9 +1321,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
                 .and(TEST_ITEM.RETRY_OF.isNull())
                 .and(TEST_ITEM_RESULTS.STATUS.notEqual(JStatusEnum.IN_PROGRESS)))
             .groupBy(TEST_ITEM.ITEM_ID, ITEM_ATTRIBUTE.KEY, ITEM_ATTRIBUTE.VALUE)
-            .getQuery()
-    ).get()));
-
+            .getQuery())));
   }
 
   @Override
