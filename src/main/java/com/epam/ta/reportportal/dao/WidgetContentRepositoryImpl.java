@@ -1294,7 +1294,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
             .filterWhere(fieldName(CUSTOM_ATTRIBUTE, VALUE).isNotNull())
             .as(CUSTOM_COLUMN)));
 
-    SelectOnConditionStep<Record> baseQuery = select(selectFields).from(TEST_ITEM)
+    SelectOnConditionStep<Record> baseQuery = dsl.select(selectFields).from(TEST_ITEM)
         .join(launchesTable)
         .on(TEST_ITEM.LAUNCH_ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
         .join(TEST_ITEM_RESULTS)
