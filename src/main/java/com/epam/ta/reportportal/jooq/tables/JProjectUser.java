@@ -73,6 +73,11 @@ public class JProjectUser extends TableImpl<JProjectUserRecord> {
      */
     public final TableField<JProjectUserRecord, JProjectRoleEnum> PROJECT_ROLE = createField(DSL.name("project_role"), SQLDataType.VARCHAR.nullable(false).asEnumDataType(JProjectRoleEnum.class), this, "");
 
+    /**
+     * The column <code>public.project_user.project_role_backup</code>.
+     */
+    public final TableField<JProjectUserRecord, String> PROJECT_ROLE_BACKUP = createField(DSL.name("project_role_backup"), SQLDataType.CLOB, this, "");
+
     private JProjectUser(Name alias, Table<JProjectUserRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);
     }

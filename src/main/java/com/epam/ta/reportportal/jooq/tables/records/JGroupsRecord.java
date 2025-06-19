@@ -106,31 +106,31 @@ public class JGroupsRecord extends UpdatableRecordImpl<JGroupsRecord> {
     }
 
     /**
-     * Setter for <code>public.groups.org_id</code>.
-     */
-    public void setOrgId(Integer value) {
-        set(6, value);
-    }
-
-    /**
-     * Getter for <code>public.groups.org_id</code>.
-     */
-    public Integer getOrgId() {
-        return (Integer) get(6);
-    }
-
-    /**
      * Setter for <code>public.groups.uuid</code>.
      */
     public void setUuid(UUID value) {
-        set(7, value);
+        set(6, value);
     }
 
     /**
      * Getter for <code>public.groups.uuid</code>.
      */
     public UUID getUuid() {
-        return (UUID) get(7);
+        return (UUID) get(6);
+    }
+
+    /**
+     * Setter for <code>public.groups.org_id</code>.
+     */
+    public void setOrgId(Integer value) {
+        set(7, value);
+    }
+
+    /**
+     * Getter for <code>public.groups.org_id</code>.
+     */
+    public Integer getOrgId() {
+        return (Integer) get(7);
     }
 
     // -------------------------------------------------------------------------
@@ -156,7 +156,7 @@ public class JGroupsRecord extends UpdatableRecordImpl<JGroupsRecord> {
     /**
      * Create a detached, initialised JGroupsRecord
      */
-    public JGroupsRecord(Long id, String slug, String name, Long createdBy, Instant createdAt, Instant updatedAt, Integer orgId, UUID uuid) {
+    public JGroupsRecord(Long id, String slug, String name, Long createdBy, Instant createdAt, Instant updatedAt, UUID uuid, Integer orgId) {
         super(JGroups.GROUPS);
 
         setId(id);
@@ -165,8 +165,8 @@ public class JGroupsRecord extends UpdatableRecordImpl<JGroupsRecord> {
         setCreatedBy(createdBy);
         setCreatedAt(createdAt);
         setUpdatedAt(updatedAt);
-        setOrgId(orgId);
         setUuid(uuid);
+        setOrgId(orgId);
         resetChangedOnNotNull();
     }
 }

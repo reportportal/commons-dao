@@ -111,7 +111,7 @@ public class JProject extends TableImpl<JProjectRecord> {
     /**
      * The column <code>public.project.organization_id</code>.
      */
-    public final TableField<JProjectRecord, Long> ORGANIZATION_ID = createField(DSL.name("organization_id"), SQLDataType.BIGINT, this, "");
+    public final TableField<JProjectRecord, Long> ORGANIZATION_ID = createField(DSL.name("organization_id"), SQLDataType.BIGINT.nullable(false), this, "");
 
     /**
      * The column <code>public.project.slug</code>.
@@ -212,7 +212,7 @@ public class JProject extends TableImpl<JProjectRecord> {
 
     @Override
     public List<UniqueKey<JProjectRecord>> getUniqueKeys() {
-        return Arrays.asList(Keys.PROJECT_KEY_KEY);
+        return Arrays.asList(Keys.PROJECT_KEY_KEY, Keys.PROJECT_NAME_UNIQUE_KEY, Keys.PROJECT_SLUG_UNIQUE_KEY);
     }
 
     @Override

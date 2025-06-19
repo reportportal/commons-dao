@@ -91,6 +91,20 @@ public class JUserCreationBidRecord extends UpdatableRecordImpl<JUserCreationBid
         return (JSONB) get(4);
     }
 
+    /**
+     * Setter for <code>public.user_creation_bid.project_role_backup</code>.
+     */
+    public void setProjectRoleBackup(String value) {
+        set(5, value);
+    }
+
+    /**
+     * Getter for <code>public.user_creation_bid.project_role_backup</code>.
+     */
+    public String getProjectRoleBackup() {
+        return (String) get(5);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -114,7 +128,7 @@ public class JUserCreationBidRecord extends UpdatableRecordImpl<JUserCreationBid
     /**
      * Create a detached, initialised JUserCreationBidRecord
      */
-    public JUserCreationBidRecord(String uuid, Instant lastModified, String email, Long invitingUserId, JSONB metadata) {
+    public JUserCreationBidRecord(String uuid, Instant lastModified, String email, Long invitingUserId, JSONB metadata, String projectRoleBackup) {
         super(JUserCreationBid.USER_CREATION_BID);
 
         setUuid(uuid);
@@ -122,6 +136,7 @@ public class JUserCreationBidRecord extends UpdatableRecordImpl<JUserCreationBid
         setEmail(email);
         setInvitingUserId(invitingUserId);
         setMetadata(metadata);
+        setProjectRoleBackup(projectRoleBackup);
         resetChangedOnNotNull();
     }
 }

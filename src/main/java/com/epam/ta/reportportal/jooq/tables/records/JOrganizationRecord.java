@@ -49,73 +49,87 @@ public class JOrganizationRecord extends UpdatableRecordImpl<JOrganizationRecord
     }
 
     /**
-     * Setter for <code>public.organization.name</code>.
-     */
-    public void setName(String value) {
-        set(2, value);
-    }
-
-    /**
-     * Getter for <code>public.organization.name</code>.
-     */
-    public String getName() {
-        return (String) get(2);
-    }
-
-    /**
-     * Setter for <code>public.organization.organization_type</code>.
-     */
-    public void setOrganizationType(String value) {
-        set(3, value);
-    }
-
-    /**
-     * Getter for <code>public.organization.organization_type</code>.
-     */
-    public String getOrganizationType() {
-        return (String) get(3);
-    }
-
-    /**
-     * Setter for <code>public.organization.slug</code>.
-     */
-    public void setSlug(String value) {
-        set(4, value);
-    }
-
-    /**
-     * Getter for <code>public.organization.slug</code>.
-     */
-    public String getSlug() {
-        return (String) get(4);
-    }
-
-    /**
      * Setter for <code>public.organization.updated_at</code>.
      */
     public void setUpdatedAt(Instant value) {
-        set(5, value);
+        set(2, value);
     }
 
     /**
      * Getter for <code>public.organization.updated_at</code>.
      */
     public Instant getUpdatedAt() {
-        return (Instant) get(5);
+        return (Instant) get(2);
+    }
+
+    /**
+     * Setter for <code>public.organization.name</code>.
+     */
+    public void setName(String value) {
+        set(3, value);
+    }
+
+    /**
+     * Getter for <code>public.organization.name</code>.
+     */
+    public String getName() {
+        return (String) get(3);
+    }
+
+    /**
+     * Setter for <code>public.organization.organization_type</code>.
+     */
+    public void setOrganizationType(String value) {
+        set(4, value);
+    }
+
+    /**
+     * Getter for <code>public.organization.organization_type</code>.
+     */
+    public String getOrganizationType() {
+        return (String) get(4);
     }
 
     /**
      * Setter for <code>public.organization.external_id</code>.
      */
     public void setExternalId(String value) {
-        set(6, value);
+        set(5, value);
     }
 
     /**
      * Getter for <code>public.organization.external_id</code>.
      */
     public String getExternalId() {
+        return (String) get(5);
+    }
+
+    /**
+     * Setter for <code>public.organization.slug</code>.
+     */
+    public void setSlug(String value) {
+        set(6, value);
+    }
+
+    /**
+     * Getter for <code>public.organization.slug</code>.
+     */
+    public String getSlug() {
         return (String) get(6);
+    }
+
+    /**
+     * Setter for <code>public.organization.owner_id</code>.
+     */
+    public void setOwnerId(Integer value) {
+        set(7, value);
+    }
+
+    /**
+     * Getter for <code>public.organization.owner_id</code>.
+     */
+    public Integer getOwnerId() {
+        return (Integer) get(7);
     }
 
     // -------------------------------------------------------------------------
@@ -141,16 +155,17 @@ public class JOrganizationRecord extends UpdatableRecordImpl<JOrganizationRecord
     /**
      * Create a detached, initialised JOrganizationRecord
      */
-    public JOrganizationRecord(Long id, Instant createdAt, String name, String organizationType, String slug, Instant updatedAt, String externalId) {
+    public JOrganizationRecord(Long id, Instant createdAt, Instant updatedAt, String name, String organizationType, String externalId, String slug, Integer ownerId) {
         super(JOrganization.ORGANIZATION);
 
         setId(id);
         setCreatedAt(createdAt);
+        setUpdatedAt(updatedAt);
         setName(name);
         setOrganizationType(organizationType);
-        setSlug(slug);
-        setUpdatedAt(updatedAt);
         setExternalId(externalId);
+        setSlug(slug);
+        setOwnerId(ownerId);
         resetChangedOnNotNull();
     }
 }

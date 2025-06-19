@@ -92,7 +92,6 @@ import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -523,7 +522,7 @@ class WidgetContentRepositoryTest extends BaseTest {
     Sort sort = Sort.by(
         Lists.newArrayList(new Sort.Order(Sort.Direction.DESC, CRITERIA_CREATED_AT)));
 
-    filter.withCondition(new FilterCondition(Condition.EQUALS, false, "superadmin", CRITERIA_USER))
+    filter.withCondition(new FilterCondition(Condition.EQUALS, false, "admin@reportportal.internal", CRITERIA_USER))
         .withCondition(new FilterCondition(Condition.IN, false, String.join(",", "CREATE"),
             CRITERIA_ACTION)).withCondition(new FilterCondition(Condition.IN, false, String.join(",", "LAUNCH", "ITEM"),
             CRITERIA_OBJECT_TYPE));
@@ -902,7 +901,7 @@ class WidgetContentRepositoryTest extends BaseTest {
         .collect(Collectors.toList());
     Sort sort = Sort.by(orders);
 
-    filter.withCondition(new FilterCondition(Condition.EQUALS, false, "superadmin", CRITERIA_USER))
+    filter.withCondition(new FilterCondition(Condition.EQUALS, false, "admin@reportportal.internal", CRITERIA_USER))
         .withCondition(new FilterCondition(Condition.IN, false, String.join(",", "CREATE"),
             CRITERIA_ACTION))
         .withCondition(new FilterCondition(Condition.IN, false, String.join(",", "LAUNCH", "ITEM"),

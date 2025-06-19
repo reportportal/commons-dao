@@ -50,10 +50,10 @@ class UserCommonDataStoreServiceTest extends BaseTest {
   @Test
   void saveUserPhoto() throws IOException {
     MultipartFile multipartFile = getMultipartFile("meh.jpg");
-    User user = userRepository.findByLogin("default").get();
+    User user = userRepository.findByLogin("default@reportportal.internal").get();
 
     userDataStoreService.saveUserPhoto(user, multipartFile);
-    user = userRepository.findByLogin("default").get();
+    user = userRepository.findByLogin("default@reportportal.internal").get();
 
     BinaryData binaryData = userDataStoreService.loadUserPhoto(user, false);
     assertThat(IOUtils.contentEquals(multipartFile.getInputStream(),

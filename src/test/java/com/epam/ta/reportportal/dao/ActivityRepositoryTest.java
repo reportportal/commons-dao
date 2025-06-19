@@ -240,7 +240,7 @@ class ActivityRepositoryTest extends BaseTest {
 		final List<Activity> activities = activityRepository.findByFilter(new Filter(Activity.class,
 				Condition.EQUALS,
 				false,
-				"superadmin",
+				"admin@reportportal.internal",
 				CRITERIA_USER
 		));
 		assertNotNull(activities);

@@ -61,6 +61,20 @@ public class JProjectUserRecord extends UpdatableRecordImpl<JProjectUserRecord> 
         return (JProjectRoleEnum) get(2);
     }
 
+    /**
+     * Setter for <code>public.project_user.project_role_backup</code>.
+     */
+    public void setProjectRoleBackup(String value) {
+        set(3, value);
+    }
+
+    /**
+     * Getter for <code>public.project_user.project_role_backup</code>.
+     */
+    public String getProjectRoleBackup() {
+        return (String) get(3);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -84,12 +98,13 @@ public class JProjectUserRecord extends UpdatableRecordImpl<JProjectUserRecord> 
     /**
      * Create a detached, initialised JProjectUserRecord
      */
-    public JProjectUserRecord(Long userId, Long projectId, JProjectRoleEnum projectRole) {
+    public JProjectUserRecord(Long userId, Long projectId, JProjectRoleEnum projectRole, String projectRoleBackup) {
         super(JProjectUser.PROJECT_USER);
 
         setUserId(userId);
         setProjectId(projectId);
         setProjectRole(projectRole);
+        setProjectRoleBackup(projectRoleBackup);
         resetChangedOnNotNull();
     }
 }

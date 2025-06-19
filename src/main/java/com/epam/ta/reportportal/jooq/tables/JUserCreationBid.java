@@ -84,6 +84,11 @@ public class JUserCreationBid extends TableImpl<JUserCreationBidRecord> {
      */
     public final TableField<JUserCreationBidRecord, JSONB> METADATA = createField(DSL.name("metadata"), SQLDataType.JSONB, this, "");
 
+    /**
+     * The column <code>public.user_creation_bid.project_role_backup</code>.
+     */
+    public final TableField<JUserCreationBidRecord, String> PROJECT_ROLE_BACKUP = createField(DSL.name("project_role_backup"), SQLDataType.VARCHAR, this, "");
+
     private JUserCreationBid(Name alias, Table<JUserCreationBidRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);
     }

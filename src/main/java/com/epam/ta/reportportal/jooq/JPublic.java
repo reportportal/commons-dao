@@ -38,6 +38,7 @@ import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
 import com.epam.ta.reportportal.jooq.tables.JOrganization;
+import com.epam.ta.reportportal.jooq.tables.JOrganizationSettings;
 import com.epam.ta.reportportal.jooq.tables.JOrganizationUser;
 import com.epam.ta.reportportal.jooq.tables.JOwnedEntity;
 import com.epam.ta.reportportal.jooq.tables.JParameter;
@@ -261,6 +262,11 @@ public class JPublic extends SchemaImpl {
     public final JOrganization ORGANIZATION = JOrganization.ORGANIZATION;
 
     /**
+     * The table <code>public.organization_settings</code>.
+     */
+    public final JOrganizationSettings ORGANIZATION_SETTINGS = JOrganizationSettings.ORGANIZATION_SETTINGS;
+
+    /**
      * The table <code>public.organization_user</code>.
      */
     public final JOrganizationUser ORGANIZATION_USER = JOrganizationUser.ORGANIZATION_USER;
@@ -476,6 +482,7 @@ public class JPublic extends SchemaImpl {
             JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION,
             JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE,
             JOrganization.ORGANIZATION,
+            JOrganizationSettings.ORGANIZATION_SETTINGS,
             JOrganizationUser.ORGANIZATION_USER,
             JOwnedEntity.OWNED_ENTITY,
             JParameter.PARAMETER,
