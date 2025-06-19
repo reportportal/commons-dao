@@ -101,9 +101,9 @@ public class JOrganization extends TableImpl<JOrganizationRecord> {
     public final TableField<JOrganizationRecord, String> SLUG = createField(DSL.name("slug"), SQLDataType.CLOB.nullable(false), this, "");
 
     /**
-     * The column <code>public.organization.user_id</code>.
+     * The column <code>public.organization.owner_id</code>.
      */
-    public final TableField<JOrganizationRecord, Integer> USER_ID = createField(DSL.name("user_id"), SQLDataType.INTEGER, this, "");
+    public final TableField<JOrganizationRecord, Integer> OWNER_ID = createField(DSL.name("owner_id"), SQLDataType.INTEGER, this, "");
 
     private JOrganization(Name alias, Table<JOrganizationRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);
@@ -189,12 +189,12 @@ public class JOrganization extends TableImpl<JOrganizationRecord> {
 
     @Override
     public List<UniqueKey<JOrganizationRecord>> getUniqueKeys() {
-        return Arrays.asList(Keys.ORGANIZATION_EXTERNAL_ID_KEY, Keys.ORGANIZATION_NAME_KEY, Keys.ORGANIZATION_SLUG_KEY, Keys.UQ_ORGANIZATION_USER_ID);
+        return Arrays.asList(Keys.ORGANIZATION_EXTERNAL_ID_KEY, Keys.ORGANIZATION_NAME_KEY, Keys.ORGANIZATION_SLUG_KEY, Keys.UQ_ORGANIZATION_OWNER_ID);
     }
 
     @Override
     public List<ForeignKey<JOrganizationRecord, ?>> getReferences() {
-        return Arrays.asList(Keys.ORGANIZATION__FK_ORGANIZATION_USER);
+        return Arrays.asList(Keys.ORGANIZATION__FK_ORGANIZATION_OWNER);
     }
 
     private transient JUsersPath _users;
@@ -204,7 +204,7 @@ public class JOrganization extends TableImpl<JOrganizationRecord> {
      */
     public JUsersPath users() {
         if (_users == null)
-            _users = new JUsersPath(this, Keys.ORGANIZATION__FK_ORGANIZATION_USER, null);
+            _users = new JUsersPath(this, Keys.ORGANIZATION__FK_ORGANIZATION_OWNER, null);
 
         return _users;
     }

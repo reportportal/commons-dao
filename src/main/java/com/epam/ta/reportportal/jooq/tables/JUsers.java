@@ -257,7 +257,7 @@ public class JUsers extends TableImpl<JUsersRecord> {
      */
     public JOrganizationPath organization() {
         if (_organization == null)
-            _organization = new JOrganizationPath(this, null, Keys.ORGANIZATION__FK_ORGANIZATION_USER.getInverseKey());
+            _organization = new JOrganizationPath(this, null, Keys.ORGANIZATION__FK_ORGANIZATION_OWNER.getInverseKey());
 
         return _organization;
     }
