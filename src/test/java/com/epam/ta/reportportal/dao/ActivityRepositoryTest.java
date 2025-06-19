@@ -298,15 +298,36 @@ class ActivityRepositoryTest extends BaseTest {
 
   @ParameterizedTest
   @CsvSource(value = {
-      "objectType|FILTER|3",
-      "objectName|filter new test|2",
-      "subjectType|USER|7"
+      "eventName|eq|createFilter|2",
+      "eventName|ne|createFilter|5",
+      "objectType|eq|FILTER|3",
+      "objectType|ne|FILTER|4",
+      "objectName|eq|filter new test|2",
+      "objectName|ne|widget test|6",
+      "organizationId|eq|1|7",
+      "organizationId|ne|1200|7",
+      "organizationName|eq|My organization|7",
+      "organizationName|eq|not exists|0",
+      "organizationName|ne|My organization|0",
+      "organizationName|ne|any|7",
+      "projectId|eq|1|3",
+      "projectId|eq|2|4",
+      "projectId|ne|2|3",
+      "projectId|ne|3|7",
+      "projectName|eq|default_personal|4",
+      "projectName|ne|default_personal|3",
+      "subjectType|eq|USER|7",
+      "subjectType|ne|USER|0",
+      "subjectName|eq|superadmin|3",
+      "subjectName|ne|superadmin|4",
+      "createdAt|gt|2024-10-12T10:16:47.461972Z|7",
+      "createdAt|ne|2024-10-18T10:16:47.461972Z|7",
   }, delimiter = '|')
-  void searchActivitiesByFields(String field, String term, int expectedAmount) {
+  void searchActivitiesByFields(String field, String operation, String term, int expectedAmount) {
     List<Activity> activities = activityRepository.findByFilter(Filter.builder()
         .withTarget(Activity.class)
         .withCondition(FilterCondition.builder()
-            .withCondition(Condition.EQUALS)
+            .withCondition(Condition.findByMarker(operation).get())
             .withSearchCriteria(field)
             .withValue(term)
             .build())
