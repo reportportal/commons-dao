@@ -52,8 +52,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import org.assertj.core.util.Lists;
 import java.util.UUID;
+import org.assertj.core.util.Lists;
 import org.assertj.core.util.Sets;
 import org.hamcrest.Matchers;
 import org.jooq.Operator;
@@ -219,7 +219,7 @@ class UserRepositoryTest extends BaseTest {
   @Test
   void findAllByLoginIn() {
     final String hanLogin = "han_solo";
-    final String defaultLogin = "default";
+    final String defaultLogin = "default@reportportal.internal";
     Set<String> logins = Sets.newHashSet(Arrays.asList(hanLogin, defaultLogin));
 
     List<User> users = userRepository.findAllByLoginIn(logins);
@@ -333,7 +333,7 @@ class UserRepositoryTest extends BaseTest {
     final Optional<User> user = userRepository.findRawById(1L);
     assertTrue(user.isPresent());
     assertEquals(1L, user.get().getId());
-    assertEquals("superadmin", user.get().getLogin());
+    assertEquals("admin@reportportal.internal", user.get().getLogin());
     assertTrue(user.get().getProjects().isEmpty());
   }
 

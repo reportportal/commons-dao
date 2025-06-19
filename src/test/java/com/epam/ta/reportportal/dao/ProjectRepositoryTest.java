@@ -32,8 +32,6 @@ import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.entity.enums.ProjectAttributeEnum;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectInfo;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import org.apache.commons.collections4.CollectionUtils;
@@ -42,7 +40,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.test.context.jdbc.Sql;
 
 /**
  * @author Ivan Budaev
@@ -116,14 +113,14 @@ class ProjectRepositoryTest extends BaseTest {
 
   @Test
   void findUserProjectsTest() {
-    List<Project> projects = projectRepository.findUserProjects("default");
+    List<Project> projects = projectRepository.findUserProjects("default@reportportal.internal");
     assertNotNull(projects);
     assertEquals(1, projects.size());
   }
 
   @Test
   void findAllByUserLogin() {
-    List<Project> projects = projectRepository.findAllByUserLogin("default");
+    List<Project> projects = projectRepository.findAllByUserLogin("default@reportportal.internal");
     assertNotNull(projects);
     assertEquals(1, projects.size());
   }

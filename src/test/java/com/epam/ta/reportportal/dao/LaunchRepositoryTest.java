@@ -233,10 +233,10 @@ class LaunchRepositoryTest extends BaseTest {
 
   @Test
   void getOwnerNames() {
-    final List<String> ownerNames = launchRepository.getOwnerNames(1L, "sup", Mode.DEFAULT.name());
+    final List<String> ownerNames = launchRepository.getOwnerNames(1L, "admin", Mode.DEFAULT.name());
     assertNotNull(ownerNames);
     assertEquals(1, ownerNames.size());
-    assertTrue(ownerNames.contains("superadmin"));
+    assertTrue(ownerNames.contains("admin@reportportal.internal"));
   }
 
   @Test
@@ -259,8 +259,8 @@ class LaunchRepositoryTest extends BaseTest {
         Mode.DEFAULT.name(),
         Instant.now().minus(5, ChronoUnit.DAYS)
     );
-    assertNotNull(map.get("default"));
-    assertEquals(3, (int) map.get("default"));
+    assertNotNull(map.get("default@reportportal.internal"));
+    assertEquals(3, (int) map.get("default@reportportal.internal"));
   }
 
   @Test
