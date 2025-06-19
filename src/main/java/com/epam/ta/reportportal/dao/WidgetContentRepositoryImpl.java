@@ -140,7 +140,6 @@ import static org.jooq.impl.DSL.name;
 import static org.jooq.impl.DSL.nullif;
 import static org.jooq.impl.DSL.orderBy;
 import static org.jooq.impl.DSL.round;
-import static org.jooq.impl.DSL.select;
 import static org.jooq.impl.DSL.selectDistinct;
 import static org.jooq.impl.DSL.sum;
 import static org.jooq.impl.DSL.timestampDiff;
@@ -149,6 +148,8 @@ import static org.jooq.impl.DSL.when;
 
 import com.epam.reportportal.model.ActivityResource;
 import com.epam.reportportal.rules.commons.validation.Suppliers;
+import com.epam.reportportal.rules.exception.ErrorType;
+import com.epam.reportportal.rules.exception.ReportPortalException;
 import com.epam.ta.reportportal.commons.querygen.CriteriaHolder;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
@@ -172,13 +173,10 @@ import com.epam.ta.reportportal.entity.widget.content.healthcheck.ComponentHealt
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableContent;
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableGetParams;
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableInitParams;
-import com.epam.reportportal.rules.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.epam.ta.reportportal.jooq.tables.JItemAttribute;
 import com.epam.ta.reportportal.util.WidgetSortUtils;
-
-import com.epam.reportportal.rules.exception.ErrorType;
 import com.google.common.collect.Lists;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -1294,7 +1292,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
             .filterWhere(fieldName(CUSTOM_ATTRIBUTE, VALUE).isNotNull())
             .as(CUSTOM_COLUMN)));
 
-    SelectOnConditionStep<Record> baseQuery = select(selectFields).from(TEST_ITEM)
+    SelectOnConditionStep<Record> baseQuery = dsl.select(selectFields).from(TEST_ITEM)
         .join(launchesTable)
         .on(TEST_ITEM.LAUNCH_ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
         .join(TEST_ITEM_RESULTS)
@@ -1304,9 +1302,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
             .or(TEST_ITEM.LAUNCH_ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID))).and(
             ITEM_ATTRIBUTE.KEY.in(params.getAttributeKeys())).and(ITEM_ATTRIBUTE.SYSTEM.isFalse()));
 
-    dsl.execute(DSL.sql(Suppliers.formattedSupplier("CREATE MATERIALIZED VIEW {} AS ({})",
-        DSL.name(params.getViewName()),
-        ofNullable(params.getCustomKey()).map(key -> {
+    dsl.execute(dsl.renderInlined(dsl.createMaterializedView(params.getViewName())
+        .as(ofNullable(params.getCustomKey()).map(key -> {
               JItemAttribute customAttribute = ITEM_ATTRIBUTE.as(CUSTOM_ATTRIBUTE);
               return baseQuery.leftJoin(customAttribute)
                   .on(DSL.condition(Operator.OR,
@@ -1321,9 +1318,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
                 .and(TEST_ITEM.RETRY_OF.isNull())
                 .and(TEST_ITEM_RESULTS.STATUS.notEqual(JStatusEnum.IN_PROGRESS)))
             .groupBy(TEST_ITEM.ITEM_ID, ITEM_ATTRIBUTE.KEY, ITEM_ATTRIBUTE.VALUE)
-            .getQuery()
-    ).get()));
-
+            .getQuery())));
   }
 
   @Override

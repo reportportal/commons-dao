@@ -42,7 +42,7 @@ dependencies {
     if (releaseMode) {
         implementation 'com.epam.reportportal:commons'
     } else {
-        implementation 'com.github.reportportal:commons:f8fcb2e'
+        implementation 'com.github.reportportal:commons:c6f3174'
     }
     implementation "io.swagger.core.v3:swagger-annotations-jakarta:2.2.27"
     // jooq dependencies
