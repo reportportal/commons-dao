@@ -66,6 +66,6 @@ public class Organization implements Serializable {
   @Column(name = "external_id")
   private String externalId;
 
-  @Column(name = "user_id")
-  private Long userId;
+  @Column(name = "owner_id")
+  private Long ownerId;
 }
