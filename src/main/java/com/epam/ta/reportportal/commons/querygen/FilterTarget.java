@@ -1180,35 +1180,36 @@ public enum FilterTarget {
 
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ID, ACTIVITY.ID, Long.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ACTION, ACTIVITY.ACTION, String.class).get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_CREATED_AT, ACTIVITY.CREATED_AT,
-          Timestamp.class).get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_OBJECT_ID, ACTIVITY.OBJECT_ID, Long.class)
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_CREATED_AT, ACTIVITY.CREATED_AT, Timestamp.class)
+          .withAggregateCriteria(DSL.max(ACTIVITY.CREATED_AT).toString())
           .get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_OBJECT_NAME, ACTIVITY.OBJECT_NAME,
-              String.class)
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_OBJECT_ID, ACTIVITY.OBJECT_ID, Long.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_OBJECT_NAME, ACTIVITY.OBJECT_NAME, String.class)
+          .withAggregateCriteria(DSL.max(ACTIVITY.OBJECT_NAME).toString())
           .get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_OBJECT_TYPE, ACTIVITY.OBJECT_TYPE,
-              String.class)
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_OBJECT_TYPE, ACTIVITY.OBJECT_TYPE, String.class)
+          .withAggregateCriteria(DSL.max(ACTIVITY.OBJECT_TYPE).toString())
           .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_PRIORITY, ACTIVITY.PRIORITY, String.class)
           .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ID, ACTIVITY.PROJECT_ID, Long.class)
+          .withAggregateCriteria(DSL.max(ACTIVITY.PROJECT_ID).toString())
           .get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_SUBJECT_ID, ACTIVITY.SUBJECT_ID, Long.class)
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_SUBJECT_ID, ACTIVITY.SUBJECT_ID, Long.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_SUBJECT_NAME, ACTIVITY.SUBJECT_NAME, String.class)
+          .withAggregateCriteria(DSL.max(ACTIVITY.SUBJECT_NAME).toString())
           .get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_SUBJECT_NAME, ACTIVITY.SUBJECT_NAME,
-              String.class)
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_SUBJECT_TYPE, ACTIVITY.SUBJECT_TYPE, String.class)
+          .withAggregateCriteria(DSL.max(ACTIVITY.SUBJECT_TYPE).toString())
           .get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_SUBJECT_TYPE, ACTIVITY.SUBJECT_TYPE,
-          String.class).get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_ACTIVITY_PROJECT_NAME, PROJECT.NAME,
-              String.class)
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_ACTIVITY_PROJECT_NAME, PROJECT.NAME, String.class)
           .withAggregateCriteria(DSL.max(PROJECT.NAME).toString())
           .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_USER, USERS.LOGIN, String.class)
           .withAggregateCriteria(DSL.max(USERS.LOGIN).toString())
           .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_EVENT_NAME, ACTIVITY.EVENT_NAME, String.class)
+          .withAggregateCriteria(DSL.max(ACTIVITY.EVENT_NAME).toString())
           .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ACTIVITY_ORG_ID, ORGANIZATION.ID, Long.class)
           .withAggregateCriteria(DSL.max(ORGANIZATION.ID).toString())
@@ -1248,8 +1249,8 @@ public enum FilterTarget {
     @Override
     protected void joinTables(QuerySupplier query) {
       query.addJoin(USERS, JoinType.LEFT_OUTER_JOIN, ACTIVITY.SUBJECT_ID.eq(USERS.ID));
-      query.addJoin(PROJECT, JoinType.JOIN, ACTIVITY.PROJECT_ID.eq(PROJECT.ID));
       query.addJoin(ORGANIZATION, JoinType.JOIN, ACTIVITY.ORGANIZATION_ID.eq(ORGANIZATION.ID));
+      query.addJoin(PROJECT, JoinType.JOIN, ACTIVITY.PROJECT_ID.eq(PROJECT.ID));
     }
 
     @Override
