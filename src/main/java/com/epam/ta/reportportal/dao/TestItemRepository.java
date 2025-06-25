@@ -16,6 +16,8 @@
 
 package com.epam.ta.reportportal.dao;
 
+import static org.hibernate.jpa.HibernateHints.HINT_FETCH_SIZE;
+
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.TestItemResults;
@@ -37,6 +39,9 @@ import org.springframework.data.repository.query.Param;
  */
 public interface TestItemRepository extends ReportPortalRepository<TestItem, Long>,
     TestItemRepositoryCustom {
+
+  @QueryHints(@QueryHint(name = HINT_FETCH_SIZE, value = "25"))
+  Stream<TestItem> streamByLaunchIdAndHasStats(Long launchId, boolean hasStats);
 
   @Query(value = "SELECT * FROM test_item WHERE item_id = (SELECT parent_id FROM test_item WHERE item_id = :childId)", nativeQuery = true)
   Optional<TestItem> findParentByChildId(@Param("childId") Long childId);
