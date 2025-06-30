@@ -11,6 +11,7 @@ import com.epam.ta.reportportal.jooq.enums.JOrganizationRoleEnum;
 import com.epam.ta.reportportal.util.SortUtils;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import org.jooq.DSLContext;
 import org.jooq.SortField;
 import org.jooq.impl.DSL;
@@ -104,5 +105,18 @@ public class ProjectUserRepositoryCustomImpl implements ProjectUserRepositoryCus
 
     return PageableExecutionUtils.getPage(result, pageable,
         () -> dsl.fetchCount(query));
+  }
+
+  @Override
+  public Set<Long> findUserProjectIdsInOrganization(Long userId, Long organizationId) {
+    return dsl.select(PROJECT.ID)
+        .from(PROJECT)
+        .join(ORGANIZATION_USER)
+        .on(PROJECT.ORGANIZATION_ID.eq(ORGANIZATION_USER.ORGANIZATION_ID))
+        .join(PROJECT_USER)
+        .on(PROJECT.ID.eq(PROJECT_USER.PROJECT_ID))
+        .where(ORGANIZATION_USER.USER_ID.eq(userId))
+        .and(ORGANIZATION_USER.ORGANIZATION_ID.eq(organizationId))
+        .and(PROJECT_USER.USER_ID.eq(userId)).fetchSet(PROJECT.ID);
   }
 }
