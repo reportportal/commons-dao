@@ -186,6 +186,7 @@ public class ResultFetchers {
       }
       testItem.getItemResults().getStatistics()
           .add(RecordMappers.STATISTICS_RECORD_MAPPER.map(record));
+      testItem.getAttachments().add(RecordMappers.ATTACHMENT_MAPPER.map(record));
       testItems.put(id, testItem);
     });
     return new ArrayList<>(testItems.values());

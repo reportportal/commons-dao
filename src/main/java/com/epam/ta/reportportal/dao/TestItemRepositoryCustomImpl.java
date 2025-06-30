@@ -765,8 +765,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
         .from(TEST_ITEM)
         .join(TEST_ITEM_RESULTS)
         .on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
-        .leftJoin(ISSUE)
-        .on(ISSUE.ISSUE_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+        .leftJoin(ATTACHMENT)
+        .on(TEST_ITEM.ITEM_ID.eq(ATTACHMENT.ITEM_ID))
         .leftJoin(STATISTICS)
         .on(TEST_ITEM.ITEM_ID.eq(STATISTICS.ITEM_ID))
         .leftJoin(STATISTICS_FIELD)
@@ -881,8 +881,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
   }
 
   /**
-   * {@link Log} entities are searched from the whole tree under {@link TestItem} that matched to
-   * the provided `launchId` and `autoAnalyzed` conditions
+   * {@link Log} entities are searched from the whole tree under {@link TestItem} that matched to the provided
+   * `launchId` and `autoAnalyzed` conditions
    */
   @Override
   public List<Long> selectIdsByAnalyzedWithLevelGteExcludingIssueTypes(boolean autoAnalyzed,
