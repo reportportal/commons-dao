@@ -18,14 +18,11 @@ package com.epam.ta.reportportal.entity.item;
 
 import com.epam.ta.reportportal.dao.converters.JpaInstantConverter;
 import com.epam.ta.reportportal.entity.ItemAttribute;
+import com.epam.ta.reportportal.entity.attachment.Attachment;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
 import com.epam.ta.reportportal.entity.log.Log;
 import com.epam.ta.reportportal.entity.pattern.PatternTemplateTestItem;
 import com.google.common.collect.Sets;
-import java.io.Serializable;
-import java.time.Instant;
-import java.util.Objects;
-import java.util.Set;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -44,6 +41,11 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import java.io.Serializable;
+import java.time.Instant;
+import java.util.Objects;
+import java.util.Set;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.JdbcType;
@@ -142,6 +144,9 @@ public class TestItem implements Serializable {
 
   @Column(name = "has_stats")
   private boolean hasStats;
+
+  @Transient
+  private Set<Attachment> attachments = Sets.newHashSet();
 
   public TestItem() {
   }
@@ -353,6 +358,14 @@ public class TestItem implements Serializable {
 
   public void setHasStats(boolean hasStats) {
     this.hasStats = hasStats;
+  }
+
+  public Set<Attachment> getAttachments() {
+    return attachments;
+  }
+
+  public void setAttachments(Set<Attachment> attachments) {
+    this.attachments = attachments;
   }
 
   @Override
