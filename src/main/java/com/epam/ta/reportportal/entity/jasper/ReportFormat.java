@@ -47,7 +47,7 @@ public enum ReportFormat {
   }
 
   public static Optional<ReportFormat> findByValue(String value) {
-    return Arrays.stream(values()).filter(format -> format.name().equalsIgnoreCase(value)).findAny();
+    return Arrays.stream(values()).filter(format -> format.getValue().equalsIgnoreCase(value)).findAny();
   }
 
   public String getValue() {
