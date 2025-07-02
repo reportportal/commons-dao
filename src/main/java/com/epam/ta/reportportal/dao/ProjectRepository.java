@@ -28,9 +28,9 @@ public interface ProjectRepository extends ReportPortalRepository<Project, Long>
 
   Optional<Project> findByName(String name);
 
-	Optional<Project> findByKey(String key);
+  Optional<Project> findByKey(String key);
 
-	boolean existsByName(String name);
+  boolean existsByName(String name);
 
   Optional<Project> findByNameAndOrganizationId(String name, Long organizationId);
 
@@ -56,4 +56,22 @@ public interface ProjectRepository extends ReportPortalRepository<Project, Long>
   @Modifying
   @Query(value = "UPDATE project SET slug = :projectSlug WHERE id = :projectId", nativeQuery = true)
   void updateProjectSlug(@Param("projectSlug") String projectSlug, @Param("projectId") Long projectId);
+
+  @Modifying
+  @Query(value = """
+      UPDATE project_attribute
+      SET value = :newValue
+      WHERE attribute_id = (
+          SELECT id FROM attribute WHERE name = :attributeName
+      )
+        AND project_id IN (
+          SELECT id FROM project WHERE organization_id = :organizationId
+      )
+        AND CAST(value AS bigint) > :newValue
+      """, nativeQuery = true)
+  int updateProjectAttributeValueIfGreater(
+      @Param("newValue") Long newValue,
+      @Param("attributeName") String attributeName,
+      @Param("organizationId") Long organizationId
+  );
 }
