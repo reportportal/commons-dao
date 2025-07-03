@@ -6,6 +6,7 @@ import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.entity.organization.MembershipDetails;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
 import java.util.Optional;
+import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,5 +54,14 @@ class ProjectUserRepositoryTest extends BaseTest {
         projectUserRepository.findUserProjectsInOrganization(1L, 1L, pageable);
 
     Assertions.assertEquals(1, memberDetails.getNumberOfElements());
+  }
+
+  @Test
+  void findUserProjectIdsInOrganization() {
+
+    final Set<Long> projectIds =
+        projectUserRepository.findUserProjectIdsInOrganization(1L, 1L);
+
+    Assertions.assertEquals(1, projectIds.size());
   }
 }

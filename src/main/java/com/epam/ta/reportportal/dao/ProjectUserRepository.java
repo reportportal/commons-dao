@@ -48,4 +48,17 @@ public interface ProjectUserRepository extends ReportPortalRepository<ProjectUse
       """,
       nativeQuery = true)
   void deleteProjectUserByProjectOrganizationId(@Param("orgId") Long orgId, @Param("userId") Long userId);
+
+  /**
+   * Deletes project user records for all projects ids from the list.
+   *
+   * @param userId The user ID
+   * @param projectIds List of Project ids
+   */
+  @Modifying
+  @Query(value = """
+      DELETE FROM project_user WHERE user_id = :userId AND project_id IN :projectIds
+      """,
+      nativeQuery = true)
+  void deleteByUserIdAndProjectIds(@Param("userId") Long userId, @Param("projectIds") List<Long> projectIds);
 }
