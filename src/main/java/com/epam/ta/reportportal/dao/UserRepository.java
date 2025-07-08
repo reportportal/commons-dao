@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
@@ -46,6 +47,18 @@ public interface UserRepository extends ReportPortalRepository<User, Long>, User
    * @return {@link Optional} of {@link User}
    */
   Optional<User> findByLogin(String login);
+
+  /**
+   * @param uuid user uuid for search
+   * @return {@link Optional} of {@link User}
+   */
+  Optional<User> findByUuid(UUID uuid);
+
+  /**
+   * @param externalId user external id for search
+   * @return {@link Optional} of {@link User}
+   */
+  Optional<User> findByExternalId(String externalId);
 
   List<User> findAllByEmailIn(Collection<String> mails);
 
@@ -84,5 +97,4 @@ public interface UserRepository extends ReportPortalRepository<User, Long>, User
 
   @Query(value = "SELECT users.login FROM users WHERE users.id = :id", nativeQuery = true)
   Optional<String> findLoginById(@Param("id") Long id);
-
 }
