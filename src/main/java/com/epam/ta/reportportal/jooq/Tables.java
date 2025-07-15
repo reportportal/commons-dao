@@ -45,7 +45,7 @@ import com.epam.ta.reportportal.jooq.tables.JParameter;
 import com.epam.ta.reportportal.jooq.tables.JPatternTemplate;
 import com.epam.ta.reportportal.jooq.tables.JPatternTemplateTestItem;
 import com.epam.ta.reportportal.jooq.tables.JPgpArmorHeaders;
-import com.epam.ta.reportportal.jooq.tables.JPlaginMarketplace;
+import com.epam.ta.reportportal.jooq.tables.JPluginMarketplace;
 import com.epam.ta.reportportal.jooq.tables.JProject;
 import com.epam.ta.reportportal.jooq.tables.JProjectAttribute;
 import com.epam.ta.reportportal.jooq.tables.JProjectUser;
@@ -318,9 +318,9 @@ public class Tables {
     }
 
     /**
-     * The table <code>public.plagin_marketplace</code>.
+     * The table <code>public.plugin_marketplace</code>.
      */
-    public static final JPlaginMarketplace PLAGIN_MARKETPLACE = JPlaginMarketplace.PLAGIN_MARKETPLACE;
+    public static final JPluginMarketplace PLUGIN_MARKETPLACE = JPluginMarketplace.PLUGIN_MARKETPLACE;
 
     /**
      * The table <code>public.project</code>.

@@ -28,7 +28,7 @@ import lombok.NoArgsConstructor;
  * @author <a href="mailto:andrei_piankouski@epam.com">Andrei Piankouski</a>
  */
 @Entity
-@Table(name = "plagin_marketplace", schema = "public")
+@Table(name = "plugin_marketplace", schema = "public")
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
