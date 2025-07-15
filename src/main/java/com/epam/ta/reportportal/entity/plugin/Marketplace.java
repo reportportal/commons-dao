@@ -36,7 +36,7 @@ public class Marketplace implements Serializable {
 
   @Id
   @Column(name = "name", unique = true, nullable = false, precision = 64)
-  private String id;
+  private String name;
 
   @Column(name = "URI")
   private String URI;
