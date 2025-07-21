@@ -278,7 +278,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
         limit, includeMethods);
 
     return CRITERIA_HISTORY_ITEM_FETCHER.apply(dsl.select(TEST_ITEM.UNIQUE_ID,
-            TEST_ITEM.NAME,
+            TEST_ITEM.NAME, TEST_ITEM.LAUNCH_ID,
             DSL.arrayAgg(
                     when(fieldName(criteriaTable.getName(), CRITERIA_FLAG).cast(Integer.class).ge(1),
                         true).otherwise(false))

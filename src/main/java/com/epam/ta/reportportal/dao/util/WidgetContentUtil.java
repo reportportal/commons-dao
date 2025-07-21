@@ -498,6 +498,7 @@ public class WidgetContentUtil {
 				entry.setName(record.get(TEST_ITEM.NAME));
 				entry.setUniqueId(record.get(TEST_ITEM.UNIQUE_ID));
 				entry.setStartTime(Collections.singletonList(record.get(DSL.field(fieldName(START_TIME_HISTORY)), Instant.class)));
+				entry.setLaunchId(record.get(TEST_ITEM.LAUNCH_ID));
 				return entry;
 			})
 			.collect(Collectors.toList());
