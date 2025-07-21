@@ -295,7 +295,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
         .on(TEST_ITEM.ITEM_ID.eq(fieldName(criteriaTable.getName(), ITEM_ID).cast(Long.class)))
         .join(LAUNCH)
         .on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
-        .groupBy(TEST_ITEM.UNIQUE_ID, TEST_ITEM.NAME)
+        .groupBy(TEST_ITEM.UNIQUE_ID, TEST_ITEM.NAME, TEST_ITEM.LAUNCH_ID)
         .having(DSL.sum(fieldName(criteriaTable.getName(), CRITERIA_FLAG).cast(Integer.class))
             .greaterThan(BigDecimal.ZERO))
         .orderBy(DSL.field(DSL.name(CRITERIA)).desc(), DSL.field(DSL.name(TOTAL)).asc())
