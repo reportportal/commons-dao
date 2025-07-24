@@ -284,7 +284,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
                         true).otherwise(false))
                 .orderBy(LAUNCH.NUMBER.asc())
                 .as(STATUS_HISTORY),
-            DSL.max(TEST_ITEM.LAUNCH_ID),
+            DSL.max(TEST_ITEM.LAUNCH_ID).as(TEST_ITEM.LAUNCH_ID.getName()),
             DSL.max(TEST_ITEM.START_TIME).filterWhere(
                     fieldName(criteriaTable.getName(), CRITERIA_FLAG).cast(Integer.class).ge(1))
                 .as(START_TIME_HISTORY),
