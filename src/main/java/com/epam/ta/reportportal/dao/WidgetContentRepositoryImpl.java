@@ -278,7 +278,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
         limit, includeMethods);
 
     return CRITERIA_HISTORY_ITEM_FETCHER.apply(dsl.select(TEST_ITEM.UNIQUE_ID,
-            TEST_ITEM.NAME, TEST_ITEM.LAUNCH_ID,
+            TEST_ITEM.NAME,
             DSL.arrayAgg(
                     when(fieldName(criteriaTable.getName(), CRITERIA_FLAG).cast(Integer.class).ge(1),
                         true).otherwise(false))
@@ -288,14 +288,15 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
                     fieldName(criteriaTable.getName(), CRITERIA_FLAG).cast(Integer.class).ge(1))
                 .as(START_TIME_HISTORY),
             DSL.sum(fieldName(criteriaTable.getName(), CRITERIA_FLAG).cast(Integer.class)).as(CRITERIA),
-            DSL.count(TEST_ITEM.ITEM_ID).as(TOTAL)
+            DSL.count(TEST_ITEM.ITEM_ID).as(TOTAL),
+            DSL.max(TEST_ITEM.LAUNCH_ID).as(LAUNCH_ID)
         )
         .from(TEST_ITEM)
         .join(criteriaTable)
         .on(TEST_ITEM.ITEM_ID.eq(fieldName(criteriaTable.getName(), ITEM_ID).cast(Long.class)))
         .join(LAUNCH)
         .on(TEST_ITEM.LAUNCH_ID.eq(LAUNCH.ID))
-        .groupBy(TEST_ITEM.UNIQUE_ID, TEST_ITEM.NAME, TEST_ITEM.LAUNCH_ID)
+        .groupBy(TEST_ITEM.UNIQUE_ID, TEST_ITEM.NAME)
         .having(DSL.sum(fieldName(criteriaTable.getName(), CRITERIA_FLAG).cast(Integer.class))
             .greaterThan(BigDecimal.ZERO))
         .orderBy(DSL.field(DSL.name(CRITERIA)).desc(), DSL.field(DSL.name(TOTAL)).asc())
