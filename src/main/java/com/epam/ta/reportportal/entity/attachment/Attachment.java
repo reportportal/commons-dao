@@ -17,9 +17,6 @@
 package com.epam.ta.reportportal.entity.attachment;
 
 import com.epam.ta.reportportal.dao.converters.JpaInstantConverter;
-import java.io.Serializable;
-import java.time.Instant;
-import java.util.Objects;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
@@ -27,6 +24,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.io.Serializable;
+import java.time.Instant;
+import java.util.Objects;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>

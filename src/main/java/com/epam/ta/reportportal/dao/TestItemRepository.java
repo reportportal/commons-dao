@@ -16,6 +16,8 @@
 
 package com.epam.ta.reportportal.dao;
 
+import static org.hibernate.jpa.HibernateHints.HINT_FETCH_SIZE;
+
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.TestItemResults;
