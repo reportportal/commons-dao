@@ -168,7 +168,7 @@ class WidgetContentRepositoryTest extends BaseTest {
         filter, defect, 10, false);
 
     assertNotNull(criteriaHistoryItems);
-    assertEquals(2, criteriaHistoryItems.size());
+    assertEquals(1, criteriaHistoryItems.size());
   }
 
   @Test
