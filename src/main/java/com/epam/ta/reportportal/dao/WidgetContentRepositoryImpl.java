@@ -284,6 +284,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
                         true).otherwise(false))
                 .orderBy(LAUNCH.NUMBER.asc())
                 .as(STATUS_HISTORY),
+            DSL.max(TEST_ITEM.LAUNCH_ID).as(TEST_ITEM.LAUNCH_ID.getName()),
             DSL.max(TEST_ITEM.START_TIME).filterWhere(
                     fieldName(criteriaTable.getName(), CRITERIA_FLAG).cast(Integer.class).ge(1))
                 .as(START_TIME_HISTORY),
@@ -763,7 +764,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
             LAUNCH.STATUS,
             LAUNCH.START_TIME,
             LAUNCH.END_TIME,
-            timestampDiff(LAUNCH.END_TIME.cast(Timestamp.class), LAUNCH.START_TIME.cast(Timestamp.class)).as(DURATION)
+            timestampDiff(LAUNCH.END_TIME.cast(Timestamp.class),
+                LAUNCH.START_TIME.cast(Timestamp.class)).as(DURATION)
         )
         .from(LAUNCH)
         .join(LAUNCHES)
@@ -852,31 +854,31 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
   @Override
   public List<ActivityResource> activityStatistics(Filter filter, Sort sort, int limit) {
 
-		return dsl.with(ACTIVITIES)
+    return dsl.with(ACTIVITIES)
         .as(QueryBuilder.newBuilder(filter, collectJoinFields(filter, sort)).with(sort).with(limit)
             .build())
-				.select(ACTIVITY.ID,
-						ACTIVITY.EVENT_NAME,
-						ACTIVITY.OBJECT_TYPE,
-						ACTIVITY.CREATED_AT,
-						ACTIVITY.DETAILS,
-						ACTIVITY.PROJECT_ID,
-						ACTIVITY.OBJECT_ID,
-						ACTIVITY.OBJECT_NAME,
-						ACTIVITY.SUBJECT_NAME,
-						USERS.LOGIN,
-						PROJECT.NAME
-				)
+        .select(ACTIVITY.ID,
+            ACTIVITY.EVENT_NAME,
+            ACTIVITY.OBJECT_TYPE,
+            ACTIVITY.CREATED_AT,
+            ACTIVITY.DETAILS,
+            ACTIVITY.PROJECT_ID,
+            ACTIVITY.OBJECT_ID,
+            ACTIVITY.OBJECT_NAME,
+            ACTIVITY.SUBJECT_NAME,
+            USERS.LOGIN,
+            PROJECT.NAME
+        )
         .from(ACTIVITY)
         .join(ACTIVITIES)
         .on(fieldName(ACTIVITIES, ID).cast(Long.class).eq(ACTIVITY.ID))
         .leftJoin(USERS)
         .on(ACTIVITY.SUBJECT_ID.eq(USERS.ID))
-				.join(PROJECT)
-				.on(ACTIVITY.PROJECT_ID.eq(PROJECT.ID))
-				.orderBy(WidgetSortUtils.sortingTransformer(filter.getTarget()).apply(sort, ACTIVITIES))
-				.fetch()
-				.map(ACTIVITY_MAPPER);
+        .join(PROJECT)
+        .on(ACTIVITY.PROJECT_ID.eq(PROJECT.ID))
+        .orderBy(WidgetSortUtils.sortingTransformer(filter.getTarget()).apply(sort, ACTIVITIES))
+        .fetch()
+        .map(ACTIVITY_MAPPER);
 
   }
 
@@ -1094,7 +1096,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
             .on((TEST_ITEM.ITEM_ID.eq(ITEM_ATTRIBUTE.ITEM_ID)
                 .or(TEST_ITEM.LAUNCH_ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID))).and(
                 ITEM_ATTRIBUTE.KEY.eq(currentLevelKey).and(ITEM_ATTRIBUTE.SYSTEM.isFalse())))
-            .groupBy(TEST_ITEM.ITEM_ID, TEST_ITEM_RESULTS.STATUS, ITEM_ATTRIBUTE.KEY, ITEM_ATTRIBUTE.VALUE)
+            .groupBy(TEST_ITEM.ITEM_ID, TEST_ITEM_RESULTS.STATUS, ITEM_ATTRIBUTE.KEY,
+                ITEM_ATTRIBUTE.VALUE)
             .having(filterSkippedTests(excludeSkipped))
             .asTable(ITEMS))
         .groupBy(fieldName(ITEMS, VALUE))
@@ -1109,12 +1112,12 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
   private Condition filterSkippedTests(boolean excludeSkipped) {
     Condition condition = DSL.noCondition();
     if (excludeSkipped) {
-       return DSL.notExists(
-           dsl.selectOne().from(STATISTICS).join(STATISTICS_FIELD)
-               .on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
-               .where(TEST_ITEM.ITEM_ID.eq(STATISTICS.ITEM_ID)
-                   .and(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
-                   .and(STATISTICS_FIELD.NAME.eq(EXECUTIONS_SKIPPED))));
+      return DSL.notExists(
+          dsl.selectOne().from(STATISTICS).join(STATISTICS_FIELD)
+              .on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
+              .where(TEST_ITEM.ITEM_ID.eq(STATISTICS.ITEM_ID)
+                  .and(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
+                  .and(STATISTICS_FIELD.NAME.eq(EXECUTIONS_SKIPPED))));
     }
     return condition;
   }
@@ -1453,7 +1456,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
                 .where(STATISTICS_FIELD.NAME.eq(EXECUTIONS_TOTAL)
                     .and(STATISTICS.LAUNCH_ID.eq(LAUNCH.ID)))
                 .asField(), 0)), 2).as(PASSING_RATE),
-        timestampDiff(LAUNCH.END_TIME.cast(Timestamp.class), LAUNCH.START_TIME.cast(Timestamp.class))
+        timestampDiff(LAUNCH.END_TIME.cast(Timestamp.class),
+            LAUNCH.START_TIME.cast(Timestamp.class))
             .as(DURATION)
     );
 
