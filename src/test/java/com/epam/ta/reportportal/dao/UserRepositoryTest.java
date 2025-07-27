@@ -39,6 +39,7 @@ import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.dao.organization.OrganizationRepositoryCustom;
 import com.epam.ta.reportportal.entity.Metadata;
+import com.epam.ta.reportportal.entity.organization.OrganizationRole;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
@@ -445,6 +446,14 @@ class UserRepositoryTest extends BaseTest {
   @Test
   void findEmailsByOrganization() {
     List<String> emails = userRepository.findEmailsByOrganization(1L);
+
+    assertFalse(emails.isEmpty());
+    assertEquals(2, emails.size());
+  }
+
+  @Test
+  void findEmailsByOrganizationAndRole() {
+    List<String> emails = userRepository.findEmailsByOrganizationAndRole(1L, OrganizationRole.MEMBER);
 
     assertFalse(emails.isEmpty());
     assertEquals(2, emails.size());
