@@ -88,6 +88,9 @@ public interface UserRepository extends ReportPortalRepository<User, Long>, User
   @Query(value = "SELECT u.email FROM users u JOIN project_user pu ON u.id = pu.user_id WHERE pu.project_id = :projectId", nativeQuery = true)
   List<String> findEmailsByProject(@Param("projectId") Long projectId);
 
+  @Query(value = "SELECT u.email FROM users u JOIN organization_user ou ON u.id = ou.user_id WHERE ou.organization_id = :organizationId", nativeQuery = true)
+  List<String> findEmailsByOrganization(@Param("organizationId") Long organizationId);
+
   @Query(value = "SELECT u.email FROM users u JOIN project_user pu ON u.id = pu.user_id WHERE pu.project_id = :projectId AND pu.project_role = cast(:#{#projectRole.name()} AS PROJECT_ROLE_ENUM)", nativeQuery = true)
   List<String> findEmailsByProjectAndRole(@Param("projectId") Long projectId,
       @Param("projectRole") ProjectRole projectRole);
@@ -97,4 +100,5 @@ public interface UserRepository extends ReportPortalRepository<User, Long>, User
 
   @Query(value = "SELECT users.login FROM users WHERE users.id = :id", nativeQuery = true)
   Optional<String> findLoginById(@Param("id") Long id);
+
 }

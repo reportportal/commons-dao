@@ -442,6 +442,14 @@ class UserRepositoryTest extends BaseTest {
     assertEquals(1, emails.size());
   }
 
+  @Test
+  void findEmailsByOrganization() {
+    List<String> emails = userRepository.findEmailsByOrganization(1L);
+
+    assertFalse(emails.isEmpty());
+    assertEquals(2, emails.size());
+  }
+
 
   @Test
   void findProjectUsers() {
