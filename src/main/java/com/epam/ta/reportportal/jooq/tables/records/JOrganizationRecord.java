@@ -121,15 +121,15 @@ public class JOrganizationRecord extends UpdatableRecordImpl<JOrganizationRecord
     /**
      * Setter for <code>public.organization.owner_id</code>.
      */
-    public void setOwnerId(Integer value) {
+    public void setOwnerId(Long value) {
         set(7, value);
     }
 
     /**
      * Getter for <code>public.organization.owner_id</code>.
      */
-    public Integer getOwnerId() {
-        return (Integer) get(7);
+    public Long getOwnerId() {
+        return (Long) get(7);
     }
 
     // -------------------------------------------------------------------------
@@ -155,7 +155,7 @@ public class JOrganizationRecord extends UpdatableRecordImpl<JOrganizationRecord
     /**
      * Create a detached, initialised JOrganizationRecord
      */
-    public JOrganizationRecord(Long id, Instant createdAt, Instant updatedAt, String name, String organizationType, String externalId, String slug, Integer ownerId) {
+    public JOrganizationRecord(Long id, Instant createdAt, Instant updatedAt, String name, String organizationType, String externalId, String slug, Long ownerId) {
         super(JOrganization.ORGANIZATION);
 
         setId(id);

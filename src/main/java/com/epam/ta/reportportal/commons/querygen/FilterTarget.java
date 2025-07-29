@@ -1506,6 +1506,7 @@ public enum FilterTarget {
           ORGANIZATION.UPDATED_AT,
           ORGANIZATION.EXTERNAL_ID,
           ORGANIZATION.ORGANIZATION_TYPE,
+          ORGANIZATION.OWNER_ID,
           DSL.countDistinct(ORGANIZATION_USER.USER_ID).as(USERS_QUANTITY),
           DSL.countDistinct(PROJECT.ID).as(PROJECTS_QUANTITY),
           DSL.countDistinct(choose().when(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS), LAUNCH.ID))
