@@ -1468,20 +1468,18 @@ public enum FilterTarget {
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_TYPE, ORGANIZATION.ORGANIZATION_TYPE,
           String.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_USERS, USERS_QUANTITY, Long.class)
-          .withAggregateCriteria(DSL.countDistinct(ORGANIZATION_USER.USER_ID).toString())
+          .withAggregateCriteria(USERS_QUANTITY)
           .get(),
       new CriteriaHolderBuilder()
           .newBuilder(CRITERIA_ORG_USER_ID, ORGANIZATION_USER.USER_ID, Long.class)
           .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_PROJECTS, PROJECTS_QUANTITY, Long.class)
-          .withAggregateCriteria(DSL.countDistinct(PROJECT.ID).toString()).get(),
+          .withAggregateCriteria(PROJECTS_QUANTITY).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_LAST_LAUNCH_RUN, LAST_RUN, Timestamp.class)
-          .withAggregateCriteria(DSL.max(LAUNCH.START_TIME).toString())
+          .withAggregateCriteria(LAST_RUN)
           .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_LAUNCHES, LAUNCHES_QUANTITY, Long.class)
-          .withAggregateCriteria(
-              DSL.countDistinct(choose().when(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS), LAUNCH.ID))
-                  .toString())
+          .withAggregateCriteria(LAUNCHES_QUANTITY)
           .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_USER, USERS.LOGIN, String.class)
           .get()
@@ -1489,28 +1487,52 @@ public enum FilterTarget {
   )) {
     @Override
     public QuerySupplier getQuery() {
-      SelectQuery<? extends Record> query = DSL.select(selectFields()).getQuery();
+      SelectQuery<? extends Record> query = DSL.select(idField().as(FILTERED_ID)).getQuery();
       addFrom(query);
-      query.addGroupBy(ORGANIZATION.ID);
+      query.addGroupBy(idField());
       QuerySupplier querySupplier = new QuerySupplier(query);
-      joinTables(querySupplier);
+      joinTablesForFilter(querySupplier);
       return querySupplier;
     }
 
     @Override
     protected Collection<? extends SelectField> selectFields() {
-      return Lists.newArrayList(ORGANIZATION.ID,
+      return Lists.newArrayList(
+          ORGANIZATION.ID,
           ORGANIZATION.NAME,
           ORGANIZATION.SLUG,
           ORGANIZATION.CREATED_AT,
           ORGANIZATION.UPDATED_AT,
           ORGANIZATION.EXTERNAL_ID,
           ORGANIZATION.ORGANIZATION_TYPE,
-          DSL.countDistinct(ORGANIZATION_USER.USER_ID).as(USERS_QUANTITY),
-          DSL.countDistinct(PROJECT.ID).as(PROJECTS_QUANTITY),
-          DSL.countDistinct(choose().when(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS), LAUNCH.ID))
-              .as(LAUNCHES_QUANTITY),
-          DSL.max(LAUNCH.START_TIME).as(LAST_RUN)
+          // Subquery for users count
+          DSL.select(DSL.countDistinct(ORGANIZATION_USER.USER_ID))
+              .from(ORGANIZATION_USER)
+              .where(ORGANIZATION_USER.ORGANIZATION_ID.eq(ORGANIZATION.ID))
+              .asField(USERS_QUANTITY),
+          // Subquery for projects count  
+          DSL.select(DSL.countDistinct(PROJECT.ID))
+              .from(PROJECT)
+              .where(PROJECT.ORGANIZATION_ID.eq(ORGANIZATION.ID))
+              .asField(PROJECTS_QUANTITY),
+          // Subquery for launches count
+          DSL.select(DSL.countDistinct(LAUNCH.ID))
+              .from(LAUNCH)
+              .where(LAUNCH.PROJECT_ID.in(
+                  DSL.select(PROJECT.ID)
+                      .from(PROJECT)
+                      .where(PROJECT.ORGANIZATION_ID.eq(ORGANIZATION.ID))
+              ).and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS)))
+              .asField(LAUNCHES_QUANTITY),
+          // Subquery for last run
+          DSL.select(DSL.max(LAUNCH.START_TIME))
+              .from(LAUNCH)
+              .where(LAUNCH.PROJECT_ID.in(
+                  DSL.select(PROJECT.ID)
+                      .from(PROJECT)
+                      .where(PROJECT.ORGANIZATION_ID.eq(ORGANIZATION.ID))
+              ))
+              .asField(LAST_RUN)
       );
     }
 
