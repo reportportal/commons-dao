@@ -142,19 +142,6 @@ public class QueryBuilder {
     return new QueryBuilder(queryable, fields);
   }
 
-  /**
-   * Creates optimized QueryBuilder for ORGANIZATION_TARGET using subqueries instead of JOINs
-   * for better performance when no filtering is needed
-   */
-  public static QueryBuilder newOptimizedOrganizationBuilder() {
-    QueryBuilder builder = new QueryBuilder(FilterTarget.ORGANIZATION_TARGET);
-    // Replace the query with optimized version using subqueries
-    SelectQuery<? extends Record> optimizedQuery = org.jooq.impl.DSL.select(FilterTarget.ORGANIZATION_TARGET.selectFields()).getQuery();
-    FilterTarget.ORGANIZATION_TARGET.addFrom(optimizedQuery);
-    builder.query = new QuerySupplier(optimizedQuery);
-    return builder;
-  }
-
   public static int retrieveOffsetAndApplyBoundaries(Pageable pageable) {
 
     long offset = pageable.getOffset();

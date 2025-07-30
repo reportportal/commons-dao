@@ -1487,11 +1487,11 @@ public enum FilterTarget {
   )) {
     @Override
     public QuerySupplier getQuery() {
-      SelectQuery<? extends Record> query = DSL.select(idField().as(FILTERED_ID)).getQuery();
+      SelectQuery<? extends Record> query = DSL.select(selectFields()).getQuery();
       addFrom(query);
-      query.addGroupBy(idField());
+      query.addGroupBy(ORGANIZATION.ID);
       QuerySupplier querySupplier = new QuerySupplier(query);
-      joinTablesForFilter(querySupplier);
+      joinTables(querySupplier);
       return querySupplier;
     }
 
