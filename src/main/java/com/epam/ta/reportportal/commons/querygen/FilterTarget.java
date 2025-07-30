@@ -1468,7 +1468,7 @@ public enum FilterTarget {
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_TYPE, ORGANIZATION.ORGANIZATION_TYPE,
           String.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_USERS, USERS_QUANTITY, Long.class)
-          .withAggregateCriteria(USERS_QUANTITY)
+          .withAggregateCriteria(DSL.countDistinct(ORGANIZATION_USER.USER_ID).toString())
           .get(),
       new CriteriaHolderBuilder()
           .newBuilder(CRITERIA_ORG_USER_ID, ORGANIZATION_USER.USER_ID, Long.class)
@@ -1509,12 +1509,12 @@ public enum FilterTarget {
           DSL.select(DSL.countDistinct(ORGANIZATION_USER.USER_ID))
               .from(ORGANIZATION_USER)
               .where(ORGANIZATION_USER.ORGANIZATION_ID.eq(ORGANIZATION.ID))
-              .asField(USERS_QUANTITY),
+              .asField(USERS_QUANTITY).as(USERS_QUANTITY),
           // Subquery for projects count  
           DSL.select(DSL.countDistinct(PROJECT.ID))
               .from(PROJECT)
               .where(PROJECT.ORGANIZATION_ID.eq(ORGANIZATION.ID))
-              .asField(PROJECTS_QUANTITY),
+              .asField(PROJECTS_QUANTITY).as(PROJECTS_QUANTITY),
           // Subquery for launches count
           DSL.select(DSL.countDistinct(LAUNCH.ID))
               .from(LAUNCH)
@@ -1523,7 +1523,7 @@ public enum FilterTarget {
                       .from(PROJECT)
                       .where(PROJECT.ORGANIZATION_ID.eq(ORGANIZATION.ID))
               ).and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS)))
-              .asField(LAUNCHES_QUANTITY),
+              .asField(LAUNCHES_QUANTITY).as(LAUNCHES_QUANTITY),
           // Subquery for last run
           DSL.select(DSL.max(LAUNCH.START_TIME))
               .from(LAUNCH)
@@ -1532,7 +1532,7 @@ public enum FilterTarget {
                       .from(PROJECT)
                       .where(PROJECT.ORGANIZATION_ID.eq(ORGANIZATION.ID))
               ))
-              .asField(LAST_RUN)
+              .asField(LAST_RUN).as(LAST_RUN)
       );
     }
 
