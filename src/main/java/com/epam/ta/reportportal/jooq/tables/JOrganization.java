@@ -103,7 +103,7 @@ public class JOrganization extends TableImpl<JOrganizationRecord> {
     /**
      * The column <code>public.organization.owner_id</code>.
      */
-    public final TableField<JOrganizationRecord, Integer> OWNER_ID = createField(DSL.name("owner_id"), SQLDataType.INTEGER, this, "");
+    public final TableField<JOrganizationRecord, Long> OWNER_ID = createField(DSL.name("owner_id"), SQLDataType.BIGINT, this, "");
 
     private JOrganization(Name alias, Table<JOrganizationRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);
