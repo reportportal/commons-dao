@@ -256,10 +256,14 @@ public class QueryBuilder {
         query.addSelect(field(criteria.getAggregateCriteria()).as(criteria.getFilterCriteria()));
         sortingSelect.add(sorting);
       }
+      Field<?> sortField = field(criteria.getAggregateCriteria());
+
+      if (String.class.equals(criteria.getDataType())) {
+        sortField = sortField.lower();
+      }
+
       query.addOrderBy(
-          field(criteria.getAggregateCriteria())
-              .lower()
-              .sort(order.getDirection().isDescending() ? SortOrder.DESC : SortOrder.ASC));
+          sortField.sort(order.getDirection().isDescending() ? SortOrder.DESC : SortOrder.ASC));
     }));
     return this;
   }
