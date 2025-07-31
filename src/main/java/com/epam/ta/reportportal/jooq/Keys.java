@@ -224,6 +224,7 @@ public class Keys {
     public static final UniqueKey<JUserPreferenceRecord> USER_PREFERENCE_PK = Internal.createUniqueKey(JUserPreference.USER_PREFERENCE, DSL.name("user_preference_pk"), new TableField[] { JUserPreference.USER_PREFERENCE.ID }, true);
     public static final UniqueKey<JUserPreferenceRecord> USER_PREFERENCE_UQ = Internal.createUniqueKey(JUserPreference.USER_PREFERENCE, DSL.name("user_preference_uq"), new TableField[] { JUserPreference.USER_PREFERENCE.PROJECT_ID, JUserPreference.USER_PREFERENCE.USER_ID, JUserPreference.USER_PREFERENCE.FILTER_ID }, true);
     public static final UniqueKey<JUsersRecord> USERS_EMAIL_KEY = Internal.createUniqueKey(JUsers.USERS, DSL.name("users_email_key"), new TableField[] { JUsers.USERS.EMAIL }, true);
+    public static final UniqueKey<JUsersRecord> USERS_EXTERNAL_ID_KEY = Internal.createUniqueKey(JUsers.USERS, DSL.name("users_external_id_key"), new TableField[] { JUsers.USERS.EXTERNAL_ID }, true);
     public static final UniqueKey<JUsersRecord> USERS_LOGIN_KEY = Internal.createUniqueKey(JUsers.USERS, DSL.name("users_login_key"), new TableField[] { JUsers.USERS.LOGIN }, true);
     public static final UniqueKey<JUsersRecord> USERS_PK = Internal.createUniqueKey(JUsers.USERS, DSL.name("users_pk"), new TableField[] { JUsers.USERS.ID }, true);
     public static final UniqueKey<JWidgetRecord> WIDGET_PKEY = Internal.createUniqueKey(JWidget.WIDGET, DSL.name("widget_pkey"), new TableField[] { JWidget.WIDGET.ID }, true);
