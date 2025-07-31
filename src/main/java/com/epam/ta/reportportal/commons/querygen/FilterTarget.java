@@ -1468,10 +1468,9 @@ public enum FilterTarget {
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_TYPE, ORGANIZATION.ORGANIZATION_TYPE,
           String.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_USERS, USERS_QUANTITY, Long.class)
-          .withAggregateCriteria(DSL.countDistinct(ORGANIZATION_USER.USER_ID).toString())
-          .get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_USERS, USERS_QUANTITY, Long.class)
           .withAggregateCriteria(USERS_QUANTITY)
+          .get(),
+      new CriteriaHolderBuilder().newBuilder(USERS_QUANTITY, USERS_QUANTITY, Long.class)
           .get(),
       new CriteriaHolderBuilder()
           .newBuilder(CRITERIA_ORG_USER_ID, ORGANIZATION_USER.USER_ID, Long.class)
