@@ -58,6 +58,11 @@ public class CriteriaHolderBuilder implements Supplier<CriteriaHolder> {
     return this;
   }
 
+  public CriteriaHolderBuilder withIgnoreSelect(boolean ignoreSelect) {
+    this.criteriaHolder.setIgnoreSelect(ignoreSelect);
+    return this;
+  }
+
   @Override
   public CriteriaHolder get() {
     return criteriaHolder;

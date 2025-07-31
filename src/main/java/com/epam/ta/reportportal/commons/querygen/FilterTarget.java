@@ -1471,6 +1471,7 @@ public enum FilterTarget {
           .withAggregateCriteria(USERS_QUANTITY)
           .get(),
       new CriteriaHolderBuilder().newBuilder(USERS_QUANTITY, USERS_QUANTITY, Long.class)
+          .withIgnoreSelect(true)
           .get(),
       new CriteriaHolderBuilder()
           .newBuilder(CRITERIA_ORG_USER_ID, ORGANIZATION_USER.USER_ID, Long.class)

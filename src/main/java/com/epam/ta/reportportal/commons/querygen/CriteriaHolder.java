@@ -71,6 +71,8 @@ public class CriteriaHolder {
   private Class<?> dataType;
   private List<JoinEntity> joinChain = Lists.newArrayList();
 
+  private boolean ignoreSelect;
+
   public CriteriaHolder() {
     // added for deserialization from DB
   }
@@ -129,6 +131,14 @@ public class CriteriaHolder {
 
   public void setAggregateCriteria(String aggregateCriteria) {
     this.aggregateCriteria = aggregateCriteria;
+  }
+
+  public boolean isIgnoreSelect() {
+    return ignoreSelect;
+  }
+
+  public void setIgnoreSelect(boolean ignoreSelect) {
+    this.ignoreSelect = ignoreSelect;
   }
 
   public Class<?> getDataType() {
