@@ -1468,27 +1468,21 @@ public enum FilterTarget {
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_TYPE, ORGANIZATION.ORGANIZATION_TYPE,
           String.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_USERS, USERS_QUANTITY, Long.class)
-          .withAggregateCriteria(USERS_QUANTITY)
-          .get(),
-      new CriteriaHolderBuilder().newBuilder(USERS_QUANTITY, USERS_QUANTITY, Long.class)
+          .withAggregateCriteria("\"" + USERS_QUANTITY + "\"")
           .withIgnoreSelect(true)
           .get(),
-      new CriteriaHolderBuilder()
-          .newBuilder(CRITERIA_ORG_USER_ID, ORGANIZATION_USER.USER_ID, Long.class)
-          .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_PROJECTS, PROJECTS_QUANTITY, Long.class)
-          .withAggregateCriteria(DSL.countDistinct(PROJECT.ID).toString()).get(),
+          .withAggregateCriteria("\"" + PROJECTS_QUANTITY + "\"")
+          .withIgnoreSelect(true)
+          .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_LAST_LAUNCH_RUN, LAST_RUN, Timestamp.class)
-          .withAggregateCriteria(DSL.max(LAUNCH.START_TIME).toString())
+          .withAggregateCriteria("\"" + LAST_RUN + "\"")
+          .withIgnoreSelect(true)
           .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_LAUNCHES, LAUNCHES_QUANTITY, Long.class)
-          .withAggregateCriteria(
-              DSL.countDistinct(choose().when(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS), LAUNCH.ID))
-                  .toString())
-          .get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_USER, USERS.LOGIN, String.class)
+          .withAggregateCriteria("\"" + LAUNCHES_QUANTITY + "\"")
+          .withIgnoreSelect(true)
           .get()
-
   )) {
     @Override
     public QuerySupplier getQuery() {
