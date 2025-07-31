@@ -68,6 +68,7 @@ public interface ProjectUserRepository extends ReportPortalRepository<ProjectUse
    *
    * @param projectId The ID of the project whose user associations should be deleted.
    */
+  @Modifying
   @Query(value = "DELETE FROM project_user WHERE project_id = :projectId", nativeQuery = true)
   void deleteAllByProjectId(@Param(value = "projectId") Long projectId);
 }
