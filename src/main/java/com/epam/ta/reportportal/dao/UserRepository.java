@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
@@ -47,6 +48,18 @@ public interface UserRepository extends ReportPortalRepository<User, Long>, User
    */
   Optional<User> findByLogin(String login);
 
+  /**
+   * @param uuid user uuid for search
+   * @return {@link Optional} of {@link User}
+   */
+  Optional<User> findByUuid(UUID uuid);
+
+  /**
+   * @param externalId user external id for search
+   * @return {@link Optional} of {@link User}
+   */
+  Optional<User> findByExternalId(String externalId);
+
   List<User> findAllByEmailIn(Collection<String> mails);
 
   List<User> findAllByLoginIn(Set<String> loginSet);
@@ -63,7 +76,8 @@ public interface UserRepository extends ReportPortalRepository<User, Long>, User
 
   /**
    * Updates user's last login value
-   * @param username  User
+   *
+   * @param username User
    */
   @Modifying(clearAutomatically = true)
   @Query(value = "UPDATE users SET metadata = jsonb_set(metadata, '{metadata,last_login}', to_jsonb(round(extract(EPOCH from clock_timestamp()) * 1000)), TRUE ) WHERE login = :username", nativeQuery = true)

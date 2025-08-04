@@ -197,6 +197,28 @@ class UserRepositoryTest extends BaseTest {
   }
 
   @Test
+  void findByUuid() {
+    final UUID uuid = userRepository.findByLogin("han_solo")
+        .map(User::getUuid)
+        .orElseThrow(() -> new IllegalStateException("User not found"));
+
+    Optional<User> user = userRepository.findByUuid(uuid);
+
+    assertTrue(user.isPresent(), "User not found");
+    assertThat("UUIDs are not equal", user.get().getUuid(), Matchers.equalTo(uuid));
+  }
+
+  @Test
+  void findByExternalId() {
+    final String externalId = "external_id_1";
+
+    Optional<User> user = userRepository.findByExternalId(externalId);
+
+    assertTrue(user.isPresent(), "User not found");
+    assertThat("External IDs are not equal", user.get().getExternalId(), Matchers.equalTo(externalId));
+  }
+
+  @Test
   void findAllByEmailIn() {
     List<String> emails = Arrays.asList("han_solo@domain.com", "chybaka@domain.com");
 
