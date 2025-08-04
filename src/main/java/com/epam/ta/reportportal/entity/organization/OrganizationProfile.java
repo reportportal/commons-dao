@@ -15,6 +15,7 @@ public class OrganizationProfile {
   private String slug;
   private String externalId;
   private String type;
+  private Long ownerId;
   private Integer launchesQuantity;
   private Instant lastRun;
   private Integer projectsQuantity;
