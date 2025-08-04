@@ -252,7 +252,7 @@ public class QueryBuilder {
               order.getProperty()));
       Pair<String, Sort.Direction> sorting = Pair.of(criteria.getFilterCriteria(),
           order.getDirection());
-      if (!order.getProperty().equalsIgnoreCase(CRITERIA_ID) && !sortingSelect.contains(sorting)) {
+      if (!order.getProperty().equalsIgnoreCase(CRITERIA_ID) && !sortingSelect.contains(sorting) && !criteria.isIgnoreSelect()) {
         query.addSelect(field(criteria.getAggregateCriteria()).as(criteria.getFilterCriteria()));
         sortingSelect.add(sorting);
       }
