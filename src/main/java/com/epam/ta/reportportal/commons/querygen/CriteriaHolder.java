@@ -71,6 +71,10 @@ public class CriteriaHolder {
   private Class<?> dataType;
   private List<JoinEntity> joinChain = Lists.newArrayList();
 
+  /**
+   * If true - criteria field will be not added in the list of selected fields.
+   * Used in case when field is calculated in selection part to avoid field duplication.
+   */
   private boolean ignoreSelect;
 
   public CriteriaHolder() {
