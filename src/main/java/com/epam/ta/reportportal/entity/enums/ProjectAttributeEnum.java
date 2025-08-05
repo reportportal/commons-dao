@@ -53,7 +53,8 @@ public enum ProjectAttributeEnum {
   AUTO_UNIQUE_ERROR_ANALYZER_ENABLED(Prefix.ANALYZER + Prefix.UNIQUE_ERROR + "enabled",
       String.valueOf(true)),
   UNIQUE_ERROR_ANALYZER_REMOVE_NUMBERS(Prefix.ANALYZER + Prefix.UNIQUE_ERROR + "removeNumbers",
-      String.valueOf(true));
+      String.valueOf(true)),
+  LARGEST_RETRY_PRIORITY(Prefix.ANALYZER + "largestRetryPriority", String.valueOf(false));
 
   public static final String FOREVER_ALIAS = "0";
   private String attribute;
