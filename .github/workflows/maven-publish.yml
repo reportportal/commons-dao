@@ -29,6 +29,7 @@ env:
   ARTIFACT: 'commons-dao'
   SONATYPE_CENTRAL_API: 'https://central.sonatype.com/api/v1/publisher'
   VERSION: '5.14.4'  # Test version for automatic runs
+  PACKAGE_SUFFIXES: '-javadoc.jar,-javadoc.jar.asc,-sources.jar,-sources.jar.asc,.jar,.jar.asc,.pom,.pom.asc,.pom.md5,.pom.sha1,.jar.md5,.jar.sha1,-javadoc.jar.md5,-javadoc.jar.sha1,-sources.jar.md5,-sources.jar.sha1'
 
 jobs:
   publish:
@@ -58,67 +59,39 @@ jobs:
 
       - name: Download artifacts from GitHub Packages
         run: |
-          # Get the list of all files matching the artifact pattern
-          echo "Discovering files for ${ARTIFACT_NAME}*..."
-          
-          # Use GitHub API to list all files in the package version
-          API_URL="https://api.github.com/packages/maven/${{ github.repository }}/${PACKAGE_PATH}/${ARTIFACT}/versions/$VERSION/files"
-          
-          # Get the list of files from GitHub Packages API
-          FILES_RESPONSE=$(curl -s -u "${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}" \
-            -H "Accept: application/vnd.github.v3+json" \
-            "$API_URL")
-          
-          # Extract file names that match our artifact pattern
-          FILES=($(echo "$FILES_RESPONSE" | jq -r ".[] | select(.name | startswith(\"${ARTIFACT_NAME}\")) | .name"))
-          
-          if [ ${#FILES[@]} -eq 0 ]; then
-            echo "ERROR: No files found matching pattern ${ARTIFACT_NAME}*" >&2
-            echo "API Response: $FILES_RESPONSE" >&2
-            exit 1
-          fi
-          
-          echo "Found ${#FILES[@]} files to download:"
-          printf '%s\n' "${FILES[@]}"
-          
-          # Download each file
-          for file in "${FILES[@]}"; do
-            URL="${REPOSITORY_URL}/${{ github.repository }}/${PACKAGE_PATH}/${ARTIFACT}/$VERSION/$file"
+          # Download all artifacts using the package suffixes
+          IFS=',' read -a files <<< '${{ env.PACKAGE_SUFFIXES }}'
+          for f in ${files[@]}; do
+            export URL="${REPOSITORY_URL}/${{ github.repository }}/${PACKAGE_PATH}/${ARTIFACT}/$VERSION/${ARTIFACT}-$VERSION${f}"
+            echo "Downloading artifact: ${URL}"
             
-            echo "Downloading $file..."
             # Download with authentication
             curl -f -u "${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}" \
                  -H "Accept: application/octet-stream" \
-                 -L -o "$file" "$URL"
+                 -L -o "${ARTIFACT}-$VERSION${f}" "$URL"
             
-            if [ ! -f "$file" ]; then
-              echo "ERROR: Failed to download $file" >&2
-              exit 1
+            if [ ! -f "${ARTIFACT}-$VERSION${f}" ]; then
+              echo "WARNING: Failed to download ${ARTIFACT}-$VERSION${f}" >&2
+              # Don't exit on failure, as some files might not exist
             fi
-            
-            echo "✅ Successfully downloaded $file"
           done
+          
+          # List all downloaded files
+          files=($(ls))
+          echo 'Files downloaded:'
+          echo "${files[@]}"
 
       - name: Create deployment bundle
         run: |
-          # Get the list of all downloaded files matching the artifact pattern
-          FILES=($(ls ${ARTIFACT_NAME}* 2>/dev/null || true))
+          # Get all downloaded files
+          FILES=($(ls))
           
           if [ ${#FILES[@]} -eq 0 ]; then
-            echo "ERROR: No files found matching pattern ${ARTIFACT_NAME}*" >&2
+            echo "ERROR: No files found to bundle!" >&2
             exit 1
           fi
           
-          echo "Bundling ${#FILES[@]} files:"
-          printf '%s\n' "${FILES[@]}"
-          
-          # Verify all files exist
-          for file in "${FILES[@]}"; do
-            if [ ! -f "$file" ]; then
-              echo "ERROR: Required file $file not found!" >&2
-              exit 1
-            fi
-          done
+          echo "Files to bundle: ${FILES[@]}"
           
           # Create the bundle ZIP file (Sonatype Central accepts ZIP files)
           BUNDLE_FILE="${ARTIFACT}-${VERSION}.zip"
@@ -140,8 +113,8 @@ jobs:
 
       - name: Upload bundle to Sonatype Central
         run: |
-          # Set bundle file name directly since variable might not be passed
-          BUNDLE_FILE="commons-bom-${VERSION}.zip"
+          # Use the bundle file name from the previous step
+          BUNDLE_FILE="${ARTIFACT}-${VERSION}.zip"
           
           if [ ! -f "${BUNDLE_FILE}" ]; then
             echo "ERROR: Bundle file ${BUNDLE_FILE} not found!" >&2
