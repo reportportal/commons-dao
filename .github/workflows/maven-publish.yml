@@ -30,5 +30,4 @@ jobs:
       package_suffixes: '-javadoc.jar,-javadoc.jar.asc,-sources.jar,-sources.jar.asc,.jar,.jar.asc,.pom,.pom.asc,.pom.md5,.pom.sha1,.jar.md5,.jar.sha1,-javadoc.jar.md5,-javadoc.jar.sha1,-sources.jar.md5,-sources.jar.sha1'
     secrets:
       SONATYPE_USER: ${{ secrets.SONATYPE_USER }}
-      SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+      SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }} 
