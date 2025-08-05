@@ -58,52 +58,75 @@ jobs:
 
       - name: Download artifacts from GitHub Packages
         run: |
-          # Define the files to download
-          FILES=(
-            "${ARTIFACT_NAME}.pom"
-            "${ARTIFACT_NAME}.pom.asc"
-            "${ARTIFACT_NAME}.pom.md5"
-            "${ARTIFACT_NAME}.pom.sha1"
-          )
+          # Get list of all available files for this artifact version
+          echo "Fetching list of available files for ${ARTIFACT_NAME}*..."
           
-          for file in "${FILES[@]}"; do
-            URL="${REPOSITORY_URL}/${{ github.repository }}/${PACKAGE_PATH}/${ARTIFACT}/$VERSION/$file"
-            
-            # Download with authentication
-            curl -f -u "${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}" \
-                 -H "Accept: application/octet-stream" \
-                 -L -o "$file" "$URL"
-            
-            if [ ! -f "$file" ]; then
-              echo "ERROR: Failed to download $file" >&2
-              exit 1
+          # Use GitHub API to list package contents
+          PACKAGE_CONTENTS=$(curl -s -u "${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/${{ github.repository }}/packages/maven/${PACKAGE}.${ARTIFACT}/versions")
+          
+          # Extract file URLs for the specific version
+          FILE_URLS=$(echo "$PACKAGE_CONTENTS" | jq -r --arg version "$VERSION" \
+            '.[] | select(.name == $version) | .files[].name | select(test("^'${ARTIFACT_NAME}'"))')
+          
+          if [ -z "$FILE_URLS" ]; then
+            echo "ERROR: No files found matching pattern ${ARTIFACT_NAME}*" >&2
+            exit 1
+          fi
+          
+          # Download each file
+          echo "$FILE_URLS" | while read -r filename; do
+            if [ -n "$filename" ]; then
+              URL="${REPOSITORY_URL}/${{ github.repository }}/${PACKAGE_PATH}/${ARTIFACT}/${VERSION}/$filename"
+              
+              echo "Downloading: $filename"
+              curl -f -u "${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}" \
+                   -H "Accept: application/octet-stream" \
+                   -L -o "$filename" "$URL"
+              
+              if [ ! -f "$filename" ]; then
+                echo "ERROR: Failed to download $filename" >&2
+                exit 1
+              fi
             fi
           done
+          
+          # Store list of downloaded files for next step
+          echo "$FILE_URLS" | grep -v '^$' > downloaded_files.txt
 
       - name: Create deployment bundle
         run: |
-          # Define specific files to bundle (exactly what we downloaded)
-          FILES=(
-            "${ARTIFACT_NAME}.pom"
-            "${ARTIFACT_NAME}.pom.asc"
-            "${ARTIFACT_NAME}.pom.md5"
-            "${ARTIFACT_NAME}.pom.sha1"
-          )
+          # Read the list of downloaded files
+          if [ ! -f "downloaded_files.txt" ]; then
+            echo "ERROR: downloaded_files.txt not found!" >&2
+            exit 1
+          fi
+          
+          # Read files into array
+          mapfile -t FILES < downloaded_files.txt
           
           # Verify all files exist
           for file in "${FILES[@]}"; do
-            if [ ! -f "$file" ]; then
+            if [ -n "$file" ] && [ ! -f "$file" ]; then
               echo "ERROR: Required file $file not found!" >&2
               exit 1
             fi
           done
           
           # Create the bundle ZIP file (Sonatype Central accepts ZIP files)
-          BUNDLE_FILE="commons-bom-${VERSION}.zip"
+          BUNDLE_FILE="${ARTIFACT}-${VERSION}.zip"
           
           # Create Maven repository structure in temporary directory
           mkdir -p temp_bundle/${PACKAGE_PATH}/${ARTIFACT}/${VERSION}
-          cp "${FILES[@]}" temp_bundle/${PACKAGE_PATH}/${ARTIFACT}/${VERSION}/
+          
+          # Copy all downloaded files
+          for file in "${FILES[@]}"; do
+            if [ -n "$file" ]; then
+              cp "$file" temp_bundle/${PACKAGE_PATH}/${ARTIFACT}/${VERSION}/
+            fi
+          done
+          
           cd temp_bundle
           
           # Create ZIP with proper Maven repository structure
@@ -118,8 +141,8 @@ jobs:
 
       - name: Upload bundle to Sonatype Central
         run: |
-          # Set bundle file name directly since variable might not be passed
-          BUNDLE_FILE="commons-bom-${VERSION}.zip"
+          # Use the bundle file name from previous step
+          BUNDLE_FILE="${ARTIFACT}-${VERSION}.zip"
           
           if [ ! -f "${BUNDLE_FILE}" ]; then
             echo "ERROR: Bundle file ${BUNDLE_FILE} not found!" >&2
@@ -233,5 +256,5 @@ jobs:
       - name: Success notification
         if: success()
         run: |
-          echo "🎉 Successfully published commons-bom version $VERSION to Maven Central!"
+          echo "🎉 Successfully published ${ARTIFACT} version $VERSION to Maven Central!"
           echo "Package: $PACKAGE:$ARTIFACT:$VERSION" 
