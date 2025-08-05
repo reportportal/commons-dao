@@ -83,11 +83,11 @@ jobs:
 
       - name: Create deployment bundle
         run: |
-          # Get all downloaded files
-          FILES=($(ls))
+          # Get only the downloaded artifact files (filter by artifact name and version)
+          FILES=($(ls ${ARTIFACT}-${VERSION}.*))
           
           if [ ${#FILES[@]} -eq 0 ]; then
-            echo "ERROR: No files found to bundle!" >&2
+            echo "ERROR: No artifact files found to bundle!" >&2
             exit 1
           fi
           
