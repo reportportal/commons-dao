@@ -73,6 +73,9 @@ public enum ActivityAction {
   DELETE_PROJECT("deleteProject"),
   BULK_DELETE_PROJECT("bulkDeleteProject"),
   UPDATE_PATTERN_ANALYZER("updatePatternAnalysisSettings"),
+  CREATE_ORGANIZATION("createOrganization"),
+  UPDATE_ORGANIZATION("updateOrganization"),
+  DELETE_ORGANIZATION("deleteOrganization"),
 
   UPDATE_INSTANCE("updateInstance");
 

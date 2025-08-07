@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.entity.activity;
 public enum EventObject {
 
   INSTANCE("instance"),
+  ORGANIZATION("organization"),
   LAUNCH("launch"),
   DASHBOARD("dashboard"),
   DEFECT_TYPE("defectType"),
