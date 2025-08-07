@@ -358,7 +358,7 @@ public class LaunchRepositoryCustomImpl implements LaunchRepositoryCustom {
   @Override
   public boolean hasItemsWithLogsWithLogLevel(Long launchId,
       Collection<JTestItemTypeEnum> itemTypes, Integer logLevel) {
-    return dsl.fetchExists(DSL.selectOne()
+    return dsl.fetchExists(dsl.selectOne()
         .from(TEST_ITEM)
         .join(LOG)
         .on(TEST_ITEM.ITEM_ID.eq(LOG.ITEM_ID))
