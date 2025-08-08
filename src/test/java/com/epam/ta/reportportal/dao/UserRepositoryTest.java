@@ -41,6 +41,7 @@ import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.epam.ta.reportportal.entity.user.User;
+import com.epam.ta.reportportal.entity.user.UserAuthProjection;
 import com.epam.ta.reportportal.entity.user.UserRole;
 import com.epam.ta.reportportal.entity.user.UserType;
 import java.util.Arrays;
@@ -443,5 +444,25 @@ class UserRepositoryTest extends BaseTest {
         .withCondition(
             new FilterCondition(Condition.LOWER_THAN_OR_EQUALS, false, "1000", CRITERIA_ID))
         .build();
+  }
+
+  @Test
+  void findAuthDataByLogin() {
+    final String login = "han_solo";
+    var userAuthProjection = userRepository.findAuthDataByLogin(login);
+
+    assertTrue(userAuthProjection.isPresent(), "User not found");
+    assertEquals(login, userAuthProjection.get().login(), "Incorrect login");
+    assertEquals("3531f6f9b0538fd347f4c95bd2af9d01", userAuthProjection.get().password(), "Incorrect password");
+  }
+
+  @Test
+  void findAuthDataByExternalId() {
+    final String externalId = "external_id_1";
+    var userAuthProjection = userRepository.findAuthDataByExternalId(externalId);
+
+    assertTrue(userAuthProjection.isPresent(), "User not found");
+    assertEquals(externalId, userAuthProjection.get().externalId(), "Incorrect external ID");
+    assertEquals("3531f6f9b0538fd347f4c95bd2af9d01", userAuthProjection.get().password(), "Incorrect password");
   }
 }
