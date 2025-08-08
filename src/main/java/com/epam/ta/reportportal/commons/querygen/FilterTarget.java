@@ -1502,6 +1502,7 @@ public enum FilterTarget {
           ORGANIZATION.UPDATED_AT,
           ORGANIZATION.EXTERNAL_ID,
           ORGANIZATION.ORGANIZATION_TYPE,
+          ORGANIZATION.OWNER_ID,
           // Subquery for users count
           DSL.select(DSL.countDistinct(ORGANIZATION_USER.USER_ID))
               .from(ORGANIZATION_USER)
