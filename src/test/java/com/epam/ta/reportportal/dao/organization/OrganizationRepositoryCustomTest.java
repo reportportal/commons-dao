@@ -28,7 +28,6 @@ import com.epam.ta.reportportal.entity.organization.OrganizationFilter;
 import com.epam.ta.reportportal.entity.organization.OrganizationProfile;
 import java.util.List;
 import java.util.Optional;
-
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -79,7 +78,6 @@ class OrganizationRepositoryCustomTest extends BaseTest {
     assertEquals(0, orgs.size());
   }
 
-  @Disabled
   @ParameterizedTest
   @CsvSource(value = {
       "slug|eq|my-organization|1",
@@ -91,6 +89,7 @@ class OrganizationRepositoryCustomTest extends BaseTest {
       "projects|eq|2|1",
       "projects|eq|999|0"
   }, delimiter = '|')
+  @Disabled("Need to fix ORGANIZATION_TARGET filter")
   void findOrganizationByFilterWithUser(String field, String condition, String value, int rows) {
     Filter filter = new Filter(OrganizationFilter.class,
         Condition.findByMarker(condition).get(),
@@ -105,7 +104,6 @@ class OrganizationRepositoryCustomTest extends BaseTest {
   }
 
 
-  @Disabled
   @ParameterizedTest
   @CsvSource(value = {
       "name|eq|My organization|1",
@@ -125,6 +123,7 @@ class OrganizationRepositoryCustomTest extends BaseTest {
       "updated_at|gt|2024-08-01T12:42:30.758055Z|1",
       "last_launch_occurred|lt|2024-08-01T12:42:30.758055Z|0"
   }, delimiter = '|')
+  @Disabled("Need to fix ORGANIZATION_TARGET filter")
   void findOrganizationByFilter(String field, String condition, String value, int rows) {
     final List<OrganizationProfile> orgs = organizationRepositoryCustom.findByFilter(
         new Filter(OrganizationFilter.class,
