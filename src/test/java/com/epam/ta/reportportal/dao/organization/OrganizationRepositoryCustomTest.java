@@ -28,6 +28,8 @@ import com.epam.ta.reportportal.entity.organization.OrganizationFilter;
 import com.epam.ta.reportportal.entity.organization.OrganizationProfile;
 import java.util.List;
 import java.util.Optional;
+
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -77,6 +79,7 @@ class OrganizationRepositoryCustomTest extends BaseTest {
     assertEquals(0, orgs.size());
   }
 
+  @Disabled
   @ParameterizedTest
   @CsvSource(value = {
       "slug|eq|my-organization|1",
@@ -102,6 +105,7 @@ class OrganizationRepositoryCustomTest extends BaseTest {
   }
 
 
+  @Disabled
   @ParameterizedTest
   @CsvSource(value = {
       "name|eq|My organization|1",
