@@ -18,6 +18,7 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.project.ProjectRole;
 import com.epam.ta.reportportal.entity.user.User;
+import com.epam.ta.reportportal.entity.user.UserAuthProjection;
 import com.epam.ta.reportportal.entity.user.UserRole;
 import com.epam.ta.reportportal.entity.user.UserType;
 import java.time.Instant;
@@ -98,5 +99,25 @@ public interface UserRepository extends ReportPortalRepository<User, Long>, User
 
   @Query(value = "SELECT users.login FROM users WHERE users.id = :id", nativeQuery = true)
   Optional<String> findLoginById(@Param("id") Long id);
+
+  /**
+   * Optimized method to find user authentication data by login.
+   * Returns only fields needed for authentication.
+   *
+   * @param login user login for search
+   * @return {@link Optional} of {@link UserAuthProjection}
+   */
+  @Query(value = "SELECT u.id, u.uuid, u.external_id, u.login, u.password, u.email, u.role, u.active, u.expired FROM users u WHERE u.login = :login", nativeQuery = true)
+  Optional<UserAuthProjection> findAuthDataByLogin(@Param("login") String login);
+
+  /**
+   * Optimized method to find user authentication data by external ID.
+   * Returns only fields needed for authentication.
+   *
+   * @param externalId user external id for search
+   * @return {@link Optional} of {@link UserAuthProjection}
+   */
+  @Query(value = "SELECT u.id, u.uuid, u.external_id, u.login, u.password, u.email, u.role, u.active, u.expired FROM users u WHERE u.external_id = :externalId", nativeQuery = true)
+  Optional<UserAuthProjection> findAuthDataByExternalId(@Param("externalId") String externalId);
 
 }
