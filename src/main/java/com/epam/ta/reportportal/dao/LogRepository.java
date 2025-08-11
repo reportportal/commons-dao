@@ -54,7 +54,7 @@ public interface LogRepository extends ReportPortalRepository<Log, Long>, LogRep
           log.item_id IN (
               SELECT item_id
               FROM test_item ti
-              WHERE ti.path ~ :regexPattern::lquery
+              WHERE ti.path ~ cast(:regexPattern as lquery)
           )
           AND log.log_level >= :logLevel
       """, nativeQuery = true)
