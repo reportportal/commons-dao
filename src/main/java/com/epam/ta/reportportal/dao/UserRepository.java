@@ -177,4 +177,69 @@ public interface UserRepository extends ReportPortalRepository<User, Long>, User
       )
   })
   void delete(User user);
+
+  /**
+   * Deletes user entity by ID and evicts all cache entries.
+   *
+   * @param id User ID
+   */
+  @Override
+  @CacheEvict(
+      value = "userAuthDataCache",
+      allEntries = true,
+      cacheManager = "caffeineCacheManager"
+  )
+  void deleteById(Long id);
+
+  /**
+   * Saves all user entities and evicts all cache entries.
+   *
+   * @param entities User entities to save
+   * @return Saved user entities
+   */
+  @Override
+  @CacheEvict(
+      value = "userAuthDataCache",
+      allEntries = true,
+      cacheManager = "caffeineCacheManager"
+  )
+  <S extends User> List<S> saveAll(Iterable<S> entities);
+
+  /**
+   * Deletes all user entities and evicts all cache entries.
+   *
+   * @param entities User entities to delete
+   */
+  @Override
+  @CacheEvict(
+      value = "userAuthDataCache",
+      allEntries = true,
+      cacheManager = "caffeineCacheManager"
+  )
+  void deleteAll(Iterable<? extends User> entities);
+
+  /**
+   * Deletes all user entities and evicts all cache entries.
+   */
+  @Override
+  @CacheEvict(
+      value = "userAuthDataCache",
+      allEntries = true,
+      cacheManager = "caffeineCacheManager"
+  )
+  void deleteAll();
+
+  /**
+   * Deletes all users by IDs and evicts all cache entries.
+   *
+   * @param ids User IDs to delete
+   */
+  @Override
+  @CacheEvict(
+      value = "userAuthDataCache",
+      allEntries = true,
+      cacheManager = "caffeineCacheManager"
+  )
+  void deleteAllById(Iterable<? extends Long> ids);
+
 }
