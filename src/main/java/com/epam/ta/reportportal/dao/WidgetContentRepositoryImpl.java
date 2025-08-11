@@ -868,8 +868,9 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 						ACTIVITY.OBJECT_NAME,
 						ACTIVITY.SUBJECT_NAME,
 						USERS.LOGIN,
-            ORGANIZATION.ID,
-            ORGANIZATION.NAME,
+                        USERS.ID,
+                        ORGANIZATION.ID,
+                        ORGANIZATION.NAME,
 						PROJECT.NAME,
 						PROJECT.KEY
 				)

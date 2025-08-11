@@ -247,6 +247,7 @@ public class WidgetContentUtil {
 		activityResource.setUser(r.get(USERS.LOGIN) != null
 				? r.get(USERS.LOGIN)
 				: r.get(ACTIVITY.SUBJECT_NAME));
+        activityResource.setUserId(r.get(USERS.ID));
 		activityResource.setProjectId(r.get(ACTIVITY.PROJECT_ID));
 		activityResource.setProjectName(r.get(PROJECT.NAME));
 		activityResource.setProjectKey(r.get(PROJECT.KEY));
