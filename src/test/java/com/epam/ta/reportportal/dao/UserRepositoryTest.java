@@ -478,7 +478,7 @@ class UserRepositoryTest extends BaseTest {
   }
 
   @Test
-  void shouldEvictCacheOnSaveUser() {
+  void shouldEvictCacheByLoginOnSaveUser() {
     final String login = "han_solo";
     var cache = cacheManager.getCache("userAuthDataCache");
     assertNotNull(cache);
@@ -496,7 +496,7 @@ class UserRepositoryTest extends BaseTest {
   }
 
   @Test
-  void shouldEvictCacheOnDeleteUser() {
+  void shouldEvictCacheByLoginOnDeleteUser() {
     var user = new User();
     user.setLogin("test_cache_user");
     user.setEmail("test@cache.com");
@@ -517,6 +517,49 @@ class UserRepositoryTest extends BaseTest {
     userRepository.delete(user);
 
     valueWrapper = cache.get("login_test_cache_user");
+    assertNull(valueWrapper, "Cache should be evicted after delete");
+  }
+
+  @Test
+  void shouldEvictCacheByExternalIdOnSaveUser() {
+    final String externalId = "external_id_1";
+    var cache = cacheManager.getCache("userAuthDataCache");
+    assertNotNull(cache);
+
+    userRepository.findAuthDataByExternalId(externalId);
+    var valueWrapper = cache.get("externalId_" + externalId);
+    assertNotNull(valueWrapper, "Cache should be populated");
+
+    var user = userRepository.findByExternalId(externalId).orElseThrow();
+    user.setFullName("Updated Name");
+    userRepository.save(user);
+    valueWrapper = cache.get("externalId_" + externalId);
+    assertNull(valueWrapper, "Cache should be evicted after updateLastLoginDate");
+  }
+
+  @Test
+  void shouldEvictCacheByExternalIdOnDeleteUser() {
+    var user = new User();
+    user.setLogin("test_cache_user");
+    user.setEmail("test@cache.com");
+    user.setFullName("Test Cache User");
+    user.setPassword("password");
+    user.setRole(UserRole.USER);
+    user.setUserType(UserType.INTERNAL);
+    user.setUuid(UUID.randomUUID());
+    user.setExternalId("external_id_2");
+    userRepository.save(user);
+
+    var cache = cacheManager.getCache("userAuthDataCache");
+    assertNotNull(cache);
+
+    userRepository.findAuthDataByExternalId(user.getExternalId());
+    var valueWrapper = cache.get("externalId_" + user.getExternalId());
+    assertNotNull(valueWrapper, "Cache should be populated");
+
+    userRepository.delete(user);
+
+    valueWrapper = cache.get("externalId_" + user.getExternalId());
     assertNull(valueWrapper, "Cache should be evicted after delete");
   }
 }

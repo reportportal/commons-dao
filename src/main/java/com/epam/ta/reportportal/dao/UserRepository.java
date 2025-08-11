@@ -29,6 +29,7 @@ import java.util.Set;
 import java.util.UUID;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
@@ -112,7 +113,7 @@ public interface UserRepository extends ReportPortalRepository<User, Long>, User
   @Query(value = "SELECT u.id, u.uuid, u.external_id, u.login, u.password, u.email, u.role, u.active, u.expired FROM users u WHERE u.login = :login", nativeQuery = true)
   @Cacheable(
       value = "userAuthDataCache",
-      key = "'login' + '_' + #login",
+      key = "'login_' + #login",
       cacheManager = "caffeineCacheManager"
   )
   Optional<UserAuthProjection> findAuthDataByLogin(@Param("login") String login);
@@ -127,36 +128,54 @@ public interface UserRepository extends ReportPortalRepository<User, Long>, User
   @Query(value = "SELECT u.id, u.uuid, u.external_id, u.login, u.password, u.email, u.role, u.active, u.expired FROM users u WHERE u.external_id = :externalId", nativeQuery = true)
   @Cacheable(
       value = "userAuthDataCache",
-      key = "'externalId' + '_' + #externalId",
+      key = "'externalId_' + #externalId",
       cacheManager = "caffeineCacheManager"
   )
   Optional<UserAuthProjection> findAuthDataByExternalId(@Param("externalId") String externalId);
 
   /**
    * Saves user entity and evicts cache entries for the user.
+   * Evicts both login and externalId cache entries to handle potential changes.
    *
    * @param user User entity to save
    * @return Saved user entity
    */
   @Override
-  @CacheEvict(
-      value = "userAuthDataCache",
-      key = "'login' + '_' + #user.login",
-      cacheManager = "caffeineCacheManager"
-  )
+  @Caching(evict = {
+      @CacheEvict(
+          value = "userAuthDataCache",
+          key = "'login_' + #user.login",
+          cacheManager = "caffeineCacheManager"
+      ),
+      @CacheEvict(
+          value = "userAuthDataCache",
+          key = "'externalId_' + #user.externalId",
+          cacheManager = "caffeineCacheManager",
+          condition = "#user.externalId != null"
+      )
+  })
   <S extends User> S save(S user);
 
   /**
    * Deletes user entity and evicts cache entries for the user.
+   * Evicts both login and externalId cache entries.
    *
    * @param user User entity to delete
    */
   @Override
-  @CacheEvict(
-      value = "userAuthDataCache", 
-      key = "'login' + '_' + #user.login",
-      cacheManager = "caffeineCacheManager"
-  )
+  @Caching(evict = {
+      @CacheEvict(
+          value = "userAuthDataCache",
+          key = "'login_' + #user.login",
+          cacheManager = "caffeineCacheManager"
+      ),
+      @CacheEvict(
+          value = "userAuthDataCache",
+          key = "'externalId_' + #user.externalId",
+          cacheManager = "caffeineCacheManager",
+          condition = "#user.externalId != null"
+      )
+  })
   void delete(User user);
 
   /**
