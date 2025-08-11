@@ -43,9 +43,9 @@ public interface LogRepository extends ReportPortalRepository<Log, Long>, LogRep
       SELECT DISTINCT
           log.id AS logId,
           log.log_level AS logLevel,
-          log.log_message AS logMessage,
           log.log_time AS logTime,
-          clusters.index_id AS indexId
+          log.log_message AS message,
+          clusters.index_id AS clusterId
       FROM
           log
       LEFT JOIN clusters
