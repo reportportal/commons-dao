@@ -59,7 +59,7 @@ public interface LogRepository extends ReportPortalRepository<Log, Long>, LogRep
           AND log.log_level >= :logLevel
       """, nativeQuery = true)
   List<IndexLog> findNestedLogsWithItemPathPattern(@Param("itemId") Long itemId,
-      @Param("regexPattern") String pathPattern,
+      @Param("pathPattern") String pathPattern,
       @Param("logLevel") int logLevel);
 
   @Modifying
