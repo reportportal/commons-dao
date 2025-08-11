@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.dao;
 
+import com.epam.reportportal.model.analyzer.IndexLog;
 import com.epam.ta.reportportal.entity.log.Log;
 import java.sql.Timestamp;
 import java.util.Collection;
@@ -37,6 +38,29 @@ public interface LogRepository extends ReportPortalRepository<Log, Long>, LogRep
   long countLogsByTestItemItemIdIn(List<Long> testItemIds);
 
   long countLogsByLaunchId(Long launchId);
+
+  @Query(value = """
+      SELECT DISTINCT
+          log.id AS logId,
+          log.log_level AS logLevel,
+          log.log_message AS logMessage,
+          log.log_time AS logTime,
+          clusters.index_id AS indexId
+      FROM
+          log
+      LEFT JOIN clusters
+          ON log.cluster_id = clusters.id
+      WHERE
+          log.item_id IN (
+              SELECT item_id
+              FROM test_item ti
+              WHERE ti.path ~ :regexPattern
+          )
+          AND log.log_level >= :logLevel
+      """, nativeQuery = true)
+  List<IndexLog> findNestedLogsWithItemPathPattern(@Param("itemId") Long itemId,
+      @Param("regexPattern") String pathPattern,
+      @Param("logLevel") int logLevel);
 
   @Modifying
   @Query(value = "UPDATE log SET launch_id = :newLaunchId WHERE launch_id = :currentLaunchId", nativeQuery = true)
