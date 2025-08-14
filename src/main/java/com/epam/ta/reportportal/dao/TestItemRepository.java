@@ -190,8 +190,8 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
   List<Long> findIdsByLaunchId(@Param("launchId") Long launchId);
 
   /**
-   * Retrieve the {@link List} of the {@link TestItem#getItemId()} by launch ID,
-   * {@link StatusEnum#name()} and {@link TestItem#isHasChildren()} == false
+   * Retrieve the {@link List} of the {@link TestItem#getItemId()} by launch ID, {@link StatusEnum#name()} and {@link
+   * TestItem#isHasChildren()} == false
    *
    * @param launchId {@link Launch#getId()}
    * @param status   {@link StatusEnum#name()}
@@ -206,15 +206,13 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
       @Param("pageSize") Integer limit, @Param("pageOffset") Long offset);
 
   /**
-   * Retrieve the {@link List} of the {@link TestItem#getItemId()} by launch ID,
-   * {@link StatusEnum#name()} and {@link TestItem#isHasChildren()} == true ordered (DESCENDING) by
-   * 'nlevel' of the {@link TestItem#getPath()}
+   * Retrieve the {@link List} of the {@link TestItem#getItemId()} by launch ID, {@link StatusEnum#name()} and {@link
+   * TestItem#isHasChildren()} == true ordered (DESCENDING) by 'nlevel' of the {@link TestItem#getPath()}
    *
    * @param launchId {@link Launch#getId()}
    * @param status   {@link StatusEnum#name()}
    * @return the {@link List} of the {@link TestItem#getItemId()}
-   * @see <a
-   * href="https://www.postgresql.org/docs/current/ltree.html">https://www.postgresql.org/docs/current/ltree.html</a>
+   * @see <a href="https://www.postgresql.org/docs/current/ltree.html">https://www.postgresql.org/docs/current/ltree.html</a>
    */
   @Query(value =
       "SELECT test_item.item_id FROM test_item JOIN test_item_results result ON test_item.item_id = result.result_id "
@@ -226,9 +224,8 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
       @Param("pageOffset") Long offset);
 
   /**
-   * Retrieve the {@link Stream} of the {@link TestItem#getItemId()} under parent
-   * {@link TestItem#getPath()}, {@link StatusEnum#name()} and {@link TestItem#isHasChildren()} ==
-   * false
+   * Retrieve the {@link Stream} of the {@link TestItem#getItemId()} under parent {@link TestItem#getPath()}, {@link
+   * StatusEnum#name()} and {@link TestItem#isHasChildren()} == false
    *
    * @param parentPath {@link TestItem#getPath()} of the parent item
    * @param status     {@link StatusEnum#name()}
@@ -243,15 +240,14 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
       @Param("pageSize") Integer limit, @Param("pageOffset") Long offset);
 
   /**
-   * Retrieve the {@link Stream} of the {@link TestItem#getItemId()} under parent
-   * {@link TestItem#getPath()}, {@link StatusEnum#name()} and {@link TestItem#isHasChildren()} ==
-   * true ordered (DESCENDING) by 'nlevel' of the {@link TestItem#getPath()}
+   * Retrieve the {@link Stream} of the {@link TestItem#getItemId()} under parent {@link TestItem#getPath()}, {@link
+   * StatusEnum#name()} and {@link TestItem#isHasChildren()} == true ordered (DESCENDING) by 'nlevel' of the {@link
+   * TestItem#getPath()}
    *
    * @param parentPath {@link TestItem#getPath()} of the parent item
    * @param status     {@link StatusEnum#name()}
    * @return the {@link List} of the {@link TestItem#getItemId()}
-   * @see <a
-   * href="https://www.postgresql.org/docs/current/ltree.html">https://www.postgresql.org/docs/current/ltree.html</a>
+   * @see <a href="https://www.postgresql.org/docs/current/ltree.html">https://www.postgresql.org/docs/current/ltree.html</a>
    */
   @Query(value =
       "SELECT test_item.item_id FROM test_item JOIN test_item_results result ON test_item.item_id = result.result_id "
@@ -270,9 +266,9 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
   Optional<TestItem> findByUuid(String uuid);
 
   /**
-   * Finds {@link TestItem#getItemId()} by {@link TestItem#getUuid()} and sets a lock on the found
-   * 'item' row in the database. Required for fetching 'item' from the concurrent environment to
-   * provide synchronization between dependant entities
+   * Finds {@link TestItem#getItemId()} by {@link TestItem#getUuid()} and sets a lock on the found 'item' row in the
+   * database. Required for fetching 'item' from the concurrent environment to provide synchronization between dependant
+   * entities
    *
    * @param uuid {@link TestItem#getUuid()}
    * @return {@link Optional} with {@link TestItem} object
@@ -289,16 +285,14 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
   List<TestItem> findTestItemsByLaunchIdOrderByStartTimeAsc(Long launchId);
 
   /**
-   * Execute sql-function that changes a structure of retries according to the MAX
-   * {@link TestItem#getStartTime()}. If the new-inserted {@link TestItem} with specified
-   * {@link TestItem#getItemId()} is a retry and it has {@link TestItem#getStartTime()} greater than
-   * MAX {@link TestItem#getStartTime()} of the other {@link TestItem} with the same
-   * {@link TestItem#getUniqueId()} then all those test items become retries of the new-inserted
-   * one: theirs {@link TestItem#isHasRetries()} flag is set to 'false' and
-   * {@link TestItem#getRetryOf()} gets the new-inserted {@link TestItem#getItemId()} value. The
-   * same operation applies to the new-inserted {@link TestItem} if its
-   * {@link TestItem#getStartTime()} is less than MAX {@link TestItem#getStartTime()} of the other
-   * {@link TestItem} with the same {@link TestItem#getUniqueId()}
+   * Execute sql-function that changes a structure of retries according to the MAX {@link TestItem#getStartTime()}. If
+   * the new-inserted {@link TestItem} with specified {@link TestItem#getItemId()} is a retry and it has {@link
+   * TestItem#getStartTime()} greater than MAX {@link TestItem#getStartTime()} of the other {@link TestItem} with the
+   * same {@link TestItem#getUniqueId()} then all those test items become retries of the new-inserted one: theirs {@link
+   * TestItem#isHasRetries()} flag is set to 'false' and {@link TestItem#getRetryOf()} gets the new-inserted {@link
+   * TestItem#getItemId()} value. The same operation applies to the new-inserted {@link TestItem} if its {@link
+   * TestItem#getStartTime()} is less than MAX {@link TestItem#getStartTime()} of the other {@link TestItem} with the
+   * same {@link TestItem#getUniqueId()}
    *
    * @param itemId The new-inserted {@link TestItem#getItemId()}
    * @deprecated {@link TestItemRepository#handleRetry(Long, Long)} should be used instead
@@ -308,9 +302,8 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
   void handleRetries(@Param("itemId") Long itemId);
 
   /**
-   * Execute sql-function that changes a structure of retries assigning
-   * {@link TestItem#getRetryOf()} value of the previously inserted retries and previous retries'
-   * parent to the new inserted parent id
+   * Execute sql-function that changes a structure of retries assigning {@link TestItem#getRetryOf()} value of the
+   * previously inserted retries and previous retries' parent to the new inserted parent id
    *
    * @param itemId      Previous retries' parent {@link TestItem#getItemId()}
    * @param retryParent The new-inserted {@link TestItem#getItemId()}
@@ -391,9 +384,8 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
   boolean hasItemsWithIssueByLaunch(@Param("launchId") Long launchId);
 
   /**
-   * Interrupts all {@link com.epam.ta.reportportal.entity.enums.StatusEnum#IN_PROGRESS} children
-   * items of the launch with provided launchId. Sets them
-   * {@link com.epam.ta.reportportal.entity.enums.StatusEnum#INTERRUPTED} status
+   * Interrupts all {@link com.epam.ta.reportportal.entity.enums.StatusEnum#IN_PROGRESS} children items of the launch
+   * with provided launchId. Sets them {@link com.epam.ta.reportportal.entity.enums.StatusEnum#INTERRUPTED} status
    *
    * @param launchId Launch id
    */
@@ -404,8 +396,8 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
   void interruptInProgressItems(@Param("launchId") Long launchId);
 
   /**
-   * Checks if all children of test item with id = {@code parentId}, except item with id =
-   * {@code stepId}, has status not in provided {@code statuses}
+   * Checks if all children of test item with id = {@code parentId}, except item with id = {@code stepId}, has status
+   * not in provided {@code statuses}
    *
    * @param parentId Id of parent test item
    * @param stepId   Id of test item that should be ignored during the checking
@@ -430,8 +422,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
   Optional<TestItem> findByPath(@Param("path") String path);
 
   /**
-   * Finds latest {@link TestItem#getItemId()} with specified {@code uniqueId}, {@code launchId},
-   * {@code parentId}
+   * Finds latest {@link TestItem#getItemId()} with specified {@code uniqueId}, {@code launchId}, {@code parentId}
    *
    * @param uniqueId {@link TestItem#getUniqueId()}
    * @param launchId {@link TestItem#getLaunchId()}
@@ -447,8 +438,8 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
       @Param("parentId") Long parentId);
 
   /**
-   * Finds latest {@link TestItem#getItemId()} with specified {@code uniqueId}, {@code launchId},
-   * {@code parentId} and not equal {@code itemId}
+   * Finds latest {@link TestItem#getItemId()} with specified {@code uniqueId}, {@code launchId}, {@code parentId} and
+   * not equal {@code itemId}
    *
    * @param uniqueId {@link TestItem#getUniqueId()}
    * @param launchId {@link TestItem#getLaunchId()}
@@ -477,13 +468,11 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
   void deleteAllByItemIdIn(Collection<Long> ids);
 
   /**
-   * Finds latest root(without any parent) {@link TestItem} with specified {@code testCaseHash} and
-   * {@code launchId}
+   * Finds latest root(without any parent) {@link TestItem} with specified {@code testCaseHash} and {@code launchId}
    *
    * @param testCaseHash {@link TestItem#getTestCaseHash()}
    * @param launchId     {@link TestItem#getLaunchId()}
-   * @return {@link Optional} of {@link TestItem#getItemId()} if exists otherwise
-   * {@link Optional#empty()}
+   * @return {@link Optional} of {@link TestItem#getItemId()} if exists otherwise {@link Optional#empty()}
    */
   @Query(value =
       "SELECT t.item_id FROM test_item t WHERE t.test_case_hash = :testCaseHash AND t.launch_id = :launchId AND t.parent_id IS NULL "
@@ -493,14 +482,13 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
       @Param("launchId") Long launchId);
 
   /**
-   * Finds latest {@link TestItem#getItemId()} with specified {@code testCaseHash}, {@code launchId}
-   * and {@code parentId}
+   * Finds latest {@link TestItem#getItemId()} with specified {@code testCaseHash}, {@code launchId} and {@code
+   * parentId}
    *
    * @param testCaseHash {@link TestItem#getTestCaseHash()}
    * @param launchId     {@link TestItem#getLaunchId()}
    * @param parentId     {@link TestItem#getParentId()}
-   * @return {@link Optional} of {@link TestItem#getItemId()} if exists otherwise
-   * {@link Optional#empty()}
+   * @return {@link Optional} of {@link TestItem#getItemId()} if exists otherwise {@link Optional#empty()}
    */
   @Query(value =
       "SELECT t.item_id FROM test_item t WHERE t.test_case_hash = :testCaseHash AND t.launch_id = :launchId "

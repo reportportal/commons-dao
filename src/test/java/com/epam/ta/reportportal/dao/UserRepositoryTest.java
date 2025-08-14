@@ -41,7 +41,6 @@ import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.epam.ta.reportportal.entity.user.User;
-import com.epam.ta.reportportal.entity.user.UserAuthProjection;
 import com.epam.ta.reportportal.entity.user.UserRole;
 import com.epam.ta.reportportal.entity.user.UserType;
 import java.util.Arrays;
@@ -58,6 +57,7 @@ import org.jooq.Operator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -69,6 +69,9 @@ import org.springframework.test.context.jdbc.Sql;
  */
 @Sql("/db/fill/user/user-fill.sql")
 class UserRepositoryTest extends BaseTest {
+
+  @Autowired
+  private CacheManager cacheManager;
 
   @Autowired
   private UserRepository userRepository;
@@ -450,19 +453,113 @@ class UserRepositoryTest extends BaseTest {
   void findAuthDataByLogin() {
     final String login = "han_solo";
     var userAuthProjection = userRepository.findAuthDataByLogin(login);
+    var cache = cacheManager.getCache("userAuthDataCache");
+    assertNotNull(cache);
+    var valueWrapper = cache.get("login_" + login);
 
     assertTrue(userAuthProjection.isPresent(), "User not found");
     assertEquals(login, userAuthProjection.get().login(), "Incorrect login");
     assertEquals("3531f6f9b0538fd347f4c95bd2af9d01", userAuthProjection.get().password(), "Incorrect password");
+    assertNotNull(valueWrapper);
   }
 
   @Test
   void findAuthDataByExternalId() {
     final String externalId = "external_id_1";
     var userAuthProjection = userRepository.findAuthDataByExternalId(externalId);
+    var cache = cacheManager.getCache("userAuthDataCache");
+    assertNotNull(cache);
+    var valueWrapper = cache.get("externalId_" + externalId);
 
     assertTrue(userAuthProjection.isPresent(), "User not found");
     assertEquals(externalId, userAuthProjection.get().externalId(), "Incorrect external ID");
     assertEquals("3531f6f9b0538fd347f4c95bd2af9d01", userAuthProjection.get().password(), "Incorrect password");
+    assertNotNull(valueWrapper);
+  }
+
+  @Test
+  void shouldEvictCacheByLoginOnSaveUser() {
+    final String login = "han_solo";
+    var cache = cacheManager.getCache("userAuthDataCache");
+    assertNotNull(cache);
+
+    userRepository.findAuthDataByLogin(login);
+    var valueWrapper = cache.get("login_" + login);
+    assertNotNull(valueWrapper, "Cache should be populated");
+
+    var user = userRepository.findByLogin(login).orElseThrow();
+    user.setFullName("Updated Name");
+    userRepository.save(user);
+
+    valueWrapper = cache.get("login_" + login);
+    assertNull(valueWrapper, "Cache should be evicted after updateLastLoginDate");
+  }
+
+  @Test
+  void shouldEvictCacheByLoginOnDeleteUser() {
+    var user = new User();
+    user.setLogin("test_cache_user");
+    user.setEmail("test@cache.com");
+    user.setFullName("Test Cache User");
+    user.setPassword("password");
+    user.setRole(UserRole.USER);
+    user.setUserType(UserType.INTERNAL);
+    user.setUuid(UUID.randomUUID());
+    userRepository.save(user);
+    
+    var cache = cacheManager.getCache("userAuthDataCache");
+    assertNotNull(cache);
+
+    userRepository.findAuthDataByLogin("test_cache_user");
+    var valueWrapper = cache.get("login_test_cache_user");
+    assertNotNull(valueWrapper, "Cache should be populated");
+
+    userRepository.delete(user);
+
+    valueWrapper = cache.get("login_test_cache_user");
+    assertNull(valueWrapper, "Cache should be evicted after delete");
+  }
+
+  @Test
+  void shouldEvictCacheByExternalIdOnSaveUser() {
+    final String externalId = "external_id_1";
+    var cache = cacheManager.getCache("userAuthDataCache");
+    assertNotNull(cache);
+
+    userRepository.findAuthDataByExternalId(externalId);
+    var valueWrapper = cache.get("externalId_" + externalId);
+    assertNotNull(valueWrapper, "Cache should be populated");
+
+    var user = userRepository.findByExternalId(externalId).orElseThrow();
+    user.setFullName("Updated Name");
+    userRepository.save(user);
+    valueWrapper = cache.get("externalId_" + externalId);
+    assertNull(valueWrapper, "Cache should be evicted after updateLastLoginDate");
+  }
+
+  @Test
+  void shouldEvictCacheByExternalIdOnDeleteUser() {
+    var user = new User();
+    user.setLogin("test_cache_user");
+    user.setEmail("test@cache.com");
+    user.setFullName("Test Cache User");
+    user.setPassword("password");
+    user.setRole(UserRole.USER);
+    user.setUserType(UserType.INTERNAL);
+    user.setUuid(UUID.randomUUID());
+    user.setExternalId("external_id_2");
+    userRepository.save(user);
+
+    var cache = cacheManager.getCache("userAuthDataCache");
+    assertNotNull(cache);
+
+    userRepository.findAuthDataByExternalId(user.getExternalId());
+    var valueWrapper = cache.get("externalId_" + user.getExternalId());
+    assertNotNull(valueWrapper, "Cache should be populated");
+
+    userRepository.delete(user);
+
+    valueWrapper = cache.get("externalId_" + user.getExternalId());
+    assertNull(valueWrapper, "Cache should be evicted after delete");
   }
 }
