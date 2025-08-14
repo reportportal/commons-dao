@@ -39,34 +39,36 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
     TestItemRepositoryCustom {
 
   /**
-   * Among the provided parent test item and its retries, finds the parent item whose direct child steps
-   * have the longest continuous sequence of non-failed nested steps from the start until the first failure occurs.
+   * Among the provided parent test item and its retries, finds the parent item whose direct child
+   * steps have the longest continuous sequence of non-failed nested steps from the start until the
+   * first failure occurs.
    *
-   * @param itemId {@link com.epam.ta.reportportal.entity.item.TestItem#getItemId()} of a parent item
-   *               (or any of its retries) whose child steps are analyzed
-   * @return {@link Long} parent item id with the maximum number of steps before the first failed step;
-   *         {@code null} if no matching steps are found
+   * @param itemId {@link com.epam.ta.reportportal.entity.item.TestItem#getItemId()} of a parent
+   *               item (or any of its retries) whose child steps are analyzed
+   * @return {@link Long} parent item id with the maximum number of steps before the first failed
+   * step; {@code null} if no matching steps are found
    */
   @Query(value = """
-      WITH steps AS (
-          SELECT ti.parent_id,
-                 SUM(CASE WHEN tir.status = 'FAILED' THEN 1 ELSE 0 END)
+      WITH parent_items AS (
+          SELECT DISTINCT item_id AS parent_id, start_time
+          FROM test_item
+          WHERE item_id = :itemId OR retry_of = :itemId
+      ),
+      nested_steps AS (
+          SELECT par.parent_id, par.start_time,
+                 SUM(CASE WHEN tir.status = 'FAILED' or ti.item_id is null THEN 1 ELSE 0 end)
                       OVER (PARTITION BY ti.parent_id ORDER BY ti.start_time
                             ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS fail_count
-          FROM test_item ti
-          JOIN test_item_results tir ON tir.result_id = ti.item_id
-          WHERE ti.parent_id IN (
-              SELECT item_id
-              FROM test_item
-              WHERE item_id = :itemId OR retry_of = :itemId
-          )
+        FROM parent_items par
+        LEFT JOIN test_item ti ON ti.parent_id = par.parent_id
+        LEFT JOIN test_item_results tir ON tir.result_id = ti.item_id
       )
-      SELECT parent_id
-      FROM steps
+      SELECT parent_id, start_time
+      FROM nested_steps
       WHERE fail_count = 0
-      GROUP BY parent_id
-      ORDER BY COUNT(*) DESC
-      LIMIT 1
+      GROUP BY parent_id, start_time
+      ORDER BY COUNT(*) desc, start_time desc
+      LIMIT 1;
       """, nativeQuery = true)
   Long findIdWithMaxStepsBeforeFailed(@Param("itemId") Long itemId);
 
