@@ -73,6 +73,7 @@ public class OrganizationMapper {
     organization.setSlug(row.get(ORGANIZATION.SLUG, String.class));
     organization.setExternalId(row.get(ORGANIZATION.EXTERNAL_ID, String.class));
     organization.setType(row.get(ORGANIZATION.ORGANIZATION_TYPE, String.class));
+    organization.setOwnerId(row.get(ORGANIZATION.OWNER_ID, Long.class));
 
     organization.setLaunchesQuantity(row.get(OrganizationFilter.LAUNCHES_QUANTITY, Integer.class));
     organization.setLastRun(row.get(OrganizationFilter.LAST_RUN, Instant.class));

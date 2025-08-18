@@ -252,14 +252,18 @@ public class QueryBuilder {
               order.getProperty()));
       Pair<String, Sort.Direction> sorting = Pair.of(criteria.getFilterCriteria(),
           order.getDirection());
-      if (!order.getProperty().equalsIgnoreCase(CRITERIA_ID) && !sortingSelect.contains(sorting)) {
+      if (!order.getProperty().equalsIgnoreCase(CRITERIA_ID) && !sortingSelect.contains(sorting) && !criteria.isIgnoreSelect()) {
         query.addSelect(field(criteria.getAggregateCriteria()).as(criteria.getFilterCriteria()));
         sortingSelect.add(sorting);
       }
+      Field<?> sortField = field(criteria.getAggregateCriteria());
+
+      if (String.class.equals(criteria.getDataType())) {
+        sortField = sortField.lower();
+      }
+
       query.addOrderBy(
-          field(criteria.getAggregateCriteria())
-              .lower()
-              .sort(order.getDirection().isDescending() ? SortOrder.DESC : SortOrder.ASC));
+          sortField.sort(order.getDirection().isDescending() ? SortOrder.DESC : SortOrder.ASC));
     }));
     return this;
   }

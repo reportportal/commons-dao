@@ -49,7 +49,7 @@ public class StatisticsQueryProvider extends AbstractHealthCheckTableQueryProvid
       List<Condition> levelConditions) {
     var excludeSkipped = params.isExcludeSkippedTests();
 
-    var resultStatusTable = DSL.select(
+    var resultStatusTable = dsl.select(
             STATISTICS_FIELD.NAME,
             DSL.sum(STATISTICS.S_COUNTER).as(SUM),
             fieldName(VALUE)

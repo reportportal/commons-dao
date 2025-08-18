@@ -233,7 +233,7 @@ public class JUsers extends TableImpl<JUsersRecord> {
 
     @Override
     public List<UniqueKey<JUsersRecord>> getUniqueKeys() {
-        return Arrays.asList(Keys.USERS_EMAIL_KEY, Keys.USERS_LOGIN_KEY);
+        return Arrays.asList(Keys.USERS_EMAIL_KEY, Keys.USERS_EXTERNAL_ID_KEY, Keys.USERS_LOGIN_KEY);
     }
 
     private transient JApiKeysPath _apiKeys;

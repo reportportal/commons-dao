@@ -16,6 +16,7 @@
 
 package com.epam.ta.reportportal.dao;
 
+import com.epam.ta.reportportal.entity.organization.OrganizationRole;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
 import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.entity.user.UserRole;
@@ -76,7 +77,8 @@ public interface UserRepository extends ReportPortalRepository<User, Long>, User
 
   /**
    * Updates user's last login value
-   * @param username  User
+   *
+   * @param username User
    */
   @Modifying(clearAutomatically = true)
   @Query(value = "UPDATE users SET metadata = jsonb_set(metadata, '{metadata,last_login}', to_jsonb(round(extract(EPOCH from clock_timestamp()) * 1000)), TRUE ) WHERE login = :username", nativeQuery = true)
@@ -88,6 +90,18 @@ public interface UserRepository extends ReportPortalRepository<User, Long>, User
   @Query(value = "SELECT u.email FROM users u JOIN project_user pu ON u.id = pu.user_id WHERE pu.project_id = :projectId", nativeQuery = true)
   List<String> findEmailsByProject(@Param("projectId") Long projectId);
 
+  @Query(value = "SELECT u.email FROM users u JOIN organization_user ou ON u.id = ou.user_id WHERE ou.organization_id = :organizationId", nativeQuery = true)
+  List<String> findEmailsByOrganization(@Param("organizationId") Long organizationId);
+
+  @Query(value = """
+      SELECT u.email FROM users u
+            JOIN organization_user ou ON u.id = ou.user_id 
+            WHERE ou.organization_id = :organizationId 
+            AND ou.organization_role = cast(:#{#organizationRole.name()} AS organization_role_enum)
+      """, nativeQuery = true)
+  List<String> findEmailsByOrganizationAndRole(@Param("organizationId") Long organizationId,
+      @Param("organizationRole") OrganizationRole organizationRole);
+
   @Query(value = "SELECT u.email FROM users u JOIN project_user pu ON u.id = pu.user_id WHERE pu.project_id = :projectId AND pu.project_role = cast(:#{#projectRole.name()} AS PROJECT_ROLE_ENUM)", nativeQuery = true)
   List<String> findEmailsByProjectAndRole(@Param("projectId") Long projectId,
       @Param("projectRole") ProjectRole projectRole);
@@ -97,4 +111,5 @@ public interface UserRepository extends ReportPortalRepository<User, Long>, User
 
   @Query(value = "SELECT users.login FROM users WHERE users.id = :id", nativeQuery = true)
   Optional<String> findLoginById(@Param("id") Long id);
+
 }

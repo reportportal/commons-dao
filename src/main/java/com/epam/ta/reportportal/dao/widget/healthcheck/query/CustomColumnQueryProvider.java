@@ -12,6 +12,7 @@ import com.google.common.collect.Sets;
 import java.util.List;
 import java.util.Optional;
 import org.jooq.Condition;
+import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SelectHavingStep;
@@ -26,16 +27,19 @@ import org.springframework.stereotype.Component;
 @Component
 public class CustomColumnQueryProvider extends AbstractHealthCheckTableQueryProvider {
 
+  private final DSLContext dsl;
+
   public static final String UNNESTED_ARRAY = "unnested_array";
 
-  public CustomColumnQueryProvider() {
+  public CustomColumnQueryProvider(DSLContext dslContext) {
     super(Sets.newHashSet(CUSTOM_COLUMN_SORTING));
+    this.dsl = dslContext;
   }
 
   @Override
   protected Select<? extends Record> contentQuery(HealthCheckTableGetParams params,
       List<Condition> levelConditions) {
-    SelectHavingStep<?> selectQuery = DSL.select(DSL.arrayAggDistinct(fieldName(UNNESTED_ARRAY))
+    SelectHavingStep<?> selectQuery = dsl.select(DSL.arrayAggDistinct(fieldName(UNNESTED_ARRAY))
             .filterWhere(fieldName(UNNESTED_ARRAY).isNotNull())
             .as(AGGREGATED_VALUES), fieldName(VALUE))
         .from(DSL.table(params.getViewName()),
