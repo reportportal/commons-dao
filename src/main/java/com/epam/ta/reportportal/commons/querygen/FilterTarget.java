@@ -1544,6 +1544,9 @@ public enum FilterTarget {
 
     @Override
     protected void joinTables(QuerySupplier query) {
+        query.addJoin(ORGANIZATION_USER,
+                JoinType.LEFT_OUTER_JOIN,
+                ORGANIZATION_USER.ORGANIZATION_ID.eq(ORGANIZATION.ID));
     }
 
     @Override
