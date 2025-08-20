@@ -1471,6 +1471,9 @@ public enum FilterTarget {
           .withAggregateCriteria("\"" + USERS_QUANTITY + "\"")
           .withIgnoreSelect(true)
           .get(),
+      new CriteriaHolderBuilder()
+          .newBuilder(CRITERIA_ORG_USER_ID, ORGANIZATION_USER.USER_ID, Long.class)
+          .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_PROJECTS, PROJECTS_QUANTITY, Long.class)
           .withAggregateCriteria("\"" + PROJECTS_QUANTITY + "\"")
           .withIgnoreSelect(true)
@@ -1489,6 +1492,7 @@ public enum FilterTarget {
       SelectQuery<? extends Record> query = DSL.select(selectFields()).getQuery();
       addFrom(query);
       QuerySupplier querySupplier = new QuerySupplier(query);
+      joinTables(querySupplier);
       return querySupplier;
     }
 
@@ -1541,6 +1545,9 @@ public enum FilterTarget {
 
     @Override
     protected void joinTables(QuerySupplier query) {
+        query.addJoin(ORGANIZATION_USER,
+                JoinType.LEFT_OUTER_JOIN,
+                ORGANIZATION_USER.ORGANIZATION_ID.eq(ORGANIZATION.ID));
     }
 
     @Override
