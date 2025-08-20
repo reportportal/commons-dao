@@ -1492,6 +1492,7 @@ public enum FilterTarget {
       SelectQuery<? extends Record> query = DSL.select(selectFields()).getQuery();
       addFrom(query);
       QuerySupplier querySupplier = new QuerySupplier(query);
+      joinTables(querySupplier);
       return querySupplier;
     }
 
