@@ -1249,8 +1249,8 @@ public enum FilterTarget {
     @Override
     protected void joinTables(QuerySupplier query) {
       query.addJoin(USERS, JoinType.LEFT_OUTER_JOIN, ACTIVITY.SUBJECT_ID.eq(USERS.ID));
-      query.addJoin(ORGANIZATION, JoinType.JOIN, ACTIVITY.ORGANIZATION_ID.eq(ORGANIZATION.ID));
-      query.addJoin(PROJECT, JoinType.JOIN, ACTIVITY.PROJECT_ID.eq(PROJECT.ID));
+      query.addJoin(ORGANIZATION, JoinType.LEFT_OUTER_JOIN, ACTIVITY.ORGANIZATION_ID.eq(ORGANIZATION.ID));
+      query.addJoin(PROJECT, JoinType.LEFT_OUTER_JOIN, ACTIVITY.PROJECT_ID.eq(PROJECT.ID));
     }
 
     @Override
