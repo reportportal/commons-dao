@@ -42,6 +42,7 @@ import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConst
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.NOT_PASSED_STATISTICS_KEY;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.PASSING_RATE;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.PERCENTAGE;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.PROJECT_ID;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.SF_NAME;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.START_TIME_HISTORY;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.STATISTICS_COUNTER;
@@ -52,6 +53,7 @@ import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConst
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.TOTAL;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.TO_INVESTIGATE;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.UNIQUE_ID;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.USER_ID;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.VALUE;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
@@ -244,10 +246,10 @@ public class WidgetContentUtil {
 
 		ActivityResource activityResource = new ActivityResource();
 		activityResource.setId(r.get(ACTIVITY.ID));
-		activityResource.setUser(r.get(USERS.LOGIN) != null
-				? r.get(USERS.LOGIN)
-				: r.get(ACTIVITY.SUBJECT_NAME));
-		activityResource.setProjectId(r.get(ACTIVITY.PROJECT_ID));
+    ofNullable(r.get(USERS.LOGIN))
+        .ifPresentOrElse(activityResource::setUser, () -> activityResource.setUser(r.get(ACTIVITY.SUBJECT_NAME)));
+    activityResource.setUserId(r.get(fieldName(USER_ID), Long.class));
+		activityResource.setProjectId(r.get(fieldName(PROJECT_ID), Long.class));
 		activityResource.setProjectName(r.get(PROJECT.NAME));
 		activityResource.setProjectKey(r.get(PROJECT.KEY));
 		activityResource.setActionType(r.get(ACTIVITY.EVENT_NAME));

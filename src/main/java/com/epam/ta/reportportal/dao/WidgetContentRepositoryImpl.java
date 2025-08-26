@@ -21,7 +21,6 @@ import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.STATISTICS_
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_START_TIME;
 import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.KEY_VALUE_SEPARATOR;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_DURATION;
-import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ACTIVITIES;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.AGGREGATED_LAUNCHES_IDS;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ATTRIBUTE_KEY;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ATTRIBUTE_VALUE;
@@ -88,7 +87,6 @@ import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConst
 import static com.epam.ta.reportportal.dao.constant.WidgetRepositoryConstants.ID;
 import static com.epam.ta.reportportal.dao.util.JooqFieldNameTransformer.fieldName;
 import static com.epam.ta.reportportal.dao.util.QueryUtils.collectJoinFields;
-import static com.epam.ta.reportportal.dao.util.ResultFetchers.ACTIVITY_FETCHER;
 import static com.epam.ta.reportportal.dao.util.WidgetContentUtil.ACTIVITY_MAPPER;
 import static com.epam.ta.reportportal.dao.util.WidgetContentUtil.BUG_TREND_STATISTICS_FETCHER;
 import static com.epam.ta.reportportal.dao.util.WidgetContentUtil.CASES_GROWTH_TREND_FETCHER;
@@ -111,17 +109,13 @@ import static com.epam.ta.reportportal.dao.util.WidgetContentUtil.TOP_PATTERN_TE
 import static com.epam.ta.reportportal.dao.util.WidgetContentUtil.UNIQUE_BUG_CONTENT_FETCHER;
 import static com.epam.ta.reportportal.jooq.Tables.FILTER;
 import static com.epam.ta.reportportal.jooq.Tables.ITEM_ATTRIBUTE;
-import static com.epam.ta.reportportal.jooq.Tables.ORGANIZATION;
-import static com.epam.ta.reportportal.jooq.Tables.ORGANIZATION_USER;
 import static com.epam.ta.reportportal.jooq.Tables.PATTERN_TEMPLATE;
 import static com.epam.ta.reportportal.jooq.Tables.PATTERN_TEMPLATE_TEST_ITEM;
 import static com.epam.ta.reportportal.jooq.Tables.STATISTICS;
 import static com.epam.ta.reportportal.jooq.Tables.STATISTICS_FIELD;
-import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
 import static com.epam.ta.reportportal.jooq.tables.JIssue.ISSUE;
 import static com.epam.ta.reportportal.jooq.tables.JIssueTicket.ISSUE_TICKET;
 import static com.epam.ta.reportportal.jooq.tables.JLaunch.LAUNCH;
-import static com.epam.ta.reportportal.jooq.tables.JProject.PROJECT;
 import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
 import static com.epam.ta.reportportal.jooq.tables.JTestItemResults.TEST_ITEM_RESULTS;
 import static com.epam.ta.reportportal.jooq.tables.JTicket.TICKET;
@@ -152,6 +146,8 @@ import static org.jooq.impl.DSL.when;
 
 import com.epam.reportportal.model.ActivityResource;
 import com.epam.reportportal.rules.commons.validation.Suppliers;
+import com.epam.reportportal.rules.exception.ErrorType;
+import com.epam.reportportal.rules.exception.ReportPortalException;
 import com.epam.ta.reportportal.commons.querygen.CriteriaHolder;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
@@ -175,15 +171,12 @@ import com.epam.ta.reportportal.entity.widget.content.healthcheck.ComponentHealt
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableContent;
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableGetParams;
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableInitParams;
-import com.epam.reportportal.rules.exception.ReportPortalException;
-import com.epam.ta.reportportal.jooq.Tables;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.epam.ta.reportportal.jooq.tables.JItemAttribute;
 import com.epam.ta.reportportal.util.WidgetSortUtils;
-
-import com.epam.reportportal.rules.exception.ErrorType;
 import com.google.common.collect.Lists;
+import jakarta.annotation.Nullable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
@@ -196,7 +189,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import jakarta.annotation.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
@@ -221,7 +213,6 @@ import org.jooq.impl.DSL;
 import org.jooq.util.postgres.PostgresDSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -460,7 +451,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
         .from(LAUNCH)
         .join(LAUNCHES)
         .on(LAUNCH.ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
-        .leftJoin(DSL.select(STATISTICS.LAUNCH_ID, STATISTICS.S_COUNTER.as(STATISTICS_COUNTER),
+        .leftJoin(dsl.select(STATISTICS.LAUNCH_ID, STATISTICS.S_COUNTER.as(STATISTICS_COUNTER),
                 STATISTICS_FIELD.NAME.as(SF_NAME))
             .from(STATISTICS)
             .join(STATISTICS_FIELD)
@@ -515,7 +506,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
         .from(LAUNCH)
         .join(LAUNCHES)
         .on(LAUNCH.ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
-        .leftJoin(DSL.select(STATISTICS.LAUNCH_ID, STATISTICS.S_COUNTER.as(STATISTICS_COUNTER),
+        .leftJoin(dsl.select(STATISTICS.LAUNCH_ID, STATISTICS.S_COUNTER.as(STATISTICS_COUNTER),
                 STATISTICS_FIELD.NAME.as(SF_NAME))
             .from(STATISTICS)
             .join(STATISTICS_FIELD)
@@ -548,7 +539,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
             LAUNCH.NUMBER,
             LAUNCH.START_TIME,
             LAUNCH.NAME,
-            coalesce(DSL.select(sum(STATISTICS.S_COUNTER))
+            coalesce(dsl.select(sum(STATISTICS.S_COUNTER))
                 .from(STATISTICS)
                 .join(STATISTICS_FIELD)
                 .onKey()
@@ -556,7 +547,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
                     .and(STATISTICS.LAUNCH_ID.eq(LAUNCH.ID)))
                 .asField()
                 .cast(Double.class), 0).as(TO_INVESTIGATE),
-            coalesce(DSL.select(sum(STATISTICS.S_COUNTER))
+            coalesce(dsl.select(sum(STATISTICS.S_COUNTER))
                 .from(STATISTICS)
                 .join(STATISTICS_FIELD)
                 .onKey()
@@ -638,7 +629,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
         .from(LAUNCH)
         .join(LAUNCHES)
         .on(LAUNCH.ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
-        .leftJoin(DSL.select(STATISTICS.LAUNCH_ID, STATISTICS.S_COUNTER.as(STATISTICS_COUNTER),
+        .leftJoin(dsl.select(STATISTICS.LAUNCH_ID, STATISTICS.S_COUNTER.as(STATISTICS_COUNTER),
                 STATISTICS_FIELD.NAME.as(SF_NAME))
             .from(STATISTICS)
             .join(STATISTICS_FIELD)
@@ -668,7 +659,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
         .from(LAUNCH)
         .join(LAUNCHES)
         .on(LAUNCH.ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
-        .leftJoin(DSL.select(STATISTICS.LAUNCH_ID, STATISTICS.S_COUNTER.as(STATISTICS_COUNTER),
+        .leftJoin(dsl.select(STATISTICS.LAUNCH_ID, STATISTICS.S_COUNTER.as(STATISTICS_COUNTER),
                 STATISTICS_FIELD.NAME.as(SF_NAME))
             .from(STATISTICS)
             .join(STATISTICS_FIELD)
@@ -702,7 +693,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
                 field(name(STATISTICS_TABLE, STATISTICS_COUNTER)).cast(Double.class)
             ).otherwise(round(val(PERCENTAGE_MULTIPLIER).mul(
                         field(name(STATISTICS_TABLE, STATISTICS_COUNTER), Integer.class))
-                    .div(nullif(DSL.select(DSL.sum(STATISTICS.S_COUNTER))
+                    .div(nullif(dsl.select(DSL.sum(STATISTICS.S_COUNTER))
                         .from(STATISTICS)
                         .join(STATISTICS_FIELD)
                         .on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
@@ -715,7 +706,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
         .from(LAUNCH)
         .join(LAUNCHES)
         .on(LAUNCH.ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
-        .leftJoin(DSL.select(STATISTICS.LAUNCH_ID, STATISTICS.S_COUNTER.as(STATISTICS_COUNTER),
+        .leftJoin(dsl.select(STATISTICS.LAUNCH_ID, STATISTICS.S_COUNTER.as(STATISTICS_COUNTER),
                 STATISTICS_FIELD.NAME.as(SF_NAME))
             .from(STATISTICS)
             .join(STATISTICS_FIELD)
@@ -724,14 +715,14 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
             .asTable(STATISTICS_TABLE))
         .on(LAUNCH.ID.eq(fieldName(STATISTICS_TABLE, LAUNCH_ID).cast(Long.class)))
         .orderBy(WidgetSortUtils.sortingTransformer(filter.getTarget()).apply(sort, LAUNCHES))
-        .unionAll(DSL.select(LAUNCH.ID,
+        .unionAll(dsl.select(LAUNCH.ID,
                 LAUNCH.NAME,
                 LAUNCH.NUMBER,
                 LAUNCH.START_TIME,
                 field(name(STATISTICS_TABLE, SF_NAME), String.class),
                 round(val(PERCENTAGE_MULTIPLIER).mul(
                             field(name(STATISTICS_TABLE, STATISTICS_COUNTER), Integer.class))
-                        .div(nullif(DSL.select(DSL.sum(STATISTICS.S_COUNTER))
+                        .div(nullif(dsl.select(DSL.sum(STATISTICS.S_COUNTER))
                             .from(STATISTICS)
                             .join(STATISTICS_FIELD)
                             .on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
@@ -742,7 +733,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
             .from(LAUNCH)
             .join(LAUNCHES)
             .on(LAUNCH.ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
-            .leftJoin(DSL.select(STATISTICS.LAUNCH_ID,
+            .leftJoin(dsl.select(STATISTICS.LAUNCH_ID,
                     STATISTICS.S_COUNTER.as(STATISTICS_COUNTER),
                     STATISTICS_FIELD.NAME.as(SF_NAME)
                 )
@@ -790,7 +781,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
             LAUNCH.NUMBER,
             LAUNCH.START_TIME,
             fieldName(STATISTICS_TABLE, STATISTICS_COUNTER),
-            coalesce(round(val(PERCENTAGE_MULTIPLIER).mul(DSL.select(DSL.sum(STATISTICS.S_COUNTER))
+            coalesce(round(val(PERCENTAGE_MULTIPLIER).mul(dsl.select(DSL.sum(STATISTICS.S_COUNTER))
                     .from(STATISTICS)
                     .join(STATISTICS_FIELD)
                     .on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
@@ -805,7 +796,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
         .from(LAUNCH)
         .join(LAUNCHES)
         .on(LAUNCH.ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
-        .leftJoin(DSL.select(STATISTICS.LAUNCH_ID, STATISTICS.S_COUNTER.as(STATISTICS_COUNTER),
+        .leftJoin(dsl.select(STATISTICS.LAUNCH_ID, STATISTICS.S_COUNTER.as(STATISTICS_COUNTER),
                 STATISTICS_FIELD.NAME.as(SF_NAME))
             .from(STATISTICS)
             .join(STATISTICS_FIELD)
@@ -858,34 +849,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
   @Override
   public List<ActivityResource> activityStatistics(Filter filter, Sort sort, int limit) {
-
-		return dsl.with(ACTIVITIES)
-        .as(QueryBuilder.newBuilder(filter, collectJoinFields(filter, sort)).with(sort).with(limit)
-            .build())
-				.select(ACTIVITY.ID,
-						ACTIVITY.EVENT_NAME,
-						ACTIVITY.OBJECT_TYPE,
-						ACTIVITY.CREATED_AT,
-						ACTIVITY.DETAILS,
-						ACTIVITY.PROJECT_ID,
-						ACTIVITY.OBJECT_ID,
-						ACTIVITY.OBJECT_NAME,
-						ACTIVITY.SUBJECT_NAME,
-						USERS.LOGIN,
-            ORGANIZATION.ID,
-            ORGANIZATION.NAME,
-						PROJECT.NAME,
-						PROJECT.KEY
-				)
-        .from(ACTIVITY)
-        .join(ACTIVITIES).on(fieldName(ACTIVITIES, ID).cast(Long.class).eq(ACTIVITY.ID))
-        .leftJoin(USERS).on(ACTIVITY.SUBJECT_ID.eq(USERS.ID))
-        .leftJoin(ORGANIZATION).on(ACTIVITY.ORGANIZATION_ID.eq(ORGANIZATION.ID))
-				.join(PROJECT).on(ACTIVITY.PROJECT_ID.eq(PROJECT.ID))
-				.orderBy(WidgetSortUtils.sortingTransformer(filter.getTarget()).apply(sort, ACTIVITIES))
-				.fetch()
-				.map(ACTIVITY_MAPPER);
-
+    return dsl.fetch(QueryBuilder.newBuilder(filter).with(sort).with(limit).wrap().build())
+        .map(ACTIVITY_MAPPER);
   }
 
   @Override
@@ -1356,7 +1321,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
         .from(LAUNCH)
         .join(LAUNCHES)
         .on(LAUNCH.ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
-        .leftJoin(DSL.select(STATISTICS.LAUNCH_ID, STATISTICS.S_COUNTER.as(STATISTICS_COUNTER),
+        .leftJoin(dsl.select(STATISTICS.LAUNCH_ID, STATISTICS.S_COUNTER.as(STATISTICS_COUNTER),
                 STATISTICS_FIELD.NAME.as(SF_NAME))
             .from(STATISTICS)
             .join(STATISTICS_FIELD)
@@ -1396,7 +1361,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
         .from(LAUNCH)
         .join(LAUNCHES)
         .on(LAUNCH.ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
-        .leftJoin(DSL.select(STATISTICS.LAUNCH_ID, STATISTICS.S_COUNTER.as(STATISTICS_COUNTER),
+        .leftJoin(dsl.select(STATISTICS.LAUNCH_ID, STATISTICS.S_COUNTER.as(STATISTICS_COUNTER),
                 STATISTICS_FIELD.NAME.as(SF_NAME))
             .from(STATISTICS)
             .join(STATISTICS_FIELD)
@@ -1413,7 +1378,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
       Collection<String> contentFields, Map<String, String> customColumns) {
 
     List<Field<?>> fields = getCommonProductStatusFields(filter, contentFields);
-    fields.add(DSL.selectDistinct(FILTER.NAME).from(FILTER).where(FILTER.ID.eq(filter.getId()))
+    fields.add(dsl.selectDistinct(FILTER.NAME).from(FILTER).where(FILTER.ID.eq(filter.getId()))
         .asField(FILTER_NAME));
 
     return buildProductStatusQuery(filter,
@@ -1495,7 +1460,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
           fieldName(ATTR_TABLE, ATTRIBUTE_KEY)
       );
       return getProductStatusSelect(filter, isLatest, sort, limit, fields,
-          statisticsFields).leftJoin(DSL.select(ITEM_ATTRIBUTE.ID.as(
+          statisticsFields).leftJoin(dsl.select(ITEM_ATTRIBUTE.ID.as(
                   ATTR_ID),
               ITEM_ATTRIBUTE.VALUE.as(ATTRIBUTE_VALUE),
               ITEM_ATTRIBUTE.KEY.as(ATTRIBUTE_KEY),
@@ -1516,7 +1481,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
         .from(LAUNCH)
         .join(LAUNCHES)
         .on(LAUNCH.ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
-        .leftJoin(DSL.select(STATISTICS.LAUNCH_ID, STATISTICS.S_COUNTER.as(STATISTICS_COUNTER),
+        .leftJoin(dsl.select(STATISTICS.LAUNCH_ID, STATISTICS.S_COUNTER.as(STATISTICS_COUNTER),
                 STATISTICS_FIELD.NAME.as(SF_NAME))
             .from(STATISTICS)
             .join(STATISTICS_FIELD)

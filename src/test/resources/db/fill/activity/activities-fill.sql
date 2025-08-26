@@ -56,6 +56,11 @@ values (1, 'UPDATE', 'updateDashboard', now() - interval '12 day', '{
 (7, 'FINISH', 'finishLaunch', now() - interval '1 day', '{
   "type": "com.epam.ta.reportportal.entity.activity.ActivityDetails",
   "history": []
-}', 5, 'launch test', 'LAUNCH', 'LOW', 2, 1, 2, 'user', 'USER');
+}', 5, 'launch test', 'LAUNCH', 'LOW', 2, 1, 2, 'user', 'USER'),
 
-alter sequence activity_id_seq restart with 8;
+(8, 'CREATE', 'createPlugin', now() - interval '1 day', '{
+  "type": "com.epam.ta.reportportal.entity.activity.ActivityDetails",
+  "history": []
+}', 5, 'nul org activity', 'PLUGIN', 'LOW', null, null, 2, 'user', 'USER');
+
+alter sequence activity_id_seq restart with 9;

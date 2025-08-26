@@ -600,7 +600,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
   public List<TestItem> selectAllDescendantsWithChildren(Long itemId) {
     JTestItem childTestItem = JTestItem.TEST_ITEM.as("cti");
     return commonTestItemDslSelect().where(TEST_ITEM.PARENT_ID.eq(itemId))
-        .and(DSL.exists(DSL.selectOne()
+        .and(DSL.exists(dsl.selectOne()
             .from(TEST_ITEM)
             .join(childTestItem)
             .on(TEST_ITEM.ITEM_ID.eq(childTestItem.PARENT_ID))
@@ -900,7 +900,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
         .and(ISSUE.ISSUE_TYPE.notIn(excludedTypeIds));
 
     return dsl.selectDistinct(fieldName(ID))
-        .from(DSL.select(outerItemTable.ITEM_ID.as(ID))
+        .from(dsl.select(outerItemTable.ITEM_ID.as(ID))
             .from(outerItemTable)
             .join(TEST_ITEM_RESULTS)
             .on(outerItemTable.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
@@ -910,7 +910,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
             .and(outerItemTable.HAS_STATS)
             .andNot(outerItemTable.HAS_CHILDREN)
             .and(issueCondition)
-            .and(DSL.exists(DSL.selectOne()
+            .and(DSL.exists(dsl.selectOne()
                 .from(nestedItemTable)
                 .join(LOG)
                 .on(nestedItemTable.ITEM_ID.eq(LOG.ITEM_ID))
@@ -918,7 +918,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
                 .andNot(nestedItemTable.HAS_STATS)
                 .and(LOG.LOG_LEVEL.greaterOrEqual(logLevel))
                 .and(DSL.sql(outerItemTable.PATH + " @> " + nestedItemTable.PATH))))
-            .unionAll(DSL.selectDistinct(TEST_ITEM.ITEM_ID.as(ID))
+            .unionAll(dsl.selectDistinct(TEST_ITEM.ITEM_ID.as(ID))
                 .from(TEST_ITEM)
                 .join(TEST_ITEM_RESULTS)
                 .on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
@@ -960,7 +960,7 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
                     .cast(Double.class)).from(TEST_ITEM)
                 .where(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
         )
-        .where(TEST_ITEM_RESULTS.RESULT_ID.in(DSL.select(TEST_ITEM.ITEM_ID)
+        .where(TEST_ITEM_RESULTS.RESULT_ID.in(dsl.select(TEST_ITEM.ITEM_ID)
             .from(TEST_ITEM)
             .where(TEST_ITEM.RETRY_OF.eq(retryOfId))))
         .and(TEST_ITEM_RESULTS.STATUS.eq(from))
