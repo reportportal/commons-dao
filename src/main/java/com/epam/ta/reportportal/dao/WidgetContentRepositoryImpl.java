@@ -21,7 +21,6 @@ import static com.epam.ta.reportportal.commons.querygen.QueryBuilder.STATISTICS_
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_START_TIME;
 import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeConstant.KEY_VALUE_SEPARATOR;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_DURATION;
-import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ACTIVITIES;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.AGGREGATED_LAUNCHES_IDS;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ATTRIBUTE_KEY;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.ATTRIBUTE_VALUE;
@@ -110,16 +109,13 @@ import static com.epam.ta.reportportal.dao.util.WidgetContentUtil.TOP_PATTERN_TE
 import static com.epam.ta.reportportal.dao.util.WidgetContentUtil.UNIQUE_BUG_CONTENT_FETCHER;
 import static com.epam.ta.reportportal.jooq.Tables.FILTER;
 import static com.epam.ta.reportportal.jooq.Tables.ITEM_ATTRIBUTE;
-import static com.epam.ta.reportportal.jooq.Tables.ORGANIZATION;
 import static com.epam.ta.reportportal.jooq.Tables.PATTERN_TEMPLATE;
 import static com.epam.ta.reportportal.jooq.Tables.PATTERN_TEMPLATE_TEST_ITEM;
 import static com.epam.ta.reportportal.jooq.Tables.STATISTICS;
 import static com.epam.ta.reportportal.jooq.Tables.STATISTICS_FIELD;
-import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
 import static com.epam.ta.reportportal.jooq.tables.JIssue.ISSUE;
 import static com.epam.ta.reportportal.jooq.tables.JIssueTicket.ISSUE_TICKET;
 import static com.epam.ta.reportportal.jooq.tables.JLaunch.LAUNCH;
-import static com.epam.ta.reportportal.jooq.tables.JProject.PROJECT;
 import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
 import static com.epam.ta.reportportal.jooq.tables.JTestItemResults.TEST_ITEM_RESULTS;
 import static com.epam.ta.reportportal.jooq.tables.JTicket.TICKET;
@@ -150,6 +146,8 @@ import static org.jooq.impl.DSL.when;
 
 import com.epam.reportportal.model.ActivityResource;
 import com.epam.reportportal.rules.commons.validation.Suppliers;
+import com.epam.reportportal.rules.exception.ErrorType;
+import com.epam.reportportal.rules.exception.ReportPortalException;
 import com.epam.ta.reportportal.commons.querygen.CriteriaHolder;
 import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
@@ -173,14 +171,12 @@ import com.epam.ta.reportportal.entity.widget.content.healthcheck.ComponentHealt
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableContent;
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableGetParams;
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableInitParams;
-import com.epam.reportportal.rules.exception.ReportPortalException;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.epam.ta.reportportal.jooq.tables.JItemAttribute;
 import com.epam.ta.reportportal.util.WidgetSortUtils;
-
-import com.epam.reportportal.rules.exception.ErrorType;
 import com.google.common.collect.Lists;
+import jakarta.annotation.Nullable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
@@ -193,7 +189,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import jakarta.annotation.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
@@ -854,35 +849,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
 
   @Override
   public List<ActivityResource> activityStatistics(Filter filter, Sort sort, int limit) {
-
-		return dsl.with(ACTIVITIES)
-        .as(QueryBuilder.newBuilder(filter, collectJoinFields(filter, sort)).with(sort).with(limit)
-            .build())
-				.select(ACTIVITY.ID,
-						ACTIVITY.EVENT_NAME,
-						ACTIVITY.OBJECT_TYPE,
-						ACTIVITY.CREATED_AT,
-						ACTIVITY.DETAILS,
-						ACTIVITY.PROJECT_ID,
-						ACTIVITY.OBJECT_ID,
-						ACTIVITY.OBJECT_NAME,
-						ACTIVITY.SUBJECT_NAME,
-						USERS.LOGIN,
-                        USERS.ID,
-                        ORGANIZATION.ID,
-                        ORGANIZATION.NAME,
-						PROJECT.NAME,
-						PROJECT.KEY
-				)
-        .from(ACTIVITY)
-        .join(ACTIVITIES).on(fieldName(ACTIVITIES, ID).cast(Long.class).eq(ACTIVITY.ID))
-        .leftJoin(USERS).on(ACTIVITY.SUBJECT_ID.eq(USERS.ID))
-        .leftJoin(ORGANIZATION).on(ACTIVITY.ORGANIZATION_ID.eq(ORGANIZATION.ID))
-				.join(PROJECT).on(ACTIVITY.PROJECT_ID.eq(PROJECT.ID))
-				.orderBy(WidgetSortUtils.sortingTransformer(filter.getTarget()).apply(sort, ACTIVITIES))
-				.fetch()
-				.map(ACTIVITY_MAPPER);
-
+    return dsl.fetch(QueryBuilder.newBuilder(filter).with(sort).with(limit).wrap().build())
+        .map(ACTIVITY_MAPPER);
   }
 
   @Override

@@ -49,6 +49,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import org.apache.commons.compress.utils.Lists;
 import org.junit.jupiter.api.DisplayName;
@@ -64,7 +65,7 @@ import org.springframework.test.context.jdbc.Sql;
 @Sql("/db/fill/activity/activities-fill.sql")
 class ActivityRepositoryTest extends BaseTest {
 
-	private static final int ACTIVITIES_COUNT = 7;
+	private static final int ACTIVITIES_COUNT = 8;
 
 	@Autowired
 	private ActivityRepository activityRepository;
@@ -156,7 +157,9 @@ class ActivityRepositoryTest extends BaseTest {
 
 		activityRepository.deleteModifiedLaterAgo(1L, period);
 		List<Activity> all = activityRepository.findAll();
-		all.stream().filter(a -> a.getProjectId().equals(1L))
+		all.stream()
+        .filter(a -> Objects.nonNull(a.getProjectId()))
+        .filter(a -> a.getProjectId().equals(1L))
 				.forEach(a -> assertTrue(a.getCreatedAt().isAfter(bound)));
 	}
 
@@ -299,11 +302,12 @@ class ActivityRepositoryTest extends BaseTest {
   @ParameterizedTest
   @CsvSource(value = {
       "eventName|eq|createFilter|2",
-      "eventName|ne|createFilter|5",
+      "eventName|ne|createFilter|6",
       "objectType|eq|FILTER|3",
-      "objectType|ne|FILTER|4",
+      "objectType|ne|FILTER|5",
       "objectName|eq|filter new test|2",
-      "objectName|ne|widget test|6",
+      "objectName|ne|widget test|7",
+      "objectName|eq|nul org activity|1",
       "organizationId|eq|1|7",
       "organizationId|ne|1200|7",
       "organizationName|eq|My organization|7",
@@ -316,12 +320,12 @@ class ActivityRepositoryTest extends BaseTest {
       "projectId|ne|3|7",
       "projectName|eq|default_personal|4",
       "projectName|ne|default_personal|3",
-      "subjectType|eq|USER|7",
+      "subjectType|eq|USER|8",
       "subjectType|ne|USER|0",
       "subjectName|eq|superadmin|3",
-      "subjectName|ne|superadmin|4",
-      "createdAt|gt|2024-10-12T10:16:47.461972Z|7",
-      "createdAt|ne|2024-10-18T10:16:47.461972Z|7",
+      "subjectName|ne|superadmin|5",
+      "createdAt|gt|2024-10-12T10:16:47.461972Z|8",
+      "createdAt|ne|2024-10-18T10:16:47.461972Z|8",
   }, delimiter = '|')
   void searchActivitiesByFields(String field, String operation, String term, int expectedAmount) {
     List<Activity> activities = activityRepository.findByFilter(Filter.builder()
