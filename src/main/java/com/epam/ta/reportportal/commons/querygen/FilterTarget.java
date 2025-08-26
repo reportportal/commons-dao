@@ -126,6 +126,8 @@ import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaCon
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER_CREATED_AT;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER_ORGANIZATION_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER_UPDATED_AT;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.PROJECT_ID;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.USER_ID;
 import static com.epam.ta.reportportal.entity.organization.OrganizationFilter.PROJECTS_QUANTITY;
 import static com.epam.ta.reportportal.entity.project.ProjectInfo.LAST_RUN;
 import static com.epam.ta.reportportal.entity.project.ProjectInfo.LAUNCHES_QUANTITY;
@@ -1180,43 +1182,20 @@ public enum FilterTarget {
 
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ID, ACTIVITY.ID, Long.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ACTION, ACTIVITY.ACTION, String.class).get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_CREATED_AT, ACTIVITY.CREATED_AT, Timestamp.class)
-          .withAggregateCriteria(DSL.max(ACTIVITY.CREATED_AT).toString())
-          .get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_CREATED_AT, ACTIVITY.CREATED_AT, Timestamp.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_OBJECT_ID, ACTIVITY.OBJECT_ID, Long.class).get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_OBJECT_NAME, ACTIVITY.OBJECT_NAME, String.class)
-          .withAggregateCriteria(DSL.max(ACTIVITY.OBJECT_NAME).toString())
-          .get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_OBJECT_TYPE, ACTIVITY.OBJECT_TYPE, String.class)
-          .withAggregateCriteria(DSL.max(ACTIVITY.OBJECT_TYPE).toString())
-          .get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_PRIORITY, ACTIVITY.PRIORITY, String.class)
-          .get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ID, ACTIVITY.PROJECT_ID, Long.class)
-          .withAggregateCriteria(DSL.max(ACTIVITY.PROJECT_ID).toString())
-          .get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_OBJECT_NAME, ACTIVITY.OBJECT_NAME, String.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_OBJECT_TYPE, ACTIVITY.OBJECT_TYPE, String.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_PRIORITY, ACTIVITY.PRIORITY, String.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ID, ACTIVITY.PROJECT_ID, Long.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_SUBJECT_ID, ACTIVITY.SUBJECT_ID, Long.class).get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_SUBJECT_NAME, ACTIVITY.SUBJECT_NAME, String.class)
-          .withAggregateCriteria(DSL.max(ACTIVITY.SUBJECT_NAME).toString())
-          .get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_SUBJECT_TYPE, ACTIVITY.SUBJECT_TYPE, String.class)
-          .withAggregateCriteria(DSL.max(ACTIVITY.SUBJECT_TYPE).toString())
-          .get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_ACTIVITY_PROJECT_NAME, PROJECT.NAME, String.class)
-          .withAggregateCriteria(DSL.max(PROJECT.NAME).toString())
-          .get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_USER, USERS.LOGIN, String.class)
-          .withAggregateCriteria(DSL.max(USERS.LOGIN).toString())
-          .get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_EVENT_NAME, ACTIVITY.EVENT_NAME, String.class)
-          .withAggregateCriteria(DSL.max(ACTIVITY.EVENT_NAME).toString())
-          .get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_ACTIVITY_ORG_ID, ORGANIZATION.ID, Long.class)
-          .withAggregateCriteria(DSL.max(ORGANIZATION.ID).toString())
-          .get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_ACTIVITY_ORG_NAME, ORGANIZATION.NAME, String.class)
-          .withAggregateCriteria(DSL.max(ORGANIZATION.NAME).toString())
-          .get()
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_SUBJECT_NAME, ACTIVITY.SUBJECT_NAME, String.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_SUBJECT_TYPE, ACTIVITY.SUBJECT_TYPE, String.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_ACTIVITY_PROJECT_NAME, PROJECT.NAME, String.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_USER, USERS.LOGIN, String.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_EVENT_NAME, ACTIVITY.EVENT_NAME, String.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_ACTIVITY_ORG_ID, ORGANIZATION.ID, Long.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_ACTIVITY_ORG_NAME, ORGANIZATION.NAME, String.class).get()
 
   )) {
     @Override
@@ -1235,8 +1214,11 @@ public enum FilterTarget {
           ACTIVITY.SUBJECT_NAME,
           ACTIVITY.SUBJECT_TYPE,
           USERS.LOGIN,
+          USERS.ID.as(USER_ID),
+          PROJECT.ID.as(PROJECT_ID),
+          PROJECT.KEY,
           PROJECT.NAME,
-          ORGANIZATION.ID,
+          ORGANIZATION.ID.as(CRITERIA_ORG_ID),
           ORGANIZATION.NAME
       );
     }
@@ -1256,6 +1238,35 @@ public enum FilterTarget {
     @Override
     protected Field<Long> idField() {
       return ACTIVITY.ID;
+    }
+
+    @Override
+    public QuerySupplier getQuery() {
+      SelectQuery<? extends Record> query = DSL.select(selectFields()).getQuery();
+      addFrom(query);
+      query.addGroupBy(
+          ACTIVITY.ID,
+          ACTIVITY.ACTION,
+          ACTIVITY.EVENT_NAME,
+          ACTIVITY.CREATED_AT,
+          ACTIVITY.DETAILS,
+          ACTIVITY.OBJECT_ID,
+          ACTIVITY.OBJECT_NAME,
+          ACTIVITY.OBJECT_TYPE,
+          ACTIVITY.PRIORITY,
+          ACTIVITY.PROJECT_ID,
+          ACTIVITY.SUBJECT_ID,
+          ACTIVITY.SUBJECT_NAME,
+          ACTIVITY.SUBJECT_TYPE,
+          USERS.ID,
+          USERS.LOGIN,
+          PROJECT.ID,
+          PROJECT.NAME,
+          ORGANIZATION.ID,
+          ORGANIZATION.NAME);
+      QuerySupplier querySupplier = new QuerySupplier(query);
+      joinTables(querySupplier);
+      return querySupplier;
     }
   },
 

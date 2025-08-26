@@ -55,6 +55,9 @@ public class WidgetContentRepositoryConstants {
   public static final String STATUS = "status";
   public static final String NUMBER = "number";
   public static final String END_TIME = "endTime";
+  public static final String USER_ID = "userId";
+	public static final String ORGANIZATION_ID = "organizationId";
+	public static final String PROJECT_ID = "projectId";
 
 	/* Most failed widget constants */
 	public static final String HISTORY = "history";
@@ -64,6 +67,7 @@ public class WidgetContentRepositoryConstants {
 	public static final String CRITERIA_TABLE = "criteria_table";
 	public static final String CRITERIA_FLAG = "criteria_flag";
 	public static final String ITEM_ID = "item_id";
+
 	public static final Integer MOST_FAILED_CRITERIA_LIMIT = 50;
 
   /* Overall statistics widget constants */
