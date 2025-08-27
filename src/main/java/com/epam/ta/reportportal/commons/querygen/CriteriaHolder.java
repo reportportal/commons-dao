@@ -137,14 +137,6 @@ public class CriteriaHolder {
     this.aggregateCriteria = aggregateCriteria;
   }
 
-  public boolean isIgnoreSelect() {
-    return ignoreSelect;
-  }
-
-  public void setIgnoreSelect(boolean ignoreSelect) {
-    this.ignoreSelect = ignoreSelect;
-  }
-
   public Class<?> getDataType() {
     return dataType;
   }
