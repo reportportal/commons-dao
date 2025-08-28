@@ -1484,12 +1484,6 @@ public enum FilterTarget {
       new CriteriaHolderBuilder()
           .newBuilder(CRITERIA_ORG_USER_ID, ORGANIZATION_USER.USER_ID, Long.class)
           .get(),
-      new CriteriaHolderBuilder().newBuilder(USERS_QUANTITY, USERS_QUANTITY, Long.class)
-          .withIgnoreSelect(true)
-          .get(),
-      new CriteriaHolderBuilder()
-          .newBuilder(CRITERIA_ORG_USER_ID, ORGANIZATION_USER.USER_ID, Long.class)
-          .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_PROJECTS, PROJECTS_QUANTITY, Long.class)
           .withAggregateCriteria(DSL.countDistinct(PROJECT.ID).toString()).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_LAST_LAUNCH_RUN, LAST_RUN, Timestamp.class)
@@ -1523,6 +1517,7 @@ public enum FilterTarget {
           ORGANIZATION.UPDATED_AT,
           ORGANIZATION.EXTERNAL_ID,
           ORGANIZATION.ORGANIZATION_TYPE,
+          ORGANIZATION.OWNER_ID,
           DSL.countDistinct(ORGANIZATION_USER.USER_ID).as(USERS_QUANTITY),
           DSL.countDistinct(PROJECT.ID).as(PROJECTS_QUANTITY),
           DSL.countDistinct(choose().when(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS), LAUNCH.ID))
