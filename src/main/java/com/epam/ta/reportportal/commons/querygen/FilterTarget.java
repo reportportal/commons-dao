@@ -1493,8 +1493,6 @@ public enum FilterTarget {
           .withAggregateCriteria(
               DSL.countDistinct(choose().when(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS), LAUNCH.ID))
                   .toString())
-          .get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_USER, USERS.LOGIN, String.class)
           .get()
 
   )) {
@@ -1540,10 +1538,6 @@ public enum FilterTarget {
       query.addJoin(PROJECT,
           JoinType.LEFT_OUTER_JOIN,
           PROJECT.ORGANIZATION_ID.eq(ORGANIZATION.ID));
-
-      query.addJoin(USERS,
-          JoinType.LEFT_OUTER_JOIN,
-          ORGANIZATION_USER.USER_ID.eq(USERS.ID));
 
       query.addJoin(LAUNCH,
           JoinType.LEFT_OUTER_JOIN,

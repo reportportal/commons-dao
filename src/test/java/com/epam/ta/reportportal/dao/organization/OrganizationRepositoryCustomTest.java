@@ -115,8 +115,6 @@ class OrganizationRepositoryCustomTest extends BaseTest {
       "launches|gt|999|0",
       "projects|eq|2|1",
       "projects|eq|999|0",
-      "user|eq|admin@reportportal.internal|1",
-      "user|eq|notexists|0",
       "created_at|gt|2024-08-01T12:42:30.758055Z|1",
       "updated_at|gt|2024-08-01T12:42:30.758055Z|1",
       "last_launch_occurred|lt|2024-08-01T12:42:30.758055Z|0"
