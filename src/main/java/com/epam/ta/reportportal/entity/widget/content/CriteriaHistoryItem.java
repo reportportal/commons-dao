@@ -17,15 +17,16 @@
 package com.epam.ta.reportportal.entity.widget.content;
 
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.CRITERIA;
+import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.LAUNCH_ID;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.START_TIME_HISTORY;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.STATUS_HISTORY;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.TOTAL;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.UNIQUE_ID;
 
+import jakarta.persistence.Column;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.List;
-import jakarta.persistence.Column;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -53,5 +54,8 @@ public class CriteriaHistoryItem implements Serializable {
 
   @Column(name = START_TIME_HISTORY)
   private List<Instant> startTime;
+
+  @Column(name = LAUNCH_ID)
+  private Long launchId;
 
 }

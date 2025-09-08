@@ -47,6 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.epam.reportportal.model.analyzer.IndexTestItem;
@@ -313,6 +314,20 @@ class TestItemRepositoryTest extends BaseTest {
         LogLevel.ERROR_INT, "[A-Za-z]*");
     Assertions.assertEquals(1, result.size());
     Assertions.assertEquals(130L, result.get(0));
+  }
+
+  @Sql("/db/fill/item/items-with-nested-steps.sql")
+  @Test
+  void findIdWithMaxStepsBeforeFailed_returnsParentIdWithLongestNonFailedPrefix() {
+    Long result = testItemRepository.findIdWithMaxStepsBeforeFailed(132L);
+    assertEquals(132L, result);
+  }
+
+  @Sql("/db/fill/item/items-with-nested-steps.sql")
+  @Test
+  void findIdWithMaxStepsBeforeFailed_returnsNullWhenNoNonFailedPrefix() {
+    Long result = testItemRepository.findIdWithMaxStepsBeforeFailed(131L);
+    assertNull(result);
   }
 
   @Sql("/db/fill/item/items-with-nested-steps.sql")
