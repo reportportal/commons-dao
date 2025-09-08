@@ -40,6 +40,8 @@ public interface ProjectRepository extends ReportPortalRepository<Project, Long>
 
   Optional<Project> findByIdAndOrganizationId(Long projectId, Long organizationId);
 
+  List<Project> findAllByOrganizationId(Long organizationId);
+
   boolean existsByIdAndOrganizationId(Long projectId, Long organizationId);
 
   @Query(value = "SELECT p.* FROM project p JOIN project_user pu on p.id = pu.project_id JOIN users u on pu.user_id = u.id WHERE u.login = :login", nativeQuery = true)

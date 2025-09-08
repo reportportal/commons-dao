@@ -183,4 +183,32 @@ class ProjectRepositoryTest extends BaseTest {
     assertEquals(2, projectInfoPage.getTotalElements());
   }
 
+  @Test
+  void findAllByOrganizationId_WhenOrganizationExists_ShouldReturnAllProjectsForOrganization() {
+    // Given
+    Long organizationId = 1L;
+    
+    // When
+    List<Project> projects = projectRepository.findAllByOrganizationId(organizationId);
+    
+    // Then
+    assertEquals(2, projects.size());
+    assertEquals("superadmin_personal", projects.get(0).getName());
+    assertEquals("default_personal", projects.get(1).getName());
+    assertEquals(organizationId, projects.get(0).getOrganizationId());
+    assertEquals(organizationId, projects.get(1).getOrganizationId());
+  }
+
+  @Test
+  void findAllByOrganizationId_WhenOrganizationDoesNotExist_ShouldReturnEmptyList() {
+    // Given
+    Long nonExistentOrganizationId = 999L;
+    
+    // When
+    List<Project> projects = projectRepository.findAllByOrganizationId(nonExistentOrganizationId);
+    
+    // Then
+    assertTrue(projects.isEmpty());
+  }
+
 }
