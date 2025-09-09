@@ -194,6 +194,7 @@ import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.google.common.collect.Lists;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -204,6 +205,9 @@ import java.util.stream.Collectors;
 import org.jooq.Field;
 import org.jooq.JoinType;
 import org.jooq.Record;
+import org.jooq.Record2;
+import org.jooq.Record3;
+import org.jooq.Record4;
 import org.jooq.SelectField;
 import org.jooq.SelectQuery;
 import org.jooq.impl.DSL;
@@ -856,8 +860,7 @@ public enum FilterTarget {
                   .filterWhere(LAUNCH_ATTRIBUTE.SYSTEM.eq(false)),
               DSL.arrayAgg(DSL.concat(DSL.coalesce(LAUNCH_ATTRIBUTE.KEY, ""),
                       DSL.val(KEY_VALUE_SEPARATOR),
-                      LAUNCH_ATTRIBUTE.VALUE
-                  ))
+                      LAUNCH_ATTRIBUTE.VALUE))
                   .filterWhere(LAUNCH_ATTRIBUTE.SYSTEM.eq(false)),
               DSL.arrayAggDistinct(DSL.concat(ITEM_ATTRIBUTE.KEY, ":"))
                   .filterWhere(ITEM_ATTRIBUTE.SYSTEM.eq(false)),
@@ -1486,13 +1489,9 @@ public enum FilterTarget {
           .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_PROJECTS, PROJECTS_QUANTITY, Long.class)
           .withAggregateCriteria(DSL.countDistinct(PROJECT.ID).toString()).get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_LAST_LAUNCH_RUN, LAST_RUN, Timestamp.class)
-          .withAggregateCriteria(DSL.max(LAUNCH.START_TIME).toString())
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_LAST_LAUNCH_RUN, DSL.field("launch_subselect.last_run"), Timestamp.class)
           .get(),
-      new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_LAUNCHES, LAUNCHES_QUANTITY, Long.class)
-          .withAggregateCriteria(
-              DSL.countDistinct(choose().when(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS), LAUNCH.ID))
-                  .toString())
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_LAUNCHES, DSL.field("launch_subselect.launches_quantity"), Long.class)
           .get()
 
   )) {
@@ -1500,7 +1499,7 @@ public enum FilterTarget {
     public QuerySupplier getQuery() {
       SelectQuery<? extends Record> query = DSL.select(selectFields()).getQuery();
       addFrom(query);
-      query.addGroupBy(ORGANIZATION.ID);
+      query.addGroupBy(ORGANIZATION.ID, DSL.field("launch_subselect.launches_quantity"), DSL.field("launch_subselect.last_run"));
       QuerySupplier querySupplier = new QuerySupplier(query);
       joinTables(querySupplier);
       return querySupplier;
@@ -1518,9 +1517,8 @@ public enum FilterTarget {
           ORGANIZATION.OWNER_ID,
           DSL.countDistinct(ORGANIZATION_USER.USER_ID).as(USERS_QUANTITY),
           DSL.countDistinct(PROJECT.ID).as(PROJECTS_QUANTITY),
-          DSL.countDistinct(choose().when(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS), LAUNCH.ID))
-              .as(LAUNCHES_QUANTITY),
-          DSL.max(LAUNCH.START_TIME).as(LAST_RUN)
+          DSL.field("launch_subselect.launches_quantity").as(LAUNCHES_QUANTITY),
+          DSL.field("launch_subselect.last_run").as(LAST_RUN)
       );
     }
 
@@ -1539,9 +1537,16 @@ public enum FilterTarget {
           JoinType.LEFT_OUTER_JOIN,
           PROJECT.ORGANIZATION_ID.eq(ORGANIZATION.ID));
 
-      query.addJoin(LAUNCH,
+      query.addJoin(DSL.select(
+                  LAUNCH.PROJECT_ID,
+                  DSL.countDistinct(LAUNCH.ID).as("launches_quantity"),
+                  DSL.max(LAUNCH.START_TIME).as("last_run")
+              ).from(PROJECT)
+              .join(LAUNCH).on(PROJECT.ID.eq(LAUNCH.PROJECT_ID))
+              .where(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS))
+              .groupBy(LAUNCH.PROJECT_ID).asTable("launch_counts"),
           JoinType.LEFT_OUTER_JOIN,
-          PROJECT.ID.eq(LAUNCH.PROJECT_ID));
+          PROJECT.ID.eq(DSL.field("launch_subselect.project_id", Long.class)));
     }
 
     @Override
