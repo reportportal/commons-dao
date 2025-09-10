@@ -13,6 +13,7 @@ import com.epam.ta.reportportal.jooq.enums.JRetentionPolicyEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.JItemAttribute.JItemAttributePath;
 import com.epam.ta.reportportal.jooq.tables.JLog.JLogPath;
+import com.epam.ta.reportportal.jooq.tables.JOrganization.JOrganizationPath;
 import com.epam.ta.reportportal.jooq.tables.JProject.JProjectPath;
 import com.epam.ta.reportportal.jooq.tables.JStatistics.JStatisticsPath;
 import com.epam.ta.reportportal.jooq.tables.JStatisticsField.JStatisticsFieldPath;
@@ -150,6 +151,11 @@ public class JLaunch extends TableImpl<JLaunchRecord> {
      */
     public final TableField<JLaunchRecord, JRetentionPolicyEnum> RETENTION_POLICY = createField(DSL.name("retention_policy"), SQLDataType.VARCHAR.defaultValue(DSL.field(DSL.raw("'REGULAR'::retention_policy_enum"), SQLDataType.VARCHAR)).asEnumDataType(JRetentionPolicyEnum.class), this, "");
 
+    /**
+     * The column <code>public.launch.organization_id</code>.
+     */
+    public final TableField<JLaunchRecord, Long> ORGANIZATION_ID = createField(DSL.name("organization_id"), SQLDataType.BIGINT.nullable(false), this, "");
+
     private JLaunch(Name alias, Table<JLaunchRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);
     }
@@ -219,7 +225,7 @@ public class JLaunch extends TableImpl<JLaunchRecord> {
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.asList(Indexes.LAUNCH_PROJECT_START_TIME_IDX, Indexes.LAUNCH_USER_IDX, Indexes.MODE_IDX);
+        return Arrays.asList(Indexes.IDX_LAUNCH_ORGANIZATION_ID, Indexes.LAUNCH_PROJECT_START_TIME_IDX, Indexes.LAUNCH_STATUS_IDX, Indexes.LAUNCH_USER_IDX, Indexes.MODE_IDX);
     }
 
     @Override
@@ -239,7 +245,19 @@ public class JLaunch extends TableImpl<JLaunchRecord> {
 
     @Override
     public List<ForeignKey<JLaunchRecord, ?>> getReferences() {
-        return Arrays.asList(Keys.LAUNCH__LAUNCH_PROJECT_ID_FKEY, Keys.LAUNCH__LAUNCH_USER_ID_FKEY);
+        return Arrays.asList(Keys.LAUNCH__FK_LAUNCH_ORGANIZATION, Keys.LAUNCH__LAUNCH_PROJECT_ID_FKEY, Keys.LAUNCH__LAUNCH_USER_ID_FKEY);
+    }
+
+    private transient JOrganizationPath _organization;
+
+    /**
+     * Get the implicit join path to the <code>public.organization</code> table.
+     */
+    public JOrganizationPath organization() {
+        if (_organization == null)
+            _organization = new JOrganizationPath(this, Keys.LAUNCH__FK_LAUNCH_ORGANIZATION, null);
+
+        return _organization;
     }
 
     private transient JProjectPath _project;

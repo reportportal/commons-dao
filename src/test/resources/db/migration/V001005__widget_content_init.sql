@@ -20,8 +20,9 @@ BEGIN
     INSERT INTO public.filter (id, name, target, description)
     VALUES (1, 'filter name', 'Launch', 'filter for product status widget');
 
-    INSERT INTO public.launch (uuid, project_id, user_id, name, description, start_time, end_time, number, last_modified, mode, status)
+    INSERT INTO public.launch (uuid, organization_id, project_id, user_id, name, description, start_time, end_time, number, last_modified, mode, status)
     VALUES ('aa848441-72a1-4192-a828-cd20b7fcbd31',
+            1,
             1,
             1,
             'launch name 1',
@@ -34,8 +35,9 @@ BEGIN
             'FAILED');
     launch1 = (SELECT currval(pg_get_serial_sequence('launch', 'id')));
 
-    INSERT INTO public.launch (uuid, project_id, user_id, name, description, start_time, end_time, number, last_modified, mode, status)
+    INSERT INTO public.launch (uuid, organization_id, project_id, user_id, name, description, start_time, end_time, number, last_modified, mode, status)
     VALUES ('aa848441-72a1-4192-a828-cd20b7fcbd32',
+            1,
             1,
             1,
             'launch name 1',
@@ -48,8 +50,9 @@ BEGIN
             'FAILED');
     launch2 = (SELECT currval(pg_get_serial_sequence('launch', 'id')));
 
-    INSERT INTO public.launch (uuid, project_id, user_id, name, description, start_time, end_time, number, last_modified, mode, status)
+    INSERT INTO public.launch (uuid, organization_id, project_id, user_id, name, description, start_time, end_time, number, last_modified, mode, status)
     VALUES ('aa848441-72a1-4192-a828-cd20b7fcbd33',
+            1,
             1,
             1,
             'launch name 1',
@@ -62,8 +65,9 @@ BEGIN
             'FAILED');
     launch3 = (SELECT currval(pg_get_serial_sequence('launch', 'id')));
 
-    INSERT INTO public.launch (uuid, project_id, user_id, name, description, start_time, end_time, number, last_modified, mode, status)
+    INSERT INTO public.launch (uuid, organization_id,  project_id, user_id, name, description, start_time, end_time, number, last_modified, mode, status)
     VALUES ('aa848441-72a1-4192-a828-cd20b7fcbd34',
+            1,
             1,
             1,
             'launch name 1',

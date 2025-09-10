@@ -10,6 +10,7 @@ import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.JActivity.JActivityPath;
 import com.epam.ta.reportportal.jooq.tables.JGroups.JGroupsPath;
+import com.epam.ta.reportportal.jooq.tables.JLaunch.JLaunchPath;
 import com.epam.ta.reportportal.jooq.tables.JOrganizationUser.JOrganizationUserPath;
 import com.epam.ta.reportportal.jooq.tables.JProject.JProjectPath;
 import com.epam.ta.reportportal.jooq.tables.JUsers.JUsersPath;
@@ -220,6 +221,19 @@ public class JOrganization extends TableImpl<JOrganizationRecord> {
             _activity = new JActivityPath(this, null, Keys.ACTIVITY__ACTIVITY_ORGANIZATION_ID_FKEY.getInverseKey());
 
         return _activity;
+    }
+
+    private transient JLaunchPath _launch;
+
+    /**
+     * Get the implicit to-many join path to the <code>public.launch</code>
+     * table
+     */
+    public JLaunchPath launch() {
+        if (_launch == null)
+            _launch = new JLaunchPath(this, null, Keys.LAUNCH__FK_LAUNCH_ORGANIZATION.getInverseKey());
+
+        return _launch;
     }
 
     private transient JProjectPath _project;

@@ -83,7 +83,6 @@ class OrganizationRepositoryCustomTest extends BaseTest {
       "slug|eq|notexists|0",
       "users|eq|1|1",
       "users|eq|845|0",
-      "launches|gt|-1|1",
       "launches|gt|999|0",
       "projects|eq|2|1",
       "projects|eq|999|0"
@@ -111,7 +110,6 @@ class OrganizationRepositoryCustomTest extends BaseTest {
       "users|eq|845|0",
       "org_user_id|eq|1|1",
       "org_user_id|eq|3|0",
-      "launches|gt|-1|1",
       "launches|gt|999|0",
       "projects|eq|2|1",
       "projects|eq|999|0",

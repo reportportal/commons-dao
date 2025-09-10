@@ -12,9 +12,10 @@ BEGIN
             WHILE sameLaunchCounter < 5
                 LOOP
                     raise notice 'Value: %', sameLaunchCounter;
-                    INSERT INTO public.launch (uuid, project_id, user_id, name, description,
+                    INSERT INTO public.launch (uuid, organization_id, project_id, user_id, name, description,
                                                start_time, end_time, last_modified, mode, status)
                     VALUES ('uuid ' || differentLaunchesCounter || sameLaunchCounter,
+                            1,
                             1,
                             1,
                             'launch name ' || differentLaunchesCounter,

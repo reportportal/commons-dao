@@ -1,7 +1,7 @@
-INSERT INTO public.launch (id, uuid, project_id, user_id, name, description, start_time, end_time,
+INSERT INTO public.launch (id, uuid, organization_id, project_id, user_id, name, description, start_time, end_time,
                            number, last_modified, mode, status, has_retries, rerun,
                            approximate_duration)
-VALUES (10, '4c838392-ba6d-48b0-b3b2-213c3a5eeebf', 1, 1, 'superadmin_TEST_EXAMPLE', null,
+VALUES (10, '4c838392-ba6d-48b0-b3b2-213c3a5eeebf', 1, 1, 1, 'superadmin_TEST_EXAMPLE', null,
         '2020-02-12 16:17:58.041000', '2020-02-12 16:18:00.141000', 2, '2020-02-12 19:21:00.758721',
         'DEFAULT', 'FAILED', false, false, 0.924);
 

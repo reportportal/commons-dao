@@ -3,9 +3,9 @@ alter sequence test_item_item_id_seq restart with 1;
 
 SELECT launches_init();
 
-INSERT INTO public.launch(id, uuid, project_id, user_id, name, start_time, end_time, last_modified,
+INSERT INTO public.launch(id, uuid, organization_id, project_id, user_id, name, start_time, end_time, last_modified,
                           mode, status)
-VALUES (100, 'uuid', 2, 2, 'finished launch', now(), now(), now(), 'DEFAULT', 'FAILED');
+VALUES (100, 'uuid', 1, 2, 2, 'finished launch', now(), now(), now(), 'DEFAULT', 'FAILED');
 
 INSERT INTO public.test_item(test_case_hash, item_id, uuid, type, start_time, last_modified,
                              has_children, has_retries, parent_id, launch_id)
@@ -29,9 +29,9 @@ INSERT INTO public.log(uuid, log_time, log_message, item_id, launch_id, last_mod
 VALUES ('log uid', now(), 'message', 2, null, now(), 40000, null, 2);
 
 
-INSERT INTO public.launch(id, uuid, project_id, user_id, name, start_time, end_time, last_modified,
+INSERT INTO public.launch(id, uuid, organization_id,project_id, user_id, name, start_time, end_time, last_modified,
                           mode, status)
-VALUES (200, 'uuid3', 2, 2, 'finished launch', now(), now(), now(), 'DEFAULT', 'FAILED');
+VALUES (200, 'uuid3', 1,2, 2, 'finished launch', now(), now(), now(), 'DEFAULT', 'FAILED');
 
 INSERT INTO public.test_item(test_case_hash, item_id, uuid, type, start_time, last_modified,
                              has_children, has_retries, parent_id, launch_id)
@@ -44,6 +44,6 @@ INSERT INTO public.log(uuid, log_time, log_message, item_id, launch_id, last_mod
                        attachment_id, project_id)
 VALUES ('log uid', now(), 'message', 3, null, now(), 40000, null, 2);
 
-INSERT INTO public.launch(id, uuid, project_id, user_id, name, start_time, end_time, last_modified,
+INSERT INTO public.launch(id, uuid, organization_id, project_id, user_id, name, start_time, end_time, last_modified,
                           mode, status, retention_policy)
-VALUES (300, 'uuid5', 2, 2, 'finished launch', now(), now(), now(), 'DEFAULT', 'FAILED', 'IMPORTANT');
+VALUES (300, 'uuid5', 1, 2, 2, 'finished launch', now(), now(), now(), 'DEFAULT', 'FAILED', 'IMPORTANT');

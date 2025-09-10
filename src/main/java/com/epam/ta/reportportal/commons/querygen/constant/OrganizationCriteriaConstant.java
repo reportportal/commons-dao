@@ -36,6 +36,14 @@ public final class OrganizationCriteriaConstant {
   public static final String CRITERIA_ORG_LAST_LAUNCH_RUN = "last_launch_occurred";
 
 
+  public static final String PRJ_LAUNCH_SUBSELECT = "prj_launch_subselect";
+  public static final String PRJ_LAUNCH_LAST_RUN = "prj_launch_last_run";
+  public static final String PRJ_LAUNCH_QTY = "prj_launch_qty";
+
+  public static final String ORG_LAUNCH_SUBSELECT = "org_launch_subselect";
+  public static final String ORG_LAUNCH_LAST_RUN = "org_launch_last_run";
+  public static final String ORG_LAUNCH_QTY = "org_launch_qty";
+
 
   private OrganizationCriteriaConstant() {
     //static only
