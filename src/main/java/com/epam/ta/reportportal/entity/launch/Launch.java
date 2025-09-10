@@ -44,6 +44,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.JdbcType;
@@ -75,6 +77,11 @@ public class Launch implements Serializable {
 
   @Column(name = "project_id", nullable = false, precision = 32)
   private Long projectId;
+
+  @Getter
+  @Setter
+  @Column(name = "organization_id", nullable = false, precision = 32)
+  private Long organizationId;
 
   @Column(name = "user_id", nullable = false)
   private Long userId;
