@@ -137,7 +137,6 @@ import static org.jooq.impl.DSL.name;
 import static org.jooq.impl.DSL.nullif;
 import static org.jooq.impl.DSL.orderBy;
 import static org.jooq.impl.DSL.round;
-import static org.jooq.impl.DSL.select;
 import static org.jooq.impl.DSL.selectDistinct;
 import static org.jooq.impl.DSL.sum;
 import static org.jooq.impl.DSL.timestampDiff;
@@ -282,6 +281,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
                         true).otherwise(false))
                 .orderBy(LAUNCH.NUMBER.asc())
                 .as(STATUS_HISTORY),
+            DSL.max(TEST_ITEM.LAUNCH_ID).as(TEST_ITEM.LAUNCH_ID.getName()),
             DSL.max(TEST_ITEM.START_TIME).filterWhere(
                     fieldName(criteriaTable.getName(), CRITERIA_FLAG).cast(Integer.class).ge(1))
                 .as(START_TIME_HISTORY),
@@ -761,7 +761,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
             LAUNCH.STATUS,
             LAUNCH.START_TIME,
             LAUNCH.END_TIME,
-            timestampDiff(LAUNCH.END_TIME.cast(Timestamp.class), LAUNCH.START_TIME.cast(Timestamp.class)).as(DURATION)
+            timestampDiff(LAUNCH.END_TIME.cast(Timestamp.class),
+                LAUNCH.START_TIME.cast(Timestamp.class)).as(DURATION)
         )
         .from(LAUNCH)
         .join(LAUNCHES)
@@ -1067,7 +1068,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
             .on((TEST_ITEM.ITEM_ID.eq(ITEM_ATTRIBUTE.ITEM_ID)
                 .or(TEST_ITEM.LAUNCH_ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID))).and(
                 ITEM_ATTRIBUTE.KEY.eq(currentLevelKey).and(ITEM_ATTRIBUTE.SYSTEM.isFalse())))
-            .groupBy(TEST_ITEM.ITEM_ID, TEST_ITEM_RESULTS.STATUS, ITEM_ATTRIBUTE.KEY, ITEM_ATTRIBUTE.VALUE)
+            .groupBy(TEST_ITEM.ITEM_ID, TEST_ITEM_RESULTS.STATUS, ITEM_ATTRIBUTE.KEY,
+                ITEM_ATTRIBUTE.VALUE)
             .having(filterSkippedTests(excludeSkipped))
             .asTable(ITEMS))
         .groupBy(fieldName(ITEMS, VALUE))
@@ -1082,12 +1084,12 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
   private Condition filterSkippedTests(boolean excludeSkipped) {
     Condition condition = DSL.noCondition();
     if (excludeSkipped) {
-       return DSL.notExists(
-           dsl.selectOne().from(STATISTICS).join(STATISTICS_FIELD)
-               .on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
-               .where(TEST_ITEM.ITEM_ID.eq(STATISTICS.ITEM_ID)
-                   .and(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
-                   .and(STATISTICS_FIELD.NAME.eq(EXECUTIONS_SKIPPED))));
+      return DSL.notExists(
+          dsl.selectOne().from(STATISTICS).join(STATISTICS_FIELD)
+              .on(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
+              .where(TEST_ITEM.ITEM_ID.eq(STATISTICS.ITEM_ID)
+                  .and(STATISTICS.STATISTICS_FIELD_ID.eq(STATISTICS_FIELD.SF_ID))
+                  .and(STATISTICS_FIELD.NAME.eq(EXECUTIONS_SKIPPED))));
     }
     return condition;
   }
@@ -1265,7 +1267,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
             .filterWhere(fieldName(CUSTOM_ATTRIBUTE, VALUE).isNotNull())
             .as(CUSTOM_COLUMN)));
 
-    SelectOnConditionStep<Record> baseQuery = select(selectFields).from(TEST_ITEM)
+    SelectOnConditionStep<Record> baseQuery = dsl.select(selectFields).from(TEST_ITEM)
         .join(launchesTable)
         .on(TEST_ITEM.LAUNCH_ID.eq(fieldName(LAUNCHES, ID).cast(Long.class)))
         .join(TEST_ITEM_RESULTS)
@@ -1275,9 +1277,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
             .or(TEST_ITEM.LAUNCH_ID.eq(ITEM_ATTRIBUTE.LAUNCH_ID))).and(
             ITEM_ATTRIBUTE.KEY.in(params.getAttributeKeys())).and(ITEM_ATTRIBUTE.SYSTEM.isFalse()));
 
-    dsl.execute(DSL.sql(Suppliers.formattedSupplier("CREATE MATERIALIZED VIEW {} AS ({})",
-        DSL.name(params.getViewName()),
-        ofNullable(params.getCustomKey()).map(key -> {
+    dsl.execute(dsl.renderInlined(dsl.createMaterializedView(params.getViewName())
+        .as(ofNullable(params.getCustomKey()).map(key -> {
               JItemAttribute customAttribute = ITEM_ATTRIBUTE.as(CUSTOM_ATTRIBUTE);
               return baseQuery.leftJoin(customAttribute)
                   .on(DSL.condition(Operator.OR,
@@ -1292,9 +1293,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
                 .and(TEST_ITEM.RETRY_OF.isNull())
                 .and(TEST_ITEM_RESULTS.STATUS.notEqual(JStatusEnum.IN_PROGRESS)))
             .groupBy(TEST_ITEM.ITEM_ID, ITEM_ATTRIBUTE.KEY, ITEM_ATTRIBUTE.VALUE)
-            .getQuery()
-    ).get()));
-
+            .getQuery())));
   }
 
   @Override
@@ -1429,7 +1428,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
                 .where(STATISTICS_FIELD.NAME.eq(EXECUTIONS_TOTAL)
                     .and(STATISTICS.LAUNCH_ID.eq(LAUNCH.ID)))
                 .asField(), 0)), 2).as(PASSING_RATE),
-        timestampDiff(LAUNCH.END_TIME.cast(Timestamp.class), LAUNCH.START_TIME.cast(Timestamp.class))
+        timestampDiff(LAUNCH.END_TIME.cast(Timestamp.class),
+            LAUNCH.START_TIME.cast(Timestamp.class))
             .as(DURATION)
     );
 

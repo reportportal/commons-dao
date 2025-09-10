@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.entity.organization.OrganizationRole;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
 import com.epam.ta.reportportal.entity.user.User;
+import com.epam.ta.reportportal.entity.user.UserAuthProjection;
 import com.epam.ta.reportportal.entity.user.UserRole;
 import com.epam.ta.reportportal.entity.user.UserType;
 import java.time.Instant;
@@ -27,6 +28,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
@@ -111,5 +115,144 @@ public interface UserRepository extends ReportPortalRepository<User, Long>, User
 
   @Query(value = "SELECT users.login FROM users WHERE users.id = :id", nativeQuery = true)
   Optional<String> findLoginById(@Param("id") Long id);
+
+  /**
+   * Optimized method to find user authentication data by login.
+   * Returns only fields needed for authentication.
+   *
+   * @param login user login for search
+   * @return {@link Optional} of {@link UserAuthProjection}
+   */
+  @Query(value = "SELECT u.id, u.uuid, u.external_id, u.login, u.password, u.email, u.role, u.active, u.expired FROM users u WHERE u.login = :login", nativeQuery = true)
+  @Cacheable(
+      value = "userAuthDataCache",
+      key = "'login_' + #login",
+      cacheManager = "caffeineCacheManager"
+  )
+  Optional<UserAuthProjection> findAuthDataByLogin(@Param("login") String login);
+
+  /**
+   * Optimized method to find user authentication data by external ID.
+   * Returns only fields needed for authentication.
+   *
+   * @param externalId user external id for search
+   * @return {@link Optional} of {@link UserAuthProjection}
+   */
+  @Query(value = "SELECT u.id, u.uuid, u.external_id, u.login, u.password, u.email, u.role, u.active, u.expired FROM users u WHERE u.external_id = :externalId", nativeQuery = true)
+  @Cacheable(
+      value = "userAuthDataCache",
+      key = "'externalId_' + #externalId",
+      cacheManager = "caffeineCacheManager"
+  )
+  Optional<UserAuthProjection> findAuthDataByExternalId(@Param("externalId") String externalId);
+
+  /**
+   * Saves user entity and evicts cache entries for the user.
+   * Evicts both login and externalId cache entries to handle potential changes.
+   *
+   * @param user User entity to save
+   * @return Saved user entity
+   */
+  @Override
+  @Caching(evict = {
+      @CacheEvict(
+          value = "userAuthDataCache",
+          key = "'login_' + #user.login",
+          cacheManager = "caffeineCacheManager"
+      ),
+      @CacheEvict(
+          value = "userAuthDataCache",
+          key = "'externalId_' + #user.externalId",
+          cacheManager = "caffeineCacheManager",
+          condition = "#user.externalId != null"
+      )
+  })
+  <S extends User> S save(S user);
+
+  /**
+   * Deletes user entity and evicts cache entries for the user.
+   * Evicts both login and externalId cache entries.
+   *
+   * @param user User entity to delete
+   */
+  @Override
+  @Caching(evict = {
+      @CacheEvict(
+          value = "userAuthDataCache",
+          key = "'login_' + #user.login",
+          cacheManager = "caffeineCacheManager"
+      ),
+      @CacheEvict(
+          value = "userAuthDataCache",
+          key = "'externalId_' + #user.externalId",
+          cacheManager = "caffeineCacheManager",
+          condition = "#user.externalId != null"
+      )
+  })
+  void delete(User user);
+
+  /**
+   * Deletes user entity by ID and evicts all cache entries.
+   *
+   * @param id User ID
+   */
+  @Override
+  @CacheEvict(
+      value = "userAuthDataCache",
+      allEntries = true,
+      cacheManager = "caffeineCacheManager"
+  )
+  void deleteById(Long id);
+
+  /**
+   * Saves all user entities and evicts all cache entries.
+   *
+   * @param entities User entities to save
+   * @return Saved user entities
+   */
+  @Override
+  @CacheEvict(
+      value = "userAuthDataCache",
+      allEntries = true,
+      cacheManager = "caffeineCacheManager"
+  )
+  <S extends User> List<S> saveAll(Iterable<S> entities);
+
+  /**
+   * Deletes all user entities and evicts all cache entries.
+   *
+   * @param entities User entities to delete
+   */
+  @Override
+  @CacheEvict(
+      value = "userAuthDataCache",
+      allEntries = true,
+      cacheManager = "caffeineCacheManager"
+  )
+  void deleteAll(Iterable<? extends User> entities);
+
+  /**
+   * Deletes all user entities and evicts all cache entries.
+   */
+  @Override
+  @CacheEvict(
+      value = "userAuthDataCache",
+      allEntries = true,
+      cacheManager = "caffeineCacheManager"
+  )
+  void deleteAll();
+
+  /**
+   * Deletes all users by IDs and evicts all cache entries.
+   *
+   * @param ids User IDs to delete
+   */
+  @Override
+  @CacheEvict(
+      value = "userAuthDataCache",
+      allEntries = true,
+      cacheManager = "caffeineCacheManager"
+  )
+  void deleteAllById(Iterable<? extends Long> ids);
 
 }
