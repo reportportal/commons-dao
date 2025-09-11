@@ -76,6 +76,10 @@ public enum ActivityAction {
   CREATE_ORGANIZATION("createOrganization"),
   UPDATE_ORGANIZATION("updateOrganization"),
   DELETE_ORGANIZATION("deleteOrganization"),
+  CREATE_NOTIFICATION_RULE("createNotificationRule"),
+  UPDATE_NOTIFICATION_RULE("updateNotificationRule"),
+  DELETE_NOTIFICATION_RULE("deleteNotificationRule"),
+  UPDATE_NOTIFICATION_SETTINGS("updateNotificationSettings"),
 
   UPDATE_INSTANCE("updateInstance");
 
