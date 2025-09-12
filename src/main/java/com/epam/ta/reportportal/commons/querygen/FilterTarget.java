@@ -1490,9 +1490,7 @@ public enum FilterTarget {
           .withAggregateCriteria(DSL.max(LAUNCH.START_TIME).toString())
           .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ORG_LAUNCHES, LAUNCHES_QUANTITY, Long.class)
-          .withAggregateCriteria(
-              DSL.countDistinct(choose().when(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS), LAUNCH.ID))
-                  .toString())
+          .withAggregateCriteria(DSL.countDistinct(LAUNCH.ID).toString())
           .get()
 
   )) {
@@ -1518,8 +1516,7 @@ public enum FilterTarget {
           ORGANIZATION.OWNER_ID,
           DSL.countDistinct(ORGANIZATION_USER.USER_ID).as(USERS_QUANTITY),
           DSL.countDistinct(PROJECT.ID).as(PROJECTS_QUANTITY),
-          DSL.countDistinct(choose().when(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS), LAUNCH.ID))
-              .as(LAUNCHES_QUANTITY),
+          DSL.countDistinct(LAUNCH.ID).as(LAUNCHES_QUANTITY),
           DSL.max(LAUNCH.START_TIME).as(LAST_RUN)
       );
     }
@@ -1541,7 +1538,7 @@ public enum FilterTarget {
 
       query.addJoin(LAUNCH,
           JoinType.LEFT_OUTER_JOIN,
-          PROJECT.ID.eq(LAUNCH.PROJECT_ID));
+          PROJECT.ID.eq(LAUNCH.PROJECT_ID).and(LAUNCH.STATUS.ne(JStatusEnum.IN_PROGRESS)));
     }
 
     @Override
