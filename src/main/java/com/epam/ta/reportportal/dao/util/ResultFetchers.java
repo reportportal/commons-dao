@@ -29,6 +29,9 @@ import static com.epam.ta.reportportal.dao.util.RecordMappers.ORGANIZATION_USER_
 import static com.epam.ta.reportportal.dao.util.RecordMappers.PATTERN_TEMPLATE_NAME_RECORD_MAPPER;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.PROJECT_USER_MAPPER;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.TICKET_MAPPER;
+import static com.epam.ta.reportportal.dao.util.RecordMappers.TMS_TEST_CASE_MAPPER;
+import static com.epam.ta.reportportal.dao.util.RecordMappers.TMS_TEST_FOLDER_MAPPER;
+import static com.epam.ta.reportportal.dao.util.RecordMappers.TMS_TEST_PLAN_MAPPER;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.USER_MAPPER;
 import static com.epam.ta.reportportal.jooq.Tables.ACTIVITY;
 import static com.epam.ta.reportportal.jooq.Tables.FILTER_SORT;
@@ -40,6 +43,9 @@ import static com.epam.ta.reportportal.jooq.Tables.ORGANIZATION_USER;
 import static com.epam.ta.reportportal.jooq.Tables.OWNED_ENTITY;
 import static com.epam.ta.reportportal.jooq.Tables.PARAMETER;
 import static com.epam.ta.reportportal.jooq.Tables.PROJECT_ATTRIBUTE;
+import static com.epam.ta.reportportal.jooq.Tables.TMS_TEST_CASE;
+import static com.epam.ta.reportportal.jooq.Tables.TMS_TEST_FOLDER;
+import static com.epam.ta.reportportal.jooq.Tables.TMS_TEST_PLAN;
 import static com.epam.ta.reportportal.jooq.tables.JProject.PROJECT;
 import static com.epam.ta.reportportal.jooq.tables.JProjectUser.PROJECT_USER;
 import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
@@ -68,6 +74,9 @@ import com.epam.ta.reportportal.entity.pattern.PatternTemplateTestItem;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectAttribute;
 import com.epam.ta.reportportal.entity.project.ProjectProfile;
+import com.epam.ta.reportportal.entity.tms.TmsTestCase;
+import com.epam.ta.reportportal.entity.tms.TmsTestFolder;
+import com.epam.ta.reportportal.entity.tms.TmsTestPlan;
 import com.epam.ta.reportportal.entity.user.OrganizationUser;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.epam.ta.reportportal.entity.user.User;
@@ -496,4 +505,45 @@ public class ResultFetchers {
     return projectProfiles;
   };
 
+  /**
+   * Fetches records from db results into list of {@link TmsTestCase} objects.
+   */
+  public static final Function<Result<? extends Record>, List<TmsTestCase>> TMS_TEST_CASE_FETCHER = rows -> {
+    Map<Long, TmsTestCase> testCases = Maps.newLinkedHashMap();
+    rows.forEach(row -> {
+      Long id = row.get(TMS_TEST_CASE.ID);
+      if (!testCases.containsKey(id)) {
+        testCases.put(id, TMS_TEST_CASE_MAPPER.map(row));
+      }
+    });
+    return new ArrayList<>(testCases.values());
+  };
+
+  /**
+   * Fetches records from db results into list of {@link TmsTestPlan} objects.
+   */
+  public static final Function<Result<? extends Record>, List<TmsTestPlan>> TMS_TEST_PLAN_FETCHER = rows -> {
+    Map<Long, TmsTestPlan> testPlans = Maps.newLinkedHashMap();
+    rows.forEach(row -> {
+      Long id = row.get(TMS_TEST_PLAN.ID);
+      if (!testPlans.containsKey(id)) {
+        testPlans.put(id, TMS_TEST_PLAN_MAPPER.map(row));
+      }
+    });
+    return new ArrayList<>(testPlans.values());
+  };
+
+  /**
+   * Fetches records from db results into list of {@link TmsTestFolder} objects.
+   */
+  public static final Function<Result<? extends Record>, List<TmsTestFolder>> TMS_TEST_FOLDER_FETCHER = rows -> {
+    Map<Long, TmsTestFolder> testFolders = Maps.newLinkedHashMap();
+    rows.forEach(row -> {
+      Long id = row.get(TMS_TEST_FOLDER.ID);
+      if (!testFolders.containsKey(id)) {
+        testFolders.put(id, TMS_TEST_FOLDER_MAPPER.map(row));
+      }
+    });
+    return new ArrayList<>(testFolders.values());
+  };
 }

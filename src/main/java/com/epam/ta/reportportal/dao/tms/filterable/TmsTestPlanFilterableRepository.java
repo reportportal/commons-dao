@@ -1,0 +1,67 @@
+package com.epam.ta.reportportal.dao.tms.filterable;
+
+import static com.epam.ta.reportportal.dao.util.ResultFetchers.TMS_TEST_PLAN_FETCHER;
+
+import com.epam.ta.reportportal.commons.querygen.ConvertibleCondition;
+import com.epam.ta.reportportal.commons.querygen.FilterCondition;
+import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
+import com.epam.ta.reportportal.commons.querygen.Queryable;
+import com.epam.ta.reportportal.dao.FilterableRepository;
+import com.epam.ta.reportportal.entity.tms.TmsTestPlan;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import org.jooq.DSLContext;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.support.PageableExecutionUtils;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public class TmsTestPlanFilterableRepository implements FilterableRepository<TmsTestPlan> {
+
+  private final DSLContext dsl;
+
+  public TmsTestPlanFilterableRepository(DSLContext dsl) {
+    this.dsl = dsl;
+  }
+
+  @Override
+  public List<TmsTestPlan> findByFilter(Queryable filter) {
+    Set<String> fields = filter.getFilterConditions()
+        .stream()
+        .map(ConvertibleCondition::getAllConditions)
+        .flatMap(Collection::stream)
+        .map(FilterCondition::getSearchCriteria)
+        .collect(Collectors.toSet());
+
+    return TMS_TEST_PLAN_FETCHER.apply(
+        dsl.fetch(QueryBuilder.newBuilder(filter, fields).wrap().build()));
+  }
+
+  @Override
+  public Page<TmsTestPlan> findByFilter(Queryable filter, Pageable pageable) {
+    Set<String> fields = filter.getFilterConditions()
+        .stream()
+        .map(ConvertibleCondition::getAllConditions)
+        .flatMap(Collection::stream)
+        .map(FilterCondition::getSearchCriteria)
+        .collect(Collectors.toSet());
+
+    fields.addAll(pageable.getSort().get()
+        .map(Sort.Order::getProperty)
+        .collect(Collectors.toSet()));
+
+    return PageableExecutionUtils.getPage(
+        TMS_TEST_PLAN_FETCHER.apply(
+            dsl.fetch(QueryBuilder.newBuilder(filter, fields)
+                .with(pageable)
+                .wrap()
+                .withWrapperSort(pageable.getSort())
+                .build())),
+        pageable,
+        () -> dsl.fetchCount(QueryBuilder.newBuilder(filter, fields).build()));
+  }
+}
