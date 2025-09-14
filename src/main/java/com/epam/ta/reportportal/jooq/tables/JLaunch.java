@@ -17,6 +17,7 @@ import com.epam.ta.reportportal.jooq.tables.JProject.JProjectPath;
 import com.epam.ta.reportportal.jooq.tables.JStatistics.JStatisticsPath;
 import com.epam.ta.reportportal.jooq.tables.JStatisticsField.JStatisticsFieldPath;
 import com.epam.ta.reportportal.jooq.tables.JTestItem.JTestItemPath;
+import com.epam.ta.reportportal.jooq.tables.JTmsTestPlan.JTmsTestPlanPath;
 import com.epam.ta.reportportal.jooq.tables.JUsers.JUsersPath;
 import com.epam.ta.reportportal.jooq.tables.records.JLaunchRecord;
 
@@ -315,6 +316,19 @@ public class JLaunch extends TableImpl<JLaunchRecord> {
             _testItem = new JTestItemPath(this, null, Keys.TEST_ITEM__TEST_ITEM_LAUNCH_ID_FKEY.getInverseKey());
 
         return _testItem;
+    }
+
+    private transient JTmsTestPlanPath _tmsTestPlan;
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>public.tms_test_plan</code> table
+     */
+    public JTmsTestPlanPath tmsTestPlan() {
+        if (_tmsTestPlan == null)
+            _tmsTestPlan = new JTmsTestPlanPath(this, null, Keys.TMS_TEST_PLAN__TMS_TEST_PLAN_FK_LAUNCH.getInverseKey());
+
+        return _tmsTestPlan;
     }
 
     /**

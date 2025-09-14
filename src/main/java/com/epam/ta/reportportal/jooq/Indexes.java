@@ -31,6 +31,9 @@ import com.epam.ta.reportportal.jooq.tables.JStaleMaterializedView;
 import com.epam.ta.reportportal.jooq.tables.JStatistics;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
 import com.epam.ta.reportportal.jooq.tables.JTicket;
+import com.epam.ta.reportportal.jooq.tables.JTmsManualScenario;
+import com.epam.ta.reportportal.jooq.tables.JTmsTestCase;
+import com.epam.ta.reportportal.jooq.tables.JTmsTestCaseVersion;
 
 import org.jooq.Index;
 import org.jooq.OrderField;
@@ -66,6 +69,9 @@ public class Indexes {
     public static final Index FILTER_SORT_FILTER_IDX = Internal.createIndex(DSL.name("filter_sort_filter_idx"), JFilterSort.FILTER_SORT, new OrderField[] { JFilterSort.FILTER_SORT.FILTER_ID }, false);
     public static final Index HASH_API_KEYS_IDX = Internal.createIndex(DSL.name("hash_api_keys_idx"), JApiKeys.API_KEYS, new OrderField[] { JApiKeys.API_KEYS.HASH }, false);
     public static final Index IDX_TEST_ITEM_NAME_TRGM = Internal.createIndex(DSL.name("idx_test_item_name_trgm"), JTestItem.TEST_ITEM, new OrderField[] { JTestItem.TEST_ITEM.NAME }, false);
+    public static final Index IDX_TMS_MANUAL_SCENARIO_TYPE = Internal.createIndex(DSL.name("idx_tms_manual_scenario_type"), JTmsManualScenario.TMS_MANUAL_SCENARIO, new OrderField[] { JTmsManualScenario.TMS_MANUAL_SCENARIO.TYPE }, false);
+    public static final Index IDX_TMS_TEST_CASE_SEARCH_VECTOR = Internal.createIndex(DSL.name("idx_tms_test_case_search_vector"), JTmsTestCase.TMS_TEST_CASE, new OrderField[] { JTmsTestCase.TMS_TEST_CASE.SEARCH_VECTOR }, false);
+    public static final Index IDX_TMS_TEST_CASE_VERSION_DEFAULT = Internal.createIndex(DSL.name("idx_tms_test_case_version_default"), JTmsTestCaseVersion.TMS_TEST_CASE_VERSION, new OrderField[] { JTmsTestCaseVersion.TMS_TEST_CASE_VERSION.TEST_CASE_ID }, true);
     public static final Index INTEGR_PROJECT_IDX = Internal.createIndex(DSL.name("integr_project_idx"), JIntegration.INTEGRATION, new OrderField[] { JIntegration.INTEGRATION.PROJECT_ID }, false);
     public static final Index ISSUE_IT_IDX = Internal.createIndex(DSL.name("issue_it_idx"), JIssue.ISSUE, new OrderField[] { JIssue.ISSUE.ISSUE_TYPE }, false);
     public static final Index ISSUE_TYPE_GROUP_IDX = Internal.createIndex(DSL.name("issue_type_group_idx"), JIssueType.ISSUE_TYPE, new OrderField[] { JIssueType.ISSUE_TYPE.ISSUE_GROUP_ID }, false);

@@ -13,6 +13,7 @@ import com.epam.ta.reportportal.jooq.tables.JGroupsUsers.JGroupsUsersPath;
 import com.epam.ta.reportportal.jooq.tables.JLaunch.JLaunchPath;
 import com.epam.ta.reportportal.jooq.tables.JOrganization.JOrganizationPath;
 import com.epam.ta.reportportal.jooq.tables.JOrganizationUser.JOrganizationUserPath;
+import com.epam.ta.reportportal.jooq.tables.JOwnedEntity.JOwnedEntityPath;
 import com.epam.ta.reportportal.jooq.tables.JProject.JProjectPath;
 import com.epam.ta.reportportal.jooq.tables.JProjectUser.JProjectUserPath;
 import com.epam.ta.reportportal.jooq.tables.JUserCreationBid.JUserCreationBidPath;
@@ -140,11 +141,6 @@ public class JUsers extends TableImpl<JUsersRecord> {
     public final TableField<JUsersRecord, Boolean> ACTIVE = createField(DSL.name("active"), SQLDataType.BOOLEAN.defaultValue(DSL.field(DSL.raw("true"), SQLDataType.BOOLEAN)), this, "");
 
     /**
-     * The column <code>public.users.login_backup</code>.
-     */
-    public final TableField<JUsersRecord, String> LOGIN_BACKUP = createField(DSL.name("login_backup"), SQLDataType.VARCHAR(255).defaultValue(DSL.field(DSL.raw("NULL::character varying"), SQLDataType.VARCHAR)), this, "");
-
-    /**
      * The column <code>public.users.created_at</code>.
      */
     public final TableField<JUsersRecord, Instant> CREATED_AT = createField(DSL.name("created_at"), SQLDataType.LOCALDATETIME(6).nullable(false).defaultValue(DSL.field(DSL.raw("now()"), SQLDataType.LOCALDATETIME)), this, "", new JooqInstantConverter());
@@ -153,6 +149,11 @@ public class JUsers extends TableImpl<JUsersRecord> {
      * The column <code>public.users.updated_at</code>.
      */
     public final TableField<JUsersRecord, Instant> UPDATED_AT = createField(DSL.name("updated_at"), SQLDataType.LOCALDATETIME(6).nullable(false).defaultValue(DSL.field(DSL.raw("now()"), SQLDataType.LOCALDATETIME)), this, "", new JooqInstantConverter());
+
+    /**
+     * The column <code>public.users.login_backup</code>.
+     */
+    public final TableField<JUsersRecord, String> LOGIN_BACKUP = createField(DSL.name("login_backup"), SQLDataType.VARCHAR(255).defaultValue(DSL.field(DSL.raw("NULL::character varying"), SQLDataType.VARCHAR)), this, "");
 
     private JUsers(Name alias, Table<JUsersRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);
@@ -249,19 +250,6 @@ public class JUsers extends TableImpl<JUsersRecord> {
         return _apiKeys;
     }
 
-    private transient JOrganizationPath _organization;
-
-    /**
-     * Get the implicit to-many join path to the
-     * <code>public.organization</code> table
-     */
-    public JOrganizationPath organization() {
-        if (_organization == null)
-            _organization = new JOrganizationPath(this, null, Keys.ORGANIZATION__FK_ORGANIZATION_OWNER.getInverseKey());
-
-        return _organization;
-    }
-
     private transient JGroupsPath _groups;
 
     /**
@@ -314,6 +302,19 @@ public class JUsers extends TableImpl<JUsersRecord> {
         return _organizationUser;
     }
 
+    private transient JOwnedEntityPath _ownedEntity;
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>public.owned_entity</code> table
+     */
+    public JOwnedEntityPath ownedEntity() {
+        if (_ownedEntity == null)
+            _ownedEntity = new JOwnedEntityPath(this, null, Keys.OWNED_ENTITY__OWNED_ENTITY_OWNER_FKEY.getInverseKey());
+
+        return _ownedEntity;
+    }
+
     private transient JProjectUserPath _projectUser;
 
     /**
@@ -351,6 +352,14 @@ public class JUsers extends TableImpl<JUsersRecord> {
             _userPreference = new JUserPreferencePath(this, null, Keys.USER_PREFERENCE__USER_PREFERENCE_USER_ID_FKEY.getInverseKey());
 
         return _userPreference;
+    }
+
+    /**
+     * Get the implicit many-to-many join path to the
+     * <code>public.organization</code> table
+     */
+    public JOrganizationPath organization() {
+        return organizationUser().organization();
     }
 
     /**
