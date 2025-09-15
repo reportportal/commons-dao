@@ -206,6 +206,9 @@ import com.epam.ta.reportportal.entity.organization.OrganizationUserFilter;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectInfo;
 import com.epam.ta.reportportal.entity.project.ProjectProfile;
+import com.epam.ta.reportportal.entity.tms.TmsTestCase;
+import com.epam.ta.reportportal.entity.tms.TmsTestFolder;
+import com.epam.ta.reportportal.entity.tms.TmsTestPlan;
 import com.epam.ta.reportportal.entity.tms.filter.TmsTestCaseFilter;
 import com.epam.ta.reportportal.entity.tms.filter.TmsTestFolderFilter;
 import com.epam.ta.reportportal.entity.tms.filter.TmsTestPlanFilter;
@@ -1734,7 +1737,7 @@ public enum FilterTarget {
     }
   },
 
-  TMS_TEST_CASE_TARGET(TmsTestCaseFilter.class,
+  TMS_TEST_CASE_TARGET(TmsTestCase.class,
       Arrays.asList(
           new CriteriaHolderBuilder().newBuilder(CRITERIA_TMS_TEST_CASE_ID, TMS_TEST_CASE.ID,
               Long.class).get(),
@@ -1797,7 +1800,7 @@ public enum FilterTarget {
     }
   },
 
-  TMS_TEST_PLAN_TARGET(TmsTestPlanFilter.class,
+  TMS_TEST_PLAN_TARGET(TmsTestPlan.class,
       Arrays.asList(
           new CriteriaHolderBuilder().newBuilder(CRITERIA_TMS_TEST_PLAN_ID, TMS_TEST_PLAN.ID,
               Long.class).get(),
@@ -1845,7 +1848,7 @@ public enum FilterTarget {
     }
   },
 
-  TMS_TEST_FOLDER_TARGET(TmsTestFolderFilter.class,
+  TMS_TEST_FOLDER_TARGET(TmsTestFolder.class,
       Arrays.asList(
           new CriteriaHolderBuilder().newBuilder(CRITERIA_TMS_TEST_FOLDER_ID, TMS_TEST_FOLDER.ID,
               Long.class).get(),
