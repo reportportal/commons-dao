@@ -535,4 +535,13 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
    */
   @Query(value = "SELECT t.item_id FROM test_item t WHERE t.retry_of = :retryOf", nativeQuery = true)
   List<Long> findIdsByRetryOf(@Param("retryOf") Long retryOf);
+
+  /**
+   * Checks if test item has nested steps (direct children with has_stats = false)
+   *
+   * @param itemId Parent item id
+   * @return True if it has nested steps, false otherwise
+   */
+  @Query(value = "SELECT EXISTS(SELECT 1 FROM test_item WHERE parent_id = :itemId AND has_stats = false)", nativeQuery = true)
+  boolean hasNestedSteps(@Param("itemId") Long itemId);
 }
