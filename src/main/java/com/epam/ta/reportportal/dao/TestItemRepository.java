@@ -537,7 +537,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
   List<Long> findIdsByRetryOf(@Param("retryOf") Long retryOf);
 
   /**
-   * Checks if test item has nested steps (direct children with has_stats = false)
+   * Checks if test item has nested steps
    *
    * @param itemId Parent item id
    * @return True if it has nested steps, false otherwise
