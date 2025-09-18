@@ -39,14 +39,13 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
     TestItemRepositoryCustom {
 
   /**
-   * Among the provided parent test item and its retries, finds the parent item whose direct child
-   * steps have the longest continuous sequence of non-failed nested steps from the start until the
-   * first failure occurs.
+   * Among the provided parent test item and its retries, finds the parent item whose direct child steps have the
+   * longest continuous sequence of non-failed nested steps from the start until the first failure occurs.
    *
-   * @param itemId {@link com.epam.ta.reportportal.entity.item.TestItem#getItemId()} of a parent
-   *               item (or any of its retries) whose child steps are analyzed
-   * @return {@link Long} parent item id with the maximum number of steps before the first failed
-   * step; {@code null} if no matching steps are found
+   * @param itemId {@link com.epam.ta.reportportal.entity.item.TestItem#getItemId()} of a parent item (or any of its
+   *               retries) whose child steps are analyzed
+   * @return {@link Long} parent item id with the maximum number of steps before the first failed step; {@code null} if
+   * no matching steps are found
    */
   @Query(value = """
       WITH parent_items AS (
@@ -190,8 +189,8 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
   List<Long> findIdsByLaunchId(@Param("launchId") Long launchId);
 
   /**
-   * Retrieve the {@link List} of the {@link TestItem#getItemId()} by launch ID, {@link StatusEnum#name()} and {@link
-   * TestItem#isHasChildren()} == false
+   * Retrieve the {@link List} of the {@link TestItem#getItemId()} by launch ID, {@link StatusEnum#name()} and
+   * {@link TestItem#isHasChildren()} == false
    *
    * @param launchId {@link Launch#getId()}
    * @param status   {@link StatusEnum#name()}
@@ -206,13 +205,14 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
       @Param("pageSize") Integer limit, @Param("pageOffset") Long offset);
 
   /**
-   * Retrieve the {@link List} of the {@link TestItem#getItemId()} by launch ID, {@link StatusEnum#name()} and {@link
-   * TestItem#isHasChildren()} == true ordered (DESCENDING) by 'nlevel' of the {@link TestItem#getPath()}
+   * Retrieve the {@link List} of the {@link TestItem#getItemId()} by launch ID, {@link StatusEnum#name()} and
+   * {@link TestItem#isHasChildren()} == true ordered (DESCENDING) by 'nlevel' of the {@link TestItem#getPath()}
    *
    * @param launchId {@link Launch#getId()}
    * @param status   {@link StatusEnum#name()}
    * @return the {@link List} of the {@link TestItem#getItemId()}
-   * @see <a href="https://www.postgresql.org/docs/current/ltree.html">https://www.postgresql.org/docs/current/ltree.html</a>
+   * @see <a
+   * href="https://www.postgresql.org/docs/current/ltree.html">https://www.postgresql.org/docs/current/ltree.html</a>
    */
   @Query(value =
       "SELECT test_item.item_id FROM test_item JOIN test_item_results result ON test_item.item_id = result.result_id "
@@ -224,8 +224,8 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
       @Param("pageOffset") Long offset);
 
   /**
-   * Retrieve the {@link Stream} of the {@link TestItem#getItemId()} under parent {@link TestItem#getPath()}, {@link
-   * StatusEnum#name()} and {@link TestItem#isHasChildren()} == false
+   * Retrieve the {@link Stream} of the {@link TestItem#getItemId()} under parent {@link TestItem#getPath()},
+   * {@link StatusEnum#name()} and {@link TestItem#isHasChildren()} == false
    *
    * @param parentPath {@link TestItem#getPath()} of the parent item
    * @param status     {@link StatusEnum#name()}
@@ -240,14 +240,15 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
       @Param("pageSize") Integer limit, @Param("pageOffset") Long offset);
 
   /**
-   * Retrieve the {@link Stream} of the {@link TestItem#getItemId()} under parent {@link TestItem#getPath()}, {@link
-   * StatusEnum#name()} and {@link TestItem#isHasChildren()} == true ordered (DESCENDING) by 'nlevel' of the {@link
-   * TestItem#getPath()}
+   * Retrieve the {@link Stream} of the {@link TestItem#getItemId()} under parent {@link TestItem#getPath()},
+   * {@link StatusEnum#name()} and {@link TestItem#isHasChildren()} == true ordered (DESCENDING) by 'nlevel' of the
+   * {@link TestItem#getPath()}
    *
    * @param parentPath {@link TestItem#getPath()} of the parent item
    * @param status     {@link StatusEnum#name()}
    * @return the {@link List} of the {@link TestItem#getItemId()}
-   * @see <a href="https://www.postgresql.org/docs/current/ltree.html">https://www.postgresql.org/docs/current/ltree.html</a>
+   * @see <a
+   * href="https://www.postgresql.org/docs/current/ltree.html">https://www.postgresql.org/docs/current/ltree.html</a>
    */
   @Query(value =
       "SELECT test_item.item_id FROM test_item JOIN test_item_results result ON test_item.item_id = result.result_id "
@@ -286,13 +287,13 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 
   /**
    * Execute sql-function that changes a structure of retries according to the MAX {@link TestItem#getStartTime()}. If
-   * the new-inserted {@link TestItem} with specified {@link TestItem#getItemId()} is a retry and it has {@link
-   * TestItem#getStartTime()} greater than MAX {@link TestItem#getStartTime()} of the other {@link TestItem} with the
-   * same {@link TestItem#getUniqueId()} then all those test items become retries of the new-inserted one: theirs {@link
-   * TestItem#isHasRetries()} flag is set to 'false' and {@link TestItem#getRetryOf()} gets the new-inserted {@link
-   * TestItem#getItemId()} value. The same operation applies to the new-inserted {@link TestItem} if its {@link
-   * TestItem#getStartTime()} is less than MAX {@link TestItem#getStartTime()} of the other {@link TestItem} with the
-   * same {@link TestItem#getUniqueId()}
+   * the new-inserted {@link TestItem} with specified {@link TestItem#getItemId()} is a retry and it has
+   * {@link TestItem#getStartTime()} greater than MAX {@link TestItem#getStartTime()} of the other {@link TestItem} with
+   * the same {@link TestItem#getUniqueId()} then all those test items become retries of the new-inserted one: theirs
+   * {@link TestItem#isHasRetries()} flag is set to 'false' and {@link TestItem#getRetryOf()} gets the new-inserted
+   * {@link TestItem#getItemId()} value. The same operation applies to the new-inserted {@link TestItem} if its
+   * {@link TestItem#getStartTime()} is less than MAX {@link TestItem#getStartTime()} of the other {@link TestItem} with
+   * the same {@link TestItem#getUniqueId()}
    *
    * @param itemId The new-inserted {@link TestItem#getItemId()}
    * @deprecated {@link TestItemRepository#handleRetry(Long, Long)} should be used instead
@@ -482,8 +483,8 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
       @Param("launchId") Long launchId);
 
   /**
-   * Finds latest {@link TestItem#getItemId()} with specified {@code testCaseHash}, {@code launchId} and {@code
-   * parentId}
+   * Finds latest {@link TestItem#getItemId()} with specified {@code testCaseHash}, {@code launchId} and
+   * {@code parentId}
    *
    * @param testCaseHash {@link TestItem#getTestCaseHash()}
    * @param launchId     {@link TestItem#getLaunchId()}
@@ -537,11 +538,14 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
   List<Long> findIdsByRetryOf(@Param("retryOf") Long retryOf);
 
   /**
-   * Checks if test item has nested steps
+   * Returns IDs (from itemIds) that have nested steps.
    *
-   * @param itemId Parent item id
-   * @return True if it has nested steps, false otherwise
+   * @param itemIds test item IDs to check
+   * @return list of IDs that have nested steps
    */
-  @Query(value = "SELECT EXISTS(SELECT 1 FROM test_item WHERE parent_id = :itemId AND has_stats = false)", nativeQuery = true)
-  boolean hasNestedSteps(@Param("itemId") Long itemId);
+  @Query(
+      value = "SELECT DISTINCT parent_id FROM test_item WHERE parent_id IN (:itemIds) AND has_stats = false",
+      nativeQuery = true
+  )
+  List<Long> findParentsWithNestedSteps(@Param("itemIds") List<Long> itemIds);
 }
