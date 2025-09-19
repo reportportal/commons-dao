@@ -35,3 +35,7 @@ datastore:
 spring:
   flyway:
     clean-disabled: false
+
+tms:
+  datastore:
+    type: filesystem
