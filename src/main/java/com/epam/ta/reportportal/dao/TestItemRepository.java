@@ -560,5 +560,4 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
       nativeQuery = true
   )
   List<Long> findParentsWithNestedSteps(@Param("itemIds") List<Long> itemIds);
-
 }
