@@ -49,13 +49,13 @@ class TmsAttachmentDataStoreServiceTest extends BaseTest {
   @Autowired
   private TmsAttachmentDataStoreService tmsAttachmentDataStoreService;
 
-  @Value("${tms.datastore.path:/data/store}")
+  @Value("${rp.tms.datastore.path:/data/store}")
   private String storageRootPath;
 
-  @Value("${tms.datastore.bucketPrefix:tms-prj-}")
+  @Value("${rp.tms.datastore.bucketPrefix:tms-prj-}")
   private String bucketPrefix;
 
-  @Value("${tms.datastore.bucketPostfix:}")
+  @Value("${rp.tms.datastore.bucketPostfix:}")
   private String bucketPostfix;
 
   @Test
