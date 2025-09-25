@@ -9,6 +9,9 @@ rp:
     path: ${java.io.tmpdir}/reportportal/datastore
   feature:
     flags: ""
+  tms:
+    datastore:
+      type: filesystem
 
 datastore:
   path: ${rp.binarystore.path:/data/storage}
@@ -35,7 +38,3 @@ datastore:
 spring:
   flyway:
     clean-disabled: false
-
-tms:
-  datastore:
-    type: filesystem

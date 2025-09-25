@@ -258,9 +258,9 @@ public class DataStoreConfiguration {
   }
 
   @Bean
-  @ConditionalOnProperty(name = "tms.datastore.type", havingValue = "filesystem")
+  @ConditionalOnProperty(name = "rp.tms.datastore.type", havingValue = "filesystem")
   public BlobStore tmsFilesystemBlobStore(
-      @Value("${tms.datastore.path:/tms/data/store}") String baseDirectory) {
+      @Value("${rp.tms.datastore.path:/data/store}") String baseDirectory) {
 
     Properties properties = new Properties();
     properties.setProperty(FilesystemConstants.PROPERTY_BASEDIR, baseDirectory);
@@ -273,13 +273,13 @@ public class DataStoreConfiguration {
   }
 
   @Bean
-  @ConditionalOnProperty(name = "tms.datastore.type", havingValue = "filesystem")
+  @ConditionalOnProperty(name = "rp.tms.datastore.type", havingValue = "filesystem")
   public TmsDataStore tmsLocalDataStore(
       @Autowired @Qualifier("tmsFilesystemBlobStore") BlobStore tmsFilesystemBlobStore,
       FeatureFlagHandler featureFlagHandler,
-      @Value("${tms.datastore.bucketPrefix:tms-prj-}") String bucketPrefix,
-      @Value("${tms.datastore.bucketPostfix:}") String bucketPostfix,
-      @Value("${tms.datastore.defaultBucketName:tms-rp-bucket}") String defaultBucketName) {
+      @Value("${rp.tms.datastore.bucketPrefix:tms-prj-}") String bucketPrefix,
+      @Value("${rp.tms.datastore.bucketPostfix:}") String bucketPostfix,
+      @Value("${rp.tms.datastore.defaultBucketName:tms-rp-bucket}") String defaultBucketName) {
     return new LocalTmsDataStore(
         tmsFilesystemBlobStore, featureFlagHandler, bucketPrefix, bucketPostfix, defaultBucketName);
   }
