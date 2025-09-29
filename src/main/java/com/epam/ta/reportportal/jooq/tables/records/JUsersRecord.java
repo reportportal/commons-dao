@@ -219,45 +219,45 @@ public class JUsersRecord extends UpdatableRecordImpl<JUsersRecord> {
     }
 
     /**
-     * Setter for <code>public.users.login_backup</code>.
-     */
-    public void setLoginBackup(String value) {
-        set(14, value);
-    }
-
-    /**
-     * Getter for <code>public.users.login_backup</code>.
-     */
-    public String getLoginBackup() {
-        return (String) get(14);
-    }
-
-    /**
      * Setter for <code>public.users.created_at</code>.
      */
     public void setCreatedAt(Instant value) {
-        set(15, value);
+        set(14, value);
     }
 
     /**
      * Getter for <code>public.users.created_at</code>.
      */
     public Instant getCreatedAt() {
-        return (Instant) get(15);
+        return (Instant) get(14);
     }
 
     /**
      * Setter for <code>public.users.updated_at</code>.
      */
     public void setUpdatedAt(Instant value) {
-        set(16, value);
+        set(15, value);
     }
 
     /**
      * Getter for <code>public.users.updated_at</code>.
      */
     public Instant getUpdatedAt() {
-        return (Instant) get(16);
+        return (Instant) get(15);
+    }
+
+    /**
+     * Setter for <code>public.users.login_backup</code>.
+     */
+    public void setLoginBackup(String value) {
+        set(16, value);
+    }
+
+    /**
+     * Getter for <code>public.users.login_backup</code>.
+     */
+    public String getLoginBackup() {
+        return (String) get(16);
     }
 
     // -------------------------------------------------------------------------
@@ -283,7 +283,7 @@ public class JUsersRecord extends UpdatableRecordImpl<JUsersRecord> {
     /**
      * Create a detached, initialised JUsersRecord
      */
-    public JUsersRecord(Long id, String login, String password, String email, String attachment, String attachmentThumbnail, String role, String type, Boolean expired, String fullName, JSONB metadata, UUID uuid, String externalId, Boolean active, String loginBackup, Instant createdAt, Instant updatedAt) {
+    public JUsersRecord(Long id, String login, String password, String email, String attachment, String attachmentThumbnail, String role, String type, Boolean expired, String fullName, JSONB metadata, UUID uuid, String externalId, Boolean active, Instant createdAt, Instant updatedAt, String loginBackup) {
         super(JUsers.USERS);
 
         setId(id);
@@ -300,9 +300,9 @@ public class JUsersRecord extends UpdatableRecordImpl<JUsersRecord> {
         setUuid(uuid);
         setExternalId(externalId);
         setActive(active);
-        setLoginBackup(loginBackup);
         setCreatedAt(createdAt);
         setUpdatedAt(updatedAt);
+        setLoginBackup(loginBackup);
         resetChangedOnNotNull();
     }
 }

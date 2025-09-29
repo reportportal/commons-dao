@@ -23,6 +23,11 @@ import com.epam.ta.reportportal.jooq.tables.JPatternTemplate.JPatternTemplatePat
 import com.epam.ta.reportportal.jooq.tables.JProjectAttribute.JProjectAttributePath;
 import com.epam.ta.reportportal.jooq.tables.JProjectUser.JProjectUserPath;
 import com.epam.ta.reportportal.jooq.tables.JSenderCase.JSenderCasePath;
+import com.epam.ta.reportportal.jooq.tables.JTmsDataset.JTmsDatasetPath;
+import com.epam.ta.reportportal.jooq.tables.JTmsEnvironment.JTmsEnvironmentPath;
+import com.epam.ta.reportportal.jooq.tables.JTmsProductVersion.JTmsProductVersionPath;
+import com.epam.ta.reportportal.jooq.tables.JTmsTestFolder.JTmsTestFolderPath;
+import com.epam.ta.reportportal.jooq.tables.JTmsTestPlan.JTmsTestPlanPath;
 import com.epam.ta.reportportal.jooq.tables.JUserPreference.JUserPreferencePath;
 import com.epam.ta.reportportal.jooq.tables.JUsers.JUsersPath;
 import com.epam.ta.reportportal.jooq.tables.records.JProjectRecord;
@@ -111,7 +116,7 @@ public class JProject extends TableImpl<JProjectRecord> {
     /**
      * The column <code>public.project.organization_id</code>.
      */
-    public final TableField<JProjectRecord, Long> ORGANIZATION_ID = createField(DSL.name("organization_id"), SQLDataType.BIGINT.nullable(false), this, "");
+    public final TableField<JProjectRecord, Long> ORGANIZATION_ID = createField(DSL.name("organization_id"), SQLDataType.BIGINT, this, "");
 
     /**
      * The column <code>public.project.slug</code>.
@@ -373,6 +378,71 @@ public class JProject extends TableImpl<JProjectRecord> {
             _ownedEntity = new JOwnedEntityPath(this, null, Keys.OWNED_ENTITY__SHAREABLE_ENTITY_PROJECT_ID_FKEY.getInverseKey());
 
         return _ownedEntity;
+    }
+
+    private transient JTmsDatasetPath _tmsDataset;
+
+    /**
+     * Get the implicit to-many join path to the <code>public.tms_dataset</code>
+     * table
+     */
+    public JTmsDatasetPath tmsDataset() {
+        if (_tmsDataset == null)
+            _tmsDataset = new JTmsDatasetPath(this, null, Keys.TMS_DATASET__TMS_DATASET_FK_PROJECT.getInverseKey());
+
+        return _tmsDataset;
+    }
+
+    private transient JTmsEnvironmentPath _tmsEnvironment;
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>public.tms_environment</code> table
+     */
+    public JTmsEnvironmentPath tmsEnvironment() {
+        if (_tmsEnvironment == null)
+            _tmsEnvironment = new JTmsEnvironmentPath(this, null, Keys.TMS_ENVIRONMENT__TMS_ENVIRONMENT_FK_PROJECT.getInverseKey());
+
+        return _tmsEnvironment;
+    }
+
+    private transient JTmsProductVersionPath _tmsProductVersion;
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>public.tms_product_version</code> table
+     */
+    public JTmsProductVersionPath tmsProductVersion() {
+        if (_tmsProductVersion == null)
+            _tmsProductVersion = new JTmsProductVersionPath(this, null, Keys.TMS_PRODUCT_VERSION__TMS_PRODUCT_VERSION_FK_PROJECT.getInverseKey());
+
+        return _tmsProductVersion;
+    }
+
+    private transient JTmsTestFolderPath _tmsTestFolder;
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>public.tms_test_folder</code> table
+     */
+    public JTmsTestFolderPath tmsTestFolder() {
+        if (_tmsTestFolder == null)
+            _tmsTestFolder = new JTmsTestFolderPath(this, null, Keys.TMS_TEST_FOLDER__TMS_TEST_FOLDER_FK_PROJECT.getInverseKey());
+
+        return _tmsTestFolder;
+    }
+
+    private transient JTmsTestPlanPath _tmsTestPlan;
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>public.tms_test_plan</code> table
+     */
+    public JTmsTestPlanPath tmsTestPlan() {
+        if (_tmsTestPlan == null)
+            _tmsTestPlan = new JTmsTestPlanPath(this, null, Keys.TMS_TEST_PLAN__TMS_TEST_PLAN_FK_PROJECT.getInverseKey());
+
+        return _tmsTestPlan;
     }
 
     private transient JUserPreferencePath _userPreference;

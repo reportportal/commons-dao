@@ -10,6 +10,7 @@ import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.JDashboard.JDashboardPath;
 import com.epam.ta.reportportal.jooq.tables.JFilter.JFilterPath;
 import com.epam.ta.reportportal.jooq.tables.JProject.JProjectPath;
+import com.epam.ta.reportportal.jooq.tables.JUsers.JUsersPath;
 import com.epam.ta.reportportal.jooq.tables.JWidget.JWidgetPath;
 import com.epam.ta.reportportal.jooq.tables.records.JOwnedEntityRecord;
 
@@ -161,7 +162,19 @@ public class JOwnedEntity extends TableImpl<JOwnedEntityRecord> {
 
     @Override
     public List<ForeignKey<JOwnedEntityRecord, ?>> getReferences() {
-        return Arrays.asList(Keys.OWNED_ENTITY__SHAREABLE_ENTITY_PROJECT_ID_FKEY);
+        return Arrays.asList(Keys.OWNED_ENTITY__OWNED_ENTITY_OWNER_FKEY, Keys.OWNED_ENTITY__SHAREABLE_ENTITY_PROJECT_ID_FKEY);
+    }
+
+    private transient JUsersPath _users;
+
+    /**
+     * Get the implicit join path to the <code>public.users</code> table.
+     */
+    public JUsersPath users() {
+        if (_users == null)
+            _users = new JUsersPath(this, Keys.OWNED_ENTITY__OWNED_ENTITY_OWNER_FKEY, null);
+
+        return _users;
     }
 
     private transient JProjectPath _project;

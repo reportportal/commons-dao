@@ -118,20 +118,6 @@ public class JOrganizationRecord extends UpdatableRecordImpl<JOrganizationRecord
         return (String) get(6);
     }
 
-    /**
-     * Setter for <code>public.organization.owner_id</code>.
-     */
-    public void setOwnerId(Long value) {
-        set(7, value);
-    }
-
-    /**
-     * Getter for <code>public.organization.owner_id</code>.
-     */
-    public Long getOwnerId() {
-        return (Long) get(7);
-    }
-
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -155,7 +141,7 @@ public class JOrganizationRecord extends UpdatableRecordImpl<JOrganizationRecord
     /**
      * Create a detached, initialised JOrganizationRecord
      */
-    public JOrganizationRecord(Long id, Instant createdAt, Instant updatedAt, String name, String organizationType, String externalId, String slug, Long ownerId) {
+    public JOrganizationRecord(Long id, Instant createdAt, Instant updatedAt, String name, String organizationType, String externalId, String slug) {
         super(JOrganization.ORGANIZATION);
 
         setId(id);
@@ -165,7 +151,6 @@ public class JOrganizationRecord extends UpdatableRecordImpl<JOrganizationRecord
         setOrganizationType(organizationType);
         setExternalId(externalId);
         setSlug(slug);
-        setOwnerId(ownerId);
         resetChangedOnNotNull();
     }
 }
