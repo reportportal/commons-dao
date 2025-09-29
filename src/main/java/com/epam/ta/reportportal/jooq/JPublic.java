@@ -59,6 +59,31 @@ import com.epam.ta.reportportal.jooq.tables.JStatisticsField;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
 import com.epam.ta.reportportal.jooq.tables.JTestItemResults;
 import com.epam.ta.reportportal.jooq.tables.JTicket;
+import com.epam.ta.reportportal.jooq.tables.JTmsAttachment;
+import com.epam.ta.reportportal.jooq.tables.JTmsAttribute;
+import com.epam.ta.reportportal.jooq.tables.JTmsDataset;
+import com.epam.ta.reportportal.jooq.tables.JTmsDatasetData;
+import com.epam.ta.reportportal.jooq.tables.JTmsEnvironment;
+import com.epam.ta.reportportal.jooq.tables.JTmsEnvironmentDataset;
+import com.epam.ta.reportportal.jooq.tables.JTmsManualScenario;
+import com.epam.ta.reportportal.jooq.tables.JTmsManualScenarioAttribute;
+import com.epam.ta.reportportal.jooq.tables.JTmsManualScenarioPreconditions;
+import com.epam.ta.reportportal.jooq.tables.JTmsManualScenarioPreconditionsAttachment;
+import com.epam.ta.reportportal.jooq.tables.JTmsMilestone;
+import com.epam.ta.reportportal.jooq.tables.JTmsProductVersion;
+import com.epam.ta.reportportal.jooq.tables.JTmsStep;
+import com.epam.ta.reportportal.jooq.tables.JTmsStepAttachment;
+import com.epam.ta.reportportal.jooq.tables.JTmsStepsManualScenario;
+import com.epam.ta.reportportal.jooq.tables.JTmsTestCase;
+import com.epam.ta.reportportal.jooq.tables.JTmsTestCaseAttribute;
+import com.epam.ta.reportportal.jooq.tables.JTmsTestCaseVersion;
+import com.epam.ta.reportportal.jooq.tables.JTmsTestFolder;
+import com.epam.ta.reportportal.jooq.tables.JTmsTestPlan;
+import com.epam.ta.reportportal.jooq.tables.JTmsTestPlanAttribute;
+import com.epam.ta.reportportal.jooq.tables.JTmsTestPlanLaunch;
+import com.epam.ta.reportportal.jooq.tables.JTmsTestPlanTestCase;
+import com.epam.ta.reportportal.jooq.tables.JTmsTextManualScenario;
+import com.epam.ta.reportportal.jooq.tables.JTmsTextManualScenarioAttachment;
 import com.epam.ta.reportportal.jooq.tables.JUserCreationBid;
 import com.epam.ta.reportportal.jooq.tables.JUserPreference;
 import com.epam.ta.reportportal.jooq.tables.JUsers;
@@ -401,6 +426,132 @@ public class JPublic extends SchemaImpl {
     public final JTicket TICKET = JTicket.TICKET;
 
     /**
+     * The table <code>public.tms_attachment</code>.
+     */
+    public final JTmsAttachment TMS_ATTACHMENT = JTmsAttachment.TMS_ATTACHMENT;
+
+    /**
+     * The table <code>public.tms_attribute</code>.
+     */
+    public final JTmsAttribute TMS_ATTRIBUTE = JTmsAttribute.TMS_ATTRIBUTE;
+
+    /**
+     * The table <code>public.tms_dataset</code>.
+     */
+    public final JTmsDataset TMS_DATASET = JTmsDataset.TMS_DATASET;
+
+    /**
+     * The table <code>public.tms_dataset_data</code>.
+     */
+    public final JTmsDatasetData TMS_DATASET_DATA = JTmsDatasetData.TMS_DATASET_DATA;
+
+    /**
+     * The table <code>public.tms_environment</code>.
+     */
+    public final JTmsEnvironment TMS_ENVIRONMENT = JTmsEnvironment.TMS_ENVIRONMENT;
+
+    /**
+     * The table <code>public.tms_environment_dataset</code>.
+     */
+    public final JTmsEnvironmentDataset TMS_ENVIRONMENT_DATASET = JTmsEnvironmentDataset.TMS_ENVIRONMENT_DATASET;
+
+    /**
+     * The table <code>public.tms_manual_scenario</code>.
+     */
+    public final JTmsManualScenario TMS_MANUAL_SCENARIO = JTmsManualScenario.TMS_MANUAL_SCENARIO;
+
+    /**
+     * The table <code>public.tms_manual_scenario_attribute</code>.
+     */
+    public final JTmsManualScenarioAttribute TMS_MANUAL_SCENARIO_ATTRIBUTE = JTmsManualScenarioAttribute.TMS_MANUAL_SCENARIO_ATTRIBUTE;
+
+    /**
+     * The table <code>public.tms_manual_scenario_preconditions</code>.
+     */
+    public final JTmsManualScenarioPreconditions TMS_MANUAL_SCENARIO_PRECONDITIONS = JTmsManualScenarioPreconditions.TMS_MANUAL_SCENARIO_PRECONDITIONS;
+
+    /**
+     * The table
+     * <code>public.tms_manual_scenario_preconditions_attachment</code>.
+     */
+    public final JTmsManualScenarioPreconditionsAttachment TMS_MANUAL_SCENARIO_PRECONDITIONS_ATTACHMENT = JTmsManualScenarioPreconditionsAttachment.TMS_MANUAL_SCENARIO_PRECONDITIONS_ATTACHMENT;
+
+    /**
+     * The table <code>public.tms_milestone</code>.
+     */
+    public final JTmsMilestone TMS_MILESTONE = JTmsMilestone.TMS_MILESTONE;
+
+    /**
+     * The table <code>public.tms_product_version</code>.
+     */
+    public final JTmsProductVersion TMS_PRODUCT_VERSION = JTmsProductVersion.TMS_PRODUCT_VERSION;
+
+    /**
+     * The table <code>public.tms_step</code>.
+     */
+    public final JTmsStep TMS_STEP = JTmsStep.TMS_STEP;
+
+    /**
+     * The table <code>public.tms_step_attachment</code>.
+     */
+    public final JTmsStepAttachment TMS_STEP_ATTACHMENT = JTmsStepAttachment.TMS_STEP_ATTACHMENT;
+
+    /**
+     * The table <code>public.tms_steps_manual_scenario</code>.
+     */
+    public final JTmsStepsManualScenario TMS_STEPS_MANUAL_SCENARIO = JTmsStepsManualScenario.TMS_STEPS_MANUAL_SCENARIO;
+
+    /**
+     * The table <code>public.tms_test_case</code>.
+     */
+    public final JTmsTestCase TMS_TEST_CASE = JTmsTestCase.TMS_TEST_CASE;
+
+    /**
+     * The table <code>public.tms_test_case_attribute</code>.
+     */
+    public final JTmsTestCaseAttribute TMS_TEST_CASE_ATTRIBUTE = JTmsTestCaseAttribute.TMS_TEST_CASE_ATTRIBUTE;
+
+    /**
+     * The table <code>public.tms_test_case_version</code>.
+     */
+    public final JTmsTestCaseVersion TMS_TEST_CASE_VERSION = JTmsTestCaseVersion.TMS_TEST_CASE_VERSION;
+
+    /**
+     * The table <code>public.tms_test_folder</code>.
+     */
+    public final JTmsTestFolder TMS_TEST_FOLDER = JTmsTestFolder.TMS_TEST_FOLDER;
+
+    /**
+     * The table <code>public.tms_test_plan</code>.
+     */
+    public final JTmsTestPlan TMS_TEST_PLAN = JTmsTestPlan.TMS_TEST_PLAN;
+
+    /**
+     * The table <code>public.tms_test_plan_attribute</code>.
+     */
+    public final JTmsTestPlanAttribute TMS_TEST_PLAN_ATTRIBUTE = JTmsTestPlanAttribute.TMS_TEST_PLAN_ATTRIBUTE;
+
+    /**
+     * The table <code>public.tms_test_plan_launch</code>.
+     */
+    public final JTmsTestPlanLaunch TMS_TEST_PLAN_LAUNCH = JTmsTestPlanLaunch.TMS_TEST_PLAN_LAUNCH;
+
+    /**
+     * The table <code>public.tms_test_plan_test_case</code>.
+     */
+    public final JTmsTestPlanTestCase TMS_TEST_PLAN_TEST_CASE = JTmsTestPlanTestCase.TMS_TEST_PLAN_TEST_CASE;
+
+    /**
+     * The table <code>public.tms_text_manual_scenario</code>.
+     */
+    public final JTmsTextManualScenario TMS_TEXT_MANUAL_SCENARIO = JTmsTextManualScenario.TMS_TEXT_MANUAL_SCENARIO;
+
+    /**
+     * The table <code>public.tms_text_manual_scenario_attachment</code>.
+     */
+    public final JTmsTextManualScenarioAttachment TMS_TEXT_MANUAL_SCENARIO_ATTACHMENT = JTmsTextManualScenarioAttachment.TMS_TEXT_MANUAL_SCENARIO_ATTACHMENT;
+
+    /**
      * The table <code>public.user_creation_bid</code>.
      */
     public final JUserCreationBid USER_CREATION_BID = JUserCreationBid.USER_CREATION_BID;
@@ -503,6 +654,31 @@ public class JPublic extends SchemaImpl {
             JTestItem.TEST_ITEM,
             JTestItemResults.TEST_ITEM_RESULTS,
             JTicket.TICKET,
+            JTmsAttachment.TMS_ATTACHMENT,
+            JTmsAttribute.TMS_ATTRIBUTE,
+            JTmsDataset.TMS_DATASET,
+            JTmsDatasetData.TMS_DATASET_DATA,
+            JTmsEnvironment.TMS_ENVIRONMENT,
+            JTmsEnvironmentDataset.TMS_ENVIRONMENT_DATASET,
+            JTmsManualScenario.TMS_MANUAL_SCENARIO,
+            JTmsManualScenarioAttribute.TMS_MANUAL_SCENARIO_ATTRIBUTE,
+            JTmsManualScenarioPreconditions.TMS_MANUAL_SCENARIO_PRECONDITIONS,
+            JTmsManualScenarioPreconditionsAttachment.TMS_MANUAL_SCENARIO_PRECONDITIONS_ATTACHMENT,
+            JTmsMilestone.TMS_MILESTONE,
+            JTmsProductVersion.TMS_PRODUCT_VERSION,
+            JTmsStep.TMS_STEP,
+            JTmsStepAttachment.TMS_STEP_ATTACHMENT,
+            JTmsStepsManualScenario.TMS_STEPS_MANUAL_SCENARIO,
+            JTmsTestCase.TMS_TEST_CASE,
+            JTmsTestCaseAttribute.TMS_TEST_CASE_ATTRIBUTE,
+            JTmsTestCaseVersion.TMS_TEST_CASE_VERSION,
+            JTmsTestFolder.TMS_TEST_FOLDER,
+            JTmsTestPlan.TMS_TEST_PLAN,
+            JTmsTestPlanAttribute.TMS_TEST_PLAN_ATTRIBUTE,
+            JTmsTestPlanLaunch.TMS_TEST_PLAN_LAUNCH,
+            JTmsTestPlanTestCase.TMS_TEST_PLAN_TEST_CASE,
+            JTmsTextManualScenario.TMS_TEXT_MANUAL_SCENARIO,
+            JTmsTextManualScenarioAttachment.TMS_TEXT_MANUAL_SCENARIO_ATTACHMENT,
             JUserCreationBid.USER_CREATION_BID,
             JUserPreference.USER_PREFERENCE,
             JUsers.USERS,

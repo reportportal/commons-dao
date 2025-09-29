@@ -100,11 +100,6 @@ public class JOrganization extends TableImpl<JOrganizationRecord> {
      */
     public final TableField<JOrganizationRecord, String> SLUG = createField(DSL.name("slug"), SQLDataType.CLOB.nullable(false), this, "");
 
-    /**
-     * The column <code>public.organization.owner_id</code>.
-     */
-    public final TableField<JOrganizationRecord, Long> OWNER_ID = createField(DSL.name("owner_id"), SQLDataType.BIGINT, this, "");
-
     private JOrganization(Name alias, Table<JOrganizationRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);
     }
@@ -189,24 +184,7 @@ public class JOrganization extends TableImpl<JOrganizationRecord> {
 
     @Override
     public List<UniqueKey<JOrganizationRecord>> getUniqueKeys() {
-        return Arrays.asList(Keys.ORGANIZATION_EXTERNAL_ID_KEY, Keys.ORGANIZATION_NAME_KEY, Keys.ORGANIZATION_SLUG_KEY, Keys.UQ_ORGANIZATION_OWNER_ID);
-    }
-
-    @Override
-    public List<ForeignKey<JOrganizationRecord, ?>> getReferences() {
-        return Arrays.asList(Keys.ORGANIZATION__FK_ORGANIZATION_OWNER);
-    }
-
-    private transient JUsersPath _users;
-
-    /**
-     * Get the implicit join path to the <code>public.users</code> table.
-     */
-    public JUsersPath users() {
-        if (_users == null)
-            _users = new JUsersPath(this, Keys.ORGANIZATION__FK_ORGANIZATION_OWNER, null);
-
-        return _users;
+        return Arrays.asList(Keys.ORGANIZATION_EXTERNAL_ID_KEY, Keys.ORGANIZATION_NAME_KEY, Keys.ORGANIZATION_SLUG_KEY);
     }
 
     private transient JActivityPath _activity;
@@ -259,6 +237,14 @@ public class JOrganization extends TableImpl<JOrganizationRecord> {
             _organizationUser = new JOrganizationUserPath(this, null, Keys.ORGANIZATION_USER__ORGANIZATION_USER_ORGANIZATION_ID_FKEY.getInverseKey());
 
         return _organizationUser;
+    }
+
+    /**
+     * Get the implicit many-to-many join path to the <code>public.users</code>
+     * table
+     */
+    public JUsersPath users() {
+        return organizationUser().users();
     }
 
     @Override
