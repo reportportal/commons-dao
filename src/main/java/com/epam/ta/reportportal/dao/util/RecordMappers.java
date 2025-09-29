@@ -43,6 +43,9 @@ import static com.epam.ta.reportportal.jooq.Tables.STATISTICS_FIELD;
 import static com.epam.ta.reportportal.jooq.Tables.TEST_ITEM;
 import static com.epam.ta.reportportal.jooq.Tables.TEST_ITEM_RESULTS;
 import static com.epam.ta.reportportal.jooq.Tables.TICKET;
+import static com.epam.ta.reportportal.jooq.Tables.TMS_TEST_CASE;
+import static com.epam.ta.reportportal.jooq.Tables.TMS_TEST_FOLDER;
+import static com.epam.ta.reportportal.jooq.Tables.TMS_TEST_PLAN;
 import static com.epam.ta.reportportal.jooq.Tables.WIDGET;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
 import static com.epam.ta.reportportal.jooq.tables.JAttachment.ATTACHMENT;
@@ -96,6 +99,9 @@ import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
 import com.epam.ta.reportportal.entity.statistics.Statistics;
 import com.epam.ta.reportportal.entity.statistics.StatisticsField;
+import com.epam.ta.reportportal.entity.tms.TmsTestCase;
+import com.epam.ta.reportportal.entity.tms.TmsTestFolder;
+import com.epam.ta.reportportal.entity.tms.TmsTestPlan;
 import com.epam.ta.reportportal.entity.user.OrganizationUser;
 import com.epam.ta.reportportal.entity.user.OrganizationUserId;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
@@ -723,5 +729,80 @@ public class RecordMappers {
     integration.setProject(project);
 
     return integration;
+  };
+
+  /**
+   * Maps record into {@link TmsTestCase} object
+   */
+  public static final RecordMapper<? super Record, TmsTestCase> TMS_TEST_CASE_MAPPER = r -> {
+    TmsTestCase testCase = new TmsTestCase();
+    testCase.setId(r.get(TMS_TEST_CASE.ID));
+    testCase.setName(r.get(TMS_TEST_CASE.NAME));
+    testCase.setDescription(r.get(TMS_TEST_CASE.DESCRIPTION));
+    testCase.setPriority(r.get(TMS_TEST_CASE.PRIORITY)); // String, не enum
+
+    // Создаем TmsTestFolder с id, если folderId присутствует
+    ofNullable(r.get(TMS_TEST_CASE.TEST_FOLDER_ID)).ifPresent(folderId -> {
+      TmsTestFolder testFolder = new TmsTestFolder();
+      testFolder.setId(folderId);
+
+      // Создаем Project с id для testFolder, если есть project_id в запросе
+      // Предполагается, что в JOIN будет PROJECT таблица
+      ofNullable(r.field("project_id")).flatMap(f -> ofNullable(r.get(f, Long.class)))
+          .ifPresent(projectId -> {
+            Project project = new Project();
+            project.setId(projectId);
+            testFolder.setProject(project);
+          });
+
+      testCase.setTestFolder(testFolder);
+    });
+
+    return testCase;
+  };
+
+  /**
+   * Maps record into {@link TmsTestPlan} object
+   */
+  public static final RecordMapper<? super Record, TmsTestPlan> TMS_TEST_PLAN_MAPPER = r -> {
+    TmsTestPlan testPlan = new TmsTestPlan();
+    testPlan.setId(r.get(TMS_TEST_PLAN.ID));
+    testPlan.setName(r.get(TMS_TEST_PLAN.NAME));
+    testPlan.setDescription(r.get(TMS_TEST_PLAN.DESCRIPTION));
+
+    // Создаем Project с id
+    ofNullable(r.get(TMS_TEST_PLAN.PROJECT_ID)).ifPresent(projectId -> {
+      Project project = new Project();
+      project.setId(projectId);
+      testPlan.setProject(project);
+    });
+
+    return testPlan;
+  };
+
+  /**
+   * Maps record into {@link TmsTestFolder} object
+   */
+  public static final RecordMapper<? super Record, TmsTestFolder> TMS_TEST_FOLDER_MAPPER = r -> {
+    TmsTestFolder testFolder = new TmsTestFolder();
+    testFolder.setId(r.get(TMS_TEST_FOLDER.ID));
+    testFolder.setName(r.get(TMS_TEST_FOLDER.NAME));
+    testFolder.setDescription(r.get(TMS_TEST_FOLDER.DESCRIPTION));
+
+    // Создаем Project с id
+    ofNullable(r.get(TMS_TEST_FOLDER.PROJECT_ID)).ifPresent(projectId -> {
+      Project project = new Project();
+      project.setId(projectId);
+      testFolder.setProject(project);
+    });
+
+    // Создаем родительскую папку с id, если parent_id присутствует
+    ofNullable(r.get(TMS_TEST_FOLDER.PARENT_ID)).ifPresent(parentId -> {
+      TmsTestFolder parentTestFolder = new TmsTestFolder();
+      parentTestFolder.setId(parentId);
+      testFolder.setParentTestFolder(parentTestFolder);
+    });
+
+    return testFolder;
   };
 }
