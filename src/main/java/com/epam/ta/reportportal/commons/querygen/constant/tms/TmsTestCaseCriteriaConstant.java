@@ -25,6 +25,11 @@ public final class TmsTestCaseCriteriaConstant {
   public static final String CRITERIA_TMS_TEST_CASE_EXTERNAL_ID = "externalId";
   public static final String CRITERIA_TMS_TEST_CASE_CREATED_AT = "createdAt";
   public static final String CRITERIA_TMS_TEST_CASE_UPDATED_AT = "updatedAt";
+  public static final String CRITERIA_TMS_TEST_CASE_PROJECT_ID = "projectId";
+  public static final String CRITERIA_TMS_TEST_CASE_FOLDER_ID = "testFolderId";
+  public static final String CRITERIA_TMS_TEST_CASE_PLAN_ID = "testPlanId";
+  public static final String CRITERIA_TMS_TEST_CASE_SEARCH = "search";
+  public static final String CRITERIA_TMS_TEST_CASE_ATTRIBUTES = "attributes";
 
 
 

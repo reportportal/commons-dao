@@ -1,12 +1,16 @@
 package com.epam.ta.reportportal.dao.tms.filterable;
 
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PROJECT_ID;
 import static com.epam.ta.reportportal.dao.util.ResultFetchers.TMS_TEST_PLAN_FETCHER;
 
+import com.epam.ta.reportportal.commons.querygen.Condition;
 import com.epam.ta.reportportal.commons.querygen.ConvertibleCondition;
+import com.epam.ta.reportportal.commons.querygen.Filter;
 import com.epam.ta.reportportal.commons.querygen.FilterCondition;
 import com.epam.ta.reportportal.commons.querygen.QueryBuilder;
 import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.dao.FilterableRepository;
+import com.epam.ta.reportportal.entity.tms.TmsTestCase;
 import com.epam.ta.reportportal.entity.tms.TmsTestPlan;
 import java.util.Collection;
 import java.util.List;
@@ -14,6 +18,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.jooq.DSLContext;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.support.PageableExecutionUtils;
@@ -63,5 +68,26 @@ public class TmsTestPlanFilterableRepository implements FilterableRepository<Tms
                 .build())),
         pageable,
         () -> dsl.fetchCount(QueryBuilder.newBuilder(filter, fields).build()));
+  }
+
+  public Page<Long> findIdsByFilter(Queryable filter, Pageable pageable) {
+    //TODO refactor to the correct implementation with a fetching of ids from DB initially
+    var fullResults = findByFilter(filter, pageable);
+
+    List<Long> ids = fullResults.getContent()
+        .stream()
+        .map(TmsTestPlan::getId)
+        .collect(Collectors.toList());
+
+    return new PageImpl<>(ids, pageable, fullResults.getTotalElements());
+  }
+
+  public Page<Long> findIdsByProjectIdAndFilter(long projectId, Filter filter, Pageable pageable) {
+    filter.withCondition(new FilterCondition(Condition.EQUALS,
+        false,
+        String.valueOf(projectId),
+        CRITERIA_PROJECT_ID
+    ));
+    return findIdsByFilter(filter, pageable);
   }
 }
