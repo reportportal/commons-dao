@@ -144,7 +144,7 @@ public interface TmsTestCaseRepository extends ReportPortalRepository<TmsTestCas
    *                     empty, no updates will be performed.
    * @param testFolderId the new test folder ID to assign. If null, the current test folder
    *                     assignment will remain unchanged.
-   * @param priority
+   * @param priority     the new priority to assign
    */
   @Modifying
   @Query(value = "UPDATE tms_test_case "

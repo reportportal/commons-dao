@@ -126,22 +126,29 @@ import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaCon
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER_CREATED_AT;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER_ORGANIZATION_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER_UPDATED_AT;
+import static com.epam.ta.reportportal.commons.querygen.constant.tms.TmsTestCaseCriteriaConstant.CRITERIA_TMS_TEST_CASE_ATTRIBUTES;
 import static com.epam.ta.reportportal.commons.querygen.constant.tms.TmsTestCaseCriteriaConstant.CRITERIA_TMS_TEST_CASE_CREATED_AT;
 import static com.epam.ta.reportportal.commons.querygen.constant.tms.TmsTestCaseCriteriaConstant.CRITERIA_TMS_TEST_CASE_DESCRIPTION;
 import static com.epam.ta.reportportal.commons.querygen.constant.tms.TmsTestCaseCriteriaConstant.CRITERIA_TMS_TEST_CASE_EXTERNAL_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.tms.TmsTestCaseCriteriaConstant.CRITERIA_TMS_TEST_CASE_FOLDER_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.tms.TmsTestCaseCriteriaConstant.CRITERIA_TMS_TEST_CASE_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.tms.TmsTestCaseCriteriaConstant.CRITERIA_TMS_TEST_CASE_NAME;
+import static com.epam.ta.reportportal.commons.querygen.constant.tms.TmsTestCaseCriteriaConstant.CRITERIA_TMS_TEST_CASE_PLAN_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.tms.TmsTestCaseCriteriaConstant.CRITERIA_TMS_TEST_CASE_PRIORITY;
+import static com.epam.ta.reportportal.commons.querygen.constant.tms.TmsTestCaseCriteriaConstant.CRITERIA_TMS_TEST_CASE_PROJECT_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.tms.TmsTestCaseCriteriaConstant.CRITERIA_TMS_TEST_CASE_SEARCH;
 import static com.epam.ta.reportportal.commons.querygen.constant.tms.TmsTestCaseCriteriaConstant.CRITERIA_TMS_TEST_CASE_UPDATED_AT;
 import static com.epam.ta.reportportal.commons.querygen.constant.tms.TmsTestFolderCriteriaConstant.CRITERIA_TMS_TEST_FOLDER_DESCRIPTION;
 import static com.epam.ta.reportportal.commons.querygen.constant.tms.TmsTestFolderCriteriaConstant.CRITERIA_TMS_TEST_FOLDER_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.tms.TmsTestFolderCriteriaConstant.CRITERIA_TMS_TEST_FOLDER_NAME;
 import static com.epam.ta.reportportal.commons.querygen.constant.tms.TmsTestFolderCriteriaConstant.CRITERIA_TMS_TEST_FOLDER_PARENT_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.tms.TmsTestFolderCriteriaConstant.CRITERIA_TMS_TEST_FOLDER_PROJECT_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.tms.TmsTestFolderCriteriaConstant.CRITERIA_TMS_TEST_FOLDER_TEST_PLAN_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.tms.TmsTestPlanCriteriaConstant.CRITERIA_TMS_TEST_PLAN_DESCRIPTION;
 import static com.epam.ta.reportportal.commons.querygen.constant.tms.TmsTestPlanCriteriaConstant.CRITERIA_TMS_TEST_PLAN_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.tms.TmsTestPlanCriteriaConstant.CRITERIA_TMS_TEST_PLAN_NAME;
 import static com.epam.ta.reportportal.commons.querygen.constant.tms.TmsTestPlanCriteriaConstant.CRITERIA_TMS_TEST_PLAN_PROJECT_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.tms.TmsTestPlanCriteriaConstant.CRITERIA_TMS_TEST_PLAN_SEARCH;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.PROJECT_ID;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.USER_ID;
 import static com.epam.ta.reportportal.entity.organization.OrganizationFilter.PROJECTS_QUANTITY;
@@ -183,6 +190,7 @@ import static com.epam.ta.reportportal.jooq.Tables.TMS_TEST_CASE;
 import static com.epam.ta.reportportal.jooq.Tables.TMS_TEST_CASE_ATTRIBUTE;
 import static com.epam.ta.reportportal.jooq.Tables.TMS_TEST_FOLDER;
 import static com.epam.ta.reportportal.jooq.Tables.TMS_TEST_PLAN;
+import static com.epam.ta.reportportal.jooq.Tables.TMS_TEST_PLAN_TEST_CASE;
 import static com.epam.ta.reportportal.jooq.Tables.USERS;
 import static com.epam.ta.reportportal.jooq.Tables.WIDGET;
 import static com.epam.ta.reportportal.jooq.tables.JOwnedEntity.OWNED_ENTITY;
@@ -1737,20 +1745,42 @@ public enum FilterTarget {
               Long.class).get(),
           new CriteriaHolderBuilder().newBuilder(CRITERIA_TMS_TEST_CASE_NAME, TMS_TEST_CASE.NAME, String.class).get(),
           new CriteriaHolderBuilder().newBuilder(CRITERIA_TMS_TEST_CASE_DESCRIPTION, TMS_TEST_CASE.DESCRIPTION, String.class).get(),
-          new CriteriaHolderBuilder().newBuilder(CRITERIA_TMS_TEST_CASE_PRIORITY, TMS_TEST_CASE.PRIORITY, String.class).get(),
-          new CriteriaHolderBuilder().newBuilder(CRITERIA_TMS_TEST_CASE_EXTERNAL_ID, TMS_TEST_CASE.EXTERNAL_ID, String.class).get(),
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_TMS_TEST_CASE_PRIORITY, TMS_TEST_CASE.PRIORITY,
+              String.class).get(),
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_TMS_TEST_CASE_EXTERNAL_ID, TMS_TEST_CASE.EXTERNAL_ID,
+              String.class).get(),
           new CriteriaHolderBuilder().newBuilder(CRITERIA_TMS_TEST_CASE_CREATED_AT, TMS_TEST_CASE.CREATED_AT, Instant.class).get(),
-          new CriteriaHolderBuilder().newBuilder(CRITERIA_TMS_TEST_CASE_UPDATED_AT, TMS_TEST_CASE.UPDATED_AT, Instant.class).get()
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_TMS_TEST_CASE_UPDATED_AT, TMS_TEST_CASE.UPDATED_AT, Instant.class).get(),
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_TMS_TEST_CASE_FOLDER_ID, TMS_TEST_CASE.TEST_FOLDER_ID,
+              Long.class).get(),
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_TMS_TEST_CASE_PROJECT_ID, TMS_TEST_FOLDER.PROJECT_ID,
+              Long.class).get(),
+          new CriteriaHolderBuilder()
+              .newBuilder(
+                  CRITERIA_TMS_TEST_CASE_PLAN_ID,
+                  TMS_TEST_PLAN_TEST_CASE.TEST_PLAN_ID,
+                  Long.class,
+                  Lists.newArrayList(
+                      JoinEntity.of(TMS_TEST_PLAN_TEST_CASE, JoinType.LEFT_OUTER_JOIN,
+                          TMS_TEST_CASE.ID.eq(TMS_TEST_PLAN_TEST_CASE.TEST_CASE_ID))
+                  ))
+              .get(),
+          new CriteriaHolderBuilder().newBuilder(
+              CRITERIA_TMS_TEST_CASE_SEARCH,
+              TMS_TEST_CASE.SEARCH_VECTOR,
+              String.class
+          ).get(),
+          new CriteriaHolderBuilder().newBuilder(
+                  CRITERIA_TMS_TEST_CASE_ATTRIBUTES,
+                  TMS_TEST_CASE_ATTRIBUTE.ATTRIBUTE_ID,
+                  Long.class
+              )
+              .withAggregateCriteria(
+                  DSL.arrayAggDistinct(TMS_TEST_CASE_ATTRIBUTE.ATTRIBUTE_ID).toString()
+              )
+              .get()
       )
   ) {
-    @Override
-    public QuerySupplier getQuery() {
-      SelectQuery<? extends Record> query = DSL.select(selectFields()).getQuery();
-      addFrom(query);
-      QuerySupplier querySupplier = new QuerySupplier(query);
-      joinTables(querySupplier);
-      return querySupplier;
-    }
 
     @Override
     protected Collection<? extends SelectField> selectFields() {
@@ -1773,19 +1803,10 @@ public enum FilterTarget {
 
     @Override
     protected void joinTables(QuerySupplier query) {
-      query.addJoin(TMS_TEST_FOLDER, JoinType.JOIN, TMS_TEST_FOLDER.ID.eq(TMS_TEST_CASE.TEST_FOLDER_ID));
-      query.addJoin(TMS_TEST_CASE_ATTRIBUTE, JoinType.LEFT_OUTER_JOIN, TMS_TEST_CASE_ATTRIBUTE.TEST_CASE_ID.eq(TMS_TEST_CASE.ID));
-
-    }
-
-    @Override
-    public QuerySupplier wrapQuery(SelectQuery<? extends Record> query) {
-      throw new UnsupportedOperationException("Operation not supported for OrganizationUserFilter query");
-    }
-
-    @Override
-    public QuerySupplier wrapQuery(SelectQuery<? extends Record> query, String... excluding) {
-      throw new UnsupportedOperationException("Operation not supported for OrganizationUserFilter query");
+      query.addJoin(TMS_TEST_FOLDER, JoinType.JOIN,
+          TMS_TEST_FOLDER.ID.eq(TMS_TEST_CASE.TEST_FOLDER_ID));
+      query.addJoin(TMS_TEST_CASE_ATTRIBUTE, JoinType.LEFT_OUTER_JOIN,
+          TMS_TEST_CASE_ATTRIBUTE.TEST_CASE_ID.eq(TMS_TEST_CASE.ID));
     }
 
     @Override
@@ -1803,7 +1824,12 @@ public enum FilterTarget {
           new CriteriaHolderBuilder().newBuilder(CRITERIA_TMS_TEST_PLAN_DESCRIPTION, TMS_TEST_PLAN.DESCRIPTION,
               String.class).get(),
           new CriteriaHolderBuilder().newBuilder(CRITERIA_TMS_TEST_PLAN_PROJECT_ID, TMS_TEST_PLAN.PROJECT_ID,
-              Long.class).get()
+              Long.class).get(),
+          new CriteriaHolderBuilder().newBuilder(
+              CRITERIA_TMS_TEST_PLAN_SEARCH,
+              TMS_TEST_PLAN.SEARCH_VECTOR,
+              String.class
+          ).get()
       )
   ) {
     @Override
@@ -1827,16 +1853,6 @@ public enum FilterTarget {
     }
 
     @Override
-    public QuerySupplier wrapQuery(SelectQuery<? extends Record> query) {
-      throw new UnsupportedOperationException("Operation not supported for TmsTestPlan query");
-    }
-
-    @Override
-    public QuerySupplier wrapQuery(SelectQuery<? extends Record> query, String... excluding) {
-      throw new UnsupportedOperationException("Operation not supported for TmsTestPlan query");
-    }
-
-    @Override
     protected Field<Long> idField() {
       return TMS_TEST_PLAN.ID;
     }
@@ -1853,7 +1869,19 @@ public enum FilterTarget {
           new CriteriaHolderBuilder().newBuilder(CRITERIA_TMS_TEST_FOLDER_PARENT_ID, TMS_TEST_FOLDER.PARENT_ID,
               Long.class).get(),
           new CriteriaHolderBuilder().newBuilder(CRITERIA_TMS_TEST_FOLDER_PROJECT_ID, TMS_TEST_FOLDER.PROJECT_ID,
-              Long.class).get()
+              Long.class).get(),
+          new CriteriaHolderBuilder()
+              .newBuilder(
+                  CRITERIA_TMS_TEST_FOLDER_TEST_PLAN_ID,
+                  TMS_TEST_PLAN_TEST_CASE.TEST_PLAN_ID,
+                  Long.class,
+                  Lists.newArrayList(
+                      JoinEntity.of(TMS_TEST_CASE, JoinType.LEFT_OUTER_JOIN,
+                          TMS_TEST_FOLDER.ID.eq(TMS_TEST_CASE.TEST_FOLDER_ID)),
+                      JoinEntity.of(TMS_TEST_PLAN_TEST_CASE, JoinType.LEFT_OUTER_JOIN,
+                          TMS_TEST_CASE.ID.eq(TMS_TEST_PLAN_TEST_CASE.TEST_CASE_ID))
+                  ))
+              .get()
       )
   ) {
     @Override
@@ -1874,17 +1902,6 @@ public enum FilterTarget {
 
     @Override
     protected void joinTables(QuerySupplier query) {
-      // No joins needed for basic fields
-    }
-
-    @Override
-    public QuerySupplier wrapQuery(SelectQuery<? extends Record> query) {
-      throw new UnsupportedOperationException("Operation not supported for TmsTestFolder query");
-    }
-
-    @Override
-    public QuerySupplier wrapQuery(SelectQuery<? extends Record> query, String... excluding) {
-      throw new UnsupportedOperationException("Operation not supported for TmsTestFolder query");
     }
 
     @Override
