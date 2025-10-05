@@ -39,9 +39,7 @@ public enum JFilterConditionEnum implements EnumType {
 
     BETWEEN("BETWEEN"),
 
-    ANY("ANY"),
-
-    FULL_TEXT_SEARCH("FULL_TEXT_SEARCH");
+    ANY("ANY");
 
     private final String literal;
 

@@ -43,6 +43,7 @@ import static com.epam.ta.reportportal.jooq.Tables.STATISTICS_FIELD;
 import static com.epam.ta.reportportal.jooq.Tables.TEST_ITEM;
 import static com.epam.ta.reportportal.jooq.Tables.TEST_ITEM_RESULTS;
 import static com.epam.ta.reportportal.jooq.Tables.TICKET;
+import static com.epam.ta.reportportal.jooq.Tables.TMS_ATTRIBUTE;
 import static com.epam.ta.reportportal.jooq.Tables.TMS_TEST_CASE;
 import static com.epam.ta.reportportal.jooq.Tables.TMS_TEST_FOLDER;
 import static com.epam.ta.reportportal.jooq.Tables.TMS_TEST_PLAN;
@@ -99,6 +100,7 @@ import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
 import com.epam.ta.reportportal.entity.statistics.Statistics;
 import com.epam.ta.reportportal.entity.statistics.StatisticsField;
+import com.epam.ta.reportportal.entity.tms.TmsAttribute;
 import com.epam.ta.reportportal.entity.tms.TmsTestCase;
 import com.epam.ta.reportportal.entity.tms.TmsTestFolder;
 import com.epam.ta.reportportal.entity.tms.TmsTestPlan;
@@ -804,5 +806,15 @@ public class RecordMappers {
     });
 
     return testFolder;
+  };
+
+  /**
+   * Maps record into {@link TmsAttribute} object
+   */
+  public static final RecordMapper<? super Record, TmsAttribute> TMS_ATTRIBUTE_MAPPER = r -> {
+    TmsAttribute attribute = new TmsAttribute();
+    attribute.setId(r.get(TMS_ATTRIBUTE.ID));
+    attribute.setKey(r.get(TMS_ATTRIBUTE.KEY));
+    return attribute;
   };
 }
