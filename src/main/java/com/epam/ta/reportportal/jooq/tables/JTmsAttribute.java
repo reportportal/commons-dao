@@ -4,6 +4,7 @@
 package com.epam.ta.reportportal.jooq.tables;
 
 
+import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.JTmsManualScenario.JTmsManualScenarioPath;
@@ -22,6 +23,7 @@ import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.ForeignKey;
 import org.jooq.Identity;
+import org.jooq.Index;
 import org.jooq.InverseForeignKey;
 import org.jooq.Name;
 import org.jooq.Path;
@@ -37,6 +39,7 @@ import org.jooq.TableField;
 import org.jooq.TableOptions;
 import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
+import org.jooq.impl.DefaultDataType;
 import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
 
@@ -71,6 +74,11 @@ public class JTmsAttribute extends TableImpl<JTmsAttributeRecord> {
      * The column <code>public.tms_attribute.key</code>.
      */
     public final TableField<JTmsAttributeRecord, String> KEY = createField(DSL.name("key"), SQLDataType.VARCHAR(255).nullable(false), this, "");
+
+    /**
+     * The column <code>public.tms_attribute.search_vector</code>.
+     */
+    public final TableField<JTmsAttributeRecord, Object> SEARCH_VECTOR = createField(DSL.name("search_vector"), DefaultDataType.getDefaultDataType("\"pg_catalog\".\"tsvector\""), this, "");
 
     private JTmsAttribute(Name alias, Table<JTmsAttributeRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);
@@ -137,6 +145,11 @@ public class JTmsAttribute extends TableImpl<JTmsAttributeRecord> {
     @Override
     public Schema getSchema() {
         return aliased() ? null : JPublic.PUBLIC;
+    }
+
+    @Override
+    public List<Index> getIndexes() {
+        return Arrays.asList(Indexes.IDX_TMS_ATTRIBUTE_SEARCH_VECTOR);
     }
 
     @Override

@@ -29,5 +29,8 @@ public class TmsAttribute implements Serializable {
   @Column(name = "key", nullable = false, unique = true)
   private String key;
 
+  @Column(name = "search_vector", insertable = false, updatable = false)
+  private String searchVector; //immutable, because trigger updates this field
+
   //TODO: override equals and hashCode methods
 }

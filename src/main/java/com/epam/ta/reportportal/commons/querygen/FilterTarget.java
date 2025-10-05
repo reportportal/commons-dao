@@ -126,6 +126,9 @@ import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaCon
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER_CREATED_AT;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER_ORGANIZATION_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.UserCriteriaConstant.CRITERIA_USER_UPDATED_AT;
+import static com.epam.ta.reportportal.commons.querygen.constant.tms.TmsAttributeCriteriaConstant.CRITERIA_TMS_ATTRIBUTE_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.tms.TmsAttributeCriteriaConstant.CRITERIA_TMS_ATTRIBUTE_KEY;
+import static com.epam.ta.reportportal.commons.querygen.constant.tms.TmsAttributeCriteriaConstant.CRITERIA_TMS_ATTRIBUTE_SEARCH;
 import static com.epam.ta.reportportal.commons.querygen.constant.tms.TmsTestCaseCriteriaConstant.CRITERIA_TMS_TEST_CASE_ATTRIBUTES;
 import static com.epam.ta.reportportal.commons.querygen.constant.tms.TmsTestCaseCriteriaConstant.CRITERIA_TMS_TEST_CASE_CREATED_AT;
 import static com.epam.ta.reportportal.commons.querygen.constant.tms.TmsTestCaseCriteriaConstant.CRITERIA_TMS_TEST_CASE_DESCRIPTION;
@@ -186,6 +189,7 @@ import static com.epam.ta.reportportal.jooq.Tables.STATISTICS_FIELD;
 import static com.epam.ta.reportportal.jooq.Tables.TEST_ITEM;
 import static com.epam.ta.reportportal.jooq.Tables.TEST_ITEM_RESULTS;
 import static com.epam.ta.reportportal.jooq.Tables.TICKET;
+import static com.epam.ta.reportportal.jooq.Tables.TMS_ATTRIBUTE;
 import static com.epam.ta.reportportal.jooq.Tables.TMS_TEST_CASE;
 import static com.epam.ta.reportportal.jooq.Tables.TMS_TEST_CASE_ATTRIBUTE;
 import static com.epam.ta.reportportal.jooq.Tables.TMS_TEST_FOLDER;
@@ -214,6 +218,7 @@ import com.epam.ta.reportportal.entity.organization.OrganizationUserFilter;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectInfo;
 import com.epam.ta.reportportal.entity.project.ProjectProfile;
+import com.epam.ta.reportportal.entity.tms.TmsAttribute;
 import com.epam.ta.reportportal.entity.tms.TmsTestCase;
 import com.epam.ta.reportportal.entity.tms.TmsTestFolder;
 import com.epam.ta.reportportal.entity.tms.TmsTestPlan;
@@ -1907,6 +1912,43 @@ public enum FilterTarget {
     @Override
     protected Field<Long> idField() {
       return TMS_TEST_FOLDER.ID;
+    }
+  },
+
+  TMS_ATTRIBUTE_TARGET(TmsAttribute.class,
+      Arrays.asList(
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_TMS_ATTRIBUTE_ID, TMS_ATTRIBUTE.ID,
+              Long.class).get(),
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_TMS_ATTRIBUTE_KEY, TMS_ATTRIBUTE.KEY,
+              String.class).get(),
+          new CriteriaHolderBuilder().newBuilder(
+              CRITERIA_TMS_ATTRIBUTE_SEARCH,
+              TMS_ATTRIBUTE.SEARCH_VECTOR,
+              String.class
+          ).get()
+      )
+  ) {
+    @Override
+    protected Collection<? extends SelectField> selectFields() {
+      return Lists.newArrayList(
+          TMS_ATTRIBUTE.ID,
+          TMS_ATTRIBUTE.KEY
+      );
+    }
+
+    @Override
+    protected void addFrom(SelectQuery<? extends Record> query) {
+      query.addFrom(TMS_ATTRIBUTE);
+    }
+
+    @Override
+    protected void joinTables(QuerySupplier query) {
+      // No joins needed for basic fields
+    }
+
+    @Override
+    protected Field<Long> idField() {
+      return TMS_ATTRIBUTE.ID;
     }
   };
 

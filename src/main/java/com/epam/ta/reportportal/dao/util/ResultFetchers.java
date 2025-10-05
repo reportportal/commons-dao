@@ -29,6 +29,7 @@ import static com.epam.ta.reportportal.dao.util.RecordMappers.ORGANIZATION_USER_
 import static com.epam.ta.reportportal.dao.util.RecordMappers.PATTERN_TEMPLATE_NAME_RECORD_MAPPER;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.PROJECT_USER_MAPPER;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.TICKET_MAPPER;
+import static com.epam.ta.reportportal.dao.util.RecordMappers.TMS_ATTRIBUTE_MAPPER;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.TMS_TEST_CASE_MAPPER;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.TMS_TEST_FOLDER_MAPPER;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.TMS_TEST_PLAN_MAPPER;
@@ -43,6 +44,7 @@ import static com.epam.ta.reportportal.jooq.Tables.ORGANIZATION_USER;
 import static com.epam.ta.reportportal.jooq.Tables.OWNED_ENTITY;
 import static com.epam.ta.reportportal.jooq.Tables.PARAMETER;
 import static com.epam.ta.reportportal.jooq.Tables.PROJECT_ATTRIBUTE;
+import static com.epam.ta.reportportal.jooq.Tables.TMS_ATTRIBUTE;
 import static com.epam.ta.reportportal.jooq.Tables.TMS_TEST_CASE;
 import static com.epam.ta.reportportal.jooq.Tables.TMS_TEST_FOLDER;
 import static com.epam.ta.reportportal.jooq.Tables.TMS_TEST_PLAN;
@@ -74,6 +76,7 @@ import com.epam.ta.reportportal.entity.pattern.PatternTemplateTestItem;
 import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectAttribute;
 import com.epam.ta.reportportal.entity.project.ProjectProfile;
+import com.epam.ta.reportportal.entity.tms.TmsAttribute;
 import com.epam.ta.reportportal.entity.tms.TmsTestCase;
 import com.epam.ta.reportportal.entity.tms.TmsTestFolder;
 import com.epam.ta.reportportal.entity.tms.TmsTestPlan;
@@ -545,5 +548,19 @@ public class ResultFetchers {
       }
     });
     return new ArrayList<>(testFolders.values());
+  };
+
+  /**
+   * Fetches records from db results into list of {@link TmsAttribute} objects.
+   */
+  public static final Function<Result<? extends Record>, List<TmsAttribute>> TMS_ATTRIBUTE_FETCHER = rows -> {
+    Map<Long, TmsAttribute> attributes = Maps.newLinkedHashMap();
+    rows.forEach(row -> {
+      Long id = row.get(TMS_ATTRIBUTE.ID);
+      if (!attributes.containsKey(id)) {
+        attributes.put(id, TMS_ATTRIBUTE_MAPPER.map(row));
+      }
+    });
+    return new ArrayList<>(attributes.values());
   };
 }

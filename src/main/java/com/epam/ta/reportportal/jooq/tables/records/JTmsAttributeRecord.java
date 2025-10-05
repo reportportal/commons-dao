@@ -46,6 +46,20 @@ public class JTmsAttributeRecord extends UpdatableRecordImpl<JTmsAttributeRecord
         return (String) get(1);
     }
 
+    /**
+     * Setter for <code>public.tms_attribute.search_vector</code>.
+     */
+    public void setSearchVector(Object value) {
+        set(2, value);
+    }
+
+    /**
+     * Getter for <code>public.tms_attribute.search_vector</code>.
+     */
+    public Object getSearchVector() {
+        return get(2);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -69,11 +83,12 @@ public class JTmsAttributeRecord extends UpdatableRecordImpl<JTmsAttributeRecord
     /**
      * Create a detached, initialised JTmsAttributeRecord
      */
-    public JTmsAttributeRecord(Long id, String key) {
+    public JTmsAttributeRecord(Long id, String key, Object searchVector) {
         super(JTmsAttribute.TMS_ATTRIBUTE);
 
         setId(id);
         setKey(key);
+        setSearchVector(searchVector);
         resetChangedOnNotNull();
     }
 }

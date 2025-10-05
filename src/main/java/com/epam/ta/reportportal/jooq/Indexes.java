@@ -32,6 +32,7 @@ import com.epam.ta.reportportal.jooq.tables.JStatistics;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
 import com.epam.ta.reportportal.jooq.tables.JTicket;
 import com.epam.ta.reportportal.jooq.tables.JTmsAttachment;
+import com.epam.ta.reportportal.jooq.tables.JTmsAttribute;
 import com.epam.ta.reportportal.jooq.tables.JTmsManualScenario;
 import com.epam.ta.reportportal.jooq.tables.JTmsManualScenarioPreconditions;
 import com.epam.ta.reportportal.jooq.tables.JTmsManualScenarioPreconditionsAttachment;
@@ -79,6 +80,7 @@ public class Indexes {
     public static final Index IDX_TEST_ITEM_NAME_TRGM = Internal.createIndex(DSL.name("idx_test_item_name_trgm"), JTestItem.TEST_ITEM, new OrderField[] { JTestItem.TEST_ITEM.NAME }, false);
     public static final Index IDX_TMS_ATTACHMENT_EXPIRES_AT = Internal.createIndex(DSL.name("idx_tms_attachment_expires_at"), JTmsAttachment.TMS_ATTACHMENT, new OrderField[] { JTmsAttachment.TMS_ATTACHMENT.EXPIRES_AT }, false);
     public static final Index IDX_TMS_ATTACHMENT_PATH = Internal.createIndex(DSL.name("idx_tms_attachment_path"), JTmsAttachment.TMS_ATTACHMENT, new OrderField[] { JTmsAttachment.TMS_ATTACHMENT.PATH_TO_FILE }, false);
+    public static final Index IDX_TMS_ATTRIBUTE_SEARCH_VECTOR = Internal.createIndex(DSL.name("idx_tms_attribute_search_vector"), JTmsAttribute.TMS_ATTRIBUTE, new OrderField[] { JTmsAttribute.TMS_ATTRIBUTE.SEARCH_VECTOR }, false);
     public static final Index IDX_TMS_MANUAL_SCENARIO_PRECONDITIONS_SCENARIO_UNIQUE = Internal.createIndex(DSL.name("idx_tms_manual_scenario_preconditions_scenario_unique"), JTmsManualScenarioPreconditions.TMS_MANUAL_SCENARIO_PRECONDITIONS, new OrderField[] { JTmsManualScenarioPreconditions.TMS_MANUAL_SCENARIO_PRECONDITIONS.MANUAL_SCENARIO_ID }, true);
     public static final Index IDX_TMS_MANUAL_SCENARIO_TYPE = Internal.createIndex(DSL.name("idx_tms_manual_scenario_type"), JTmsManualScenario.TMS_MANUAL_SCENARIO, new OrderField[] { JTmsManualScenario.TMS_MANUAL_SCENARIO.TYPE }, false);
     public static final Index IDX_TMS_STEP_ATTACHMENT_ATTACHMENT_ID = Internal.createIndex(DSL.name("idx_tms_step_attachment_attachment_id"), JTmsStepAttachment.TMS_STEP_ATTACHMENT, new OrderField[] { JTmsStepAttachment.TMS_STEP_ATTACHMENT.ATTACHMENT_ID }, false);
