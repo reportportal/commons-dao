@@ -7,7 +7,7 @@ project.ext {
     releaseMode = project.hasProperty("releaseMode") ? project.releaseMode.toBoolean() : false
     hasDBSchema = project.hasProperty("DB_SCHEMA_POSTGRES")
     scriptsUrl = commonScriptsUrl + (releaseMode ? getProperty('scripts.version') : 'develop')
-    migrationsUrl = migrationsScriptsUrl + (releaseMode ? getProperty('migrations.version') : 'develop')
+    migrationsUrl = migrationsScriptsUrl + (releaseMode ? getProperty('migrations.version') : 'feature/upcoming')
 
     //TODO refactor with archive download
     testScriptsSrc = [
@@ -86,6 +86,7 @@ project.ext {
             (migrationsUrl + '/migrations/96_create_groups_tables.up.sql')             : 'V096__create_groups_tables.sql',
             (migrationsUrl + '/migrations/97_add_groups_uuid.up.sql')                  : 'V097__add_groups_uuid.up.sql',
             (migrationsUrl + '/migrations/98_add_plugin_type.up.sql')                  : 'V098__add_plugin_type.up.sql',
+            (migrationsUrl + '/migrations/106_create_log_type_table.up.sql')           : 'V106__create_log_type_table.sql'
     ]
     excludeTests = [
             'com/epam/ta/reportportal/jooq/**',
