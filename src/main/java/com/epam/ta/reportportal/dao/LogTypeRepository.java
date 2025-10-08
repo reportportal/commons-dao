@@ -25,12 +25,20 @@ public interface LogTypeRepository extends ReportPortalRepository<ProjectLogType
 
   List<ProjectLogType> findByProjectId(Long projectId);
 
-  @Query("SELECT COUNT(log.id) > 0 FROM ProjectLogType log " +
-      "WHERE log.projectId = :projectId AND (LOWER(log.name) = LOWER(:name) OR log.level = :level)")
+  @Query(value = """
+      SELECT EXISTS (
+          SELECT 1
+          FROM log_type lt
+          WHERE lt.project_id = :projectId AND (LOWER(lt.name) = LOWER(:name) OR lt.level = :level)
+      )
+      """, nativeQuery = true)
   boolean existsByProjectIdAndNameOrLevelIgnoreCase(@Param("projectId") Long projectId,
       @Param("name") String name, @Param("level") Integer level);
 
-  @Query("SELECT COUNT(log.id) FROM ProjectLogType log " +
-      "WHERE log.projectId = :projectId AND log.filterable = true")
+  @Query("""
+      SELECT COUNT(log.id)
+      FROM ProjectLogType log
+      WHERE log.projectId = :projectId AND log.filterable = true
+      """)
   long countFilterableLogTypes(@Param("projectId") Long projectId);
 }
