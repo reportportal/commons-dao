@@ -55,9 +55,9 @@ public class TmsTestPlan {
   @JoinColumn(name = "product_version_id", nullable = false)
   private TmsProductVersion productVersion;
 
-  @OneToOne
-  @JoinColumn(name = "launch_id", unique = true)
-  private Launch launch;
+  @OneToMany(mappedBy = "testPlan")
+  @ToString.Exclude
+  private Set<Launch> launches;
 
   @OneToMany(mappedBy = "testPlan")
   @ToString.Exclude
