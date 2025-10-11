@@ -2,6 +2,7 @@ package com.epam.ta.reportportal.entity.tms;
 
 import com.epam.ta.reportportal.dao.converters.JpaInstantConverter;
 import com.epam.ta.reportportal.entity.item.TestItem;
+import com.epam.ta.reportportal.entity.launch.Launch;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
@@ -86,6 +87,14 @@ public class TmsTestCase implements Serializable {
   @ManyToMany(mappedBy = "testCases")
   @ToString.Exclude
   private Set<TmsTestPlan> testPlans;
+
+  @ManyToMany
+  @JoinTable(
+      name = "tms_test_case_launch",
+      joinColumns = @JoinColumn(name = "test_case_id"),
+      inverseJoinColumns = @JoinColumn(name = "launch_id"))
+  @ToString.Exclude
+  private Set<Launch> launches;
 
   @ManyToMany
   @JoinTable(
