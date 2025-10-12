@@ -19,7 +19,13 @@ public interface TmsTestCaseRepository extends ReportPortalRepository<TmsTestCas
       "LEFT JOIN FETCH tc.attributes t " +
       "WHERE tf.project.id = :projectId"
   )
-  List<TmsTestCase> findByTestFolder_ProjectId(Long projectId);
+  List<TmsTestCase> findByProjectId(Long projectId);
+
+  @Query("SELECT tc.id FROM TmsTestCase tc " +
+      "JOIN tc.testFolder tf " +
+      "WHERE tf.project.id = :projectId"
+  )
+  List<Long> findIdsByProjectId(Long projectId);
 
   @Query("SELECT tc FROM TmsTestCase tc " +
       "JOIN FETCH tc.testFolder tf " +

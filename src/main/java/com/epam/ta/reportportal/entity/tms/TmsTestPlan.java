@@ -55,7 +55,8 @@ public class TmsTestPlan {
   @JoinColumn(name = "product_version_id", nullable = false)
   private TmsProductVersion productVersion;
 
-  @OneToMany(mappedBy = "testPlan")
+  @OneToMany
+  @JoinColumn(name = "test_plan_id", referencedColumnName = "id", insertable = false, updatable = false)
   @ToString.Exclude
   private Set<Launch> launches;
 

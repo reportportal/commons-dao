@@ -137,6 +137,9 @@ public class Launch implements Serializable {
   @Column(name = "approximate_duration")
   private double approximateDuration;
 
+  @Column(name = "test_plan_id")
+  private Long testPlanId;
+
   public Launch() {
   }
 
@@ -295,6 +298,14 @@ public class Launch implements Serializable {
 
   public void setRetentionPolicy(RetentionPolicyEnum retentionPolicy) {
     this.retentionPolicy = retentionPolicy;
+  }
+
+  public Long getTestPlanId() {
+    return testPlanId;
+  }
+
+  public void setTestPlanId(Long testPlanId) {
+    this.testPlanId = testPlanId;
   }
 
   @Override

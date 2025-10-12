@@ -1,0 +1,27 @@
+package com.epam.ta.reportportal.entity.tms;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class TmsTestPlanWithStatistic {
+
+  private TmsTestPlan testPlan;
+  private TmsTestPlanExecutionStatisticRS executionStatistic;
+
+  public static TmsTestPlanWithStatistic of(TmsTestPlan testPlan,
+      TmsTestPlanExecutionStatisticRS statistic) {
+    return new TmsTestPlanWithStatistic(testPlan, statistic);
+  }
+
+  public Long getId() {
+    return testPlan.getId();
+  }
+
+  public String getName() {
+    return testPlan.getName();
+  }
+}
