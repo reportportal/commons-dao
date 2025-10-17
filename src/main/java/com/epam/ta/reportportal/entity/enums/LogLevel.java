@@ -16,8 +16,6 @@
 
 package com.epam.ta.reportportal.entity.enums;
 
-import com.epam.reportportal.rules.exception.ErrorType;
-import com.epam.reportportal.rules.exception.ReportPortalException;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -52,40 +50,33 @@ public enum LogLevel {
    */
   public static Optional<LogLevel> toLevel(String levelString) {
     return Arrays.stream(LogLevel.values())
-        .filter(level -> level.name().equalsIgnoreCase(levelString)).findAny();
+        .filter(level -> level.name().equalsIgnoreCase(levelString))
+        .findAny();
   }
 
   /**
-   * Convert the string passed as argument to a Level.
+   * Resolves a custom log level from a string input. If the input does not match any known level
+   * name, returns an empty Optional.
+   *
+   * @param levelString the input level;
+   * @return Optional containing the resolved integer code when matched by name, otherwise empty
    */
-  public static int toCustomLogLevel(String levelString) {
-
-    Optional<LogLevel> level = Arrays.stream(LogLevel.values())
-        .filter(l -> l.name().equalsIgnoreCase(levelString)).findFirst();
-
-    return level.map(LogLevel::toInt).orElseGet(() -> {
-      try {
-        int intLevel = Integer.parseInt(levelString);
-        return intLevel < TRACE.toInt() ? TRACE.toInt() : intLevel;
-      } catch (NumberFormatException ex) {
-        return UNKNOWN_INT;
-      }
-
-    });
-  }
-
-  /**
-   * Convert the string passed as argument to a Level
-   */
-  public static LogLevel toLevel(int intLevel) {
-
+  public static Optional<Integer> toCustomLogLevel(String levelString) {
     return Arrays.stream(LogLevel.values())
-        .sorted((prev, curr) -> Integer.compare(curr.toInt(), prev.toInt()))
-        .filter(l -> l.toInt() <= intLevel)
-        .findFirst()
-        .orElseThrow(() -> new ReportPortalException(ErrorType.BAD_SAVE_LOG_REQUEST,
-            "Wrong level = " + intLevel));
+        .filter(logLevel -> logLevel.name().equalsIgnoreCase(levelString))
+        .map(LogLevel::toInt)
+        .findFirst();
+  }
 
+  /**
+   * Resolves log level name from its integer representation. If not found, returns an empty
+   * Optional.
+   */
+  public static Optional<String> toLevel(int intLevel) {
+    return Arrays.stream(LogLevel.values())
+        .filter(logLevel -> logLevel.toInt() == intLevel)
+        .map(LogLevel::toString)
+        .findFirst();
   }
 
   public int toInt() {
