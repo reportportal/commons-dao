@@ -19,11 +19,13 @@ package com.epam.ta.reportportal.dao;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.epam.ta.reportportal.BaseTest;
 import com.epam.ta.reportportal.entity.log.ProjectLogType;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -141,5 +143,60 @@ class LogTypeRepositoryTest extends BaseTest {
 
     // then
     assertEquals(6, logTypesCount);
+  }
+
+  @Test
+  void findLevelByProjectIdAndNameWhenLogTypeExistsShouldReturnTraceLevel() {
+    // given
+    final long projectId = 1L;
+    final String levelName = "Trace";
+
+    // when
+    Optional<Integer> level = logTypeRepository.findLevelByProjectIdAndNameIgnoreCase(
+        projectId, levelName);
+
+    // then
+    assertTrue(level.isPresent());
+    assertEquals(5000, level.get());
+  }
+
+  @Test
+  void findLevelByProjectIdAndNameWhenLogTypeDoesNotExistShouldReturnEmptyOptional() {
+    // given
+    final long projectId = 1L;
+    final String nonExistingLevelName = "custom-error";
+
+    // when
+    Optional<Integer> level = logTypeRepository.findLevelByProjectIdAndNameIgnoreCase(
+        projectId, nonExistingLevelName);
+
+    // then
+    assertFalse(level.isPresent());
+  }
+
+  @Test
+  void findNameByProjectIdAndLevelWhenLevelExistsShouldReturnName() {
+    // given
+    final long projectId = 1L;
+    final int level = 20000;
+
+    // when
+    String levelName = logTypeRepository.findNameByProjectIdAndLevel(projectId, level);
+
+    // then
+    assertEquals("info", levelName);
+  }
+
+  @Test
+  void findNameByProjectIdAndLevelWhenLevelDoesNotExistShouldReturnNull() {
+    // given
+    final long projectId = 1L;
+    final int nonExistingLevel = 12345;
+
+    // when
+    String levelName = logTypeRepository.findNameByProjectIdAndLevel(projectId, nonExistingLevel);
+
+    // then
+    assertNull(levelName);
   }
 }

@@ -18,6 +18,7 @@ package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.log.ProjectLogType;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -41,4 +42,20 @@ public interface LogTypeRepository extends ReportPortalRepository<ProjectLogType
       WHERE log.projectId = :projectId AND log.filterable = true
       """)
   long countFilterableLogTypes(@Param("projectId") Long projectId);
+
+  @Query("""
+      SELECT lt.level
+      FROM ProjectLogType lt
+      WHERE lt.projectId = :projectId AND LOWER(lt.name) = LOWER(:name)
+      """)
+  Optional<Integer> findLevelByProjectIdAndNameIgnoreCase(@Param("projectId") Long projectId,
+      @Param("name") String name);
+
+  @Query("""
+      SELECT lt.name
+      FROM ProjectLogType lt
+      WHERE lt.projectId = :projectId AND lt.level = :level
+      """)
+  String findNameByProjectIdAndLevel(@Param("projectId") Long projectId,
+      @Param("level") Integer level);
 }
