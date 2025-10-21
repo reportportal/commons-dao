@@ -28,11 +28,16 @@ import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 
 class LogTypeRepositoryTest extends BaseTest {
 
   @Autowired
   private LogTypeRepository logTypeRepository;
+
+  @Autowired
+  private CacheManager cacheManager;
 
   @Test
   void findByProjectIdWhenProjectWithDefaultLogTypesExistsShouldReturnAllDefaultTypesWithExpectedValues() {
@@ -152,8 +157,12 @@ class LogTypeRepositoryTest extends BaseTest {
     final String levelName = "Trace";
 
     // when
-    Optional<Integer> level = logTypeRepository.findLevelByProjectIdAndNameIgnoreCase(
-        projectId, levelName);
+    Optional<Integer> level = logTypeRepository.findLevelByProjectIdAndNameIgnoreCase(projectId, levelName);
+
+    Cache cache = cacheManager.getCache("projectLogTypeWithLevelNameCache");
+    assertNotNull(cache);
+    Cache.ValueWrapper valueWrapper = cache.get(projectId + "_" + levelName);
+    assertNotNull(valueWrapper);
 
     // then
     assertTrue(level.isPresent());

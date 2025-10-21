@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.entity.log.ProjectLogType;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -43,6 +44,11 @@ public interface LogTypeRepository extends ReportPortalRepository<ProjectLogType
       """)
   long countFilterableLogTypes(@Param("projectId") Long projectId);
 
+  @Cacheable(
+      value = "projectLogTypeWithLevelNameCache",
+      key = "#projectId + '_' + #name",
+      cacheManager = "caffeineCacheManager"
+  )
   @Query("""
       SELECT lt.level
       FROM ProjectLogType lt
