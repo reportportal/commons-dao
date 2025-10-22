@@ -10,10 +10,10 @@ import lombok.NoArgsConstructor;
 public class TmsTestPlanWithStatistic {
 
   private TmsTestPlan testPlan;
-  private TmsTestPlanExecutionStatisticRS executionStatistic;
+  private TmsTestPlanExecutionStatistic executionStatistic;
 
   public static TmsTestPlanWithStatistic of(TmsTestPlan testPlan,
-      TmsTestPlanExecutionStatisticRS statistic) {
+      TmsTestPlanExecutionStatistic statistic) {
     return new TmsTestPlanWithStatistic(testPlan, statistic);
   }
 
