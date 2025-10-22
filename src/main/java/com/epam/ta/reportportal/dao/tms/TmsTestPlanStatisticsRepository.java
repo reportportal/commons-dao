@@ -2,7 +2,7 @@ package com.epam.ta.reportportal.dao.tms;
 
 import com.epam.ta.reportportal.dao.ReportPortalRepository;
 import com.epam.ta.reportportal.entity.tms.TmsTestPlan;
-import com.epam.ta.reportportal.entity.tms.TmsTestPlanExecutionStatisticRS;
+import com.epam.ta.reportportal.entity.tms.TmsTestPlanExecutionStatistic;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -45,7 +45,7 @@ public interface TmsTestPlanStatisticsRepository extends ReportPortalRepository<
       ) covered_cases ON covered_cases.test_plan_id = tp.id
       WHERE tp.id = :testPlanId
       """, nativeQuery = true)
-  TmsTestPlanExecutionStatisticRS getExecutionStatisticsByTestPlanId(
+  TmsTestPlanExecutionStatistic getExecutionStatisticsByTestPlanId(
       @Param("testPlanId") Long testPlanId
   );
 }
