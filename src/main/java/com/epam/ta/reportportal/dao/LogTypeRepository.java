@@ -25,6 +25,11 @@ import org.springframework.data.repository.query.Param;
 
 public interface LogTypeRepository extends ReportPortalRepository<ProjectLogType, Long> {
 
+  @Cacheable(
+      value = "projectLogTypeCache",
+      key = "#projectId",
+      cacheManager = "caffeineCacheManager"
+  )
   List<ProjectLogType> findByProjectId(Long projectId);
 
   @Query(value = """
@@ -57,6 +62,11 @@ public interface LogTypeRepository extends ReportPortalRepository<ProjectLogType
   Optional<Integer> findLevelByProjectIdAndNameIgnoreCase(@Param("projectId") Long projectId,
       @Param("name") String name);
 
+  @Cacheable(
+      value = "projectLogTypeWithLevelCache",
+      key = "#projectId + '_' + #level",
+      cacheManager = "caffeineCacheManager"
+  )
   @Query("""
       SELECT lt.name
       FROM ProjectLogType lt

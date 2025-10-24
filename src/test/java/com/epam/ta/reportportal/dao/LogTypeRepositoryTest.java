@@ -94,6 +94,32 @@ class LogTypeRepositoryTest extends BaseTest {
   }
 
   @Test
+  void findByProjectIdShouldPopulateCache() {
+    // given
+    final long projectId = 1L;
+
+    // when
+    List<ProjectLogType> result = logTypeRepository.findByProjectId(projectId);
+
+    Cache cache = cacheManager.getCache("projectLogTypeCache");
+    assertNotNull(cache);
+
+    Cache.ValueWrapper cachedValue = cache.get(projectId);
+    assertNotNull(cachedValue);
+
+    List<ProjectLogType> cachedList = (List<ProjectLogType>) cachedValue.get();
+    assertNotNull(cachedList);
+    assertEquals(7, cachedList.size());
+
+    // then
+    assertEquals(result.size(), cachedList.size());
+    for (int i = 0; i < result.size(); i++) {
+      assertEquals(result.get(i).getName(), cachedList.get(i).getName());
+      assertEquals(result.get(i).getLevel(), cachedList.get(i).getLevel());
+    }
+  }
+
+  @Test
   void existsByProjectIdAndNameOrLevelWhenDuplicateByNameExistsShouldReturnTrue() {
     // given
     final long projectId = 1L;
@@ -157,7 +183,8 @@ class LogTypeRepositoryTest extends BaseTest {
     final String levelName = "Trace";
 
     // when
-    Optional<Integer> level = logTypeRepository.findLevelByProjectIdAndNameIgnoreCase(projectId, levelName);
+    Optional<Integer> level = logTypeRepository.findLevelByProjectIdAndNameIgnoreCase(projectId,
+        levelName);
 
     Cache cache = cacheManager.getCache("projectLogTypeWithLevelNameCache");
     assertNotNull(cache);
@@ -191,6 +218,12 @@ class LogTypeRepositoryTest extends BaseTest {
 
     // when
     String levelName = logTypeRepository.findNameByProjectIdAndLevel(projectId, level);
+
+    Cache cache = cacheManager.getCache("projectLogTypeWithLevelCache");
+    assertNotNull(cache);
+    Cache.ValueWrapper valueWrapper = cache.get(projectId + "_" + level);
+    assertNotNull(valueWrapper);
+    assertEquals("info", valueWrapper.get().toString());
 
     // then
     assertEquals("info", levelName);

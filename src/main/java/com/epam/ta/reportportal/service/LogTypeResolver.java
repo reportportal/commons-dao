@@ -18,8 +18,11 @@ package com.epam.ta.reportportal.service;
 
 import com.epam.ta.reportportal.dao.LogTypeRepository;
 import com.epam.ta.reportportal.entity.enums.LogLevel;
+import com.epam.ta.reportportal.entity.log.ProjectLogType;
 import com.google.common.base.Strings;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -65,5 +68,17 @@ public class LogTypeResolver {
         .or(() -> Optional.ofNullable(
             logTypeRepository.findNameByProjectIdAndLevel(projectId, logLevel)))
         .orElse(LogLevel.UNKNOWN.toString());
+  }
+
+  /**
+   * Retrieves a map of all log levels for a given project. Optimized for batch operations where
+   * multiple log level resolutions are needed.
+   *
+   * @param projectId the project ID
+   * @return a map where keys are log level integers and values are log level names
+   */
+  public Map<Integer, String> getLogLevelMapForProject(Long projectId) {
+    return logTypeRepository.findByProjectId(projectId).stream()
+        .collect(Collectors.toMap(ProjectLogType::getLevel, ProjectLogType::getName));
   }
 }
