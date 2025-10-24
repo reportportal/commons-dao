@@ -175,14 +175,7 @@ public class CriteriaHolder {
         getDataType())) {
       castedValue = BooleanUtils.toBoolean(oneValue);
     } else if (LogLevel.class.isAssignableFrom(getDataType())) {
-      Optional<LogLevel> level = LogLevel.toLevel(oneValue);
-      BusinessRule.expect(level, Optional::isPresent)
-          .verify(errorType,
-              formattedSupplier("Cannot convert '{}' to valid 'LogLevel'", oneValue));
-      castedValue = level.get().toInt();
-      BusinessRule.expect(castedValue, Objects::nonNull)
-          .verify(errorType,
-              formattedSupplier("Cannot convert '{}' to valid 'LogLevel'", oneValue));
+      castedValue = parseLong(oneValue, errorType);
     } else if (JStatusEnum.class.isAssignableFrom(getDataType())) {
 
       Optional<StatusEnum> status = StatusEnum.fromValue(oneValue);

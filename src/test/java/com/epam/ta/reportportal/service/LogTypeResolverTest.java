@@ -1,12 +1,17 @@
 package com.epam.ta.reportportal.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import com.epam.ta.reportportal.dao.LogTypeRepository;
 import com.epam.ta.reportportal.entity.enums.LogLevel;
+import com.epam.ta.reportportal.entity.log.ProjectLogType;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -144,6 +149,80 @@ class LogTypeResolverTest {
     // then
     assertEquals("UNKNOWN", result);
     verify(logTypeRepository).findNameByProjectIdAndLevel(projectId, logLevel);
+  }
+
+  @Test
+  void getLogLevelMapForProjectWhenDefaultLogTypesShouldReturnAllLevelsMap() {
+    // given
+    Long projectId = 1L;
+    List<ProjectLogType> projectLogTypes = List.of(
+        createProjectLogType(projectId, "trace", 5000),
+        createProjectLogType(projectId, "debug", 10000),
+        createProjectLogType(projectId, "info", 20000),
+        createProjectLogType(projectId, "warn", 30000),
+        createProjectLogType(projectId, "error", 40000),
+        createProjectLogType(projectId, "fatal", 50000),
+        createProjectLogType(projectId, "unknown", 60000)
+    );
+    when(logTypeRepository.findByProjectId(projectId)).thenReturn(projectLogTypes);
+
+    // when
+    Map<Integer, String> result = logTypeResolver.getLogLevelMapForProject(projectId);
+
+    // then
+    assertNotNull(result);
+    assertEquals(7, result.size());
+    assertEquals("trace", result.get(5000));
+    assertEquals("debug", result.get(10000));
+    assertEquals("info", result.get(20000));
+    assertEquals("warn", result.get(30000));
+    assertEquals("error", result.get(40000));
+    assertEquals("fatal", result.get(50000));
+    assertEquals("unknown", result.get(60000));
+    verify(logTypeRepository).findByProjectId(projectId);
+  }
+
+  @Test
+  void getLogLevelMapForProjectWheCustomLogTypesShouldReturnAllLevelsMap() {
+    // given
+    Long projectId = 2L;
+    List<ProjectLogType> projectLogTypes = List.of(
+        createProjectLogType(projectId, "trace", 5000),
+        createProjectLogType(projectId, "debug", 10000),
+        createProjectLogType(projectId, "info", 20000),
+        createProjectLogType(projectId, "custom_warning", 25000),
+        createProjectLogType(projectId, "warn", 30000),
+        createProjectLogType(projectId, "custom_critical", 35000),
+        createProjectLogType(projectId, "error", 40000),
+        createProjectLogType(projectId, "fatal", 50000),
+        createProjectLogType(projectId, "unknown", 60000)
+    );
+    when(logTypeRepository.findByProjectId(projectId)).thenReturn(projectLogTypes);
+
+    // when
+    Map<Integer, String> result = logTypeResolver.getLogLevelMapForProject(projectId);
+
+    // then
+    assertNotNull(result);
+    assertEquals(9, result.size());
+    assertEquals("custom_warning", result.get(25000));
+    assertEquals("custom_critical", result.get(35000));
+    assertTrue(result.containsKey(5000));
+    assertTrue(result.containsKey(10000));
+    assertTrue(result.containsKey(20000));
+    assertTrue(result.containsKey(30000));
+    assertTrue(result.containsKey(40000));
+    assertTrue(result.containsKey(50000));
+    assertTrue(result.containsKey(60000));
+    verify(logTypeRepository).findByProjectId(projectId);
+  }
+
+  private ProjectLogType createProjectLogType(Long projectId, String name, int level) {
+    ProjectLogType logType = new ProjectLogType();
+    logType.setProjectId(projectId);
+    logType.setName(name);
+    logType.setLevel(level);
+    return logType;
   }
 
 }
