@@ -259,4 +259,73 @@ public interface TmsTestFolderRepository extends ReportPortalRepository<TmsTestF
    * @return true if exists, false if not
    */
   Boolean existsByIdAndProjectId(long id, long projectId);
+
+  /**
+   * Checks if a folder with the given name exists in the specified parent folder.
+   *
+   * @param projectId      The ID of the project
+   * @param name           The name of the folder
+   * @param parentFolderId The ID of the parent folder (null for root level)
+   * @return true if a folder with the name exists, false otherwise
+   */
+  @Query("""
+      SELECT CASE WHEN COUNT(f) > 0 THEN true ELSE false END
+      FROM TmsTestFolder f
+      WHERE f.project.id = :projectId
+      AND f.name = :name
+      AND (:parentFolderId IS NULL AND f.parentTestFolder IS NULL 
+           OR f.parentTestFolder.id = :parentFolderId)
+      """)
+  boolean existsByNameAndTestFolder(
+      @Param("projectId") Long projectId,
+      @Param("name") String name,
+      @Param("parentFolderId") Long parentFolderId
+  );
+
+  /**
+   * Counts the number of test cases in a folder and all its subfolders.
+   *
+   * @param folderId The ID of the folder
+   * @return The count of test cases
+   */
+  @Query("""
+      SELECT COUNT(tc)
+      FROM TmsTestCase tc
+      WHERE tc.testFolder.id IN (
+          SELECT f.id FROM TmsTestFolder f
+          WHERE f.id = :folderId
+          OR f.parentTestFolder.id = :folderId
+      )
+      """)
+  Long countTestCasesByFolderId(@Param("folderId") Long folderId);
+
+  /**
+   * Finds all test case IDs in a specific folder.
+   *
+   * @param folderId The ID of the folder
+   * @return List of test case IDs
+   */
+  @Query("""
+      SELECT tc.id
+      FROM TmsTestCase tc
+      WHERE tc.testFolder.id = :folderId
+      """)
+  List<Long> findTestCaseIdsByFolderId(@Param("folderId") Long folderId);
+
+  /**
+   * Updates the folder for multiple test cases.
+   *
+   * @param testCaseIds The IDs of test cases to update
+   * @param folderId    The ID of the new folder
+   */
+  @Modifying
+  @Query("""
+      UPDATE TmsTestCase tc
+      SET tc.testFolder.id = :folderId
+      WHERE tc.id IN :testCaseIds
+      """)
+  void updateTestCaseFolder(
+      @Param("testCaseIds") List<Long> testCaseIds,
+      @Param("folderId") Long folderId
+  );
 }
