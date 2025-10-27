@@ -42,6 +42,18 @@ public interface LogTypeRepository extends ReportPortalRepository<ProjectLogType
   boolean existsByProjectIdAndNameOrLevelIgnoreCase(@Param("projectId") Long projectId,
       @Param("name") String name, @Param("level") Integer level);
 
+  @Query(value = """
+      SELECT EXISTS (
+          SELECT 1
+          FROM log_type lt
+          WHERE lt.project_id = :projectId
+            AND lt.id != :excludeId
+            AND (LOWER(lt.name) = LOWER(:name) OR lt.level = :level)
+      )
+      """, nativeQuery = true)
+  boolean existsByProjectIdAndNameOrLevelIgnoreCaseExcludingId(@Param("projectId") Long projectId,
+      @Param("name") String name, @Param("level") Integer level, @Param("excludeId") Long excludeId);
+
   @Query("""
       SELECT COUNT(log.id)
       FROM ProjectLogType log
