@@ -241,4 +241,62 @@ class LogTypeRepositoryTest extends BaseTest {
     // then
     assertNull(levelName);
   }
+
+  @Test
+  void existsByProjectIdAndNameOrLevelExcludingIdWhenDuplicateByNameExistsInOtherLogTypeShouldReturnTrue() {
+    // given
+    final long projectId = 1L;
+    final String existingName = "Info";
+    final int newLevel = 223445;
+    final long excludeId = 1L;
+
+    // when
+    boolean exists = logTypeRepository.existsByProjectIdAndNameOrLevelIgnoreCaseExcludingId(
+        projectId, existingName, newLevel, excludeId);
+
+    // then
+    assertTrue(exists);
+  }
+
+  @Test
+  void existsByProjectIdAndNameOrLevelExcludingIdWhenMatchingNameBelongsToExcludedIdShouldReturnFalse() {
+    // given
+    final long projectId = 1L;
+    List<ProjectLogType> logTypes = logTypeRepository.findByProjectId(projectId);
+    ProjectLogType infoLogType = logTypes.stream()
+        .filter(lt -> "info".equals(lt.getName()))
+        .findFirst()
+        .orElseThrow();
+    final String existingName = "Info";
+    final int newLevel = 999999;
+    final long excludeId = infoLogType.getId();
+
+    // when
+    boolean exists = logTypeRepository.existsByProjectIdAndNameOrLevelIgnoreCaseExcludingId(
+        projectId, existingName, newLevel, excludeId);
+
+    // then
+    assertFalse(exists);
+  }
+
+  @Test
+  void existsByProjectIdAndNameOrLevelExcludingIdWhenMatchingLevelBelongsToExcludedIdShouldReturnFalse() {
+    // given
+    final long projectId = 1L;
+    List<ProjectLogType> logTypes = logTypeRepository.findByProjectId(projectId);
+    ProjectLogType debugLogType = logTypes.stream()
+        .filter(lt -> "debug".equals(lt.getName()))
+        .findFirst()
+        .orElseThrow();
+    final String newName = "New name";
+    final int existingLevel = 10000;
+    final long excludeId = debugLogType.getId();
+
+    // when
+    boolean exists = logTypeRepository.existsByProjectIdAndNameOrLevelIgnoreCaseExcludingId(
+        projectId, newName, existingLevel, excludeId);
+
+    // then
+    assertFalse(exists);
+  }
 }
