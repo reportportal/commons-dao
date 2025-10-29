@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
 import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.entity.user.UserAuthProjection;
+import com.epam.ta.reportportal.entity.user.UserIdFullNameProjection;
 import com.epam.ta.reportportal.entity.user.UserRole;
 import com.epam.ta.reportportal.entity.user.UserType;
 import java.time.Instant;
@@ -102,6 +103,15 @@ public interface UserRepository extends ReportPortalRepository<User, Long>, User
 
   @Query(value = "SELECT users.login FROM users WHERE users.id = :id", nativeQuery = true)
   Optional<String> findLoginById(@Param("id") Long id);
+
+  /**
+   * Batch fetch user full names by user IDs.
+   *
+   * @param userIds collection of user IDs
+   * @return List of user ID and full name projections
+   */
+  @Query("SELECT new com.epam.ta.reportportal.entity.user.UserIdFullNameProjection(u.id, u.fullName) FROM User u WHERE u.id IN :userIds")
+  List<UserIdFullNameProjection> findFullNamesByIds(@Param("userIds") List<Long> userIds);
 
   /**
    * Optimized method to find user authentication data by login.

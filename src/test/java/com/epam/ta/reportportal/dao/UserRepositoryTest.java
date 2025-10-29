@@ -41,6 +41,7 @@ import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.epam.ta.reportportal.entity.user.User;
+import com.epam.ta.reportportal.entity.user.UserIdFullNameProjection;
 import com.epam.ta.reportportal.entity.user.UserRole;
 import com.epam.ta.reportportal.entity.user.UserType;
 import java.util.Arrays;
@@ -157,6 +158,21 @@ class UserRepositoryTest extends BaseTest {
   }
 
   @Test
+  void findFullNamesByIds() {
+    // given
+    List<Long> userIds = List.of(1L, 2L);
+
+    // when
+    List<UserIdFullNameProjection> fullNamesByIds = userRepository.findFullNamesByIds(
+        userIds);
+
+    // then
+    assertEquals(2, fullNamesByIds.size());
+    assertEquals("tester", fullNamesByIds.get(0).fullName());
+    assertEquals("tester", fullNamesByIds.get(1).fullName());
+  }
+
+  @Test
   void findUserDetailsInfoByLogin() {
     Optional<ReportPortalUser> chubaka = userRepository.findUserDetails("chubaka");
     assertTrue(chubaka.isPresent(), "User not found");
@@ -219,7 +235,8 @@ class UserRepositoryTest extends BaseTest {
     Optional<User> user = userRepository.findByExternalId(externalId);
 
     assertTrue(user.isPresent(), "User not found");
-    assertThat("External IDs are not equal", user.get().getExternalId(), Matchers.equalTo(externalId));
+    assertThat("External IDs are not equal", user.get().getExternalId(),
+        Matchers.equalTo(externalId));
   }
 
   @Test
@@ -459,7 +476,8 @@ class UserRepositoryTest extends BaseTest {
 
     assertTrue(userAuthProjection.isPresent(), "User not found");
     assertEquals(login, userAuthProjection.get().login(), "Incorrect login");
-    assertEquals("3531f6f9b0538fd347f4c95bd2af9d01", userAuthProjection.get().password(), "Incorrect password");
+    assertEquals("3531f6f9b0538fd347f4c95bd2af9d01", userAuthProjection.get().password(),
+        "Incorrect password");
     assertNotNull(valueWrapper);
   }
 
@@ -473,7 +491,8 @@ class UserRepositoryTest extends BaseTest {
 
     assertTrue(userAuthProjection.isPresent(), "User not found");
     assertEquals(externalId, userAuthProjection.get().externalId(), "Incorrect external ID");
-    assertEquals("3531f6f9b0538fd347f4c95bd2af9d01", userAuthProjection.get().password(), "Incorrect password");
+    assertEquals("3531f6f9b0538fd347f4c95bd2af9d01", userAuthProjection.get().password(),
+        "Incorrect password");
     assertNotNull(valueWrapper);
   }
 
@@ -506,7 +525,7 @@ class UserRepositoryTest extends BaseTest {
     user.setUserType(UserType.INTERNAL);
     user.setUuid(UUID.randomUUID());
     userRepository.save(user);
-    
+
     var cache = cacheManager.getCache("userAuthDataCache");
     assertNotNull(cache);
 

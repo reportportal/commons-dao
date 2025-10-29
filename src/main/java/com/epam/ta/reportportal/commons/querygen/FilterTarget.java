@@ -957,6 +957,7 @@ public enum FilterTarget {
           TEST_ITEM.HAS_STATS,
           TEST_ITEM.HAS_RETRIES,
           TEST_ITEM.LAUNCH_ID,
+          TEST_ITEM.ANALYSIS_OWNER_ID,
           TEST_ITEM_RESULTS.STATUS,
           TEST_ITEM_RESULTS.END_TIME,
           TEST_ITEM_RESULTS.DURATION,

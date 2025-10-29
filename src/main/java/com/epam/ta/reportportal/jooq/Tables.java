@@ -18,6 +18,9 @@ import com.epam.ta.reportportal.jooq.tables.JDashboardWidget;
 import com.epam.ta.reportportal.jooq.tables.JFilter;
 import com.epam.ta.reportportal.jooq.tables.JFilterCondition;
 import com.epam.ta.reportportal.jooq.tables.JFilterSort;
+import com.epam.ta.reportportal.jooq.tables.JGroups;
+import com.epam.ta.reportportal.jooq.tables.JGroupsProjects;
+import com.epam.ta.reportportal.jooq.tables.JGroupsUsers;
 import com.epam.ta.reportportal.jooq.tables.JIntegration;
 import com.epam.ta.reportportal.jooq.tables.JIntegrationType;
 import com.epam.ta.reportportal.jooq.tables.JIssue;
@@ -31,6 +34,7 @@ import com.epam.ta.reportportal.jooq.tables.JLaunchAttributeRules;
 import com.epam.ta.reportportal.jooq.tables.JLaunchNames;
 import com.epam.ta.reportportal.jooq.tables.JLaunchNumber;
 import com.epam.ta.reportportal.jooq.tables.JLog;
+import com.epam.ta.reportportal.jooq.tables.JLogType;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
@@ -143,6 +147,21 @@ public class Tables {
     public static final JFilterSort FILTER_SORT = JFilterSort.FILTER_SORT;
 
     /**
+     * The table <code>public.groups</code>.
+     */
+    public static final JGroups GROUPS = JGroups.GROUPS;
+
+    /**
+     * The table <code>public.groups_projects</code>.
+     */
+    public static final JGroupsProjects GROUPS_PROJECTS = JGroupsProjects.GROUPS_PROJECTS;
+
+    /**
+     * The table <code>public.groups_users</code>.
+     */
+    public static final JGroupsUsers GROUPS_USERS = JGroupsUsers.GROUPS_USERS;
+
+    /**
      * The table <code>public.integration</code>.
      */
     public static final JIntegration INTEGRATION = JIntegration.INTEGRATION;
@@ -206,6 +225,11 @@ public class Tables {
      * The table <code>public.log</code>.
      */
     public static final JLog LOG = JLog.LOG;
+
+    /**
+     * The table <code>public.log_type</code>.
+     */
+    public static final JLogType LOG_TYPE = JLogType.LOG_TYPE;
 
     /**
      * The table <code>public.oauth_registration</code>.

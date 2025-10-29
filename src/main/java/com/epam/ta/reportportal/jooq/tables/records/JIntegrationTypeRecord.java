@@ -121,6 +121,20 @@ public class JIntegrationTypeRecord extends UpdatableRecordImpl<JIntegrationType
         return (JSONB) get(6);
     }
 
+    /**
+     * Setter for <code>public.integration_type.plugin_type</code>.
+     */
+    public void setPluginType(String value) {
+        set(7, value);
+    }
+
+    /**
+     * Getter for <code>public.integration_type.plugin_type</code>.
+     */
+    public String getPluginType() {
+        return (String) get(7);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -144,7 +158,7 @@ public class JIntegrationTypeRecord extends UpdatableRecordImpl<JIntegrationType
     /**
      * Create a detached, initialised JIntegrationTypeRecord
      */
-    public JIntegrationTypeRecord(Integer id, String name, JIntegrationAuthFlowEnum authFlow, Instant creationDate, JIntegrationGroupEnum groupType, Boolean enabled, JSONB details) {
+    public JIntegrationTypeRecord(Integer id, String name, JIntegrationAuthFlowEnum authFlow, Instant creationDate, JIntegrationGroupEnum groupType, Boolean enabled, JSONB details, String pluginType) {
         super(JIntegrationType.INTEGRATION_TYPE);
 
         setId(id);
@@ -154,6 +168,7 @@ public class JIntegrationTypeRecord extends UpdatableRecordImpl<JIntegrationType
         setGroupType(groupType);
         setEnabled(enabled);
         setDetails(details);
+        setPluginType(pluginType);
         resetChangedOnNotNull();
     }
 }
