@@ -283,7 +283,7 @@ public interface TmsTestFolderRepository extends ReportPortalRepository<TmsTestF
   );
 
   /**
-   * Counts the number of test cases in a folder and all its subfolders.
+   * Counts the number of test cases in a folder.
    *
    * @param folderId The ID of the folder
    * @return The count of test cases
@@ -291,11 +291,7 @@ public interface TmsTestFolderRepository extends ReportPortalRepository<TmsTestF
   @Query("""
       SELECT COUNT(tc)
       FROM TmsTestCase tc
-      WHERE tc.testFolder.id IN (
-          SELECT f.id FROM TmsTestFolder f
-          WHERE f.id = :folderId
-          OR f.parentTestFolder.id = :folderId
-      )
+      WHERE tc.testFolder.id = :folderId
       """)
   Long countTestCasesByFolderId(@Param("folderId") Long folderId);
 
