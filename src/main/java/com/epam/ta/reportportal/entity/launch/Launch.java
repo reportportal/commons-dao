@@ -1,24 +1,9 @@
-/*
- * Copyright 2019 EPAM Systems
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.epam.ta.reportportal.entity.launch;
 
 import com.epam.ta.reportportal.dao.converters.JpaInstantConverter;
 import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
+import com.epam.ta.reportportal.entity.enums.LaunchTypeEnum;
 import com.epam.ta.reportportal.entity.enums.RetentionPolicyEnum;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.log.Log;
@@ -47,8 +32,6 @@ import jakarta.persistence.UniqueConstraint;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.JdbcType;
-import org.hibernate.annotations.Type;
-
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -56,7 +39,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 /**
  * @author Pavel Bortnik
  */
-
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "launch", schema = "public", uniqueConstraints = {
@@ -121,6 +103,11 @@ public class Launch implements Serializable {
   @Enumerated(EnumType.STRING)
   @JdbcType(PostgreSQLEnumJdbcType.class)
   private RetentionPolicyEnum retentionPolicy;
+
+  @Column(name = "launch_type")
+  @Enumerated(EnumType.STRING)
+  @JdbcType(PostgreSQLEnumJdbcType.class)
+  private LaunchTypeEnum launchType;
 
   @OneToMany(mappedBy = "launch", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
   @Fetch(FetchMode.JOIN)
@@ -300,6 +287,14 @@ public class Launch implements Serializable {
     this.retentionPolicy = retentionPolicy;
   }
 
+  public LaunchTypeEnum getLaunchType() {
+    return launchType;
+  }
+
+  public void setLaunchType(LaunchTypeEnum launchType) {
+    this.launchType = launchType;
+  }
+
   public Long getTestPlanId() {
     return testPlanId;
   }
@@ -323,13 +318,13 @@ public class Launch implements Serializable {
         name, launch.name) && Objects.equals(description, launch.description) && Objects.equals(
         startTime, launch.startTime) && Objects.equals(endTime, launch.endTime) && Objects.equals(
         number, launch.number) && mode == launch.mode && status == launch.status
-        && retentionPolicy == launch.retentionPolicy;
+        && retentionPolicy == launch.retentionPolicy && launchType == launch.launchType;
   }
 
   @Override
   public int hashCode() {
     return Objects.hash(uuid, projectId, name, description, startTime, endTime, number, hasRetries,
-        rerun, mode, status, retentionPolicy
+        rerun, mode, status, retentionPolicy, launchType
     );
   }
 
@@ -350,10 +345,12 @@ public class Launch implements Serializable {
     sb.append(", lastModified=").append(lastModified);
     sb.append(", mode=").append(mode);
     sb.append(", status=").append(status);
+    sb.append(", launchType=").append(launchType);
     sb.append(", attributes=").append(attributes);
     sb.append(", statistics=").append(statistics);
     sb.append(", approximateDuration=").append(approximateDuration);
     sb.append(", retentionPolicy=").append(retentionPolicy);
+    sb.append(", testPlanId=").append(testPlanId);
     sb.append('}');
     return sb.toString();
   }

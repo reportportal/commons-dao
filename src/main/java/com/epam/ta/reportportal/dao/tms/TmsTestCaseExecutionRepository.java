@@ -144,15 +144,17 @@ public interface TmsTestCaseExecutionRepository extends
   List<TmsTestCaseExecution> findByLaunchId(@Param("launchId") Long launchId);
 
   /**
-   * Finds execution by test case ID and launch ID.
+   * Finds execution by test case execution ID and launch ID.
    *
-   * @param testCaseId test case ID
+   * @param testCaseExecutionId test case execution ID
    * @param launchId   launch ID
    * @return optional execution
    */
-  @Query("SELECT e FROM TmsTestCaseExecution e WHERE e.testCaseId = :testCaseId AND e.launchId = :launchId")
-  Optional<TmsTestCaseExecution> findByTestCaseIdAndLaunchId(
-      @Param("testCaseId") Long testCaseId,
+  @Query("SELECT e FROM TmsTestCaseExecution e "
+      + "WHERE e.id = :testCaseExecutionId "
+      + "AND e.launchId = :launchId")
+  Optional<TmsTestCaseExecution> findByTestCaseExecutionIdAndLaunchId(
+      @Param("testCaseExecutionId") Long testCaseExecutionId,
       @Param("launchId") Long launchId
   );
 
