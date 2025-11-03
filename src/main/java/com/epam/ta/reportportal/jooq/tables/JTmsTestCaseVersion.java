@@ -9,6 +9,7 @@ import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.JTmsManualScenario.JTmsManualScenarioPath;
 import com.epam.ta.reportportal.jooq.tables.JTmsTestCase.JTmsTestCasePath;
+import com.epam.ta.reportportal.jooq.tables.JTmsTestCaseExecution.JTmsTestCaseExecutionPath;
 import com.epam.ta.reportportal.jooq.tables.records.JTmsTestCaseVersionRecord;
 
 import java.util.Arrays;
@@ -198,6 +199,19 @@ public class JTmsTestCaseVersion extends TableImpl<JTmsTestCaseVersionRecord> {
             _tmsManualScenario = new JTmsManualScenarioPath(this, null, Keys.TMS_MANUAL_SCENARIO__TMS_MANUAL_SCENARIO_FK_TEST_CASE_VERSION.getInverseKey());
 
         return _tmsManualScenario;
+    }
+
+    private transient JTmsTestCaseExecutionPath _tmsTestCaseExecution;
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>public.tms_test_case_execution</code> table
+     */
+    public JTmsTestCaseExecutionPath tmsTestCaseExecution() {
+        if (_tmsTestCaseExecution == null)
+            _tmsTestCaseExecution = new JTmsTestCaseExecutionPath(this, null, Keys.TMS_TEST_CASE_EXECUTION__TMS_TEST_CASE_EXECUTION_FK_TEST_CASE_VERSION.getInverseKey());
+
+        return _tmsTestCaseExecution;
     }
 
     @Override

@@ -76,11 +76,12 @@ import com.epam.ta.reportportal.jooq.tables.JTmsStepAttachment;
 import com.epam.ta.reportportal.jooq.tables.JTmsStepsManualScenario;
 import com.epam.ta.reportportal.jooq.tables.JTmsTestCase;
 import com.epam.ta.reportportal.jooq.tables.JTmsTestCaseAttribute;
+import com.epam.ta.reportportal.jooq.tables.JTmsTestCaseExecution;
+import com.epam.ta.reportportal.jooq.tables.JTmsTestCaseLaunch;
 import com.epam.ta.reportportal.jooq.tables.JTmsTestCaseVersion;
 import com.epam.ta.reportportal.jooq.tables.JTmsTestFolder;
 import com.epam.ta.reportportal.jooq.tables.JTmsTestPlan;
 import com.epam.ta.reportportal.jooq.tables.JTmsTestPlanAttribute;
-import com.epam.ta.reportportal.jooq.tables.JTmsTestPlanLaunch;
 import com.epam.ta.reportportal.jooq.tables.JTmsTestPlanTestCase;
 import com.epam.ta.reportportal.jooq.tables.JTmsTextManualScenario;
 import com.epam.ta.reportportal.jooq.tables.JTmsTextManualScenarioAttachment;
@@ -498,6 +499,16 @@ public class Tables {
     public static final JTmsTestCaseAttribute TMS_TEST_CASE_ATTRIBUTE = JTmsTestCaseAttribute.TMS_TEST_CASE_ATTRIBUTE;
 
     /**
+     * The table <code>public.tms_test_case_execution</code>.
+     */
+    public static final JTmsTestCaseExecution TMS_TEST_CASE_EXECUTION = JTmsTestCaseExecution.TMS_TEST_CASE_EXECUTION;
+
+    /**
+     * The table <code>public.tms_test_case_launch</code>.
+     */
+    public static final JTmsTestCaseLaunch TMS_TEST_CASE_LAUNCH = JTmsTestCaseLaunch.TMS_TEST_CASE_LAUNCH;
+
+    /**
      * The table <code>public.tms_test_case_version</code>.
      */
     public static final JTmsTestCaseVersion TMS_TEST_CASE_VERSION = JTmsTestCaseVersion.TMS_TEST_CASE_VERSION;
@@ -516,11 +527,6 @@ public class Tables {
      * The table <code>public.tms_test_plan_attribute</code>.
      */
     public static final JTmsTestPlanAttribute TMS_TEST_PLAN_ATTRIBUTE = JTmsTestPlanAttribute.TMS_TEST_PLAN_ATTRIBUTE;
-
-    /**
-     * The table <code>public.tms_test_plan_launch</code>.
-     */
-    public static final JTmsTestPlanLaunch TMS_TEST_PLAN_LAUNCH = JTmsTestPlanLaunch.TMS_TEST_PLAN_LAUNCH;
 
     /**
      * The table <code>public.tms_test_plan_test_case</code>.

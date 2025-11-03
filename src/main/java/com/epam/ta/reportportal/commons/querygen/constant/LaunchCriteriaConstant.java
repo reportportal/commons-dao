@@ -28,14 +28,7 @@ public final class LaunchCriteriaConstant {
   public static final String CRITERIA_LAUNCH_STATUS = "status";
   public static final String CRITERIA_LAUNCH_NUMBER = "number";
   public static final String CRITERIA_LAUNCH_TYPE = "launchType";
-  public static final String CRITERIA_LAUNCH_ID = "id";
-  public static final String CRITERIA_LAUNCH_NAME = "name";
-  public static final String CRITERIA_LAUNCH_DESCRIPTION = "description";
-  public static final String CRITERIA_LAUNCH_START_TIME = "startTime";
-  public static final String CRITERIA_LAUNCH_END_TIME = "endTime";
   public static final String CRITERIA_TEST_PLAN_ID = "testPlanId";
-  public static final String CRITERIA_USER_ID = "userId";
-  public static final String CRITERIA_UUID = "uuid";
 
   private LaunchCriteriaConstant() {
     //static only

@@ -9,6 +9,7 @@ import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
+import com.epam.ta.reportportal.jooq.enums.JLaunchTypeEnum;
 import com.epam.ta.reportportal.jooq.enums.JRetentionPolicyEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.JItemAttribute.JItemAttributePath;
@@ -17,8 +18,9 @@ import com.epam.ta.reportportal.jooq.tables.JProject.JProjectPath;
 import com.epam.ta.reportportal.jooq.tables.JStatistics.JStatisticsPath;
 import com.epam.ta.reportportal.jooq.tables.JStatisticsField.JStatisticsFieldPath;
 import com.epam.ta.reportportal.jooq.tables.JTestItem.JTestItemPath;
+import com.epam.ta.reportportal.jooq.tables.JTmsTestCase.JTmsTestCasePath;
+import com.epam.ta.reportportal.jooq.tables.JTmsTestCaseLaunch.JTmsTestCaseLaunchPath;
 import com.epam.ta.reportportal.jooq.tables.JTmsTestPlan.JTmsTestPlanPath;
-import com.epam.ta.reportportal.jooq.tables.JTmsTestPlanLaunch.JTmsTestPlanLaunchPath;
 import com.epam.ta.reportportal.jooq.tables.JUsers.JUsersPath;
 import com.epam.ta.reportportal.jooq.tables.records.JLaunchRecord;
 
@@ -151,6 +153,16 @@ public class JLaunch extends TableImpl<JLaunchRecord> {
      * The column <code>public.launch.retention_policy</code>.
      */
     public final TableField<JLaunchRecord, JRetentionPolicyEnum> RETENTION_POLICY = createField(DSL.name("retention_policy"), SQLDataType.VARCHAR.defaultValue(DSL.field(DSL.raw("'REGULAR'::retention_policy_enum"), SQLDataType.VARCHAR)).asEnumDataType(JRetentionPolicyEnum.class), this, "");
+
+    /**
+     * The column <code>public.launch.test_plan_id</code>.
+     */
+    public final TableField<JLaunchRecord, Long> TEST_PLAN_ID = createField(DSL.name("test_plan_id"), SQLDataType.BIGINT, this, "");
+
+    /**
+     * The column <code>public.launch.launch_type</code>.
+     */
+    public final TableField<JLaunchRecord, JLaunchTypeEnum> LAUNCH_TYPE = createField(DSL.name("launch_type"), SQLDataType.VARCHAR.defaultValue(DSL.field(DSL.raw("'AUTOMATION'::launch_type_enum"), SQLDataType.VARCHAR)).asEnumDataType(JLaunchTypeEnum.class), this, "");
 
     private JLaunch(Name alias, Table<JLaunchRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);
@@ -319,6 +331,19 @@ public class JLaunch extends TableImpl<JLaunchRecord> {
         return _testItem;
     }
 
+    private transient JTmsTestCaseLaunchPath _tmsTestCaseLaunch;
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>public.tms_test_case_launch</code> table
+     */
+    public JTmsTestCaseLaunchPath tmsTestCaseLaunch() {
+        if (_tmsTestCaseLaunch == null)
+            _tmsTestCaseLaunch = new JTmsTestCaseLaunchPath(this, null, Keys.TMS_TEST_CASE_LAUNCH__TMS_TEST_CASE_LAUNCH_FK_LAUNCH.getInverseKey());
+
+        return _tmsTestCaseLaunch;
+    }
+
     private transient JTmsTestPlanPath _tmsTestPlan;
 
     /**
@@ -332,25 +357,20 @@ public class JLaunch extends TableImpl<JLaunchRecord> {
         return _tmsTestPlan;
     }
 
-    private transient JTmsTestPlanLaunchPath _tmsTestPlanLaunch;
-
-    /**
-     * Get the implicit to-many join path to the
-     * <code>public.tms_test_plan_launch</code> table
-     */
-    public JTmsTestPlanLaunchPath tmsTestPlanLaunch() {
-        if (_tmsTestPlanLaunch == null)
-            _tmsTestPlanLaunch = new JTmsTestPlanLaunchPath(this, null, Keys.TMS_TEST_PLAN_LAUNCH__TMS_TEST_PLAN_LAUNCH_FK_LAUNCH.getInverseKey());
-
-        return _tmsTestPlanLaunch;
-    }
-
     /**
      * Get the implicit many-to-many join path to the
      * <code>public.statistics_field</code> table
      */
     public JStatisticsFieldPath statisticsField() {
         return statistics().statisticsField();
+    }
+
+    /**
+     * Get the implicit many-to-many join path to the
+     * <code>public.tms_test_case</code> table
+     */
+    public JTmsTestCasePath tmsTestCase() {
+        return tmsTestCaseLaunch().tmsTestCase();
     }
 
     @Override

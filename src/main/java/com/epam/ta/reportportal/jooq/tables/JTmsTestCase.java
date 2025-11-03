@@ -8,9 +8,12 @@ import com.epam.ta.reportportal.dao.converters.JooqInstantConverter;
 import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
+import com.epam.ta.reportportal.jooq.tables.JLaunch.JLaunchPath;
 import com.epam.ta.reportportal.jooq.tables.JTmsAttribute.JTmsAttributePath;
 import com.epam.ta.reportportal.jooq.tables.JTmsDataset.JTmsDatasetPath;
 import com.epam.ta.reportportal.jooq.tables.JTmsTestCaseAttribute.JTmsTestCaseAttributePath;
+import com.epam.ta.reportportal.jooq.tables.JTmsTestCaseExecution.JTmsTestCaseExecutionPath;
+import com.epam.ta.reportportal.jooq.tables.JTmsTestCaseLaunch.JTmsTestCaseLaunchPath;
 import com.epam.ta.reportportal.jooq.tables.JTmsTestCaseVersion.JTmsTestCaseVersionPath;
 import com.epam.ta.reportportal.jooq.tables.JTmsTestFolder.JTmsTestFolderPath;
 import com.epam.ta.reportportal.jooq.tables.JTmsTestPlan.JTmsTestPlanPath;
@@ -243,6 +246,32 @@ public class JTmsTestCase extends TableImpl<JTmsTestCaseRecord> {
         return _tmsTestCaseAttribute;
     }
 
+    private transient JTmsTestCaseExecutionPath _tmsTestCaseExecution;
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>public.tms_test_case_execution</code> table
+     */
+    public JTmsTestCaseExecutionPath tmsTestCaseExecution() {
+        if (_tmsTestCaseExecution == null)
+            _tmsTestCaseExecution = new JTmsTestCaseExecutionPath(this, null, Keys.TMS_TEST_CASE_EXECUTION__TMS_TEST_CASE_EXECUTION_FK_TEST_CASE.getInverseKey());
+
+        return _tmsTestCaseExecution;
+    }
+
+    private transient JTmsTestCaseLaunchPath _tmsTestCaseLaunch;
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>public.tms_test_case_launch</code> table
+     */
+    public JTmsTestCaseLaunchPath tmsTestCaseLaunch() {
+        if (_tmsTestCaseLaunch == null)
+            _tmsTestCaseLaunch = new JTmsTestCaseLaunchPath(this, null, Keys.TMS_TEST_CASE_LAUNCH__TMS_TEST_CASE_LAUNCH_FK_TEST_CASE.getInverseKey());
+
+        return _tmsTestCaseLaunch;
+    }
+
     private transient JTmsTestCaseVersionPath _tmsTestCaseVersion;
 
     /**
@@ -275,6 +304,14 @@ public class JTmsTestCase extends TableImpl<JTmsTestCaseRecord> {
      */
     public JTmsAttributePath tmsAttribute() {
         return tmsTestCaseAttribute().tmsAttribute();
+    }
+
+    /**
+     * Get the implicit many-to-many join path to the <code>public.launch</code>
+     * table
+     */
+    public JLaunchPath launch() {
+        return tmsTestCaseLaunch().launch();
     }
 
     /**

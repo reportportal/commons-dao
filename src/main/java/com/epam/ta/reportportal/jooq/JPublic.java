@@ -76,11 +76,12 @@ import com.epam.ta.reportportal.jooq.tables.JTmsStepAttachment;
 import com.epam.ta.reportportal.jooq.tables.JTmsStepsManualScenario;
 import com.epam.ta.reportportal.jooq.tables.JTmsTestCase;
 import com.epam.ta.reportportal.jooq.tables.JTmsTestCaseAttribute;
+import com.epam.ta.reportportal.jooq.tables.JTmsTestCaseExecution;
+import com.epam.ta.reportportal.jooq.tables.JTmsTestCaseLaunch;
 import com.epam.ta.reportportal.jooq.tables.JTmsTestCaseVersion;
 import com.epam.ta.reportportal.jooq.tables.JTmsTestFolder;
 import com.epam.ta.reportportal.jooq.tables.JTmsTestPlan;
 import com.epam.ta.reportportal.jooq.tables.JTmsTestPlanAttribute;
-import com.epam.ta.reportportal.jooq.tables.JTmsTestPlanLaunch;
 import com.epam.ta.reportportal.jooq.tables.JTmsTestPlanTestCase;
 import com.epam.ta.reportportal.jooq.tables.JTmsTextManualScenario;
 import com.epam.ta.reportportal.jooq.tables.JTmsTextManualScenarioAttachment;
@@ -512,6 +513,16 @@ public class JPublic extends SchemaImpl {
     public final JTmsTestCaseAttribute TMS_TEST_CASE_ATTRIBUTE = JTmsTestCaseAttribute.TMS_TEST_CASE_ATTRIBUTE;
 
     /**
+     * The table <code>public.tms_test_case_execution</code>.
+     */
+    public final JTmsTestCaseExecution TMS_TEST_CASE_EXECUTION = JTmsTestCaseExecution.TMS_TEST_CASE_EXECUTION;
+
+    /**
+     * The table <code>public.tms_test_case_launch</code>.
+     */
+    public final JTmsTestCaseLaunch TMS_TEST_CASE_LAUNCH = JTmsTestCaseLaunch.TMS_TEST_CASE_LAUNCH;
+
+    /**
      * The table <code>public.tms_test_case_version</code>.
      */
     public final JTmsTestCaseVersion TMS_TEST_CASE_VERSION = JTmsTestCaseVersion.TMS_TEST_CASE_VERSION;
@@ -530,11 +541,6 @@ public class JPublic extends SchemaImpl {
      * The table <code>public.tms_test_plan_attribute</code>.
      */
     public final JTmsTestPlanAttribute TMS_TEST_PLAN_ATTRIBUTE = JTmsTestPlanAttribute.TMS_TEST_PLAN_ATTRIBUTE;
-
-    /**
-     * The table <code>public.tms_test_plan_launch</code>.
-     */
-    public final JTmsTestPlanLaunch TMS_TEST_PLAN_LAUNCH = JTmsTestPlanLaunch.TMS_TEST_PLAN_LAUNCH;
 
     /**
      * The table <code>public.tms_test_plan_test_case</code>.
@@ -671,11 +677,12 @@ public class JPublic extends SchemaImpl {
             JTmsStepsManualScenario.TMS_STEPS_MANUAL_SCENARIO,
             JTmsTestCase.TMS_TEST_CASE,
             JTmsTestCaseAttribute.TMS_TEST_CASE_ATTRIBUTE,
+            JTmsTestCaseExecution.TMS_TEST_CASE_EXECUTION,
+            JTmsTestCaseLaunch.TMS_TEST_CASE_LAUNCH,
             JTmsTestCaseVersion.TMS_TEST_CASE_VERSION,
             JTmsTestFolder.TMS_TEST_FOLDER,
             JTmsTestPlan.TMS_TEST_PLAN,
             JTmsTestPlanAttribute.TMS_TEST_PLAN_ATTRIBUTE,
-            JTmsTestPlanLaunch.TMS_TEST_PLAN_LAUNCH,
             JTmsTestPlanTestCase.TMS_TEST_PLAN_TEST_CASE,
             JTmsTextManualScenario.TMS_TEXT_MANUAL_SCENARIO,
             JTmsTextManualScenarioAttachment.TMS_TEXT_MANUAL_SCENARIO_ATTACHMENT,

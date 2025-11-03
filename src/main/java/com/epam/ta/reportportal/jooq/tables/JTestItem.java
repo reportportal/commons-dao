@@ -19,6 +19,7 @@ import com.epam.ta.reportportal.jooq.tables.JStatistics.JStatisticsPath;
 import com.epam.ta.reportportal.jooq.tables.JStatisticsField.JStatisticsFieldPath;
 import com.epam.ta.reportportal.jooq.tables.JTestItem.JTestItemPath;
 import com.epam.ta.reportportal.jooq.tables.JTestItemResults.JTestItemResultsPath;
+import com.epam.ta.reportportal.jooq.tables.JTmsTestCaseExecution.JTmsTestCaseExecutionPath;
 import com.epam.ta.reportportal.jooq.tables.records.JTestItemRecord;
 
 import java.time.Instant;
@@ -367,6 +368,19 @@ public class JTestItem extends TableImpl<JTestItemRecord> {
             _testItemResults = new JTestItemResultsPath(this, null, Keys.TEST_ITEM_RESULTS__TEST_ITEM_RESULTS_RESULT_ID_FKEY.getInverseKey());
 
         return _testItemResults;
+    }
+
+    private transient JTmsTestCaseExecutionPath _tmsTestCaseExecution;
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>public.tms_test_case_execution</code> table
+     */
+    public JTmsTestCaseExecutionPath tmsTestCaseExecution() {
+        if (_tmsTestCaseExecution == null)
+            _tmsTestCaseExecution = new JTmsTestCaseExecutionPath(this, null, Keys.TMS_TEST_CASE_EXECUTION__TMS_TEST_CASE_EXECUTION_FK_TEST_ITEM.getInverseKey());
+
+        return _tmsTestCaseExecution;
     }
 
     /**

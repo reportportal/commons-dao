@@ -5,6 +5,7 @@ package com.epam.ta.reportportal.jooq.tables.records;
 
 
 import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
+import com.epam.ta.reportportal.jooq.enums.JLaunchTypeEnum;
 import com.epam.ta.reportportal.jooq.enums.JRetentionPolicyEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.JLaunch;
@@ -247,6 +248,34 @@ public class JLaunchRecord extends UpdatableRecordImpl<JLaunchRecord> {
         return (JRetentionPolicyEnum) get(15);
     }
 
+    /**
+     * Setter for <code>public.launch.test_plan_id</code>.
+     */
+    public void setTestPlanId(Long value) {
+        set(16, value);
+    }
+
+    /**
+     * Getter for <code>public.launch.test_plan_id</code>.
+     */
+    public Long getTestPlanId() {
+        return (Long) get(16);
+    }
+
+    /**
+     * Setter for <code>public.launch.launch_type</code>.
+     */
+    public void setLaunchType(JLaunchTypeEnum value) {
+        set(17, value);
+    }
+
+    /**
+     * Getter for <code>public.launch.launch_type</code>.
+     */
+    public JLaunchTypeEnum getLaunchType() {
+        return (JLaunchTypeEnum) get(17);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -270,7 +299,7 @@ public class JLaunchRecord extends UpdatableRecordImpl<JLaunchRecord> {
     /**
      * Create a detached, initialised JLaunchRecord
      */
-    public JLaunchRecord(Long id, String uuid, Long projectId, Long userId, String name, String description, Instant startTime, Instant endTime, Integer number, Instant lastModified, JLaunchModeEnum mode, JStatusEnum status, Boolean hasRetries, Boolean rerun, Double approximateDuration, JRetentionPolicyEnum retentionPolicy) {
+    public JLaunchRecord(Long id, String uuid, Long projectId, Long userId, String name, String description, Instant startTime, Instant endTime, Integer number, Instant lastModified, JLaunchModeEnum mode, JStatusEnum status, Boolean hasRetries, Boolean rerun, Double approximateDuration, JRetentionPolicyEnum retentionPolicy, Long testPlanId, JLaunchTypeEnum launchType) {
         super(JLaunch.LAUNCH);
 
         setId(id);
@@ -289,6 +318,8 @@ public class JLaunchRecord extends UpdatableRecordImpl<JLaunchRecord> {
         setRerun(rerun);
         setApproximateDuration(approximateDuration);
         setRetentionPolicy(retentionPolicy);
+        setTestPlanId(testPlanId);
+        setLaunchType(launchType);
         resetChangedOnNotNull();
     }
 }

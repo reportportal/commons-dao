@@ -15,7 +15,6 @@ import com.epam.ta.reportportal.jooq.tables.JTmsMilestone.JTmsMilestonePath;
 import com.epam.ta.reportportal.jooq.tables.JTmsProductVersion.JTmsProductVersionPath;
 import com.epam.ta.reportportal.jooq.tables.JTmsTestCase.JTmsTestCasePath;
 import com.epam.ta.reportportal.jooq.tables.JTmsTestPlanAttribute.JTmsTestPlanAttributePath;
-import com.epam.ta.reportportal.jooq.tables.JTmsTestPlanLaunch.JTmsTestPlanLaunchPath;
 import com.epam.ta.reportportal.jooq.tables.JTmsTestPlanTestCase.JTmsTestPlanTestCasePath;
 import com.epam.ta.reportportal.jooq.tables.records.JTmsTestPlanRecord;
 
@@ -275,19 +274,6 @@ public class JTmsTestPlan extends TableImpl<JTmsTestPlanRecord> {
             _tmsTestPlanAttribute = new JTmsTestPlanAttributePath(this, null, Keys.TMS_TEST_PLAN_ATTRIBUTE__TMS_TEST_PLAN_ATTRIBUTE_FK_TEST_PLAN.getInverseKey());
 
         return _tmsTestPlanAttribute;
-    }
-
-    private transient JTmsTestPlanLaunchPath _tmsTestPlanLaunch;
-
-    /**
-     * Get the implicit to-many join path to the
-     * <code>public.tms_test_plan_launch</code> table
-     */
-    public JTmsTestPlanLaunchPath tmsTestPlanLaunch() {
-        if (_tmsTestPlanLaunch == null)
-            _tmsTestPlanLaunch = new JTmsTestPlanLaunchPath(this, null, Keys.TMS_TEST_PLAN_LAUNCH__TMS_TEST_PLAN_LAUNCH_FK_TEST_PLAN.getInverseKey());
-
-        return _tmsTestPlanLaunch;
     }
 
     private transient JTmsTestPlanTestCasePath _tmsTestPlanTestCase;
