@@ -20,12 +20,12 @@ public class OrganizationSettingsRepositoryTest extends BaseTest {
   })
   public void testSettingsMigrated(Long orgId) {
     var retentionSettings = organizationSettingsRepository.findByOrganizationId(orgId).stream()
-        .filter(it -> it.getSettingKey().startsWith("retention_")).collect(Collectors.toMap(
-            OrganizationSetting::getSettingKey, it -> it));
+        .filter(it -> it.getSettingKey().startsWith("retention_"))
+        .collect(Collectors.toMap(OrganizationSetting::getSettingKey, it -> it));
     assertEquals(3, retentionSettings.size());
-    assertEquals("90", retentionSettings.get("retention_launches").getSettingValue());
-    assertEquals("14", retentionSettings.get("retention_logs").getSettingValue());
-    assertEquals("14", retentionSettings.get("retention_attachments").getSettingValue());
+    assertEquals("7776000", retentionSettings.get("retention_launches").getSettingValue());
+    assertEquals("1209600", retentionSettings.get("retention_logs").getSettingValue());
+    assertEquals("1209600", retentionSettings.get("retention_attachments").getSettingValue());
   }
 
 }

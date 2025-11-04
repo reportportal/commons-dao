@@ -162,6 +162,11 @@ public class JTestItem extends TableImpl<JTestItemRecord> {
      */
     public final TableField<JTestItemRecord, Integer> TEST_CASE_HASH = createField(DSL.name("test_case_hash"), SQLDataType.INTEGER.nullable(false), this, "");
 
+    /**
+     * The column <code>public.test_item.analysis_owner_id</code>.
+     */
+    public final TableField<JTestItemRecord, Long> ANALYSIS_OWNER_ID = createField(DSL.name("analysis_owner_id"), SQLDataType.BIGINT, this, "");
+
     private JTestItem(Name alias, Table<JTestItemRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);
     }

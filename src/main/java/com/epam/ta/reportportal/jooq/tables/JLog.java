@@ -189,7 +189,7 @@ public class JLog extends TableImpl<JLogRecord> {
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.asList(Indexes.LOG_ATTACH_ID_IDX, Indexes.LOG_CLUSTER_IDX, Indexes.LOG_LAUNCH_ID_IDX, Indexes.LOG_PROJECT_ID_LOG_TIME_IDX, Indexes.LOG_PROJECT_IDX, Indexes.LOG_TI_IDX);
+        return Arrays.asList(Indexes.IDX_LOG_PROJECT_LEVEL, Indexes.LOG_ATTACH_ID_IDX, Indexes.LOG_CLUSTER_IDX, Indexes.LOG_LAUNCH_ID_IDX, Indexes.LOG_PROJECT_ID_LOG_TIME_IDX, Indexes.LOG_PROJECT_IDX, Indexes.LOG_TI_IDX);
     }
 
     @Override

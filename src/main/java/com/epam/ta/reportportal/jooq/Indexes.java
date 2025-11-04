@@ -65,6 +65,7 @@ public class Indexes {
     public static final Index FILTER_COND_FILTER_IDX = Internal.createIndex(DSL.name("filter_cond_filter_idx"), JFilterCondition.FILTER_CONDITION, new OrderField[] { JFilterCondition.FILTER_CONDITION.FILTER_ID }, false);
     public static final Index FILTER_SORT_FILTER_IDX = Internal.createIndex(DSL.name("filter_sort_filter_idx"), JFilterSort.FILTER_SORT, new OrderField[] { JFilterSort.FILTER_SORT.FILTER_ID }, false);
     public static final Index HASH_API_KEYS_IDX = Internal.createIndex(DSL.name("hash_api_keys_idx"), JApiKeys.API_KEYS, new OrderField[] { JApiKeys.API_KEYS.HASH }, false);
+    public static final Index IDX_LOG_PROJECT_LEVEL = Internal.createIndex(DSL.name("idx_log_project_level"), JLog.LOG, new OrderField[] { JLog.LOG.PROJECT_ID, JLog.LOG.LOG_LEVEL }, false);
     public static final Index IDX_TEST_ITEM_NAME_TRGM = Internal.createIndex(DSL.name("idx_test_item_name_trgm"), JTestItem.TEST_ITEM, new OrderField[] { JTestItem.TEST_ITEM.NAME }, false);
     public static final Index INTEGR_PROJECT_IDX = Internal.createIndex(DSL.name("integr_project_idx"), JIntegration.INTEGRATION, new OrderField[] { JIntegration.INTEGRATION.PROJECT_ID }, false);
     public static final Index ISSUE_IT_IDX = Internal.createIndex(DSL.name("issue_it_idx"), JIssue.ISSUE, new OrderField[] { JIssue.ISSUE.ISSUE_TYPE }, false);
@@ -75,6 +76,7 @@ public class Indexes {
     public static final Index ITEM_TEST_CASE_ID_LAUNCH_ID_IDX = Internal.createIndex(DSL.name("item_test_case_id_launch_id_idx"), JTestItem.TEST_ITEM, new OrderField[] { JTestItem.TEST_ITEM.TEST_CASE_ID, JTestItem.TEST_ITEM.LAUNCH_ID }, false);
     public static final Index L_ATTR_RL_SEND_CASE_IDX = Internal.createIndex(DSL.name("l_attr_rl_send_case_idx"), JLaunchAttributeRules.LAUNCH_ATTRIBUTE_RULES, new OrderField[] { JLaunchAttributeRules.LAUNCH_ATTRIBUTE_RULES.SENDER_CASE_ID }, false);
     public static final Index LAUNCH_PROJECT_START_TIME_IDX = Internal.createIndex(DSL.name("launch_project_start_time_idx"), JLaunch.LAUNCH, new OrderField[] { JLaunch.LAUNCH.PROJECT_ID, JLaunch.LAUNCH.START_TIME }, false);
+    public static final Index LAUNCH_STATUS_IDX = Internal.createIndex(DSL.name("launch_status_idx"), JLaunch.LAUNCH, new OrderField[] { JLaunch.LAUNCH.STATUS }, false);
     public static final Index LAUNCH_USER_IDX = Internal.createIndex(DSL.name("launch_user_idx"), JLaunch.LAUNCH, new OrderField[] { JLaunch.LAUNCH.USER_ID }, false);
     public static final Index LN_SEND_CASE_IDX = Internal.createIndex(DSL.name("ln_send_case_idx"), JLaunchNames.LAUNCH_NAMES, new OrderField[] { JLaunchNames.LAUNCH_NAMES.SENDER_CASE_ID }, false);
     public static final Index LOG_ATTACH_ID_IDX = Internal.createIndex(DSL.name("log_attach_id_idx"), JLog.LOG, new OrderField[] { JLog.LOG.ATTACHMENT_ID }, false);

@@ -13,6 +13,7 @@ import com.epam.ta.reportportal.jooq.tables.JAttribute;
 import com.epam.ta.reportportal.jooq.tables.JClusters;
 import com.epam.ta.reportportal.jooq.tables.JClustersTestItem;
 import com.epam.ta.reportportal.jooq.tables.JContentField;
+import com.epam.ta.reportportal.jooq.tables.JCounterDecrease;
 import com.epam.ta.reportportal.jooq.tables.JDashboard;
 import com.epam.ta.reportportal.jooq.tables.JDashboardWidget;
 import com.epam.ta.reportportal.jooq.tables.JFilter;
@@ -135,6 +136,11 @@ public class JPublic extends SchemaImpl {
      * The table <code>public.content_field</code>.
      */
     public final JContentField CONTENT_FIELD = JContentField.CONTENT_FIELD;
+
+    /**
+     * The table <code>public.counter_decrease</code>.
+     */
+    public final JCounterDecrease COUNTER_DECREASE = JCounterDecrease.COUNTER_DECREASE;
 
     /**
      * The table <code>public.dashboard</code>.
@@ -457,6 +463,7 @@ public class JPublic extends SchemaImpl {
             JClusters.CLUSTERS,
             JClustersTestItem.CLUSTERS_TEST_ITEM,
             JContentField.CONTENT_FIELD,
+            JCounterDecrease.COUNTER_DECREASE,
             JDashboard.DASHBOARD,
             JDashboardWidget.DASHBOARD_WIDGET,
             JFilter.FILTER,

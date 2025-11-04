@@ -13,6 +13,7 @@ import com.epam.ta.reportportal.jooq.tables.JAttribute;
 import com.epam.ta.reportportal.jooq.tables.JClusters;
 import com.epam.ta.reportportal.jooq.tables.JClustersTestItem;
 import com.epam.ta.reportportal.jooq.tables.JContentField;
+import com.epam.ta.reportportal.jooq.tables.JCounterDecrease;
 import com.epam.ta.reportportal.jooq.tables.JDashboard;
 import com.epam.ta.reportportal.jooq.tables.JDashboardWidget;
 import com.epam.ta.reportportal.jooq.tables.JFilter;
@@ -121,6 +122,11 @@ public class Tables {
      * The table <code>public.content_field</code>.
      */
     public static final JContentField CONTENT_FIELD = JContentField.CONTENT_FIELD;
+
+    /**
+     * The table <code>public.counter_decrease</code>.
+     */
+    public static final JCounterDecrease COUNTER_DECREASE = JCounterDecrease.COUNTER_DECREASE;
 
     /**
      * The table <code>public.dashboard</code>.
@@ -405,6 +411,7 @@ public class Tables {
      * The table <code>public.widget</code>.
      */
     public static final JWidget WIDGET = JWidget.WIDGET;
+
 
     /**
      * The table <code>public.widget_filter</code>.
