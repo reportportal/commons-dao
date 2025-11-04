@@ -4,12 +4,9 @@
 package com.epam.ta.reportportal.jooq.tables;
 
 
-import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.JTestItem.JTestItemPath;
-import com.epam.ta.reportportal.jooq.tables.JTmsTestCase.JTmsTestCasePath;
-import com.epam.ta.reportportal.jooq.tables.JTmsTestCaseVersion.JTmsTestCaseVersionPath;
 import com.epam.ta.reportportal.jooq.tables.records.JTmsTestCaseExecutionRecord;
 
 import java.util.Arrays;
@@ -20,7 +17,6 @@ import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.ForeignKey;
 import org.jooq.Identity;
-import org.jooq.Index;
 import org.jooq.InverseForeignKey;
 import org.jooq.JSONB;
 import org.jooq.Name;
@@ -78,10 +74,15 @@ public class JTmsTestCaseExecution extends TableImpl<JTmsTestCaseExecutionRecord
     public final TableField<JTmsTestCaseExecutionRecord, Long> TEST_CASE_ID = createField(DSL.name("test_case_id"), SQLDataType.BIGINT.nullable(false), this, "");
 
     /**
+     * The column <code>public.tms_test_case_execution.launch_id</code>.
+     */
+    public final TableField<JTmsTestCaseExecutionRecord, Long> LAUNCH_ID = createField(DSL.name("launch_id"), SQLDataType.BIGINT.nullable(false), this, "");
+
+    /**
      * The column
      * <code>public.tms_test_case_execution.test_case_version_id</code>.
      */
-    public final TableField<JTmsTestCaseExecutionRecord, Long> TEST_CASE_VERSION_ID = createField(DSL.name("test_case_version_id"), SQLDataType.BIGINT, this, "");
+    public final TableField<JTmsTestCaseExecutionRecord, Long> TEST_CASE_VERSION_ID = createField(DSL.name("test_case_version_id"), SQLDataType.BIGINT.nullable(false), this, "");
 
     /**
      * The column
@@ -159,11 +160,6 @@ public class JTmsTestCaseExecution extends TableImpl<JTmsTestCaseExecutionRecord
     }
 
     @Override
-    public List<Index> getIndexes() {
-        return Arrays.asList(Indexes.IDX_TMS_TEST_CASE_EXECUTION_CASE_ITEM, Indexes.IDX_TMS_TEST_CASE_EXECUTION_SNAPSHOT, Indexes.IDX_TMS_TEST_CASE_EXECUTION_TEST_CASE_ID, Indexes.IDX_TMS_TEST_CASE_EXECUTION_TEST_ITEM_ID, Indexes.IDX_TMS_TEST_CASE_EXECUTION_VERSION_ID);
-    }
-
-    @Override
     public Identity<JTmsTestCaseExecutionRecord, Long> getIdentity() {
         return (Identity<JTmsTestCaseExecutionRecord, Long>) super.getIdentity();
     }
@@ -180,33 +176,7 @@ public class JTmsTestCaseExecution extends TableImpl<JTmsTestCaseExecutionRecord
 
     @Override
     public List<ForeignKey<JTmsTestCaseExecutionRecord, ?>> getReferences() {
-        return Arrays.asList(Keys.TMS_TEST_CASE_EXECUTION__TMS_TEST_CASE_EXECUTION_FK_TEST_CASE, Keys.TMS_TEST_CASE_EXECUTION__TMS_TEST_CASE_EXECUTION_FK_TEST_CASE_VERSION, Keys.TMS_TEST_CASE_EXECUTION__TMS_TEST_CASE_EXECUTION_FK_TEST_ITEM);
-    }
-
-    private transient JTmsTestCasePath _tmsTestCase;
-
-    /**
-     * Get the implicit join path to the <code>public.tms_test_case</code>
-     * table.
-     */
-    public JTmsTestCasePath tmsTestCase() {
-        if (_tmsTestCase == null)
-            _tmsTestCase = new JTmsTestCasePath(this, Keys.TMS_TEST_CASE_EXECUTION__TMS_TEST_CASE_EXECUTION_FK_TEST_CASE, null);
-
-        return _tmsTestCase;
-    }
-
-    private transient JTmsTestCaseVersionPath _tmsTestCaseVersion;
-
-    /**
-     * Get the implicit join path to the
-     * <code>public.tms_test_case_version</code> table.
-     */
-    public JTmsTestCaseVersionPath tmsTestCaseVersion() {
-        if (_tmsTestCaseVersion == null)
-            _tmsTestCaseVersion = new JTmsTestCaseVersionPath(this, Keys.TMS_TEST_CASE_EXECUTION__TMS_TEST_CASE_EXECUTION_FK_TEST_CASE_VERSION, null);
-
-        return _tmsTestCaseVersion;
+        return Arrays.asList(Keys.TMS_TEST_CASE_EXECUTION__TMS_TEST_CASE_EXECUTION_FK_TEST_ITEM);
     }
 
     private transient JTestItemPath _testItem;

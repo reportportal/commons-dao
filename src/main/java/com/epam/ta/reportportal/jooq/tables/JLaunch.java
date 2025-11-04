@@ -18,8 +18,6 @@ import com.epam.ta.reportportal.jooq.tables.JProject.JProjectPath;
 import com.epam.ta.reportportal.jooq.tables.JStatistics.JStatisticsPath;
 import com.epam.ta.reportportal.jooq.tables.JStatisticsField.JStatisticsFieldPath;
 import com.epam.ta.reportportal.jooq.tables.JTestItem.JTestItemPath;
-import com.epam.ta.reportportal.jooq.tables.JTmsTestCase.JTmsTestCasePath;
-import com.epam.ta.reportportal.jooq.tables.JTmsTestCaseLaunch.JTmsTestCaseLaunchPath;
 import com.epam.ta.reportportal.jooq.tables.JTmsTestPlan.JTmsTestPlanPath;
 import com.epam.ta.reportportal.jooq.tables.JUsers.JUsersPath;
 import com.epam.ta.reportportal.jooq.tables.records.JLaunchRecord;
@@ -331,19 +329,6 @@ public class JLaunch extends TableImpl<JLaunchRecord> {
         return _testItem;
     }
 
-    private transient JTmsTestCaseLaunchPath _tmsTestCaseLaunch;
-
-    /**
-     * Get the implicit to-many join path to the
-     * <code>public.tms_test_case_launch</code> table
-     */
-    public JTmsTestCaseLaunchPath tmsTestCaseLaunch() {
-        if (_tmsTestCaseLaunch == null)
-            _tmsTestCaseLaunch = new JTmsTestCaseLaunchPath(this, null, Keys.TMS_TEST_CASE_LAUNCH__TMS_TEST_CASE_LAUNCH_FK_LAUNCH.getInverseKey());
-
-        return _tmsTestCaseLaunch;
-    }
-
     private transient JTmsTestPlanPath _tmsTestPlan;
 
     /**
@@ -363,14 +348,6 @@ public class JLaunch extends TableImpl<JLaunchRecord> {
      */
     public JStatisticsFieldPath statisticsField() {
         return statistics().statisticsField();
-    }
-
-    /**
-     * Get the implicit many-to-many join path to the
-     * <code>public.tms_test_case</code> table
-     */
-    public JTmsTestCasePath tmsTestCase() {
-        return tmsTestCaseLaunch().tmsTestCase();
     }
 
     @Override

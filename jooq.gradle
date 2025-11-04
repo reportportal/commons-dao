@@ -4,7 +4,7 @@ jooq {
             driver = 'org.postgresql.Driver'
             url = 'jdbc:postgresql://localhost:5432/reportportal'
             user = 'rpuser'
-            password = 'rppass123'
+            password = 'rppass'
         }
         generator {
             strategy {
