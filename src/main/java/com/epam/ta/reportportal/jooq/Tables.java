@@ -13,6 +13,7 @@ import com.epam.ta.reportportal.jooq.tables.JAttribute;
 import com.epam.ta.reportportal.jooq.tables.JClusters;
 import com.epam.ta.reportportal.jooq.tables.JClustersTestItem;
 import com.epam.ta.reportportal.jooq.tables.JContentField;
+import com.epam.ta.reportportal.jooq.tables.JCounterDecrease;
 import com.epam.ta.reportportal.jooq.tables.JDashboard;
 import com.epam.ta.reportportal.jooq.tables.JDashboardWidget;
 import com.epam.ta.reportportal.jooq.tables.JFilter;
@@ -34,7 +35,6 @@ import com.epam.ta.reportportal.jooq.tables.JLaunchAttributeRules;
 import com.epam.ta.reportportal.jooq.tables.JLaunchNames;
 import com.epam.ta.reportportal.jooq.tables.JLaunchNumber;
 import com.epam.ta.reportportal.jooq.tables.JLog;
-import com.epam.ta.reportportal.jooq.tables.JLogType;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
@@ -122,6 +122,11 @@ public class Tables {
      * The table <code>public.content_field</code>.
      */
     public static final JContentField CONTENT_FIELD = JContentField.CONTENT_FIELD;
+
+    /**
+     * The table <code>public.counter_decrease</code>.
+     */
+    public static final JCounterDecrease COUNTER_DECREASE = JCounterDecrease.COUNTER_DECREASE;
 
     /**
      * The table <code>public.dashboard</code>.
@@ -227,11 +232,6 @@ public class Tables {
      * The table <code>public.log</code>.
      */
     public static final JLog LOG = JLog.LOG;
-
-    /**
-     * The table <code>public.log_type</code>.
-     */
-    public static final JLogType LOG_TYPE = JLogType.LOG_TYPE;
 
     /**
      * The table <code>public.oauth_registration</code>.
@@ -411,6 +411,7 @@ public class Tables {
      * The table <code>public.widget</code>.
      */
     public static final JWidget WIDGET = JWidget.WIDGET;
+
 
     /**
      * The table <code>public.widget_filter</code>.

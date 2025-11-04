@@ -19,7 +19,6 @@ import com.epam.ta.reportportal.jooq.tables.JStatistics.JStatisticsPath;
 import com.epam.ta.reportportal.jooq.tables.JStatisticsField.JStatisticsFieldPath;
 import com.epam.ta.reportportal.jooq.tables.JTestItem.JTestItemPath;
 import com.epam.ta.reportportal.jooq.tables.JTestItemResults.JTestItemResultsPath;
-import com.epam.ta.reportportal.jooq.tables.JUsers.JUsersPath;
 import com.epam.ta.reportportal.jooq.tables.records.JTestItemRecord;
 
 import java.time.Instant;
@@ -257,19 +256,7 @@ public class JTestItem extends TableImpl<JTestItemRecord> {
 
     @Override
     public List<ForeignKey<JTestItemRecord, ?>> getReferences() {
-        return Arrays.asList(Keys.TEST_ITEM__FK_TEST_ITEM_ANALYSIS_OWNER, Keys.TEST_ITEM__TEST_ITEM_LAUNCH_ID_FKEY, Keys.TEST_ITEM__TEST_ITEM_PARENT_ID_FKEY, Keys.TEST_ITEM__TEST_ITEM_RETRY_OF_FKEY);
-    }
-
-    private transient JUsersPath _users;
-
-    /**
-     * Get the implicit join path to the <code>public.users</code> table.
-     */
-    public JUsersPath users() {
-        if (_users == null)
-            _users = new JUsersPath(this, Keys.TEST_ITEM__FK_TEST_ITEM_ANALYSIS_OWNER, null);
-
-        return _users;
+        return Arrays.asList(Keys.TEST_ITEM__TEST_ITEM_LAUNCH_ID_FKEY, Keys.TEST_ITEM__TEST_ITEM_PARENT_ID_FKEY, Keys.TEST_ITEM__TEST_ITEM_RETRY_OF_FKEY);
     }
 
     private transient JLaunchPath _launch;
