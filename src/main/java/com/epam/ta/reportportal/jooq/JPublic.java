@@ -34,6 +34,7 @@ import com.epam.ta.reportportal.jooq.tables.JLaunchAttributeRules;
 import com.epam.ta.reportportal.jooq.tables.JLaunchNames;
 import com.epam.ta.reportportal.jooq.tables.JLaunchNumber;
 import com.epam.ta.reportportal.jooq.tables.JLog;
+import com.epam.ta.reportportal.jooq.tables.JLogType;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
@@ -240,6 +241,11 @@ public class JPublic extends SchemaImpl {
      * The table <code>public.log</code>.
      */
     public final JLog LOG = JLog.LOG;
+
+    /**
+     * The table <code>public.log_type</code>.
+     */
+    public final JLogType LOG_TYPE = JLogType.LOG_TYPE;
 
     /**
      * The table <code>public.oauth_registration</code>.
@@ -478,6 +484,7 @@ public class JPublic extends SchemaImpl {
             JLaunchNames.LAUNCH_NAMES,
             JLaunchNumber.LAUNCH_NUMBER,
             JLog.LOG,
+            JLogType.LOG_TYPE,
             JOauthRegistration.OAUTH_REGISTRATION,
             JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION,
             JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE,

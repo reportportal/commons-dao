@@ -18,10 +18,8 @@ package com.epam.ta.reportportal.entity.enums;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.epam.reportportal.rules.exception.ReportPortalException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -42,7 +40,7 @@ class LogLevelTest {
   private List<Integer> disallowedCodes;
 
   @BeforeEach
-  void setUp() throws Exception {
+  void setUp() {
     allowedNames = Arrays.stream(LogLevel.values())
         .collect(Collectors.toMap(it -> it,
             it -> Arrays.asList(it.name(), it.name().toUpperCase(), it.name().toLowerCase())));
@@ -76,36 +74,30 @@ class LogLevelTest {
 
   @Test
   void toLevelInt() {
-    allowedCodes.forEach((key, value) -> assertEquals(key, LogLevel.toLevel(value)));
+    allowedCodes
+        .forEach((key, value) -> assertEquals(key.toString(), LogLevel.toLevel(value).get()));
   }
 
   @Test
   void toCustomLogLevel() {
-    allowedNames.forEach((key, value) -> value.forEach(
-        val -> assertEquals(key.toInt(), LogLevel.toCustomLogLevel(val))));
-    allowedCodes.forEach(
-        (key, val) -> assertEquals(key.toInt(), LogLevel.toCustomLogLevel(val.toString())));
-    disallowedCodes.forEach(it -> {
-      if (it < LogLevel.TRACE_INT) {
-        assertEquals(LogLevel.TRACE_INT, LogLevel.toCustomLogLevel(it.toString()));
-      } else {
-        assertEquals(it.intValue(), LogLevel.toCustomLogLevel(it.toString()));
-      }
-    });
+    allowedNames.forEach((key, value) -> value.forEach(val ->
+        assertEquals(key.toInt(), LogLevel.toCustomLogLevel(val).get())));
+    allowedCodes.forEach((key, val) ->
+        assertFalse(LogLevel.toCustomLogLevel(val.toString()).isPresent()));
+    disallowedCodes.forEach(it ->
+        assertFalse(LogLevel.toCustomLogLevel(it.toString()).isPresent()));
   }
 
   @Test
   void toCustomLogLevelNames() {
     Collections.shuffle(disallowedNames);
     final String wrongLogName = disallowedNames.get(0);
-    assertEquals(LogLevel.UNKNOWN.toInt(), LogLevel.toCustomLogLevel(wrongLogName));
+    assertFalse(LogLevel.toCustomLogLevel(wrongLogName).isPresent());
   }
 
   @Test
   void toCustomLogLevelCodesFail() {
-
-    final int i = LogLevel.toCustomLogLevel(disallowedCodes.get(0).toString());
-    assertEquals(LogLevel.TRACE.toInt(), i);
+    assertFalse(LogLevel.toCustomLogLevel(disallowedCodes.get(0).toString()).isPresent());
   }
 
   @Test
@@ -113,8 +105,7 @@ class LogLevelTest {
     Collections.shuffle(disallowedCodes);
     final Integer code = disallowedCodes.get(0);
 
-    final ReportPortalException exception = assertThrows(ReportPortalException.class,
-        () -> LogLevel.toLevel(code));
-    assertEquals("Error in Save Log Request. Wrong level = " + code, exception.getMessage());
+    Optional<String> level = LogLevel.toLevel(code);
+    assertFalse(level.isPresent());
   }
 }

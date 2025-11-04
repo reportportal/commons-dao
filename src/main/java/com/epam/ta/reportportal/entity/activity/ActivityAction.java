@@ -81,7 +81,11 @@ public enum ActivityAction {
   DELETE_NOTIFICATION_RULE("deleteNotificationRule"),
   UPDATE_NOTIFICATION_SETTINGS("updateNotificationSettings"),
 
-  UPDATE_INSTANCE("updateInstance");
+  UPDATE_INSTANCE("updateInstance"),
+
+  CREATE_LOG_TYPE("createLogType"),
+  UPDATE_LOG_TYPE("updateLogType"),
+  DELETE_LOG_TYPE("deleteLogType");
 
   private final String value;
 

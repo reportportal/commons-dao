@@ -68,6 +68,39 @@ public interface LogRepository extends ReportPortalRepository<Log, Long>, LogRep
   List<IndexLog> findNestedLogsOfRetryItem(@Param("itemId") Long itemId,
       @Param("logLevel") int logLevel);
 
+  @Query(value = """
+      WITH ParentPath AS (
+          SELECT path
+          FROM test_item ti2
+          WHERE ti2.item_id = (
+              SELECT parent_id
+              FROM test_item ti3
+              WHERE ti3.item_id = :itemId
+          )
+      ),
+      TargetPath AS (
+          SELECT cast(concat(pp.path, '.', :itemId) as ltree) AS path
+          FROM ParentPath pp
+      ),
+      FilteredItems AS (
+          SELECT ti.item_id
+          FROM test_item ti
+          WHERE ti.path <@ (SELECT path FROM TargetPath)
+      )
+      SELECT
+          log.id AS logId,
+          log.log_level AS logLevel,
+          log.log_time AS logTime,
+          log.log_message AS message,
+          clusters.index_id AS clusterId
+      FROM log
+      LEFT JOIN clusters ON log.cluster_id = clusters.id
+      WHERE log.item_id IN (SELECT item_id FROM FilteredItems)
+        AND log.log_level >= :logLevel;
+      """, nativeQuery = true)
+  List<IndexLog> findNestedLogsOfRetryItem(@Param("itemId") Long itemId,
+      @Param("logLevel") int logLevel);
+
   @Modifying
   @Query(value = "UPDATE log SET launch_id = :newLaunchId WHERE launch_id = :currentLaunchId", nativeQuery = true)
   void updateLaunchIdByLaunchId(@Param("currentLaunchId") Long currentLaunchId,
