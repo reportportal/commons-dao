@@ -2,12 +2,14 @@ package com.epam.ta.reportportal.entity.tms;
 
 import com.epam.ta.reportportal.entity.launch.Launch;
 import jakarta.persistence.Column;
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
@@ -22,30 +24,21 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@IdClass(TmsManualLaunchAttribute.TmsManualLaunchAttributeId.class)
 public class TmsManualLaunchAttribute implements Serializable {
 
-  @Id
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "attribute_id", nullable = false)
-  private TmsAttribute attribute;
+  @EmbeddedId
+  private TmsManualLaunchAttributeId id;
 
-  @Id
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "launch_id", nullable = false)
+  @ManyToOne
+  @MapsId(value = "launchId")
+  @JoinColumn(name = "launch_id")
   private Launch launch;
+
+  @ManyToOne
+  @MapsId(value = "attributeId")
+  @JoinColumn(name = "attribute_id")
+  private TmsAttribute attribute;
 
   @Column(name = "value")
   private String value;
-
-  /**
-   * Composite primary key class for TmsManualLaunchAttribute.
-   */
-  @Data
-  @NoArgsConstructor
-  @AllArgsConstructor
-  public static class TmsManualLaunchAttributeId implements Serializable {
-    private Long attribute;
-    private Long launch;
-  }
 }
