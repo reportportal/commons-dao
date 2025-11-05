@@ -1,6 +1,8 @@
 package com.epam.ta.reportportal.dao.tms;
 
+import com.epam.ta.reportportal.dao.ReportPortalRepository;
 import com.epam.ta.reportportal.entity.tms.TmsManualLaunchAttribute;
+import com.epam.ta.reportportal.entity.tms.TmsManualLaunchAttributeId;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -11,7 +13,7 @@ import org.springframework.data.repository.query.Param;
  * Repository for {@link TmsManualLaunchAttribute} entity.
  */
 public interface TmsManualLaunchAttributeRepository extends
-    JpaRepository<TmsManualLaunchAttribute, TmsManualLaunchAttribute.TmsManualLaunchAttributeId> {
+    ReportPortalRepository<TmsManualLaunchAttribute, TmsManualLaunchAttributeId> {
 
   /**
    * Finds all attributes by launch ID.
