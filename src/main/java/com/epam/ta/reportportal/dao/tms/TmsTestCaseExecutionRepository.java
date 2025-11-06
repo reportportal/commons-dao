@@ -280,4 +280,20 @@ public interface TmsTestCaseExecutionRepository extends
       ORDER BY ti.startTime ASC
       """)
   List<TmsTestCaseExecution> findByLaunchIdWithDetails(@Param("launchId") Long launchId);
+
+  /**
+   * Finds all executions by test case ID and launch ID.
+   *
+   * @param testCaseId test case ID
+   * @param launchId   launch ID
+   * @return list of executions
+   */
+  @Query("SELECT e FROM TmsTestCaseExecution e "
+      + "WHERE e.testCaseId = :testCaseId "
+      + "AND e.launchId = :launchId "
+      + "ORDER BY e.id ASC")
+  List<TmsTestCaseExecution> findByTestCaseIdAndLaunchId(
+      @Param("testCaseId") Long testCaseId,
+      @Param("launchId") Long launchId
+  );
 }
