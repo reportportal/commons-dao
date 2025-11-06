@@ -30,6 +30,7 @@ import static com.epam.ta.reportportal.dao.util.RecordMappers.PATTERN_TEMPLATE_N
 import static com.epam.ta.reportportal.dao.util.RecordMappers.PROJECT_USER_MAPPER;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.TICKET_MAPPER;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.TMS_ATTRIBUTE_MAPPER;
+import static com.epam.ta.reportportal.dao.util.RecordMappers.TMS_TEST_CASE_EXECUTION_MAPPER;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.TMS_TEST_CASE_MAPPER;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.TMS_TEST_FOLDER_MAPPER;
 import static com.epam.ta.reportportal.dao.util.RecordMappers.TMS_TEST_PLAN_MAPPER;
@@ -51,6 +52,7 @@ import static com.epam.ta.reportportal.jooq.Tables.TMS_TEST_PLAN;
 import static com.epam.ta.reportportal.jooq.tables.JProject.PROJECT;
 import static com.epam.ta.reportportal.jooq.tables.JProjectUser.PROJECT_USER;
 import static com.epam.ta.reportportal.jooq.tables.JTestItem.TEST_ITEM;
+import static com.epam.ta.reportportal.jooq.tables.JTmsTestCaseExecution.TMS_TEST_CASE_EXECUTION;
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
 import static java.util.Optional.ofNullable;
 
@@ -78,6 +80,7 @@ import com.epam.ta.reportportal.entity.project.ProjectAttribute;
 import com.epam.ta.reportportal.entity.project.ProjectProfile;
 import com.epam.ta.reportportal.entity.tms.TmsAttribute;
 import com.epam.ta.reportportal.entity.tms.TmsTestCase;
+import com.epam.ta.reportportal.entity.tms.TmsTestCaseExecution;
 import com.epam.ta.reportportal.entity.tms.TmsTestFolder;
 import com.epam.ta.reportportal.entity.tms.TmsTestPlan;
 import com.epam.ta.reportportal.entity.user.OrganizationUser;
@@ -562,5 +565,19 @@ public class ResultFetchers {
       }
     });
     return new ArrayList<>(attributes.values());
+  };
+
+  /**
+   * Fetches records from db results into list of {@link TmsTestCaseExecution} objects.
+   */
+  public static final Function<Result<? extends Record>, List<TmsTestCaseExecution>> TMS_TEST_CASE_EXECUTION_FETCHER = rows -> {
+    Map<Long, TmsTestCaseExecution> executions = Maps.newLinkedHashMap();
+    rows.forEach(row -> {
+      Long id = row.get(TMS_TEST_CASE_EXECUTION.ID);
+      if (!executions.containsKey(id)) {
+        executions.put(id, TMS_TEST_CASE_EXECUTION_MAPPER.map(row));
+      }
+    });
+    return new ArrayList<>(executions.values());
   };
 }

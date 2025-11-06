@@ -50,6 +50,7 @@ import static com.epam.ta.reportportal.jooq.Tables.TMS_TEST_PLAN;
 import static com.epam.ta.reportportal.jooq.Tables.WIDGET;
 import static com.epam.ta.reportportal.jooq.tables.JActivity.ACTIVITY;
 import static com.epam.ta.reportportal.jooq.tables.JAttachment.ATTACHMENT;
+import static com.epam.ta.reportportal.jooq.tables.JTmsTestCaseExecution.TMS_TEST_CASE_EXECUTION;
 import static com.epam.ta.reportportal.jooq.tables.JUsers.USERS;
 import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
@@ -102,6 +103,7 @@ import com.epam.ta.reportportal.entity.statistics.Statistics;
 import com.epam.ta.reportportal.entity.statistics.StatisticsField;
 import com.epam.ta.reportportal.entity.tms.TmsAttribute;
 import com.epam.ta.reportportal.entity.tms.TmsTestCase;
+import com.epam.ta.reportportal.entity.tms.TmsTestCaseExecution;
 import com.epam.ta.reportportal.entity.tms.TmsTestFolder;
 import com.epam.ta.reportportal.entity.tms.TmsTestPlan;
 import com.epam.ta.reportportal.entity.user.OrganizationUser;
@@ -816,5 +818,46 @@ public class RecordMappers {
     attribute.setId(r.get(TMS_ATTRIBUTE.ID));
     attribute.setKey(r.get(TMS_ATTRIBUTE.KEY));
     return attribute;
+  };
+
+  /**
+   * Maps record into {@link TmsTestCaseExecution} object
+   */
+  public static final RecordMapper<? super Record, TmsTestCaseExecution> TMS_TEST_CASE_EXECUTION_MAPPER = r -> {
+    TmsTestCaseExecution execution = new TmsTestCaseExecution();
+    execution.setId(r.get(TMS_TEST_CASE_EXECUTION.ID));
+    execution.setTestCaseId(r.get(TMS_TEST_CASE_EXECUTION.TEST_CASE_ID));
+    execution.setLaunchId(r.get(TMS_TEST_CASE_EXECUTION.LAUNCH_ID));
+    execution.setTestCaseVersionId(r.get(TMS_TEST_CASE_EXECUTION.TEST_CASE_VERSION_ID));
+    execution.setTestCaseSnapshot(r.get(TMS_TEST_CASE_EXECUTION.TEST_CASE_SNAPSHOT, String.class));
+
+    //Create TestItem with id, if test_item_id exists
+    ofNullable(r.get(TMS_TEST_CASE_EXECUTION.TEST_ITEM_ID)).ifPresent(testItemId -> {
+      TestItem testItem = new TestItem();
+      testItem.setItemId(testItemId);
+
+      // If there is test_item from JOIN - fill that
+      ofNullable(r.field(TEST_ITEM.START_TIME)).flatMap(f -> ofNullable(r.get(f, Instant.class)))
+          .ifPresent(testItem::setStartTime);
+      ofNullable(r.field(TEST_ITEM.NAME)).flatMap(f -> ofNullable(r.get(f, String.class)))
+          .ifPresent(testItem::setName);
+
+      // Get TestItemResults
+      ofNullable(r.field(TEST_ITEM_RESULTS.RESULT_ID))
+          .flatMap(f -> ofNullable(r.get(f, Long.class)))
+          .ifPresent(resultId -> {
+            TestItemResults results = new TestItemResults();
+            results.setItemId(resultId);
+            ofNullable(r.field(TEST_ITEM_RESULTS.STATUS)).flatMap(f -> ofNullable(r.get(f)))
+                .ifPresent(status -> results.setStatus(StatusEnum.valueOf(status.getLiteral())));
+            ofNullable(r.field(TEST_ITEM_RESULTS.END_TIME)).flatMap(f -> ofNullable(r.get(f, Instant.class)))
+                .ifPresent(results::setEndTime);
+            testItem.setItemResults(results);
+          });
+
+      execution.setTestItem(testItem);
+    });
+
+    return execution;
   };
 }
