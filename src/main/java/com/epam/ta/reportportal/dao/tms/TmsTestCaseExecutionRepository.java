@@ -147,7 +147,7 @@ public interface TmsTestCaseExecutionRepository extends
    * Finds execution by test case execution ID and launch ID.
    *
    * @param testCaseExecutionId test case execution ID
-   * @param launchId   launch ID
+   * @param launchId            launch ID
    * @return optional execution
    */
   @Query("SELECT e FROM TmsTestCaseExecution e "
@@ -294,6 +294,19 @@ public interface TmsTestCaseExecutionRepository extends
       + "ORDER BY e.id ASC")
   List<TmsTestCaseExecution> findByTestCaseIdAndLaunchId(
       @Param("testCaseId") Long testCaseId,
+      @Param("launchId") Long launchId
+  );
+
+  /**
+   * Checks if execution exists for test case in launch.
+   *
+   * @param testCaseExecutionId test case execution ID
+   * @param launchId            launch ID
+   * @return true if exists
+   */
+  @Query("SELECT CASE WHEN COUNT(e) > 0 THEN true ELSE false END FROM TmsTestCaseExecution e WHERE e.id = :testCaseExecutionId AND e.launchId = :launchId")
+  boolean existsByTestCaseExecutionIdAndLaunchId(
+      @Param("testCaseExecutionId") Long testCaseExecutionId,
       @Param("launchId") Long launchId
   );
 }
