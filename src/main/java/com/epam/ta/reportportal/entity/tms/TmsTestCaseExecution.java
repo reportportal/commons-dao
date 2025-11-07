@@ -1,6 +1,7 @@
 package com.epam.ta.reportportal.entity.tms;
 
 import com.epam.ta.reportportal.entity.item.TestItem;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -14,7 +15,9 @@ import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -28,14 +31,16 @@ import org.hibernate.type.SqlTypes;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@EqualsAndHashCode(of = "id")
 public class TmsTestCaseExecution implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @OneToOne(fetch = FetchType.LAZY)
+  @OneToOne
   @JoinColumn(name = "test_item_id", unique = true)
+  @ToString.Exclude
   private TestItem testItem;
 
   @Column(name = "test_case_id")
@@ -50,4 +55,8 @@ public class TmsTestCaseExecution implements Serializable {
   @JdbcTypeCode(SqlTypes.JSON)
   @Column(name = "test_case_snapshot", nullable = false, columnDefinition = "jsonb")
   private String testCaseSnapshot;
+
+  @OneToOne(mappedBy = "execution")
+  @ToString.Exclude
+  private TmsTestCaseExecutionComment executionComment;
 }

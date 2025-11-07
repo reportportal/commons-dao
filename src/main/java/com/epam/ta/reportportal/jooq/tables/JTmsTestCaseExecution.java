@@ -7,6 +7,7 @@ package com.epam.ta.reportportal.jooq.tables;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.JTestItem.JTestItemPath;
+import com.epam.ta.reportportal.jooq.tables.JTmsTestCaseExecutionComment.JTmsTestCaseExecutionCommentPath;
 import com.epam.ta.reportportal.jooq.tables.records.JTmsTestCaseExecutionRecord;
 
 import java.util.Arrays;
@@ -189,6 +190,19 @@ public class JTmsTestCaseExecution extends TableImpl<JTmsTestCaseExecutionRecord
             _testItem = new JTestItemPath(this, Keys.TMS_TEST_CASE_EXECUTION__TMS_TEST_CASE_EXECUTION_FK_TEST_ITEM, null);
 
         return _testItem;
+    }
+
+    private transient JTmsTestCaseExecutionCommentPath _tmsTestCaseExecutionComment;
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>public.tms_test_case_execution_comment</code> table
+     */
+    public JTmsTestCaseExecutionCommentPath tmsTestCaseExecutionComment() {
+        if (_tmsTestCaseExecutionComment == null)
+            _tmsTestCaseExecutionComment = new JTmsTestCaseExecutionCommentPath(this, null, Keys.TMS_TEST_CASE_EXECUTION_COMMENT__TMS_TEST_CASE_EXECUTION_COMMENT_FK_EXECUTION.getInverseKey());
+
+        return _tmsTestCaseExecutionComment;
     }
 
     @Override
