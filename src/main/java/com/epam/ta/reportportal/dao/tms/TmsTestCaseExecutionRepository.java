@@ -4,6 +4,8 @@ import com.epam.ta.reportportal.dao.ReportPortalRepository;
 import com.epam.ta.reportportal.entity.tms.TmsTestCaseExecution;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -292,9 +294,10 @@ public interface TmsTestCaseExecutionRepository extends
       + "WHERE e.testCaseId = :testCaseId "
       + "AND e.launchId = :launchId "
       + "ORDER BY e.id ASC")
-  List<TmsTestCaseExecution> findByTestCaseIdAndLaunchId(
+  Page<TmsTestCaseExecution> findByTestCaseIdAndLaunchId(
       @Param("testCaseId") Long testCaseId,
-      @Param("launchId") Long launchId
+      @Param("launchId") Long launchId,
+      Pageable pageable
   );
 
   /**
