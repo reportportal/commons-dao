@@ -77,6 +77,8 @@ import com.epam.ta.reportportal.jooq.tables.JTmsStepsManualScenario;
 import com.epam.ta.reportportal.jooq.tables.JTmsTestCase;
 import com.epam.ta.reportportal.jooq.tables.JTmsTestCaseAttribute;
 import com.epam.ta.reportportal.jooq.tables.JTmsTestCaseExecution;
+import com.epam.ta.reportportal.jooq.tables.JTmsTestCaseExecutionComment;
+import com.epam.ta.reportportal.jooq.tables.JTmsTestCaseExecutionCommentAttachment;
 import com.epam.ta.reportportal.jooq.tables.JTmsTestCaseVersion;
 import com.epam.ta.reportportal.jooq.tables.JTmsTestFolder;
 import com.epam.ta.reportportal.jooq.tables.JTmsTestPlan;
@@ -517,6 +519,16 @@ public class JPublic extends SchemaImpl {
     public final JTmsTestCaseExecution TMS_TEST_CASE_EXECUTION = JTmsTestCaseExecution.TMS_TEST_CASE_EXECUTION;
 
     /**
+     * The table <code>public.tms_test_case_execution_comment</code>.
+     */
+    public final JTmsTestCaseExecutionComment TMS_TEST_CASE_EXECUTION_COMMENT = JTmsTestCaseExecutionComment.TMS_TEST_CASE_EXECUTION_COMMENT;
+
+    /**
+     * The table <code>public.tms_test_case_execution_comment_attachment</code>.
+     */
+    public final JTmsTestCaseExecutionCommentAttachment TMS_TEST_CASE_EXECUTION_COMMENT_ATTACHMENT = JTmsTestCaseExecutionCommentAttachment.TMS_TEST_CASE_EXECUTION_COMMENT_ATTACHMENT;
+
+    /**
      * The table <code>public.tms_test_case_version</code>.
      */
     public final JTmsTestCaseVersion TMS_TEST_CASE_VERSION = JTmsTestCaseVersion.TMS_TEST_CASE_VERSION;
@@ -672,6 +684,8 @@ public class JPublic extends SchemaImpl {
             JTmsTestCase.TMS_TEST_CASE,
             JTmsTestCaseAttribute.TMS_TEST_CASE_ATTRIBUTE,
             JTmsTestCaseExecution.TMS_TEST_CASE_EXECUTION,
+            JTmsTestCaseExecutionComment.TMS_TEST_CASE_EXECUTION_COMMENT,
+            JTmsTestCaseExecutionCommentAttachment.TMS_TEST_CASE_EXECUTION_COMMENT_ATTACHMENT,
             JTmsTestCaseVersion.TMS_TEST_CASE_VERSION,
             JTmsTestFolder.TMS_TEST_FOLDER,
             JTmsTestPlan.TMS_TEST_PLAN,

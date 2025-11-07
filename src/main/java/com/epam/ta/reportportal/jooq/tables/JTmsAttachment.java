@@ -13,6 +13,8 @@ import com.epam.ta.reportportal.jooq.tables.JTmsManualScenarioPreconditions.JTms
 import com.epam.ta.reportportal.jooq.tables.JTmsManualScenarioPreconditionsAttachment.JTmsManualScenarioPreconditionsAttachmentPath;
 import com.epam.ta.reportportal.jooq.tables.JTmsStep.JTmsStepPath;
 import com.epam.ta.reportportal.jooq.tables.JTmsStepAttachment.JTmsStepAttachmentPath;
+import com.epam.ta.reportportal.jooq.tables.JTmsTestCaseExecutionComment.JTmsTestCaseExecutionCommentPath;
+import com.epam.ta.reportportal.jooq.tables.JTmsTestCaseExecutionCommentAttachment.JTmsTestCaseExecutionCommentAttachmentPath;
 import com.epam.ta.reportportal.jooq.tables.JTmsTextManualScenario.JTmsTextManualScenarioPath;
 import com.epam.ta.reportportal.jooq.tables.JTmsTextManualScenarioAttachment.JTmsTextManualScenarioAttachmentPath;
 import com.epam.ta.reportportal.jooq.tables.records.JTmsAttachmentRecord;
@@ -233,6 +235,19 @@ public class JTmsAttachment extends TableImpl<JTmsAttachmentRecord> {
         return _tmsStepAttachment;
     }
 
+    private transient JTmsTestCaseExecutionCommentAttachmentPath _tmsTestCaseExecutionCommentAttachment;
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>public.tms_test_case_execution_comment_attachment</code> table
+     */
+    public JTmsTestCaseExecutionCommentAttachmentPath tmsTestCaseExecutionCommentAttachment() {
+        if (_tmsTestCaseExecutionCommentAttachment == null)
+            _tmsTestCaseExecutionCommentAttachment = new JTmsTestCaseExecutionCommentAttachmentPath(this, null, Keys.TMS_TEST_CASE_EXECUTION_COMMENT_ATTACHMENT__TMS_TEST_CASE_EXECUTION_COMMENT_ATTACHMENT_FK_ATTACHMENT.getInverseKey());
+
+        return _tmsTestCaseExecutionCommentAttachment;
+    }
+
     private transient JTmsTextManualScenarioAttachmentPath _tmsTextManualScenarioAttachment;
 
     /**
@@ -260,6 +275,14 @@ public class JTmsAttachment extends TableImpl<JTmsAttachmentRecord> {
      */
     public JTmsStepPath tmsStep() {
         return tmsStepAttachment().tmsStep();
+    }
+
+    /**
+     * Get the implicit many-to-many join path to the
+     * <code>public.tms_test_case_execution_comment</code> table
+     */
+    public JTmsTestCaseExecutionCommentPath tmsTestCaseExecutionComment() {
+        return tmsTestCaseExecutionCommentAttachment().tmsTestCaseExecutionComment();
     }
 
     /**

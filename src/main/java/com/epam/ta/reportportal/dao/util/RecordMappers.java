@@ -45,6 +45,7 @@ import static com.epam.ta.reportportal.jooq.Tables.TEST_ITEM_RESULTS;
 import static com.epam.ta.reportportal.jooq.Tables.TICKET;
 import static com.epam.ta.reportportal.jooq.Tables.TMS_ATTRIBUTE;
 import static com.epam.ta.reportportal.jooq.Tables.TMS_TEST_CASE;
+import static com.epam.ta.reportportal.jooq.Tables.TMS_TEST_CASE_EXECUTION_COMMENT;
 import static com.epam.ta.reportportal.jooq.Tables.TMS_TEST_FOLDER;
 import static com.epam.ta.reportportal.jooq.Tables.TMS_TEST_PLAN;
 import static com.epam.ta.reportportal.jooq.Tables.WIDGET;
@@ -104,6 +105,7 @@ import com.epam.ta.reportportal.entity.statistics.StatisticsField;
 import com.epam.ta.reportportal.entity.tms.TmsAttribute;
 import com.epam.ta.reportportal.entity.tms.TmsTestCase;
 import com.epam.ta.reportportal.entity.tms.TmsTestCaseExecution;
+import com.epam.ta.reportportal.entity.tms.TmsTestCaseExecutionComment;
 import com.epam.ta.reportportal.entity.tms.TmsTestFolder;
 import com.epam.ta.reportportal.entity.tms.TmsTestPlan;
 import com.epam.ta.reportportal.entity.user.OrganizationUser;
@@ -857,6 +859,17 @@ public class RecordMappers {
 
       execution.setTestItem(testItem);
     });
+
+    ofNullable(r.field(TMS_TEST_CASE_EXECUTION_COMMENT.ID))
+        .flatMap(f -> ofNullable(r.get(f, Long.class)))
+        .ifPresent(commentId -> {
+          TmsTestCaseExecutionComment comment = new TmsTestCaseExecutionComment();
+          comment.setId(commentId);
+          ofNullable(r.field(TMS_TEST_CASE_EXECUTION_COMMENT.COMMENT))
+              .flatMap(f -> ofNullable(r.get(f, String.class)))
+              .ifPresent(comment::setComment);
+          execution.setExecutionComment(comment);
+        });
 
     return execution;
   };
