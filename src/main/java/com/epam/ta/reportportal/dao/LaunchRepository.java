@@ -183,4 +183,13 @@ public interface LaunchRepository extends ReportPortalRepository<Launch, Long>,
    * @return true if launch exists in a project, false otherwise
    */
   boolean existsByIdAndProjectId(Long launchId, Long projectId);
+
+  /**
+   * Finds test plan ID by launch ID.
+   *
+   * @param launchId the launch ID
+   * @return optional test plan ID
+   */
+  @Query("SELECT l.testPlanId FROM Launch l WHERE l.id = :launchId")
+  Optional<Long> findTestPlanIdById(@Param("launchId") Long launchId);
 }
