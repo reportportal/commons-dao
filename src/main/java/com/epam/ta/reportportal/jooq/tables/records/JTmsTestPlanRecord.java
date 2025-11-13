@@ -6,6 +6,8 @@ package com.epam.ta.reportportal.jooq.tables.records;
 
 import com.epam.ta.reportportal.jooq.tables.JTmsTestPlan;
 
+import java.time.Instant;
+
 import org.jooq.Record1;
 import org.jooq.impl.UpdatableRecordImpl;
 
@@ -130,6 +132,34 @@ public class JTmsTestPlanRecord extends UpdatableRecordImpl<JTmsTestPlanRecord> 
         return (Long) get(7);
     }
 
+    /**
+     * Setter for <code>public.tms_test_plan.created_at</code>.
+     */
+    public void setCreatedAt(Instant value) {
+        set(8, value);
+    }
+
+    /**
+     * Getter for <code>public.tms_test_plan.created_at</code>.
+     */
+    public Instant getCreatedAt() {
+        return (Instant) get(8);
+    }
+
+    /**
+     * Setter for <code>public.tms_test_plan.updated_at</code>.
+     */
+    public void setUpdatedAt(Instant value) {
+        set(9, value);
+    }
+
+    /**
+     * Getter for <code>public.tms_test_plan.updated_at</code>.
+     */
+    public Instant getUpdatedAt() {
+        return (Instant) get(9);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -153,7 +183,7 @@ public class JTmsTestPlanRecord extends UpdatableRecordImpl<JTmsTestPlanRecord> 
     /**
      * Create a detached, initialised JTmsTestPlanRecord
      */
-    public JTmsTestPlanRecord(Long id, String name, String description, Long projectId, Long environmentId, Long productVersionId, Object searchVector, Long launchId) {
+    public JTmsTestPlanRecord(Long id, String name, String description, Long projectId, Long environmentId, Long productVersionId, Object searchVector, Long launchId, Instant createdAt, Instant updatedAt) {
         super(JTmsTestPlan.TMS_TEST_PLAN);
 
         setId(id);
@@ -164,6 +194,8 @@ public class JTmsTestPlanRecord extends UpdatableRecordImpl<JTmsTestPlanRecord> 
         setProductVersionId(productVersionId);
         setSearchVector(searchVector);
         setLaunchId(launchId);
+        setCreatedAt(createdAt);
+        setUpdatedAt(updatedAt);
         resetChangedOnNotNull();
     }
 }

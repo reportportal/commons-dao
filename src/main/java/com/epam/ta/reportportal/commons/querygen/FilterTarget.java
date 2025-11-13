@@ -149,11 +149,13 @@ import static com.epam.ta.reportportal.commons.querygen.constant.tms.TmsTestFold
 import static com.epam.ta.reportportal.commons.querygen.constant.tms.TmsTestFolderCriteriaConstant.CRITERIA_TMS_TEST_FOLDER_PARENT_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.tms.TmsTestFolderCriteriaConstant.CRITERIA_TMS_TEST_FOLDER_PROJECT_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.tms.TmsTestFolderCriteriaConstant.CRITERIA_TMS_TEST_FOLDER_TEST_PLAN_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.tms.TmsTestPlanCriteriaConstant.CRITERIA_TMS_TEST_PLAN_CREATED_AT;
 import static com.epam.ta.reportportal.commons.querygen.constant.tms.TmsTestPlanCriteriaConstant.CRITERIA_TMS_TEST_PLAN_DESCRIPTION;
 import static com.epam.ta.reportportal.commons.querygen.constant.tms.TmsTestPlanCriteriaConstant.CRITERIA_TMS_TEST_PLAN_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.tms.TmsTestPlanCriteriaConstant.CRITERIA_TMS_TEST_PLAN_NAME;
 import static com.epam.ta.reportportal.commons.querygen.constant.tms.TmsTestPlanCriteriaConstant.CRITERIA_TMS_TEST_PLAN_PROJECT_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.tms.TmsTestPlanCriteriaConstant.CRITERIA_TMS_TEST_PLAN_SEARCH;
+import static com.epam.ta.reportportal.commons.querygen.constant.tms.TmsTestPlanCriteriaConstant.CRITERIA_TMS_TEST_PLAN_UPDATED_AT;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.PROJECT_ID;
 import static com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants.USER_ID;
 import static com.epam.ta.reportportal.entity.organization.OrganizationFilter.PROJECTS_QUANTITY;
@@ -1835,6 +1837,8 @@ public enum FilterTarget {
               String.class).get(),
           new CriteriaHolderBuilder().newBuilder(CRITERIA_TMS_TEST_PLAN_DESCRIPTION, TMS_TEST_PLAN.DESCRIPTION,
               String.class).get(),
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_TMS_TEST_PLAN_CREATED_AT, TMS_TEST_CASE.CREATED_AT, Instant.class).get(),
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_TMS_TEST_PLAN_UPDATED_AT, TMS_TEST_CASE.UPDATED_AT, Instant.class).get(),
           new CriteriaHolderBuilder().newBuilder(CRITERIA_TMS_TEST_PLAN_PROJECT_ID, TMS_TEST_PLAN.PROJECT_ID,
               Long.class).get(),
           new CriteriaHolderBuilder().newBuilder(

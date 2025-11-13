@@ -1,9 +1,12 @@
 package com.epam.ta.reportportal.entity.tms;
 
+import com.epam.ta.reportportal.dao.converters.JpaInstantConverter;
 import com.epam.ta.reportportal.entity.launch.Launch;
 import com.epam.ta.reportportal.entity.project.Project;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -14,17 +17,22 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.time.Instant;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Table(name = "tms_test_plan", schema = "public")
 @Getter
 @Setter
+@EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
 @AllArgsConstructor
 public class TmsTestPlan {
@@ -39,6 +47,16 @@ public class TmsTestPlan {
 
   @Column(name = "description")
   private String description;
+
+  @CreatedDate
+  @Column(name = "created_at", nullable = false)
+  @Convert(converter = JpaInstantConverter.class)
+  private Instant createdAt;
+
+  @LastModifiedDate
+  @Column(name = "updated_at", nullable = false)
+  @Convert(converter = JpaInstantConverter.class)
+  private Instant updatedAt;
 
   @Column(name = "search_vector", insertable = false, updatable = false)
   private String searchVector; //immutable, because trigger updates this field
