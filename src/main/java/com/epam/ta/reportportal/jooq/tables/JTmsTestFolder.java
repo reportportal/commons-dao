@@ -67,7 +67,7 @@ public class JTmsTestFolder extends TableImpl<JTmsTestFolderRecord> {
     /**
      * The column <code>public.tms_test_folder.name</code>.
      */
-    public final TableField<JTmsTestFolderRecord, String> NAME = createField(DSL.name("name"), SQLDataType.VARCHAR(255), this, "");
+    public final TableField<JTmsTestFolderRecord, String> NAME = createField(DSL.name("name"), SQLDataType.VARCHAR(255).nullable(false), this, "");
 
     /**
      * The column <code>public.tms_test_folder.description</code>.

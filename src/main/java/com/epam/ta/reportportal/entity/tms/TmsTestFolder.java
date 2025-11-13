@@ -33,7 +33,7 @@ public class TmsTestFolder implements Serializable {
   @Column(name = "id", unique = true, nullable = false, precision = 64)
   private Long id;
 
-  @Column(name = "name")
+  @Column(name = "name", nullable = false)
   private String name;
 
   @Column(name = "description")
