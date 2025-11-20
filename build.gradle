@@ -68,13 +68,14 @@ dependencies {
     implementation "org.hibernate.validator:hibernate-validator:${hibernateValidatorVersion}"
 
     api 'org.apache.commons:commons-collections4:4.4'
+    api "org.apache.commons:commons-lang3:${commonsLang3Version}"
     api ('commons-validator:commons-validator:1.10.0') { // for EmailValidator only
         exclude group: 'commons-beanutils', module: 'commons-beanutils'
     }
 
     api 'org.jasypt:jasypt:1.9.3'
 
-    api 'io.zonky.test:embedded-postgres:2.0.7'
+    api 'io.zonky.test:embedded-postgres:2.2.0'
     api 'org.apache.commons:commons-compress:1.28.0'
     implementation 'org.flywaydb:flyway-core:10.15.2'
     implementation 'org.flywaydb:flyway-database-postgresql:10.20.0'
