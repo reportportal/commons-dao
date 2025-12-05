@@ -203,6 +203,15 @@ public interface LogRepositoryCustom extends FilterableRepository<Log> {
       Queryable filter, Pageable pageable);
 
   /**
+   * Returns log ids with page numbers calculated in DB using provided pageable (sort + size).
+   *
+   * @param filter   log filter
+   * @param pageable page + sort used for page number calculation
+   * @return list of entries (logId, pageNumber)
+   */
+  List<Map.Entry<Long, Integer>> findLogIdsWithPage(Queryable filter, Pageable pageable);
+
+  /**
    * Retrieves log message of specified test item with log level greather or equals than
    * {@code level}
    *
