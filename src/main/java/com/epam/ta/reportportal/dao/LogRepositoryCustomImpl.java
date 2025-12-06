@@ -79,7 +79,7 @@ import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.OrderField;
 import org.jooq.Record;
-import org.jooq.Record2;
+import org.jooq.Record3;
 import org.jooq.Record4;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectHavingStep;
@@ -215,7 +215,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
   }
 
   @Override
-  public List<Map.Entry<Long, Integer>> findLogIdsWithPage(Queryable filter, Pageable pageable) {
+  public List<LogPageEntry> findLogIdsWithPage(Queryable filter, Pageable pageable) {
     Set<String> fields = QueryUtils.collectJoinFields(filter);
     var baseSelect = QueryBuilder.newBuilder(filter, fields).build();
 
@@ -231,8 +231,10 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
         .plus(1)
         .as(PAGE_NUMBER);
 
-    List<Record2<Long, Integer>> rows = dsl
-        .select(fieldName(baseTable.getName(), ID).cast(Long.class), pageField)
+    List<Record3<Long, Integer, Integer>> rows = dsl
+        .select(fieldName(baseTable.getName(), ID).cast(Long.class),
+            pageField,
+            LOG.LOG_LEVEL)
         .from(baseTable)
         .join(LOG)
         .on(fieldName(baseTable.getName(), ID).cast(Long.class).eq(LOG.ID))
@@ -240,7 +242,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
         .fetch();
 
     return rows.stream()
-        .map(r -> Map.entry(r.value1(), r.value2()))
+        .map(r -> new LogPageEntry(r.value1(), r.value2(), r.value3()))
         .toList();
   }
 
