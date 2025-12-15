@@ -559,4 +559,21 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
       nativeQuery = true
   )
   List<Long> findParentsWithNestedSteps(@Param("itemIds") List<Long> itemIds);
+
+  /**
+   * Finds all test items by item IDs filtered by project ID.
+   *
+   * @param ids       Collection of test item IDs
+   * @param projectId Project ID
+   * @return List of test items that belong to the specified project
+   */
+  @Query(value = """
+      SELECT ti.* FROM test_item ti
+      INNER JOIN launch l ON ti.launch_id = l.id
+      WHERE ti.item_id IN (:ids)
+        AND l.project_id = :projectId
+      ORDER BY ti.item_id
+      """, nativeQuery = true)
+  List<TestItem> findAllByItemIdInAndProjectId(@Param("ids") Collection<Long> ids,
+      @Param("projectId") Long projectId);
 }
