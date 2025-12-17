@@ -18,6 +18,9 @@ import com.epam.ta.reportportal.jooq.tables.JDashboardWidget;
 import com.epam.ta.reportportal.jooq.tables.JFilter;
 import com.epam.ta.reportportal.jooq.tables.JFilterCondition;
 import com.epam.ta.reportportal.jooq.tables.JFilterSort;
+import com.epam.ta.reportportal.jooq.tables.JGroups;
+import com.epam.ta.reportportal.jooq.tables.JGroupsProjects;
+import com.epam.ta.reportportal.jooq.tables.JGroupsUsers;
 import com.epam.ta.reportportal.jooq.tables.JIntegration;
 import com.epam.ta.reportportal.jooq.tables.JIntegrationType;
 import com.epam.ta.reportportal.jooq.tables.JIssue;
@@ -31,6 +34,7 @@ import com.epam.ta.reportportal.jooq.tables.JLaunchAttributeRules;
 import com.epam.ta.reportportal.jooq.tables.JLaunchNames;
 import com.epam.ta.reportportal.jooq.tables.JLaunchNumber;
 import com.epam.ta.reportportal.jooq.tables.JLog;
+import com.epam.ta.reportportal.jooq.tables.JLogType;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistration;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationRestriction;
 import com.epam.ta.reportportal.jooq.tables.JOauthRegistrationScope;
@@ -157,6 +161,21 @@ public class JPublic extends SchemaImpl {
     public final JFilterSort FILTER_SORT = JFilterSort.FILTER_SORT;
 
     /**
+     * The table <code>public.groups</code>.
+     */
+    public final JGroups GROUPS = JGroups.GROUPS;
+
+    /**
+     * The table <code>public.groups_projects</code>.
+     */
+    public final JGroupsProjects GROUPS_PROJECTS = JGroupsProjects.GROUPS_PROJECTS;
+
+    /**
+     * The table <code>public.groups_users</code>.
+     */
+    public final JGroupsUsers GROUPS_USERS = JGroupsUsers.GROUPS_USERS;
+
+    /**
      * The table <code>public.integration</code>.
      */
     public final JIntegration INTEGRATION = JIntegration.INTEGRATION;
@@ -220,6 +239,11 @@ public class JPublic extends SchemaImpl {
      * The table <code>public.log</code>.
      */
     public final JLog LOG = JLog.LOG;
+
+    /**
+     * The table <code>public.log_type</code>.
+     */
+    public final JLogType LOG_TYPE = JLogType.LOG_TYPE;
 
     /**
      * The table <code>public.oauth_registration</code>.
@@ -432,6 +456,9 @@ public class JPublic extends SchemaImpl {
             JFilter.FILTER,
             JFilterCondition.FILTER_CONDITION,
             JFilterSort.FILTER_SORT,
+            JGroups.GROUPS,
+            JGroupsProjects.GROUPS_PROJECTS,
+            JGroupsUsers.GROUPS_USERS,
             JIntegration.INTEGRATION,
             JIntegrationType.INTEGRATION_TYPE,
             JIssue.ISSUE,
@@ -445,6 +472,7 @@ public class JPublic extends SchemaImpl {
             JLaunchNames.LAUNCH_NAMES,
             JLaunchNumber.LAUNCH_NUMBER,
             JLog.LOG,
+            JLogType.LOG_TYPE,
             JOauthRegistration.OAUTH_REGISTRATION,
             JOauthRegistrationRestriction.OAUTH_REGISTRATION_RESTRICTION,
             JOauthRegistrationScope.OAUTH_REGISTRATION_SCOPE,

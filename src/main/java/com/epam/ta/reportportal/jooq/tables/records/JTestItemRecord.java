@@ -273,6 +273,20 @@ public class JTestItemRecord extends UpdatableRecordImpl<JTestItemRecord> {
         return (Integer) get(17);
     }
 
+    /**
+     * Setter for <code>public.test_item.analysis_owner_id</code>.
+     */
+    public void setAnalysisOwnerId(Long value) {
+        set(18, value);
+    }
+
+    /**
+     * Getter for <code>public.test_item.analysis_owner_id</code>.
+     */
+    public Long getAnalysisOwnerId() {
+        return (Long) get(18);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -296,7 +310,7 @@ public class JTestItemRecord extends UpdatableRecordImpl<JTestItemRecord> {
     /**
      * Create a detached, initialised JTestItemRecord
      */
-    public JTestItemRecord(Long itemId, String uuid, String name, String codeRef, JTestItemTypeEnum type, Instant startTime, String description, Instant lastModified, Object path, String uniqueId, String testCaseId, Boolean hasChildren, Boolean hasRetries, Boolean hasStats, Long parentId, Long retryOf, Long launchId, Integer testCaseHash) {
+    public JTestItemRecord(Long itemId, String uuid, String name, String codeRef, JTestItemTypeEnum type, Instant startTime, String description, Instant lastModified, Object path, String uniqueId, String testCaseId, Boolean hasChildren, Boolean hasRetries, Boolean hasStats, Long parentId, Long retryOf, Long launchId, Integer testCaseHash, Long analysisOwnerId) {
         super(JTestItem.TEST_ITEM);
 
         setItemId(itemId);
@@ -317,6 +331,7 @@ public class JTestItemRecord extends UpdatableRecordImpl<JTestItemRecord> {
         setRetryOf(retryOf);
         setLaunchId(launchId);
         setTestCaseHash(testCaseHash);
+        setAnalysisOwnerId(analysisOwnerId);
         resetChangedOnNotNull();
     }
 }

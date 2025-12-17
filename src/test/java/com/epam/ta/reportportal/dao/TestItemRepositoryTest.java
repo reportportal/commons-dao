@@ -47,6 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.epam.reportportal.model.analyzer.IndexTestItem;
@@ -317,6 +318,20 @@ class TestItemRepositoryTest extends BaseTest {
 
   @Sql("/db/fill/item/items-with-nested-steps.sql")
   @Test
+  void findIdWithMaxStepsBeforeFailed_returnsParentIdWithLongestNonFailedPrefix() {
+    Long result = testItemRepository.findIdWithMaxStepsBeforeFailed(132L);
+    assertEquals(132L, result);
+  }
+
+  @Sql("/db/fill/item/items-with-nested-steps.sql")
+  @Test
+  void findIdWithMaxStepsBeforeFailed_returnsNullWhenNoNonFailedPrefix() {
+    Long result = testItemRepository.findIdWithMaxStepsBeforeFailed(131L);
+    assertNull(result);
+  }
+
+  @Sql("/db/fill/item/items-with-nested-steps.sql")
+  @Test
   void selectIdsUnderByStringLogMessage() {
     final List<Long> result = testItemRepository.selectIdsUnderByStringLogMessage(
         10L,
@@ -412,12 +427,12 @@ class TestItemRepositoryTest extends BaseTest {
 
   @Test
   void hasItemsInStatusByParent() {
-    assertTrue(testItemRepository.hasItemsInStatusByParent(2L, "1.2", StatusEnum.FAILED.name()));
+    assertTrue(testItemRepository.hasItemsInStatusByParent(2L, 1L,"1.2", StatusEnum.FAILED.name()));
   }
 
   @Test
   void hasItemsInStatusByParentNegative() {
-    assertFalse(testItemRepository.hasItemsInStatusByParent(2L, "1.2", StatusEnum.SKIPPED.name(),
+    assertFalse(testItemRepository.hasItemsInStatusByParent(2L, 1L, "1.2", StatusEnum.SKIPPED.name(),
         StatusEnum.PASSED.name()));
   }
 

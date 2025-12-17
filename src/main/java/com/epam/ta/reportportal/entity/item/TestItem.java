@@ -145,6 +145,9 @@ public class TestItem implements Serializable {
   @Column(name = "has_stats")
   private boolean hasStats;
 
+  @Column(name = "analysis_owner_id")
+  private Long analysisOwnerId;
+
   @Transient
   private Set<Attachment> attachments = Sets.newHashSet();
 
@@ -358,6 +361,14 @@ public class TestItem implements Serializable {
 
   public void setHasStats(boolean hasStats) {
     this.hasStats = hasStats;
+  }
+
+  public Long getAnalysisOwnerId() {
+    return analysisOwnerId;
+  }
+
+  public void setAnalysisOwnerId(Long analysisOwnerId) {
+    this.analysisOwnerId = analysisOwnerId;
   }
 
   public Set<Attachment> getAttachments() {

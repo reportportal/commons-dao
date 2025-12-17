@@ -161,7 +161,7 @@ public class JItemAttribute extends TableImpl<JItemAttributeRecord> {
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.asList(Indexes.ITEM_ATTR_LAUNCH_IDX, Indexes.ITEM_ATTR_TI_IDX);
+        return Arrays.asList(Indexes.ITEM_ATTR_LAUNCH_IDX, Indexes.ITEM_ATTR_TI_IDX, Indexes.ITEM_ATTRIBUTE_KEY_VALUE_IDX);
     }
 
     @Override

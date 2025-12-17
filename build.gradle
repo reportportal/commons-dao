@@ -18,10 +18,7 @@ apply from: 'jooq.gradle'
 
 repositories {
     mavenCentral { url "https://repo1.maven.org/maven2" }
-
-    if (!releaseMode) {
-        maven { url 'https://jitpack.io' }
-    }
+    maven { url 'https://jitpack.io' }
 }
 
 java {
@@ -39,11 +36,8 @@ dependencyManagement {
 }
 
 dependencies {
-    if (releaseMode) {
-        implementation 'com.epam.reportportal:commons'
-    } else {
-        implementation 'com.github.reportportal:commons:c6f3174'
-    }
+    implementation 'com.github.reportportal:commons:5.15.0'
+
     implementation "io.swagger.core.v3:swagger-annotations-jakarta:2.2.27"
     // jooq dependencies
     api "org.jooq:jooq:${jooqVersion}"
@@ -55,35 +49,35 @@ dependencies {
 
     implementation 'org.springframework.security:spring-security-core'
     implementation 'org.springframework:spring-webmvc'
-    implementation 'org.apache.tika:tika-core'
+    implementation 'org.apache.tika:tika-core:3.2.2'
     api('org.springframework.boot:spring-boot-starter-data-jpa') {
         exclude group: 'org.hibernate', module: 'hibernate-core'
     }
     implementation 'org.springframework.boot:spring-boot-starter-cache'
     implementation 'com.github.ben-manes.caffeine:caffeine'
 
-    implementation 'io.minio:minio:8.5.17'
+    implementation 'io.minio:minio:8.6.0'
 
     api 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
     implementation "org.hibernate.validator:hibernate-validator:${hibernateValidatorVersion}"
 
     api 'org.apache.commons:commons-collections4:4.4'
-    api ('commons-validator:commons-validator:1.9.0') { // for EmailValidator only
+    api('commons-validator:commons-validator:1.10.0') { // for EmailValidator only
         exclude group: 'commons-beanutils', module: 'commons-beanutils'
     }
 
     api 'org.jasypt:jasypt:1.9.3'
 
-    api 'io.zonky.test:embedded-postgres:2.0.7'
-    api 'org.apache.commons:commons-compress:1.27.1'
+    api 'io.zonky.test:embedded-postgres:2.2.0'
+    api 'org.apache.commons:commons-compress:1.28.0'
     implementation 'org.flywaydb:flyway-core:10.15.2'
     implementation 'org.flywaydb:flyway-database-postgresql:10.20.0'
 
     api "org.apache.jclouds.api:s3:${jcloudsVersion}"
     api "org.apache.jclouds.provider:aws-s3:${jcloudsVersion}"
     api "org.apache.jclouds.api:filesystem:${jcloudsVersion}"
-    implementation 'software.amazon.awssdk:aws-core:2.29.50'
-    implementation 'software.amazon.awssdk:sts:2.29.50'
+    implementation 'software.amazon.awssdk:aws-core:2.38.9'
+    implementation 'software.amazon.awssdk:sts:2.38.9'
     api 'com.google.guava:guava:33.2.1-jre'
 
     // add lombok support

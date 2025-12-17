@@ -19,10 +19,10 @@ BEGIN
     VALUES ('death_star', 'INTERNAL', now());
     death_star := (SELECT currval(pg_get_serial_sequence('project', 'id')));
 
-    INSERT INTO users (login, password, email, role, type, full_name, expired, metadata, uuid)
+    INSERT INTO users (login, password, email, role, type, full_name, expired, metadata, uuid, external_id)
     VALUES ('han_solo', '3531f6f9b0538fd347f4c95bd2af9d01', 'han_solo@domain.com', 'ADMINISTRATOR',
             'INTERNAL', 'Han Solo', FALSE,
-            '{"metadata": {"last_login": "1551187023768"}}', gen_random_uuid());
+            '{"metadata": {"last_login": "1551187023768"}}', gen_random_uuid(), 'external_id_1');
     han_solo := (SELECT currval(pg_get_serial_sequence('users', 'id')));
 
     INSERT INTO project_user (user_id, project_id, project_role)

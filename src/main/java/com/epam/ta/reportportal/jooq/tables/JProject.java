@@ -9,11 +9,14 @@ import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.tables.JActivity.JActivityPath;
 import com.epam.ta.reportportal.jooq.tables.JAttribute.JAttributePath;
+import com.epam.ta.reportportal.jooq.tables.JGroups.JGroupsPath;
+import com.epam.ta.reportportal.jooq.tables.JGroupsProjects.JGroupsProjectsPath;
 import com.epam.ta.reportportal.jooq.tables.JIntegration.JIntegrationPath;
 import com.epam.ta.reportportal.jooq.tables.JIssueType.JIssueTypePath;
 import com.epam.ta.reportportal.jooq.tables.JIssueTypeProject.JIssueTypeProjectPath;
 import com.epam.ta.reportportal.jooq.tables.JLaunch.JLaunchPath;
 import com.epam.ta.reportportal.jooq.tables.JLaunchNumber.JLaunchNumberPath;
+import com.epam.ta.reportportal.jooq.tables.JLogType.JLogTypePath;
 import com.epam.ta.reportportal.jooq.tables.JOwnedEntity.JOwnedEntityPath;
 import com.epam.ta.reportportal.jooq.tables.JPatternTemplate.JPatternTemplatePath;
 import com.epam.ta.reportportal.jooq.tables.JProjectAttribute.JProjectAttributePath;
@@ -203,6 +206,19 @@ public class JProject extends TableImpl<JProjectRecord> {
         return _activity;
     }
 
+    private transient JGroupsProjectsPath _groupsProjects;
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>public.groups_projects</code> table
+     */
+    public JGroupsProjectsPath groupsProjects() {
+        if (_groupsProjects == null)
+            _groupsProjects = new JGroupsProjectsPath(this, null, Keys.GROUPS_PROJECTS__GROUPS_PROJECTS_PROJECT_ID_FKEY.getInverseKey());
+
+        return _groupsProjects;
+    }
+
     private transient JIntegrationPath _integration;
 
     /**
@@ -253,6 +269,19 @@ public class JProject extends TableImpl<JProjectRecord> {
             _launch = new JLaunchPath(this, null, Keys.LAUNCH__LAUNCH_PROJECT_ID_FKEY.getInverseKey());
 
         return _launch;
+    }
+
+    private transient JLogTypePath _logType;
+
+    /**
+     * Get the implicit to-many join path to the <code>public.log_type</code>
+     * table
+     */
+    public JLogTypePath logType() {
+        if (_logType == null)
+            _logType = new JLogTypePath(this, null, Keys.LOG_TYPE__LOG_TYPE_PROJECT_ID_FKEY.getInverseKey());
+
+        return _logType;
     }
 
     private transient JPatternTemplatePath _patternTemplate;
@@ -331,6 +360,14 @@ public class JProject extends TableImpl<JProjectRecord> {
             _userPreference = new JUserPreferencePath(this, null, Keys.USER_PREFERENCE__USER_PREFERENCE_PROJECT_ID_FKEY.getInverseKey());
 
         return _userPreference;
+    }
+
+    /**
+     * Get the implicit many-to-many join path to the <code>public.groups</code>
+     * table
+     */
+    public JGroupsPath groups() {
+        return groupsProjects().groups();
     }
 
     /**
