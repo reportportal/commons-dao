@@ -18,10 +18,7 @@ apply from: 'jooq.gradle'
 
 repositories {
     mavenCentral { url "https://repo1.maven.org/maven2" }
-
-    if (!releaseMode) {
-        maven { url 'https://jitpack.io' }
-    }
+    maven { url 'https://jitpack.io' }
 }
 
 java {
@@ -39,11 +36,8 @@ dependencyManagement {
 }
 
 dependencies {
-    if (releaseMode) {
-        implementation 'com.epam.reportportal:commons:5.15.0'
-    } else {
-        implementation 'com.github.reportportal:commons:2d72f91'
-    }
+    implementation 'com.github.reportportal:commons:5.15.0'
+
     implementation "io.swagger.core.v3:swagger-annotations-jakarta:2.2.27"
     // jooq dependencies
     api "org.jooq:jooq:${jooqVersion}"
@@ -55,7 +49,7 @@ dependencies {
 
     implementation 'org.springframework.security:spring-security-core'
     implementation 'org.springframework:spring-webmvc'
-    implementation 'org.apache.tika:tika-core'
+    implementation 'org.apache.tika:tika-core:3.2.2'
     api('org.springframework.boot:spring-boot-starter-data-jpa') {
         exclude group: 'org.hibernate', module: 'hibernate-core'
     }
@@ -68,7 +62,7 @@ dependencies {
     implementation "org.hibernate.validator:hibernate-validator:${hibernateValidatorVersion}"
 
     api 'org.apache.commons:commons-collections4:4.4'
-    api ('commons-validator:commons-validator:1.10.0') { // for EmailValidator only
+    api('commons-validator:commons-validator:1.10.0') { // for EmailValidator only
         exclude group: 'commons-beanutils', module: 'commons-beanutils'
     }
 
