@@ -71,6 +71,7 @@ import com.epam.ta.reportportal.entity.dashboard.DashboardWidgetId;
 import com.epam.ta.reportportal.entity.enums.IntegrationAuthFlowEnum;
 import com.epam.ta.reportportal.entity.enums.IntegrationGroupEnum;
 import com.epam.ta.reportportal.entity.enums.ProjectType;
+import com.epam.ta.reportportal.entity.enums.RetentionPolicyEnum;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.enums.TestItemIssueGroup;
 import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
@@ -385,6 +386,7 @@ public class RecordMappers {
     launch.setId(r.get(LAUNCH.ID));
     launch.setName(r.get(LAUNCH.NAME));
     launch.setUserId(r.get(LAUNCH.USER_ID));
+    launch.setRetentionPolicy(r.into(LAUNCH.RETENTION_POLICY).into(RetentionPolicyEnum.class));
     return launch;
   };
 
