@@ -149,19 +149,39 @@ public class S3DataStore implements DataStore {
 
   @Override
   public void deleteAll(List<String> filePaths, String bucketName) {
-    if (!featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)) {
-      blobStore.removeBlobs(bucketPrefix + bucketName + bucketPostfix, filePaths);
-    } else {
-      blobStore.removeBlobs(bucketName, filePaths);
+    String container = resolveContainerName(bucketName);
+    if (container == null || container.isEmpty()) {
+      LOGGER.warn("Skipping deleteAll: resolved container name is empty for bucketName='{}'", bucketName);
+      return;
+    }
+    if (!blobStore.containerExists(container)) {
+      LOGGER.warn("Skipping deleteAll: container '{}' does not exist", container);
+      return;
+    }
+    try {
+      blobStore.removeBlobs(container, filePaths);
+    } catch (Exception e) {
+      LOGGER.error("Unable to remove blobs from container '{}'", container, e);
+      throw new ReportPortalException(ErrorType.INCORRECT_REQUEST, "Unable to delete files");
     }
   }
 
   @Override
   public void deleteContainer(String bucketName) {
-    if (!featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)) {
-      blobStore.deleteContainer(bucketPrefix + bucketName + bucketPostfix);
-    } else {
-      blobStore.deleteContainer(bucketName);
+    String container = resolveContainerName(bucketName);
+    if (container == null || container.isEmpty()) {
+      LOGGER.warn("Skipping deleteContainer: resolved container name is empty for bucketName='{}'", bucketName);
+      return;
+    }
+    if (!blobStore.containerExists(container)) {
+      LOGGER.warn("Skipping deleteContainer: container '{}' does not exist", container);
+      return;
+    }
+    try {
+      blobStore.deleteContainer(container);
+    } catch (Exception e) {
+      LOGGER.error("Unable to delete container '{}'", container, e);
+      throw new ReportPortalException(ErrorType.INCORRECT_REQUEST, "Unable to delete container");
     }
   }
 
@@ -193,5 +213,16 @@ public class S3DataStore implements DataStore {
 
   private String retrievePath(Path path, int beginIndex, int endIndex) {
     return String.valueOf(path.subpath(beginIndex, endIndex));
+  }
+
+  private String resolveContainerName(String bucketName) {
+    if (featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)) {
+      return (bucketName == null || bucketName.isEmpty()) ? defaultBucketName : bucketName;
+    } else {
+      if (bucketName == null || bucketName.isEmpty()) {
+        return null;
+      }
+      return bucketPrefix + bucketName + bucketPostfix;
+    }
   }
 }
