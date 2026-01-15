@@ -16,7 +16,7 @@
 
 package com.epam.ta.reportportal.filesystem.distributed.s3;
 
-import static org.mockito.Mockito.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -25,12 +25,15 @@ import static org.mockito.Mockito.when;
 import com.epam.ta.reportportal.entity.enums.FeatureFlag;
 import com.epam.ta.reportportal.util.FeatureFlagHandler;
 import java.io.InputStream;
-import org.jclouds.blobstore.BlobStore;
-import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.BlobBuilder;
-import org.jclouds.io.Payload;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.core.sync.ResponseTransformer;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.HeadBucketRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
@@ -41,60 +44,42 @@ class S3DataStoreTest {
   private static final String BUCKET_PREFIX = "prj-";
   private static final String BUCKET_POSTFIX = "-postfix";
   private static final String DEFAULT_BUCKET_NAME = "rp-bucket";
-  private static final String REGION = "us-east-1";
   private static final int ZERO = 0;
 
-  private final BlobStore blobStore = mock(BlobStore.class);
+  private final S3Client s3Client = mock(S3Client.class);
   private final InputStream inputStream = mock(InputStream.class);
 
   private final FeatureFlagHandler featureFlagHandler = mock(FeatureFlagHandler.class);
 
-  private final S3DataStore s3DataStore =
-      new S3DataStore(blobStore, BUCKET_PREFIX, BUCKET_POSTFIX, DEFAULT_BUCKET_NAME, REGION,
-          featureFlagHandler
-      );
+  private final S3DataStore s3DataStore = new S3DataStore(s3Client, BUCKET_PREFIX, BUCKET_POSTFIX, DEFAULT_BUCKET_NAME,
+      featureFlagHandler);
 
   @Test
   void save() throws Exception {
 
-    BlobBuilder blobBuilderMock = mock(BlobBuilder.class);
-    BlobBuilder.PayloadBlobBuilder payloadBlobBuilderMock =
-        mock(BlobBuilder.PayloadBlobBuilder.class);
-    Blob blobMock = mock(Blob.class);
-
     String filePath = DEFAULT_BUCKET_NAME + "/" + FILE_NAME;
 
     when(inputStream.available()).thenReturn(ZERO);
-    when(payloadBlobBuilderMock.contentDisposition(FILE_NAME)).thenReturn(payloadBlobBuilderMock);
-    when(payloadBlobBuilderMock.contentLength(ZERO)).thenReturn(payloadBlobBuilderMock);
-    when(payloadBlobBuilderMock.build()).thenReturn(blobMock);
-    when(blobBuilderMock.payload(inputStream)).thenReturn(payloadBlobBuilderMock);
-
-    when(blobStore.containerExists(any(String.class))).thenReturn(true);
-    when(blobStore.blobBuilder(FILE_NAME)).thenReturn(blobBuilderMock);
-
     when(featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)).thenReturn(false);
+
+    // Mock ensureBucketExists check which calls headBucket
+    when(s3Client.headBucket(any(HeadBucketRequest.class)))
+        .thenReturn(any(software.amazon.awssdk.services.s3.model.HeadBucketResponse.class));
 
     s3DataStore.save(filePath, inputStream);
 
-    verify(blobStore, times(1)).putBlob(
-        BUCKET_PREFIX + DEFAULT_BUCKET_NAME + BUCKET_POSTFIX, blobMock);
+    verify(s3Client, times(1)).putObject(any(PutObjectRequest.class), any(RequestBody.class));
   }
 
   @Test
   void load() throws Exception {
 
-    Blob mockBlob = mock(Blob.class);
-    Payload mockPayload = mock(Payload.class);
-
     String filePath = DEFAULT_BUCKET_NAME + "/" + FILE_NAME;
 
-    when(mockPayload.openStream()).thenReturn(inputStream);
-    when(mockBlob.getPayload()).thenReturn(mockPayload);
+    when(featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)).thenReturn(false);
 
-    when(blobStore.getBlob(BUCKET_PREFIX + DEFAULT_BUCKET_NAME + BUCKET_POSTFIX,
-        FILE_NAME
-    )).thenReturn(mockBlob);
+    when(s3Client.getObject(any(GetObjectRequest.class), any(ResponseTransformer.class))).thenReturn(inputStream);
+
     InputStream loaded = s3DataStore.load(filePath);
 
     Assertions.assertEquals(inputStream, loaded);
@@ -104,10 +89,10 @@ class S3DataStoreTest {
   void delete() throws Exception {
 
     String filePath = DEFAULT_BUCKET_NAME + "/" + FILE_NAME;
+    when(featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)).thenReturn(false);
 
     s3DataStore.delete(filePath);
 
-    verify(blobStore, times(1)).removeBlob(
-        BUCKET_PREFIX + DEFAULT_BUCKET_NAME + BUCKET_POSTFIX, FILE_NAME);
+    verify(s3Client, times(1)).deleteObject(any(DeleteObjectRequest.class));
   }
 }

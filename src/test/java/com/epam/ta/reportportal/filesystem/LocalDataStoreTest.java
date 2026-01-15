@@ -16,34 +16,30 @@
 
 package com.epam.ta.reportportal.filesystem;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import com.epam.ta.reportportal.entity.enums.FeatureFlag;
 import com.epam.ta.reportportal.util.FeatureFlagHandler;
-import java.io.InputStream;
-import org.jclouds.blobstore.BlobStore;
-import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.BlobBuilder;
-import org.jclouds.io.Payload;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import static org.mockito.Mockito.when;
 
 class LocalDataStoreTest {
 
   private LocalDataStore localDataStore;
 
-  private BlobStore blobStore;
-
   private FeatureFlagHandler featureFlagHandler;
 
-  private final InputStream inputStream = mock(InputStream.class);
-
-  private static final int ZERO = 0;
+  @TempDir
+  Path tempDir;
 
   private static final String FILE_PATH = "someFile.txt";
 
@@ -60,115 +56,97 @@ class LocalDataStoreTest {
   @BeforeEach
   void setUp() {
 
-    blobStore = Mockito.mock(BlobStore.class);
-
     featureFlagHandler = Mockito.mock(FeatureFlagHandler.class);
 
-    localDataStore =
-        new LocalDataStore(blobStore, featureFlagHandler, BUCKET_PREFIX, BUCKET_POSTFIX,
-            DEFAULT_BUCKET_NAME
-        );
+    localDataStore = new LocalDataStore(featureFlagHandler, tempDir.toString(), BUCKET_PREFIX, BUCKET_POSTFIX,
+        DEFAULT_BUCKET_NAME);
   }
 
   @Test
   void whenSave_andSingleBucketIsEnabled_thenSaveToSingleBucket() throws Exception {
-
-    BlobBuilder blobBuilderMock = mock(BlobBuilder.class);
-    BlobBuilder.PayloadBlobBuilder payloadBlobBuilderMock =
-        mock(BlobBuilder.PayloadBlobBuilder.class);
-    Blob blobMock = mock(Blob.class);
-
-    when(inputStream.available()).thenReturn(ZERO);
-    when(payloadBlobBuilderMock.contentLength(ZERO)).thenReturn(payloadBlobBuilderMock);
-    when(payloadBlobBuilderMock.contentDisposition(FILE_PATH)).thenReturn(payloadBlobBuilderMock);
-    when(payloadBlobBuilderMock.build()).thenReturn(blobMock);
-    when(blobBuilderMock.payload(inputStream)).thenReturn(payloadBlobBuilderMock);
+    String content = "test content";
+    InputStream inputStream = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
 
     when(featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)).thenReturn(true);
-    when(blobStore.blobBuilder(FILE_PATH)).thenReturn(blobBuilderMock);
 
     localDataStore.save(FILE_PATH, inputStream);
 
-    verify(blobStore, times(1)).putBlob(DEFAULT_BUCKET_NAME, blobMock);
+    Path expectedPath = tempDir.resolve(DEFAULT_BUCKET_NAME).resolve(FILE_PATH);
+    Assertions.assertTrue(Files.exists(expectedPath));
+    Assertions.assertEquals(content, Files.readString(expectedPath));
   }
 
   @Test
   void whenLoad_andSingleBucketIsEnabled_thenReturnFromSingleBucket() throws Exception {
-
-    Blob mockBlob = mock(Blob.class);
-    Payload mockPayload = mock(Payload.class);
-
-    when(mockPayload.openStream()).thenReturn(inputStream);
-    when(mockBlob.getPayload()).thenReturn(mockPayload);
+    String content = "test content";
+    Path filePath = tempDir.resolve(DEFAULT_BUCKET_NAME).resolve(FILE_PATH);
+    Files.createDirectories(filePath.getParent());
+    Files.writeString(filePath, content);
 
     when(featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)).thenReturn(true);
-    when(blobStore.getBlob(DEFAULT_BUCKET_NAME, FILE_PATH)).thenReturn(mockBlob);
+
     InputStream loaded = localDataStore.load(FILE_PATH);
 
-    Assertions.assertEquals(inputStream, loaded);
+    Assertions.assertNotNull(loaded);
+    String loadedContent = new String(loaded.readAllBytes(), StandardCharsets.UTF_8);
+    Assertions.assertEquals(content, loadedContent);
   }
 
   @Test
   void whenDelete_andSingleBucketIsEnabled_thenDeleteFromSingleBucket() throws Exception {
+    Path filePath = tempDir.resolve(DEFAULT_BUCKET_NAME).resolve(FILE_PATH);
+    Files.createDirectories(filePath.getParent());
+    Files.createFile(filePath);
 
     when(featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)).thenReturn(true);
 
     localDataStore.delete(FILE_PATH);
 
-    verify(blobStore, times(1)).removeBlob(DEFAULT_BUCKET_NAME, FILE_PATH);
+    Assertions.assertFalse(Files.exists(filePath));
   }
 
   @Test
   void whenSave_andSingleBucketIsDisabled_andBucketInName_thenSaveToThisBucket() throws Exception {
-
-    BlobBuilder blobBuilderMock = mock(BlobBuilder.class);
-    BlobBuilder.PayloadBlobBuilder payloadBlobBuilderMock =
-        mock(BlobBuilder.PayloadBlobBuilder.class);
-    Blob blobMock = mock(Blob.class);
-
-    when(inputStream.available()).thenReturn(ZERO);
-    when(payloadBlobBuilderMock.contentLength(ZERO)).thenReturn(payloadBlobBuilderMock);
-    when(payloadBlobBuilderMock.contentDisposition(FILE_PATH)).thenReturn(payloadBlobBuilderMock);
-    when(payloadBlobBuilderMock.build()).thenReturn(blobMock);
-    when(blobBuilderMock.payload(inputStream)).thenReturn(payloadBlobBuilderMock);
+    String content = "test content";
+    InputStream inputStream = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
 
     when(featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)).thenReturn(false);
-    when(blobStore.blobBuilder(FILE_PATH)).thenReturn(blobBuilderMock);
 
     localDataStore.save(MULTI_FILE_PATH, inputStream);
 
-    verify(blobStore, times(1)).putBlob(
-        BUCKET_PREFIX + MULTI_BUCKET_NAME + BUCKET_POSTFIX, blobMock);
+    Path expectedPath = tempDir.resolve(BUCKET_PREFIX + MULTI_BUCKET_NAME + BUCKET_POSTFIX).resolve(FILE_PATH);
+    Assertions.assertTrue(Files.exists(expectedPath));
+    Assertions.assertEquals(content, Files.readString(expectedPath));
   }
 
   @Test
   void whenLoad_andSingleBucketIsDisabled_andBucketInName_thenReturnFromThisBucket()
       throws Exception {
-
-    Blob mockBlob = mock(Blob.class);
-    Payload mockPayload = mock(Payload.class);
-
-    when(mockPayload.openStream()).thenReturn(inputStream);
-    when(mockBlob.getPayload()).thenReturn(mockPayload);
+    String content = "test content";
+    Path expectedPath = tempDir.resolve(BUCKET_PREFIX + MULTI_BUCKET_NAME + BUCKET_POSTFIX).resolve(FILE_PATH);
+    Files.createDirectories(expectedPath.getParent());
+    Files.writeString(expectedPath, content);
 
     when(featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)).thenReturn(false);
-    when(blobStore.getBlob(BUCKET_PREFIX + MULTI_BUCKET_NAME + BUCKET_POSTFIX,
-        FILE_PATH
-    )).thenReturn(mockBlob);
+
     InputStream loaded = localDataStore.load(MULTI_FILE_PATH);
 
-    Assertions.assertEquals(inputStream, loaded);
+    Assertions.assertNotNull(loaded);
+    String loadedContent = new String(loaded.readAllBytes(), StandardCharsets.UTF_8);
+    Assertions.assertEquals(content, loadedContent);
   }
 
   @Test
   void whenDelete_andSingleBucketIsDisabled_andBucketInName_thenReturnFromThisBucket()
       throws Exception {
+    Path expectedPath = tempDir.resolve(BUCKET_PREFIX + MULTI_BUCKET_NAME + BUCKET_POSTFIX).resolve(FILE_PATH);
+    Files.createDirectories(expectedPath.getParent());
+    Files.createFile(expectedPath);
 
     when(featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)).thenReturn(false);
 
     localDataStore.delete(MULTI_FILE_PATH);
 
-    verify(blobStore, times(1)).removeBlob(
-        BUCKET_PREFIX + MULTI_BUCKET_NAME + BUCKET_POSTFIX, FILE_PATH);
+    Assertions.assertFalse(Files.exists(expectedPath));
   }
 }

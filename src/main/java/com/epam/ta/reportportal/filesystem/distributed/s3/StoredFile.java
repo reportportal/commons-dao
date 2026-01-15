@@ -19,21 +19,6 @@ package com.epam.ta.reportportal.filesystem.distributed.s3;
 /**
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
-public class StoredFile {
+public record StoredFile(String bucket, String filePath) {
 
-  private final String bucket;
-  private final String filePath;
-
-  public StoredFile(String bucket, String filePath) {
-    this.bucket = bucket;
-    this.filePath = filePath;
-  }
-
-  public String getBucket() {
-    return bucket;
-  }
-
-  public String getFilePath() {
-    return filePath;
-  }
 }
