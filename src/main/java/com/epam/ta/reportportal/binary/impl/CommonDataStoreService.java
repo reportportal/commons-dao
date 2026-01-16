@@ -52,7 +52,6 @@ public abstract class CommonDataStoreService implements DataStoreService {
 
   @Override
   public void delete(String fileId) {
-    System.out.println("Deleting file123: " + fileId);
     dataStore.delete(dataEncoder.decode(fileId));
   }
 
