@@ -19,7 +19,7 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
 import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.entity.user.UserAuthProjection;
-import com.epam.ta.reportportal.entity.user.UserIdFullNameProjection;
+import com.epam.ta.reportportal.entity.user.UserIdDisplayNameProjection;
 import com.epam.ta.reportportal.entity.user.UserRole;
 import com.epam.ta.reportportal.entity.user.UserType;
 import java.time.Instant;
@@ -105,17 +105,17 @@ public interface UserRepository extends ReportPortalRepository<User, Long>, User
   Optional<String> findLoginById(@Param("id") Long id);
 
   /**
-   * Batch fetch user full names by user IDs.
+   * Batch fetch user display names by user IDs. Display name is the user's full name if available, otherwise the
+   * login.
    *
    * @param userIds collection of user IDs
-   * @return List of user ID and full name projections
+   * @return List of user ID and display name projections
    */
-  @Query("SELECT new com.epam.ta.reportportal.entity.user.UserIdFullNameProjection(u.id, u.fullName) FROM User u WHERE u.id IN :userIds")
-  List<UserIdFullNameProjection> findFullNamesByIds(@Param("userIds") List<Long> userIds);
+  @Query("SELECT new com.epam.ta.reportportal.entity.user.UserIdDisplayNameProjection(u.id, COALESCE(u.fullName, u.login)) FROM User u WHERE u.id IN :userIds")
+  List<UserIdDisplayNameProjection> findDisplayNamesByIds(@Param("userIds") List<Long> userIds);
 
   /**
-   * Optimized method to find user authentication data by login.
-   * Returns only fields needed for authentication.
+   * Optimized method to find user authentication data by login. Returns only fields needed for authentication.
    *
    * @param login user login for search
    * @return {@link Optional} of {@link UserAuthProjection}
@@ -129,8 +129,7 @@ public interface UserRepository extends ReportPortalRepository<User, Long>, User
   Optional<UserAuthProjection> findAuthDataByLogin(@Param("login") String login);
 
   /**
-   * Optimized method to find user authentication data by external ID.
-   * Returns only fields needed for authentication.
+   * Optimized method to find user authentication data by external ID. Returns only fields needed for authentication.
    *
    * @param externalId user external id for search
    * @return {@link Optional} of {@link UserAuthProjection}
@@ -144,8 +143,8 @@ public interface UserRepository extends ReportPortalRepository<User, Long>, User
   Optional<UserAuthProjection> findAuthDataByExternalId(@Param("externalId") String externalId);
 
   /**
-   * Saves user entity and evicts cache entries for the user.
-   * Evicts both login and externalId cache entries to handle potential changes.
+   * Saves user entity and evicts cache entries for the user. Evicts both login and externalId cache entries to handle
+   * potential changes.
    *
    * @param user User entity to save
    * @return Saved user entity
@@ -167,8 +166,7 @@ public interface UserRepository extends ReportPortalRepository<User, Long>, User
   <S extends User> S save(S user);
 
   /**
-   * Deletes user entity and evicts cache entries for the user.
-   * Evicts both login and externalId cache entries.
+   * Deletes user entity and evicts cache entries for the user. Evicts both login and externalId cache entries.
    *
    * @param user User entity to delete
    */
