@@ -25,10 +25,12 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
+@Slf4j
 public abstract class CommonDataStoreService implements DataStoreService {
 
   protected DataStore dataStore;
@@ -50,13 +52,16 @@ public abstract class CommonDataStoreService implements DataStoreService {
 
   @Override
   public void delete(String fileId) {
+    System.out.println("Deleting file123: " + fileId);
     dataStore.delete(dataEncoder.decode(fileId));
   }
 
   @Override
   public void deleteAll(List<String> fileIds, String bucketName) {
-    dataStore.deleteAll(
-        fileIds.stream().map(dataEncoder::decode).collect(Collectors.toList()), bucketName);
+    var decodedPaths = fileIds.stream()
+        .map(dataEncoder::decode)
+        .toList();
+    dataStore.deleteAll(decodedPaths, bucketName);
   }
 
   @Override
