@@ -41,7 +41,7 @@ import com.epam.ta.reportportal.entity.project.Project;
 import com.epam.ta.reportportal.entity.project.ProjectRole;
 import com.epam.ta.reportportal.entity.user.ProjectUser;
 import com.epam.ta.reportportal.entity.user.User;
-import com.epam.ta.reportportal.entity.user.UserIdFullNameProjection;
+import com.epam.ta.reportportal.entity.user.UserIdDisplayNameProjection;
 import com.epam.ta.reportportal.entity.user.UserRole;
 import com.epam.ta.reportportal.entity.user.UserType;
 import java.util.Arrays;
@@ -158,18 +158,18 @@ class UserRepositoryTest extends BaseTest {
   }
 
   @Test
-  void findFullNamesByIds() {
+  void findDisplayNamesByIds() {
     // given
     List<Long> userIds = List.of(1L, 2L);
 
     // when
-    List<UserIdFullNameProjection> fullNamesByIds = userRepository.findFullNamesByIds(
+    List<UserIdDisplayNameProjection> displayNamesByIds = userRepository.findDisplayNamesByIds(
         userIds);
 
     // then
-    assertEquals(2, fullNamesByIds.size());
-    assertEquals("tester", fullNamesByIds.get(0).fullName());
-    assertEquals("tester", fullNamesByIds.get(1).fullName());
+    assertEquals(2, displayNamesByIds.size());
+    assertEquals("tester", displayNamesByIds.get(0).displayName());
+    assertEquals("tester", displayNamesByIds.get(1).displayName());
   }
 
   @Test
