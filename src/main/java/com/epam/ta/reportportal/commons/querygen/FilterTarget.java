@@ -831,9 +831,9 @@ public enum FilterTarget {
               DSL.arrayAggDistinct(DSL.concat((DSL.coalesce(ITEM_ATTRIBUTE.KEY, "")), ":")),
               DSL.arrayAggDistinct(DSL.concat(DSL.coalesce(ITEM_ATTRIBUTE.VALUE, ""))),
               DSL.arrayAgg(DSL.concat(DSL.coalesce(ITEM_ATTRIBUTE.KEY, ""),
-                      DSL.val(KEY_VALUE_SEPARATOR),
-                      DSL.coalesce(ITEM_ATTRIBUTE.VALUE, "")
-                  ))
+                  DSL.val(KEY_VALUE_SEPARATOR),
+                  DSL.coalesce(ITEM_ATTRIBUTE.VALUE, "")
+              ))
           ).toString()).get(),
 
           new CriteriaHolderBuilder().newBuilder(CRITERIA_PATTERN_TEMPLATE_NAME,
@@ -1241,6 +1241,9 @@ public enum FilterTarget {
 
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ID, DASHBOARD.ID, Long.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_NAME, DASHBOARD.NAME, String.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ID, OWNED_ENTITY.LOCKED, Long.class)
+          .withAggregateCriteria(DSL.max(OWNED_ENTITY.LOCKED).toString())
+          .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_CREATION_DATE, DASHBOARD.CREATION_DATE,
           Timestamp.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ID, OWNED_ENTITY.PROJECT_ID,
@@ -1268,7 +1271,8 @@ public enum FilterTarget {
           DASHBOARD_WIDGET.WIDGET_POSITION_Y,
           WIDGET.WIDGET_OPTIONS,
           OWNED_ENTITY.PROJECT_ID,
-          OWNED_ENTITY.OWNER
+          OWNED_ENTITY.OWNER,
+          OWNED_ENTITY.LOCKED
       );
     }
 

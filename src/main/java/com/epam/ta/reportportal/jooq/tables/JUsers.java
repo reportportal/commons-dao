@@ -12,7 +12,6 @@ import com.epam.ta.reportportal.jooq.tables.JGroupsUsers.JGroupsUsersPath;
 import com.epam.ta.reportportal.jooq.tables.JLaunch.JLaunchPath;
 import com.epam.ta.reportportal.jooq.tables.JProject.JProjectPath;
 import com.epam.ta.reportportal.jooq.tables.JProjectUser.JProjectUserPath;
-import com.epam.ta.reportportal.jooq.tables.JTestItem.JTestItemPath;
 import com.epam.ta.reportportal.jooq.tables.JUserCreationBid.JUserCreationBidPath;
 import com.epam.ta.reportportal.jooq.tables.JUserPreference.JUserPreferencePath;
 import com.epam.ta.reportportal.jooq.tables.records.JUsersRecord;
@@ -229,19 +228,6 @@ public class JUsers extends TableImpl<JUsersRecord> {
             _apiKeys = new JApiKeysPath(this, null, Keys.API_KEYS__API_KEYS_USER_ID_FKEY.getInverseKey());
 
         return _apiKeys;
-    }
-
-    private transient JTestItemPath _testItem;
-
-    /**
-     * Get the implicit to-many join path to the <code>public.test_item</code>
-     * table
-     */
-    public JTestItemPath testItem() {
-        if (_testItem == null)
-            _testItem = new JTestItemPath(this, null, Keys.TEST_ITEM__FK_TEST_ITEM_ANALYSIS_OWNER.getInverseKey());
-
-        return _testItem;
     }
 
     private transient JGroupsPath _groups;

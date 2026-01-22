@@ -77,6 +77,11 @@ public class JOwnedEntity extends TableImpl<JOwnedEntityRecord> {
      */
     public final TableField<JOwnedEntityRecord, Long> PROJECT_ID = createField(DSL.name("project_id"), SQLDataType.BIGINT.nullable(false), this, "");
 
+    /**
+     * The column <code>public.owned_entity.locked</code>.
+     */
+    public final TableField<JOwnedEntityRecord, Boolean> LOCKED = createField(DSL.name("locked"), SQLDataType.BOOLEAN.defaultValue(DSL.field(DSL.raw("false"), SQLDataType.BOOLEAN)), this, "");
+
     private JOwnedEntity(Name alias, Table<JOwnedEntityRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);
     }
