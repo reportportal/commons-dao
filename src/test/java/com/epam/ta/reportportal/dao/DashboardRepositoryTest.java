@@ -100,9 +100,9 @@ class DashboardRepositoryTest extends BaseTest {
   }
 
   @Test
-  void shouldFindByFilterAndPage() {
+  void shouldFindByFilterAndSortByLocked() {
     Filter filter = buildDefaultFilter();
-    Pageable pageable = PageRequest.of(1, 50, Sort.sort(Dashboard.class));
+    Pageable pageable = PageRequest.of(1, 50, Sort.by("locked"));
     Page<Dashboard> page = repository.findByFilter(filter, pageable);
     assertEquals(1, page.getTotalElements());
   }

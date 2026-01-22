@@ -1243,7 +1243,7 @@ public enum FilterTarget {
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ID, DASHBOARD.ID, Long.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_NAME, DASHBOARD.NAME, String.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_LOCKED, OWNED_ENTITY.LOCKED, Boolean.class)
-          .withAggregateCriteria(DSL.max(OWNED_ENTITY.LOCKED).toString())
+          .withAggregateCriteria(DSL.max(DSL.cast(OWNED_ENTITY.LOCKED, Integer.class)).toString())
           .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_CREATION_DATE, DASHBOARD.CREATION_DATE,
           Timestamp.class).get(),
@@ -1303,7 +1303,7 @@ public enum FilterTarget {
           .withAggregateCriteria(DSL.max(WIDGET.NAME).toString())
           .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_LOCKED, OWNED_ENTITY.LOCKED, Boolean.class)
-          .withAggregateCriteria(DSL.max(OWNED_ENTITY.LOCKED).toString())
+          .withAggregateCriteria(DSL.max(DSL.cast(OWNED_ENTITY.LOCKED, Integer.class)).toString())
           .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_DESCRIPTION, WIDGET.DESCRIPTION, String.class)
           .get(),
@@ -1348,7 +1348,7 @@ public enum FilterTarget {
           new CriteriaHolderBuilder().newBuilder(CRITERIA_ID, FILTER.ID, Long.class).get(),
           new CriteriaHolderBuilder().newBuilder(CRITERIA_NAME, FILTER.NAME, String.class).get(),
           new CriteriaHolderBuilder().newBuilder(CRITERIA_LOCKED, OWNED_ENTITY.LOCKED, Boolean.class)
-              .withAggregateCriteria(DSL.max(OWNED_ENTITY.LOCKED).toString())
+              .withAggregateCriteria(DSL.max(DSL.cast(OWNED_ENTITY.LOCKED, Integer.class)).toString())
               .get(),
           new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ID, OWNED_ENTITY.PROJECT_ID,
                   Long.class)
