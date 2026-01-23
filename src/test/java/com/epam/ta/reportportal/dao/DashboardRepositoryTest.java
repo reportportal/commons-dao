@@ -113,4 +113,11 @@ class DashboardRepositoryTest extends BaseTest {
     List<Dashboard> byFilter = repository.findByFilter(filter);
     assertEquals(1, byFilter.size());
   }
+
+  @Test
+  void toggleDashboardLock() {
+    repository.toggleDashboardLock(13L, true);
+    Dashboard dashboard = repository.findById(13L).get();
+    assertTrue(dashboard.getLocked());
+  }
 }

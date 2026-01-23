@@ -77,11 +77,11 @@ public interface DashboardRepository extends ReportPortalRepository<Dashboard, L
    */
   @Modifying
   @Query(value = """
-           UPDATE owned_entity SET locked = :isLocked WHERE id = :dashboardId;
+           WITH widget_ids AS (SELECT widget_id FROM dashboard_widget WHERE dashboard_id = :dashboardId)
            UPDATE owned_entity SET locked = :isLocked
-               WHERE id IN (SELECT widget_id FROM dashboard_widget WHERE dashboard_id = :dashboardId);
-           UPDATE owned_entity SET locked = :isLocked WHERE id IN (SELECT filter_id FROM widget_filter
-               WHERE widget_id IN (SELECT widget_id FROM dashboard_widget WHERE dashboard_id = :dashboardId));
+           WHERE id = :dashboardId
+           OR id IN (SELECT widget_id FROM widget_ids)
+           OR id IN (SELECT filter_id FROM widget_filter WHERE widget_id IN (SELECT widget_id FROM widget_ids));
       """, nativeQuery = true)
   void toggleDashboardLock(@Param("dashboardId") Long dashboardId, @Param("isLocked") boolean isLocked);
 
