@@ -18,11 +18,15 @@ package com.epam.ta.reportportal.entity.activity;
 
 import java.util.Arrays;
 import java.util.Optional;
+import lombok.Getter;
 
+@Getter
 public enum EventAction {
   CREATE("create"),
   UPDATE("update"),
   DELETE("delete"),
+  LOCK("lock"),
+  UNLOCK("unlock"),
   BULK_CREATE("bulkCreate"),
   BULK_UPDATE("bulkUpdate"),
   BULK_DELETE("bulkDelete"),
@@ -50,10 +54,6 @@ public enum EventAction {
         .flatMap(str -> Arrays.stream(values())
             .filter(it -> it.value.equalsIgnoreCase(str))
             .findAny());
-  }
-
-  public String getValue() {
-    return value;
   }
 
 }
