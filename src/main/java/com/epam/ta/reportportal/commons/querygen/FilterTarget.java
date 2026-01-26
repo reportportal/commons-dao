@@ -34,6 +34,7 @@ import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteria
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAST_MODIFIED;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LAUNCH_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_LOCKED;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_NAME;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_OWNER;
 import static com.epam.ta.reportportal.commons.querygen.constant.GeneralCriteriaConstant.CRITERIA_PROJECT;
@@ -831,9 +832,9 @@ public enum FilterTarget {
               DSL.arrayAggDistinct(DSL.concat((DSL.coalesce(ITEM_ATTRIBUTE.KEY, "")), ":")),
               DSL.arrayAggDistinct(DSL.concat(DSL.coalesce(ITEM_ATTRIBUTE.VALUE, ""))),
               DSL.arrayAgg(DSL.concat(DSL.coalesce(ITEM_ATTRIBUTE.KEY, ""),
-                      DSL.val(KEY_VALUE_SEPARATOR),
-                      DSL.coalesce(ITEM_ATTRIBUTE.VALUE, "")
-                  ))
+                  DSL.val(KEY_VALUE_SEPARATOR),
+                  DSL.coalesce(ITEM_ATTRIBUTE.VALUE, "")
+              ))
           ).toString()).get(),
 
           new CriteriaHolderBuilder().newBuilder(CRITERIA_PATTERN_TEMPLATE_NAME,
@@ -1241,6 +1242,9 @@ public enum FilterTarget {
 
       new CriteriaHolderBuilder().newBuilder(CRITERIA_ID, DASHBOARD.ID, Long.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_NAME, DASHBOARD.NAME, String.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_LOCKED, OWNED_ENTITY.LOCKED, Boolean.class)
+          .withAggregateCriteria(DSL.max(DSL.cast(OWNED_ENTITY.LOCKED, Integer.class)).toString())
+          .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_CREATION_DATE, DASHBOARD.CREATION_DATE,
           Timestamp.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ID, OWNED_ENTITY.PROJECT_ID,
@@ -1268,7 +1272,8 @@ public enum FilterTarget {
           DASHBOARD_WIDGET.WIDGET_POSITION_Y,
           WIDGET.WIDGET_OPTIONS,
           OWNED_ENTITY.PROJECT_ID,
-          OWNED_ENTITY.OWNER
+          OWNED_ENTITY.OWNER,
+          OWNED_ENTITY.LOCKED
       );
     }
 
@@ -1297,6 +1302,9 @@ public enum FilterTarget {
       new CriteriaHolderBuilder().newBuilder(CRITERIA_NAME, WIDGET.NAME, String.class)
           .withAggregateCriteria(DSL.max(WIDGET.NAME).toString())
           .get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_LOCKED, OWNED_ENTITY.LOCKED, Boolean.class)
+          .withAggregateCriteria(DSL.max(DSL.cast(OWNED_ENTITY.LOCKED, Integer.class)).toString())
+          .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_DESCRIPTION, WIDGET.DESCRIPTION, String.class)
           .get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ID, OWNED_ENTITY.PROJECT_ID,
@@ -1314,7 +1322,8 @@ public enum FilterTarget {
           WIDGET.DESCRIPTION,
           WIDGET.ITEMS_COUNT,
           OWNED_ENTITY.PROJECT_ID,
-          OWNED_ENTITY.OWNER
+          OWNED_ENTITY.OWNER,
+          OWNED_ENTITY.LOCKED
       );
     }
 
@@ -1338,7 +1347,9 @@ public enum FilterTarget {
       Arrays.asList(
           new CriteriaHolderBuilder().newBuilder(CRITERIA_ID, FILTER.ID, Long.class).get(),
           new CriteriaHolderBuilder().newBuilder(CRITERIA_NAME, FILTER.NAME, String.class).get(),
-
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_LOCKED, OWNED_ENTITY.LOCKED, Boolean.class)
+              .withAggregateCriteria(DSL.max(DSL.cast(OWNED_ENTITY.LOCKED, Integer.class)).toString())
+              .get(),
           new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ID, OWNED_ENTITY.PROJECT_ID,
                   Long.class)
               .withAggregateCriteria(DSL.max(OWNED_ENTITY.PROJECT_ID).toString())
@@ -1362,7 +1373,8 @@ public enum FilterTarget {
           FILTER_SORT.FIELD,
           FILTER_SORT.DIRECTION,
           OWNED_ENTITY.PROJECT_ID,
-          OWNED_ENTITY.OWNER
+          OWNED_ENTITY.OWNER,
+          OWNED_ENTITY.LOCKED
       );
     }
 

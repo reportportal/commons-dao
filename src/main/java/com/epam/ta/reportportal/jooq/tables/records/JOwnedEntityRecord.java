@@ -60,6 +60,20 @@ public class JOwnedEntityRecord extends UpdatableRecordImpl<JOwnedEntityRecord> 
         return (Long) get(2);
     }
 
+    /**
+     * Setter for <code>public.owned_entity.locked</code>.
+     */
+    public void setLocked(Boolean value) {
+        set(3, value);
+    }
+
+    /**
+     * Getter for <code>public.owned_entity.locked</code>.
+     */
+    public Boolean getLocked() {
+        return (Boolean) get(3);
+    }
+
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
@@ -83,12 +97,13 @@ public class JOwnedEntityRecord extends UpdatableRecordImpl<JOwnedEntityRecord> 
     /**
      * Create a detached, initialised JOwnedEntityRecord
      */
-    public JOwnedEntityRecord(Long id, String owner, Long projectId) {
+    public JOwnedEntityRecord(Long id, String owner, Long projectId, Boolean locked) {
         super(JOwnedEntity.OWNED_ENTITY);
 
         setId(id);
         setOwner(owner);
         setProjectId(projectId);
+        setLocked(locked);
         resetChangedOnNotNull();
     }
 }

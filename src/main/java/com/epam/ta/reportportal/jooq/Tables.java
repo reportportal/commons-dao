@@ -56,6 +56,7 @@ import com.epam.ta.reportportal.jooq.tables.JStaleMaterializedView;
 import com.epam.ta.reportportal.jooq.tables.JStatistics;
 import com.epam.ta.reportportal.jooq.tables.JStatisticsField;
 import com.epam.ta.reportportal.jooq.tables.JTestItem;
+import com.epam.ta.reportportal.jooq.tables.JTestItemDeleted;
 import com.epam.ta.reportportal.jooq.tables.JTestItemResults;
 import com.epam.ta.reportportal.jooq.tables.JTicket;
 import com.epam.ta.reportportal.jooq.tables.JUserCreationBid;
@@ -369,6 +370,11 @@ public class Tables {
      * The table <code>public.test_item</code>.
      */
     public static final JTestItem TEST_ITEM = JTestItem.TEST_ITEM;
+
+    /**
+     * The table <code>public.test_item_deleted</code>.
+     */
+    public static final JTestItemDeleted TEST_ITEM_DELETED = JTestItemDeleted.TEST_ITEM_DELETED;
 
     /**
      * The table <code>public.test_item_results</code>.

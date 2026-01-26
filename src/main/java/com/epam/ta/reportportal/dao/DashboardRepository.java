@@ -19,6 +19,9 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.entity.dashboard.Dashboard;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 /**
  * @author Pavel Bortnik
@@ -57,5 +60,29 @@ public interface DashboardRepository extends ReportPortalRepository<Dashboard, L
    * @return if exists 'true' else 'false'
    */
   boolean existsByNameAndProjectId(String name, Long projectId);
+
+
+  /**
+   * Toggles the lock flag for the specified dashboard and all related widgets and filters.
+   *
+   * <p>Performs three native update statements:
+   * <ul>
+   *   <li>Updates the dashboard owned_entity row.</li>
+   *   <li>Updates owned_entity rows for widgets linked to the dashboard.</li>
+   *   <li>Updates owned_entity rows for filters linked to those widgets.</li>
+   * </ul>
+   *
+   * @param dashboardId id of the dashboard to toggle lock for
+   * @param isLocked entity new status value
+   */
+  @Modifying
+  @Query(value = """
+           WITH widget_ids AS (SELECT widget_id FROM dashboard_widget WHERE dashboard_id = :dashboardId)
+           UPDATE owned_entity SET locked = :isLocked
+           WHERE id = :dashboardId
+           OR id IN (SELECT widget_id FROM widget_ids)
+           OR id IN (SELECT filter_id FROM widget_filter WHERE widget_id IN (SELECT widget_id FROM widget_ids));
+      """, nativeQuery = true)
+  void toggleDashboardLock(@Param("dashboardId") Long dashboardId, @Param("isLocked") boolean isLocked);
 
 }

@@ -148,7 +148,7 @@ public class JLaunch extends TableImpl<JLaunchRecord> {
     /**
      * The column <code>public.launch.retention_policy</code>.
      */
-    public final TableField<JLaunchRecord, JRetentionPolicyEnum> RETENTION_POLICY = createField(DSL.name("retention_policy"), SQLDataType.VARCHAR.defaultValue(DSL.field(DSL.raw("'REGULAR'::retention_policy_enum"), SQLDataType.VARCHAR)).asEnumDataType(JRetentionPolicyEnum.class), this, "");
+    public final TableField<JLaunchRecord, JRetentionPolicyEnum> RETENTION_POLICY = createField(DSL.name("retention_policy"), SQLDataType.VARCHAR.nullable(false).defaultValue(DSL.field(DSL.raw("'REGULAR'::retention_policy_enum"), SQLDataType.VARCHAR)).asEnumDataType(JRetentionPolicyEnum.class), this, "");
 
     private JLaunch(Name alias, Table<JLaunchRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);
