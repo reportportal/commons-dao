@@ -85,4 +85,29 @@ public interface DashboardRepository extends ReportPortalRepository<Dashboard, L
       """, nativeQuery = true)
   void toggleDashboardLock(@Param("dashboardId") Long dashboardId, @Param("isLocked") boolean isLocked);
 
+  /**
+   * Unlocks all dashboard filters that are related to the specified dashboard
+   * and not related to any other locked dashboard.
+   *
+   * @param dashboardId id of the dashboard to unlock filters for
+   */
+  @Modifying
+  @Query(value = """
+      UPDATE owned_entity SET locked = false
+      WHERE id IN (
+        SELECT DISTINCT wf.filter_id
+        FROM widget_filter wf
+        JOIN dashboard_widget dw ON wf.widget_id = dw.widget_id
+        WHERE dw.dashboard_id = :dashboardId
+      )
+      AND id NOT IN (
+        SELECT DISTINCT wf.filter_id
+        FROM widget_filter wf
+        JOIN dashboard_widget dw ON wf.widget_id = dw.widget_id
+        JOIN owned_entity oe ON dw.dashboard_id = oe.id
+        WHERE oe.locked = true AND oe.id != :dashboardId
+      );
+      """, nativeQuery = true)
+  void unlockDashboardFilters(@Param("dashboardId") Long dashboardId);
+
 }
