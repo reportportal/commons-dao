@@ -572,8 +572,6 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
       INNER JOIN launch l ON ti.launch_id = l.id
       WHERE ti.item_id IN (:ids)
         AND l.project_id = :projectId
-      ORDER BY ti.item_id
       """, nativeQuery = true)
-  List<TestItem> findAllByItemIdInAndProjectId(@Param("ids") Collection<Long> ids,
-      @Param("projectId") Long projectId);
+  List<TestItem> findAllByItemIdInAndProjectId(@Param("ids") Collection<Long> ids, @Param("projectId") Long projectId);
 }
