@@ -17,6 +17,7 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.widget.Widget;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -74,4 +75,28 @@ public interface WidgetRepository extends ReportPortalRepository<Widget, Long>,
 			+ " WHERE se.project_id = :projectId AND w.widget_type IN :widgetTypes AND cf.field LIKE :contentFieldPart || '%'", nativeQuery = true)
 	List<Widget> findAllByProjectIdAndWidgetTypeInAndContentFieldContaining(@Param("projectId") Long projectId,
 			@Param("widgetTypes") List<String> widgetTypes, @Param("contentFieldPart") String contentFieldPart);
+
+	/**
+	 * Unlocks all widget filters that are related to the specified widget
+	 * and not related to any other locked dashboard.
+	 *
+	 * @param widgetId id of the widget to unlock filters for
+	 */
+	@Modifying
+	@Query(value = """
+			UPDATE owned_entity SET locked = false
+			WHERE id IN (
+			  SELECT DISTINCT wf.filter_id
+			  FROM widget_filter wf
+			  WHERE wf.widget_id = :widgetId
+			)
+			AND id NOT IN (
+			  SELECT DISTINCT wf.filter_id
+			  FROM widget_filter wf
+			  JOIN dashboard_widget dw ON wf.widget_id = dw.widget_id
+			  JOIN owned_entity oe ON dw.dashboard_id = oe.id
+			  WHERE oe.locked = true
+			);
+			""", nativeQuery = true)
+	void unlockWidgetFilters(@Param("widgetId") Long widgetId);
 }
