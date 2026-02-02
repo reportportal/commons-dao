@@ -17,11 +17,11 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.widget.Widget;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 /**
  * @author Pavel Bortnik
@@ -70,8 +70,53 @@ public interface WidgetRepository extends ReportPortalRepository<Widget, Long>,
       @Param("projectId") Long projectId,
       @Param("widgetTypes") List<String> widgetTypes, @Param("contentField") String contentField);
 
-	@Query(value = "SELECT * FROM widget w JOIN owned_entity se on w.id = se.id JOIN content_field cf on w.id = cf.id "
-			+ " WHERE se.project_id = :projectId AND w.widget_type IN :widgetTypes AND cf.field LIKE :contentFieldPart || '%'", nativeQuery = true)
-	List<Widget> findAllByProjectIdAndWidgetTypeInAndContentFieldContaining(@Param("projectId") Long projectId,
-			@Param("widgetTypes") List<String> widgetTypes, @Param("contentFieldPart") String contentFieldPart);
+  @Query(value = "SELECT * FROM widget w JOIN owned_entity se on w.id = se.id JOIN content_field cf on w.id = cf.id "
+      + " WHERE se.project_id = :projectId AND w.widget_type IN :widgetTypes AND cf.field LIKE :contentFieldPart || '%'", nativeQuery = true)
+  List<Widget> findAllByProjectIdAndWidgetTypeInAndContentFieldContaining(@Param("projectId") Long projectId,
+      @Param("widgetTypes") List<String> widgetTypes, @Param("contentFieldPart") String contentFieldPart);
+
+  /**
+   * Unlocks all widget filters that are related to the specified widget
+   * and not related to any other locked dashboard.
+   *
+   * @param widgetId id of the widget to unlock filters for
+   */
+  @Modifying
+  @Query(value = """
+      UPDATE owned_entity SET locked = false
+      WHERE id IN (
+        SELECT DISTINCT wf.filter_id
+        FROM widget_filter wf
+        WHERE wf.widget_id = :widgetId
+      )
+      AND id NOT IN (
+        SELECT DISTINCT wf.filter_id
+        FROM widget_filter wf
+        JOIN dashboard_widget dw ON wf.widget_id = dw.widget_id
+        JOIN owned_entity oe ON dw.dashboard_id = oe.id
+        WHERE oe.locked = true
+      );
+      """, nativeQuery = true)
+  void unlockWidgetFilters(@Param("widgetId") Long widgetId);
+
+
+  /**
+   * Locks all widget filters that are related to the specified widget.
+   *
+   * <p>This operation sets the `locked` flag to true on entries in the
+   * `owned_entity` table for every filter referenced by the given widget
+   * (via the `widget_filter` join table).</p>
+   *
+   * @param widgetId id of the widget to lock filters for
+   */
+  @Modifying
+  @Query(value = """
+      UPDATE owned_entity SET locked = true
+      WHERE id IN (
+        SELECT DISTINCT wf.filter_id
+        FROM widget_filter wf
+        WHERE wf.widget_id = :widgetId
+      );
+      """, nativeQuery = true)
+  void lockWidgetFilters(@Param("widgetId") Long widgetId);
 }
