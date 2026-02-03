@@ -123,15 +123,15 @@ class DashboardRepositoryTest extends BaseTest {
 
   @Test
   void toggleDashboardLock() {
-    dashboardRepository.toggleDashboardLock(13L, true);
+    dashboardRepository.lockDashboard(13L);
     Dashboard dashboard = dashboardRepository.findById(13L).get();
     assertTrue(dashboard.getLocked());
   }
 
   @Test
   void unlockDashboardFilters() {
-    dashboardRepository.toggleDashboardLock(13L, true);
-    dashboardRepository.toggleDashboardLock(18L, true);
+    dashboardRepository.lockDashboard(13L);
+    dashboardRepository.lockDashboard(18L);
     entityManager.flush();
     entityManager.clear();
 

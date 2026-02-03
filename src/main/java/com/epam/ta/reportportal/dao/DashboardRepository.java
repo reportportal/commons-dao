@@ -73,17 +73,36 @@ public interface DashboardRepository extends ReportPortalRepository<Dashboard, L
    * </ul>
    *
    * @param dashboardId id of the dashboard to toggle lock for
-   * @param isLocked entity new status value
    */
   @Modifying
   @Query(value = """
            WITH widget_ids AS (SELECT widget_id FROM dashboard_widget WHERE dashboard_id = :dashboardId)
-           UPDATE owned_entity SET locked = :isLocked
+           UPDATE owned_entity SET locked = true
            WHERE id = :dashboardId
            OR id IN (SELECT widget_id FROM widget_ids)
            OR id IN (SELECT filter_id FROM widget_filter WHERE widget_id IN (SELECT widget_id FROM widget_ids));
       """, nativeQuery = true)
-  void toggleDashboardLock(@Param("dashboardId") Long dashboardId, @Param("isLocked") boolean isLocked);
+  void lockDashboard(@Param("dashboardId") Long dashboardId);
+
+
+  @Modifying
+  @Query(value = """
+           WITH widget_ids AS (SELECT widget_id FROM dashboard_widget WHERE dashboard_id = :dashboardId)
+           UPDATE owned_entity SET locked = false
+           WHERE id = :dashboardId
+           OR id IN (SELECT widget_id FROM widget_ids)
+           OR (
+             id IN (SELECT filter_id FROM widget_filter WHERE widget_id IN (SELECT widget_id FROM widget_ids))
+             AND id NOT IN (
+               SELECT DISTINCT wf.filter_id
+               FROM widget_filter wf
+               JOIN dashboard_widget dw ON wf.widget_id = dw.widget_id
+               JOIN owned_entity oe ON dw.dashboard_id = oe.id
+               WHERE oe.locked = true AND oe.id != :dashboardId
+             )
+           );
+      """, nativeQuery = true)
+  void unlockDashboard(@Param("dashboardId") Long dashboardId);
 
   /**
    * Unlocks all dashboard filters that are related to the specified dashboard
