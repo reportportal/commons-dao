@@ -587,7 +587,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
         and ti.path <@ CAST(:path AS LTREE)
         and ti.item_id != :itemId
         and a.file_id is not null
-      order by ti.path, ti.item_id, a.id
+      order by ti.item_id, a.id
       """,
       nativeQuery = true
   )
