@@ -589,8 +589,8 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
       """,
       nativeQuery = true
   )
-  List<NestedItemAttachment> findNestedStepsAttachments(String launchId, String path,
-      String itemId);
+  List<NestedItemAttachment> findNestedStepsAttachments(Long launchId, String path,
+      Long itemId);
 
   /**
    * Finds all test items by item IDs filtered by project ID.
