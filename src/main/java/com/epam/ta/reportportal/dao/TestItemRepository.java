@@ -575,17 +575,18 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
   @Query(value = """
       select
         ti.item_id as itemId,
+        ti.name as name,
+        cast (ti.path as varchar) as path,
         a.file_id as fileId,
         a.file_name as fileName,
         a.content_type as contentType
       from attachment a
-      join test_item ti on ti.item_id = a.item_id
+      right join test_item ti on ti.item_id = a.item_id
       where ti.launch_id = :launchId
         and ti.has_stats = false
         and ti.path <@ CAST(:path AS LTREE)
         and ti.item_id != :itemId
-        and a.file_id is not null
-      order by ti.path, ti.item_id, a.id
+      order by ti.item_id, a.id
       """,
       nativeQuery = true
   )
