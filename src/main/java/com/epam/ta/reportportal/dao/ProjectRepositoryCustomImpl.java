@@ -57,8 +57,8 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
   @Autowired
   private ProjectInfoCteQueryBuilder cteQueryBuilder;
 
-  @Value("${rp.feature.projectInfoCteOptimization:false}")
-  private boolean useCteOptimization;
+  @Value("${rp.feature.project-info-use-cte-query:false}")
+  private boolean useCteQuery;
 
   @Override
   public List<Project> findByFilter(Queryable filter) {
@@ -164,7 +164,7 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
   }
 
   private boolean shouldUseCteQuery(Queryable filter) {
-    return useCteOptimization && filter.getTarget() == FilterTarget.PROJECT_INFO;
+    return useCteQuery && filter.getTarget() == FilterTarget.PROJECT_INFO;
   }
 
 }
