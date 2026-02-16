@@ -40,6 +40,7 @@ import java.util.Optional;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
@@ -52,6 +53,12 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 
   @Autowired
   private DSLContext dsl;
+
+  @Autowired
+  private ProjectInfoCteQueryBuilder cteQueryBuilder;
+
+  @Value("${rp.feature.projectInfoCteOptimization:false}")
+  private boolean useCteOptimization;
 
   @Override
   public List<Project> findByFilter(Queryable filter) {
@@ -78,11 +85,18 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
 
   @Override
   public List<ProjectInfo> findProjectInfoByFilter(Queryable filter) {
+    if (shouldUseCteQuery(filter)) {
+      return cteQueryBuilder.findProjectInfo(filter);
+    }
     return dsl.fetch(QueryBuilder.newBuilder(filter).build()).into(ProjectInfo.class);
   }
 
   @Override
   public Page<ProjectInfo> findProjectInfoByFilter(Queryable filter, Pageable pageable) {
+    if (shouldUseCteQuery(filter)) {
+      return cteQueryBuilder.findPagedProjectInfo(filter, pageable);
+    }
+
     return PageableExecutionUtils.getPage(
         dsl.fetch(QueryBuilder.newBuilder(filter).with(pageable).build()).into(ProjectInfo.class),
         pageable,
@@ -147,6 +161,10 @@ public class ProjectRepositoryCustomImpl implements ProjectRepositoryCustom {
             .having(DSL.max(LAUNCH.START_TIME).le(bound))
             .limit(limit)))
         .execute();
+  }
+
+  private boolean shouldUseCteQuery(Queryable filter) {
+    return useCteOptimization && filter.getTarget() == FilterTarget.PROJECT_INFO;
   }
 
 }
