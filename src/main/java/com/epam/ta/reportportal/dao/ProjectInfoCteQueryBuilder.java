@@ -52,6 +52,7 @@ import org.jooq.CommonTableExpression;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Field;
+import org.jooq.Operator;
 import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SelectQuery;
@@ -216,6 +217,13 @@ public class ProjectInfoCteQueryBuilder {
   }
 
   private void applyConditions(SelectQuery<Record> query, List<FilterCondition> filters, Queryable queryable) {
+    if (filters.isEmpty()) {
+      return;
+    }
+
+    List<Condition> andConditions = new ArrayList<>();
+    List<Condition> orConditions = new ArrayList<>();
+
     for (FilterCondition fc : filters) {
       var criteriaHolderOpt = queryable.getTarget().getCriteriaByFilter(fc.getSearchCriteria());
       if (criteriaHolderOpt.isEmpty()) {
@@ -223,18 +231,34 @@ public class ProjectInfoCteQueryBuilder {
       }
 
       var criteriaHolder = criteriaHolderOpt.get();
-
       Condition condition = buildConditionForCte(fc, criteriaHolder);
+
       if (condition != null) {
-        query.addConditions(condition);
+        if (fc.getOperator() == Operator.OR) {
+          orConditions.add(condition);
+        } else {
+          andConditions.add(condition);
+        }
       }
     }
+
+    // Add OR conditions as a single combined condition
+    if (!orConditions.isEmpty()) {
+      Condition combinedOr = orConditions.stream()
+          .reduce(DSL::or)
+          .orElse(DSL.noCondition());
+      query.addConditions(combinedOr);
+    }
+
+    // Add AND conditions individually (they're combined with AND by default)
+    andConditions.forEach(query::addConditions);
   }
 
 
   private Condition buildConditionForCte(FilterCondition fc,
       com.epam.ta.reportportal.commons.querygen.CriteriaHolder criteriaHolder) {
-    Field<Object> field = field(name(fc.getSearchCriteria()));
+    String mappedFieldName = mapFilterField(fc.getSearchCriteria());
+    Field<Object> field = field(name(mappedFieldName));
     String value = fc.getValue();
 
     try {
@@ -313,6 +337,18 @@ public class ProjectInfoCteQueryBuilder {
     return switch (apiFieldName) {
       case "type" -> PROJECT.PROJECT_TYPE.getName();
       case "creationDate" -> PROJECT.CREATION_DATE.getName();
+      case "usersQuantity" -> USERS_QUANTITY;
+      case "launchesQuantity" -> LAUNCHES_QUANTITY;
+      case "lastRun" -> LAST_RUN;
+      default -> apiFieldName;
+    };
+  }
+
+  private String mapFilterField(String apiFieldName) {
+    return switch (apiFieldName) {
+      case "type" -> PROJECT.PROJECT_TYPE.getName();
+      case "creationDate" -> PROJECT.CREATION_DATE.getName();
+      case "organization" -> PROJECT.ORGANIZATION.getName();
       case "usersQuantity" -> USERS_QUANTITY;
       case "launchesQuantity" -> LAUNCHES_QUANTITY;
       case "lastRun" -> LAST_RUN;
