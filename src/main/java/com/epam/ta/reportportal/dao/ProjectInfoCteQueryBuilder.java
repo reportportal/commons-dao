@@ -302,10 +302,22 @@ public class ProjectInfoCteQueryBuilder {
   private void applySorting(SelectQuery<Record> query, Pageable pageable) {
     if (pageable.getSort().isSorted()) {
       for (var order : pageable.getSort()) {
-        query.addOrderBy(field(name(ALIAS_FILTERED, order.getProperty()))
+        String mappedFieldName = mapSortField(order.getProperty());
+        query.addOrderBy(field(name(ALIAS_FILTERED, mappedFieldName))
             .sort(order.isAscending() ? SortOrder.ASC : SortOrder.DESC));
       }
     }
+  }
+
+  private String mapSortField(String apiFieldName) {
+    return switch (apiFieldName) {
+      case "type" -> PROJECT.PROJECT_TYPE.getName();
+      case "creationDate" -> PROJECT.CREATION_DATE.getName();
+      case "usersQuantity" -> USERS_QUANTITY;
+      case "launchesQuantity" -> LAUNCHES_QUANTITY;
+      case "lastRun" -> LAST_RUN;
+      default -> apiFieldName;
+    };
   }
 
   private void applyPagination(SelectQuery<Record> query, Pageable pageable) {
