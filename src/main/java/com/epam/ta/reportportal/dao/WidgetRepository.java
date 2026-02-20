@@ -19,7 +19,6 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.entity.widget.Widget;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -33,15 +32,13 @@ public interface WidgetRepository extends ReportPortalRepository<Widget, Long>,
    * Finds widget by 'id' and 'project id'
    *
    * @param id        {@link Widget#id}
-   * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} whose widget
-   *                  will be extracted
+   * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} whose widget will be extracted
    * @return {@link Widget} wrapped in the {@link Optional}
    */
   Optional<Widget> findByIdAndProjectId(Long id, Long projectId);
 
   /**
-   * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} whose
-   *                  widgets will be extracted
+   * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} whose widgets will be extracted
    * @return The {@link List} of the {@link Widget}
    */
   List<Widget> findAllByProjectId(Long projectId);
@@ -51,8 +48,8 @@ public interface WidgetRepository extends ReportPortalRepository<Widget, Long>,
    *
    * @param name      {@link Widget#name}
    * @param owner     {@link Widget#owner}
-   * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} on which
-   *                  widget existence will be checked
+   * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} on which widget existence will
+   *                  be checked
    * @return if exists 'true' else 'false'
    */
   boolean existsByNameAndOwnerAndProjectId(String name, String owner, Long projectId);
@@ -74,49 +71,4 @@ public interface WidgetRepository extends ReportPortalRepository<Widget, Long>,
       + " WHERE se.project_id = :projectId AND w.widget_type IN :widgetTypes AND cf.field LIKE :contentFieldPart || '%'", nativeQuery = true)
   List<Widget> findAllByProjectIdAndWidgetTypeInAndContentFieldContaining(@Param("projectId") Long projectId,
       @Param("widgetTypes") List<String> widgetTypes, @Param("contentFieldPart") String contentFieldPart);
-
-  /**
-   * Unlocks all widget filters that are related to the specified widget
-   * and not related to any other locked dashboard.
-   *
-   * @param widgetId id of the widget to unlock filters for
-   */
-  @Modifying
-  @Query(value = """
-      UPDATE owned_entity SET locked = false
-      WHERE id IN (
-        SELECT DISTINCT wf.filter_id
-        FROM widget_filter wf
-        WHERE wf.widget_id = :widgetId
-      )
-      AND id NOT IN (
-        SELECT DISTINCT wf.filter_id
-        FROM widget_filter wf
-        JOIN dashboard_widget dw ON wf.widget_id = dw.widget_id
-        JOIN owned_entity oe ON dw.dashboard_id = oe.id
-        WHERE oe.locked = true
-      );
-      """, nativeQuery = true)
-  void unlockWidgetFilters(@Param("widgetId") Long widgetId);
-
-
-  /**
-   * Locks all widget filters that are related to the specified widget.
-   *
-   * <p>This operation sets the `locked` flag to true on entries in the
-   * `owned_entity` table for every filter referenced by the given widget
-   * (via the `widget_filter` join table).</p>
-   *
-   * @param widgetId id of the widget to lock filters for
-   */
-  @Modifying
-  @Query(value = """
-      UPDATE owned_entity SET locked = true
-      WHERE id IN (
-        SELECT DISTINCT wf.filter_id
-        FROM widget_filter wf
-        WHERE wf.widget_id = :widgetId
-      );
-      """, nativeQuery = true)
-  void lockWidgetFilters(@Param("widgetId") Long widgetId);
 }
