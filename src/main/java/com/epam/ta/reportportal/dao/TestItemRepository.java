@@ -180,17 +180,6 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
       Pageable pageable);
 
   /**
-   * Retrieve list of test item ids for provided launch
-   *
-   * @param launchId Launch id
-   * @return List of test item ids
-   */
-  @Query(value = "SELECT item_id FROM test_item WHERE launch_id = :launchId UNION "
-      + "SELECT item_id FROM test_item WHERE retry_of IS NOT NULL AND retry_of IN "
-      + "(SELECT item_id FROM test_item WHERE launch_id = :launchId);", nativeQuery = true)
-  List<Long> findIdsByLaunchId(@Param("launchId") Long launchId);
-
-  /**
    * Retrieve the {@link List} of the {@link TestItem#getItemId()} by launch ID,
    * {@link StatusEnum#name()} and {@link TestItem#isHasChildren()} == false
    *
@@ -524,41 +513,6 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
 
   @Query(value = "SELECT t.name FROM test_item t WHERE t.item_id = :itemId", nativeQuery = true)
   Optional<String> findItemNameByItemId(Long itemId);
-
-  /**
-   * Count items by launch id
-   *
-   * @param launchId Launch id
-   * @return Number of {@link TestItem}
-   */
-  long countTestItemByLaunchId(Long launchId);
-
-  /**
-   * Select items with provided parent ids
-   *
-   * @param parentIds Parent test items id
-   * @return List of item ids
-   */
-  @Query(value = "SELECT t.item_id FROM test_item t WHERE t.parent_id IN (:parentIds)", nativeQuery = true)
-  List<Long> findIdsByParentIds(@Param("parentIds") Long... parentIds);
-
-  /**
-   * Select item paths by provided parent ids
-   *
-   * @param parentIds Parent test items id
-   * @return List of item paths
-   */
-  @Query(value = "SELECT CAST(t.path AS VARCHAR) FROM test_item t WHERE t.parent_id IN (:parentIds)", nativeQuery = true)
-  List<String> findPathsByParentIds(@Param("parentIds") Long... parentIds);
-
-  /**
-   * Select items ids with provided retry of
-   *
-   * @param retryOf Retry of test item id
-   * @return List of item ids
-   */
-  @Query(value = "SELECT t.item_id FROM test_item t WHERE t.retry_of = :retryOf", nativeQuery = true)
-  List<Long> findIdsByRetryOf(@Param("retryOf") Long retryOf);
 
   /**
    * Returns IDs (from itemIds) that have nested steps.
