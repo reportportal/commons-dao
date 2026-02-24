@@ -129,20 +129,17 @@ class DashboardRepositoryTest extends BaseTest {
   }
 
   @Test
-  void unlockDashboardFilters() {
+  void lockDashboardShouldNotLockFilters() {
     dashboardRepository.lockDashboard(13L);
-    dashboardRepository.lockDashboard(18L);
     entityManager.flush();
     entityManager.clear();
 
-    assertTrue(filterRepository.findById(2L).get().getLocked());
-    assertTrue(filterRepository.findById(3L).get().getLocked());
+    // Dashboard should be locked
+    Dashboard dashboard = dashboardRepository.findById(13L).get();
+    assertTrue(dashboard.getLocked());
 
-    dashboardRepository.unlockDashboardFilters(13L);
-    entityManager.clear();
-
+    // Filters should NOT be locked
     assertFalse(filterRepository.findById(2L).get().getLocked());
-    assertTrue(filterRepository.findById(3L).get().getLocked());
   }
 
 }

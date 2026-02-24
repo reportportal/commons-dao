@@ -33,8 +33,8 @@ public interface DashboardRepository extends ReportPortalRepository<Dashboard, L
    * Finds dashboard by 'id' and 'project id'
    *
    * @param id        {@link Dashboard#id}
-   * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} whose
-   *                  dashboard will be extracted
+   * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} whose dashboard will be
+   *                  extracted
    * @return {@link Dashboard} wrapped in the {@link Optional}
    */
   Optional<Dashboard> findByIdAndProjectId(Long id, Long projectId);
@@ -46,8 +46,8 @@ public interface DashboardRepository extends ReportPortalRepository<Dashboard, L
    *
    * @param name      {@link Dashboard#name}
    * @param owner     {@link Dashboard#owner}
-   * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} on which
-   *                  dashboard existence will be checked
+   * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} on which dashboard existence
+   *                  will be checked
    * @return if exists 'true' else 'false'
    */
   boolean existsByNameAndOwnerAndProjectId(String name, String owner, Long projectId);
@@ -63,13 +63,12 @@ public interface DashboardRepository extends ReportPortalRepository<Dashboard, L
 
 
   /**
-   * Toggles the lock flag for the specified dashboard and all related widgets and filters.
+   * Toggles the lock flag for the specified dashboard and all related widgets.
    *
-   * <p>Performs three native update statements:
+   * <p>Performs native update statements:
    * <ul>
    *   <li>Updates the dashboard owned_entity row.</li>
    *   <li>Updates owned_entity rows for widgets linked to the dashboard.</li>
-   *   <li>Updates owned_entity rows for filters linked to those widgets.</li>
    * </ul>
    *
    * @param dashboardId id of the dashboard to toggle lock for
@@ -79,8 +78,7 @@ public interface DashboardRepository extends ReportPortalRepository<Dashboard, L
            WITH widget_ids AS (SELECT widget_id FROM dashboard_widget WHERE dashboard_id = :dashboardId)
            UPDATE owned_entity SET locked = true
            WHERE id = :dashboardId
-           OR id IN (SELECT widget_id FROM widget_ids)
-           OR id IN (SELECT filter_id FROM widget_filter WHERE widget_id IN (SELECT widget_id FROM widget_ids));
+           OR id IN (SELECT widget_id FROM widget_ids);
       """, nativeQuery = true)
   void lockDashboard(@Param("dashboardId") Long dashboardId);
 
@@ -90,43 +88,8 @@ public interface DashboardRepository extends ReportPortalRepository<Dashboard, L
            WITH widget_ids AS (SELECT widget_id FROM dashboard_widget WHERE dashboard_id = :dashboardId)
            UPDATE owned_entity SET locked = false
            WHERE id = :dashboardId
-           OR id IN (SELECT widget_id FROM widget_ids)
-           OR (
-             id IN (SELECT filter_id FROM widget_filter WHERE widget_id IN (SELECT widget_id FROM widget_ids))
-             AND id NOT IN (
-               SELECT DISTINCT wf.filter_id
-               FROM widget_filter wf
-               JOIN dashboard_widget dw ON wf.widget_id = dw.widget_id
-               JOIN owned_entity oe ON dw.dashboard_id = oe.id
-               WHERE oe.locked = true AND oe.id != :dashboardId
-             )
-           );
+           OR id IN (SELECT widget_id FROM widget_ids);
       """, nativeQuery = true)
   void unlockDashboard(@Param("dashboardId") Long dashboardId);
-
-  /**
-   * Unlocks all dashboard filters that are related to the specified dashboard
-   * and not related to any other locked dashboard.
-   *
-   * @param dashboardId id of the dashboard to unlock filters for
-   */
-  @Modifying
-  @Query(value = """
-      UPDATE owned_entity SET locked = false
-      WHERE id IN (
-        SELECT DISTINCT wf.filter_id
-        FROM widget_filter wf
-        JOIN dashboard_widget dw ON wf.widget_id = dw.widget_id
-        WHERE dw.dashboard_id = :dashboardId
-      )
-      AND id NOT IN (
-        SELECT DISTINCT wf.filter_id
-        FROM widget_filter wf
-        JOIN dashboard_widget dw ON wf.widget_id = dw.widget_id
-        JOIN owned_entity oe ON dw.dashboard_id = oe.id
-        WHERE oe.locked = true AND oe.id != :dashboardId
-      );
-      """, nativeQuery = true)
-  void unlockDashboardFilters(@Param("dashboardId") Long dashboardId);
 
 }
