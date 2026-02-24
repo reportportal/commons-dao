@@ -305,6 +305,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
    * @param itemId      Previous retries' parent {@link TestItem#getItemId()}
    * @param retryParent The new-inserted {@link TestItem#getItemId()}
    */
+  @Deprecated
   @Query(value = "SELECT handle_retry(:itemId, :retryParent)", nativeQuery = true)
   void handleRetry(@Param("itemId") Long itemId, @Param("retryParent") Long retryParent);
 
