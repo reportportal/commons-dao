@@ -7,7 +7,7 @@ project.ext {
     releaseMode = project.hasProperty("releaseMode") ? project.releaseMode.toBoolean() : false
     hasDBSchema = project.hasProperty("DB_SCHEMA_POSTGRES")
     scriptsUrl = commonScriptsUrl + (releaseMode ? getProperty('scripts.version') : '5.14.0')
-    migrationsUrl = migrationsScriptsUrl + (releaseMode ? getProperty('migrations.version') : 'EPMRPP-111517')
+    migrationsUrl = migrationsScriptsUrl + (releaseMode ? getProperty('migrations.version') : 'feature/upcoming')
 
     //TODO refactor with archive download
     testScriptsSrc = [
