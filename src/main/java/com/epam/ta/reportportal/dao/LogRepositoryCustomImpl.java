@@ -178,7 +178,10 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
             .join(childItemTable)
             .on(LOG.ITEM_ID.eq(childItemTable.ITEM_ID))
             .join(parentItemTable)
-            .on(DSL.sql(childItemTable.PATH + " <@ " + parentItemTable.PATH))
+            .on(childItemTable.PATH.cast(String.class).eq(parentItemTable.PATH.cast(String.class))
+                .or(childItemTable.PATH.cast(String.class)
+                    .like(parentItemTable.PATH.cast(String.class).concat(".%")))
+            )
             .leftJoin(CLUSTERS)
             .on(LOG.CLUSTER_ID.eq(CLUSTERS.ID))
             .where(childItemTable.LAUNCH_ID.eq(launchId))
@@ -263,7 +266,10 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
         .join(childItemTable)
         .on(LOG.ITEM_ID.eq(childItemTable.ITEM_ID))
         .join(parentItemTable)
-        .on(DSL.sql(childItemTable.PATH + " <@ " + parentItemTable.PATH))
+        .on(childItemTable.PATH.cast(String.class).eq(parentItemTable.PATH.cast(String.class))
+            .or(childItemTable.PATH.cast(String.class)
+                .like(parentItemTable.PATH.cast(String.class).concat(".%")))
+        )
         .where(childItemTable.LAUNCH_ID.eq(launchId))
         .and(parentItemTable.LAUNCH_ID.eq(launchId))
         .and(parentItemTable.ITEM_ID.in(itemIds))
@@ -462,7 +468,9 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
             .and(TEST_ITEM.LAUNCH_ID.eq(launchId))
             .and(TEST_ITEM.ITEM_ID.eq(itemId)
                 .or(TEST_ITEM.HAS_STATS.eq(false)
-                    .and(DSL.sql(TEST_ITEM.PATH + " <@ cast(? AS LTREE)", path)))))
+                    .and(TEST_ITEM.PATH.cast(String.class).eq(path)
+                        .or(TEST_ITEM.PATH.cast(String.class).like(path + ".%"))
+                    ))))
         .fetch(LOG.LOG_MESSAGE);
   }
 
@@ -477,7 +485,9 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
             .and(TEST_ITEM.LAUNCH_ID.eq(launchId))
             .and(TEST_ITEM.ITEM_ID.eq(itemId)
                 .or(TEST_ITEM.HAS_STATS.eq(false)
-                    .and(DSL.sql(TEST_ITEM.PATH + " <@ cast(? AS LTREE)", path)))))
+                    .and(TEST_ITEM.PATH.cast(String.class).eq(path)
+                        .or(TEST_ITEM.PATH.cast(String.class).like(path + ".%"))
+                    ))))
         .fetch(LOG.ID);
   }
 
@@ -529,7 +539,10 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
         .join(childItemTable)
         .on(LOG.ITEM_ID.eq(childItemTable.ITEM_ID))
         .join(parentItemTable)
-        .on(DSL.sql(childItemTable.PATH + " <@ " + parentItemTable.PATH));
+        .on(childItemTable.PATH.cast(String.class).eq(parentItemTable.PATH.cast(String.class))
+            .or(childItemTable.PATH.cast(String.class)
+                .like(parentItemTable.PATH.cast(String.class).concat(".%")))
+        );
 
     if (includeAttachments) {
       logsSelect = logsSelect.leftJoin(ATTACHMENT).on(LOG.ATTACHMENT_ID.eq(ATTACHMENT.ID));

@@ -226,7 +226,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
    */
   @Query(value =
       "SELECT test_item.item_id FROM test_item JOIN test_item_results result ON test_item.item_id = result.result_id "
-          + " WHERE CAST(:parentPath AS LTREE) @> test_item.path AND CAST(:parentPath AS LTREE) != test_item.path "
+          + " WHERE test_item.path::text LIKE :parentPath || '.%' "
           + " AND NOT test_item.has_children AND result.status = CAST(:#{#status.name()} AS STATUS_ENUM) ORDER BY test_item.item_id LIMIT :pageSize OFFSET :pageOffset", nativeQuery = true)
   List<Long> findIdsByNotHasChildrenAndParentPathAndStatus(@Param("parentPath") String parentPath,
       @Param("status") StatusEnum status,
@@ -245,7 +245,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
    */
   @Query(value =
       "SELECT test_item.item_id FROM test_item JOIN test_item_results result ON test_item.item_id = result.result_id "
-          + " WHERE CAST(:parentPath AS LTREE) @> test_item.path AND CAST(:parentPath AS LTREE) != test_item.path "
+          + " WHERE test_item.path::text LIKE :parentPath || '.%' "
           + " AND test_item.has_children AND result.status = CAST(:#{#status.name()} AS STATUS_ENUM)"
           + " ORDER BY nlevel(test_item.path) DESC, test_item.item_id LIMIT :pageSize OFFSET :pageOffset", nativeQuery = true)
   List<Long> findIdsByHasChildrenAndParentPathAndStatusOrderedByPathLevel(
@@ -318,7 +318,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
    * @param itemPath Current item path in a tree
    * @return True if has
    */
-  @Query(value = "SELECT EXISTS(SELECT 1 FROM test_item t WHERE t.path <@ CAST(:itemPath AS LTREE) AND t.item_id != :itemId LIMIT 1)", nativeQuery = true)
+  @Query(value = "SELECT EXISTS(SELECT 1 FROM test_item t WHERE t.path::text LIKE :itemPath || '.%' LIMIT 1)", nativeQuery = true)
   boolean hasChildren(@Param("itemId") Long itemId, @Param("itemPath") String itemPath);
 
   /**
@@ -340,14 +340,14 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
    */
   @Query(value =
       "SELECT EXISTS(SELECT 1 FROM test_item ti JOIN test_item_results tir ON ti.item_id = tir.result_id"
-          + " WHERE ti.path @> CAST(:itemPath AS LTREE) AND ti.has_stats = TRUE AND ti.item_id != :itemId AND tir.status = CAST(:#{#status.name()} AS STATUS_ENUM) LIMIT 1)", nativeQuery = true)
+          + " WHERE :itemPath LIKE ti.path::text || '.%' AND ti.has_stats = TRUE AND ti.item_id != :itemId AND tir.status = CAST(:#{#status.name()} AS STATUS_ENUM) LIMIT 1)", nativeQuery = true)
   boolean hasParentWithStatus(@Param("itemId") Long itemId, @Param("itemPath") String itemPath,
       @Param("status") StatusEnum status);
 
   /**
    * Check for existence of descendants with statuses NOT EQUAL to provided status
    *
-   * @param parentId {@link TestItem#getParent()} ID
+   * @param parentId {@link TestItem#getParentId()} ()} ID
    * @param statuses {@link StatusEnum#name()} Array
    * @return 'true' if items with statuses NOT EQUAL to provided status exist, otherwise 'false'
    */
@@ -374,7 +374,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
                   join   test_item_results tir
                   ON     ti.item_id = tir.result_id
                   WHERE  ti.launch_id = :launchId
-                  AND    ti.path <@ Cast(:parentPath AS LTREE)
+                  AND    ti.path::text LIKE :parentPath || '.%'
                   AND    ti.item_id != :parentId
                   AND    Cast(tir.status AS VARCHAR) IN (:statuses))
           """, nativeQuery = true)
@@ -473,7 +473,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
    * @param path Path of {@link TestItem}
    * @return {@link List<Long>} of test item ids
    */
-  @Query(value = "SELECT item_id FROM test_item WHERE path <@ CAST(:path AS LTREE)", nativeQuery = true)
+  @Query(value = "SELECT item_id FROM test_item WHERE path::text = :path OR path::text LIKE :path || '.%'", nativeQuery = true)
   List<Long> selectAllDescendantsIds(@Param("path") String path);
 
   void deleteAllByItemIdIn(Collection<Long> ids);
@@ -539,8 +539,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
       right join test_item ti on ti.item_id = a.item_id
       where ti.launch_id = :launchId
         and ti.has_stats = false
-        and ti.path <@ CAST(:path AS LTREE)
-        and ti.item_id != :itemId
+        and ti.path::text LIKE :path || '.%'
       order by ti.item_id, a.id
       """,
       nativeQuery = true
