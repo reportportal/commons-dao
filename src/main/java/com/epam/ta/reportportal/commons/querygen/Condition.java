@@ -153,7 +153,7 @@ public enum Condition {
     @Override
     public org.jooq.Condition toCondition(FilterCondition filter, CriteriaHolder criteriaHolder) {
       validate(criteriaHolder, filter.getValue(), false, INCORRECT_FILTER_PARAMETERS);
-      Field<String> aggregateField = DSL.field(criteriaHolder.getAggregateCriteria(), String.class);
+      Field<String> aggregateField = DSL.field(criteriaHolder.getAggregateCriteria()).cast(String.class);
       return aggregateField.eq(filter.getValue())
           .or(aggregateField.like(filter.getValue() + ".%"));
     }
