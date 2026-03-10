@@ -46,13 +46,14 @@ public interface LogRepository extends ReportPortalRepository<Log, Long>, LogRep
           )
       ),
       TargetPath AS (
-          SELECT cast(concat(pp.path, '.', :itemId) as ltree) AS path
+          SELECT concat(pp.path, '.', :itemId) AS path
           FROM ParentPath pp
       ),
       FilteredItems AS (
           SELECT ti.item_id
           FROM test_item ti
-          WHERE ti.path <@ (SELECT path FROM TargetPath)
+          WHERE ti.path::text = (SELECT path FROM TargetPath)
+             OR ti.path::text LIKE (SELECT path FROM TargetPath) || '.%'
       )
       SELECT
           log.id AS logId,
