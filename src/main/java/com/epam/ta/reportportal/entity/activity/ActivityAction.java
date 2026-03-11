@@ -18,14 +18,17 @@ package com.epam.ta.reportportal.entity.activity;
 
 import java.util.Arrays;
 import java.util.Optional;
+import lombok.Getter;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
  */
+@Getter
 public enum ActivityAction {
 
   CREATE_DASHBOARD("createDashboard"),
   UPDATE_DASHBOARD("updateDashboard"),
+  UPDATE_DASHBOARD_STATE("updateDashboardState"),
   DELETE_DASHBOARD("deleteDashboard"),
   CREATE_WIDGET("createWidget"),
   UPDATE_WIDGET("updateWidget"),
@@ -91,7 +94,4 @@ public enum ActivityAction {
         str -> Arrays.stream(values()).filter(it -> it.value.equalsIgnoreCase(str)).findAny());
   }
 
-  public String getValue() {
-    return value;
-  }
 }

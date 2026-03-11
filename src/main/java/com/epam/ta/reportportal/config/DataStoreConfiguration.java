@@ -81,7 +81,7 @@ public class DataStoreConfiguration {
         return new CacheLoader<>() {
 
           @Override
-          @SuppressWarnings({ "Guava", "NullableProblems" })
+          @SuppressWarnings({"Guava", "NullableProblems"})
           public Optional<String> load(String bucket) {
             if (CustomBucketToRegionModule.this.region != null) {
               return Optional.of(CustomBucketToRegionModule.this.region);
@@ -146,9 +146,9 @@ public class DataStoreConfiguration {
     Properties properties = new Properties();
     properties.setProperty(FilesystemConstants.PROPERTY_BASEDIR, baseDirectory);
 
-    BlobStoreContext blobStoreContext =
-        ContextBuilder.newBuilder("filesystem").overrides(properties)
-            .buildView(BlobStoreContext.class);
+    BlobStoreContext blobStoreContext = ContextBuilder.newBuilder("filesystem")
+        .overrides(properties)
+        .buildView(BlobStoreContext.class);
 
     return blobStoreContext.getBlobStore();
   }
@@ -178,9 +178,10 @@ public class DataStoreConfiguration {
       @Value("${datastore.secretKey}") String secretKey,
       @Value("${datastore.endpoint}") String endpoint) {
 
-    BlobStoreContext blobStoreContext =
-        ContextBuilder.newBuilder("s3").endpoint(endpoint).credentials(accessKey, secretKey)
-            .buildView(BlobStoreContext.class);
+    BlobStoreContext blobStoreContext = ContextBuilder.newBuilder("s3")
+        .endpoint(endpoint)
+        .credentials(accessKey, secretKey)
+        .buildView(BlobStoreContext.class);
 
     return blobStoreContext.getBlobStore();
   }
@@ -192,7 +193,8 @@ public class DataStoreConfiguration {
    * @param bucketPrefix       Prefix for bucket name
    * @param defaultBucketName  Name of default bucket to use
    * @param region             Region to store
-   * @param featureFlagHandler Instance of {@link FeatureFlagHandler} to check enabled features
+   * @param featureFlagHandler Instance of {@link FeatureFlagHandler} to check
+   *                           enabled features
    * @return {@link DataStore} object
    */
   @Bean
@@ -245,9 +247,7 @@ public class DataStoreConfiguration {
       @Value("${datastore.bucketPostfix}") String bucketPostfix,
       @Value("${datastore.defaultBucketName}") String defaultBucketName,
       @Value("${datastore.region}") String region, FeatureFlagHandler featureFlagHandler) {
-    return new S3DataStore(blobStore, bucketPrefix, bucketPostfix, defaultBucketName, region,
-        featureFlagHandler
-    );
+    return new S3DataStore(blobStore, bucketPrefix, bucketPostfix, defaultBucketName, region, featureFlagHandler);
   }
 
   @Bean("attachmentThumbnailator")

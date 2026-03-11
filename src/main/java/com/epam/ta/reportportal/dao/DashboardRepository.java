@@ -19,6 +19,9 @@ package com.epam.ta.reportportal.dao;
 import com.epam.ta.reportportal.entity.dashboard.Dashboard;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 /**
  * @author Pavel Bortnik
@@ -30,8 +33,8 @@ public interface DashboardRepository extends ReportPortalRepository<Dashboard, L
    * Finds dashboard by 'id' and 'project id'
    *
    * @param id        {@link Dashboard#id}
-   * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} whose
-   *                  dashboard will be extracted
+   * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} whose dashboard will be
+   *                  extracted
    * @return {@link Dashboard} wrapped in the {@link Optional}
    */
   Optional<Dashboard> findByIdAndProjectId(Long id, Long projectId);
@@ -43,8 +46,8 @@ public interface DashboardRepository extends ReportPortalRepository<Dashboard, L
    *
    * @param name      {@link Dashboard#name}
    * @param owner     {@link Dashboard#owner}
-   * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} on which
-   *                  dashboard existence will be checked
+   * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} on which dashboard existence
+   *                  will be checked
    * @return if exists 'true' else 'false'
    */
   boolean existsByNameAndOwnerAndProjectId(String name, String owner, Long projectId);
@@ -57,5 +60,36 @@ public interface DashboardRepository extends ReportPortalRepository<Dashboard, L
    * @return if exists 'true' else 'false'
    */
   boolean existsByNameAndProjectId(String name, Long projectId);
+
+
+  /**
+   * Toggles the lock flag for the specified dashboard and all related widgets.
+   *
+   * <p>Performs native update statements:
+   * <ul>
+   *   <li>Updates the dashboard owned_entity row.</li>
+   *   <li>Updates owned_entity rows for widgets linked to the dashboard.</li>
+   * </ul>
+   *
+   * @param dashboardId id of the dashboard to toggle lock for
+   */
+  @Modifying
+  @Query(value = """
+           WITH widget_ids AS (SELECT widget_id FROM dashboard_widget WHERE dashboard_id = :dashboardId)
+           UPDATE owned_entity SET locked = true
+           WHERE id = :dashboardId
+           OR id IN (SELECT widget_id FROM widget_ids);
+      """, nativeQuery = true)
+  void lockDashboard(@Param("dashboardId") Long dashboardId);
+
+
+  @Modifying
+  @Query(value = """
+           WITH widget_ids AS (SELECT widget_id FROM dashboard_widget WHERE dashboard_id = :dashboardId)
+           UPDATE owned_entity SET locked = false
+           WHERE id = :dashboardId
+           OR id IN (SELECT widget_id FROM widget_ids);
+      """, nativeQuery = true)
+  void unlockDashboard(@Param("dashboardId") Long dashboardId);
 
 }

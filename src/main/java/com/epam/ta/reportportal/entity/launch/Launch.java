@@ -120,7 +120,7 @@ public class Launch implements Serializable {
   @Column(name = "retention_policy", nullable = false)
   @Enumerated(EnumType.STRING)
   @JdbcType(PostgreSQLEnumJdbcType.class)
-  private RetentionPolicyEnum retentionPolicy;
+  private RetentionPolicyEnum retentionPolicy = RetentionPolicyEnum.REGULAR;
 
   @OneToMany(mappedBy = "launch", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
   @Fetch(FetchMode.JOIN)

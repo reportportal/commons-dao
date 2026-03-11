@@ -17,11 +17,10 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.widget.Widget;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 /**
  * @author Pavel Bortnik
@@ -33,15 +32,13 @@ public interface WidgetRepository extends ReportPortalRepository<Widget, Long>,
    * Finds widget by 'id' and 'project id'
    *
    * @param id        {@link Widget#id}
-   * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} whose widget
-   *                  will be extracted
+   * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} whose widget will be extracted
    * @return {@link Widget} wrapped in the {@link Optional}
    */
   Optional<Widget> findByIdAndProjectId(Long id, Long projectId);
 
   /**
-   * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} whose
-   *                  widgets will be extracted
+   * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} whose widgets will be extracted
    * @return The {@link List} of the {@link Widget}
    */
   List<Widget> findAllByProjectId(Long projectId);
@@ -51,8 +48,8 @@ public interface WidgetRepository extends ReportPortalRepository<Widget, Long>,
    *
    * @param name      {@link Widget#name}
    * @param owner     {@link Widget#owner}
-   * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} on which
-   *                  widget existence will be checked
+   * @param projectId Id of the {@link com.epam.ta.reportportal.entity.project.Project} on which widget existence will
+   *                  be checked
    * @return if exists 'true' else 'false'
    */
   boolean existsByNameAndOwnerAndProjectId(String name, String owner, Long projectId);
@@ -70,8 +67,8 @@ public interface WidgetRepository extends ReportPortalRepository<Widget, Long>,
       @Param("projectId") Long projectId,
       @Param("widgetTypes") List<String> widgetTypes, @Param("contentField") String contentField);
 
-	@Query(value = "SELECT * FROM widget w JOIN owned_entity se on w.id = se.id JOIN content_field cf on w.id = cf.id "
-			+ " WHERE se.project_id = :projectId AND w.widget_type IN :widgetTypes AND cf.field LIKE :contentFieldPart || '%'", nativeQuery = true)
-	List<Widget> findAllByProjectIdAndWidgetTypeInAndContentFieldContaining(@Param("projectId") Long projectId,
-			@Param("widgetTypes") List<String> widgetTypes, @Param("contentFieldPart") String contentFieldPart);
+  @Query(value = "SELECT * FROM widget w JOIN owned_entity se on w.id = se.id JOIN content_field cf on w.id = cf.id "
+      + " WHERE se.project_id = :projectId AND w.widget_type IN :widgetTypes AND cf.field LIKE :contentFieldPart || '%'", nativeQuery = true)
+  List<Widget> findAllByProjectIdAndWidgetTypeInAndContentFieldContaining(@Param("projectId") Long projectId,
+      @Param("widgetTypes") List<String> widgetTypes, @Param("contentFieldPart") String contentFieldPart);
 }

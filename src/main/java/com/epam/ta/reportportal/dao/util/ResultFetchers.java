@@ -296,6 +296,7 @@ public class ResultFetchers {
       } else {
         userFilter = r.into(UserFilter.class);
         userFilter.setOwner(r.get(OWNED_ENTITY.OWNER));
+        userFilter.setLocked(r.get(OWNED_ENTITY.LOCKED));
         Project project = new Project();
         project.setId(r.get(OWNED_ENTITY.PROJECT_ID, Long.class));
         userFilter.setProject(project);
@@ -321,6 +322,7 @@ public class ResultFetchers {
       } else {
         dashboard = r.into(Dashboard.class);
         dashboard.setOwner(r.get(OWNED_ENTITY.OWNER));
+        dashboard.setLocked(r.get(OWNED_ENTITY.LOCKED));
         Project project = new Project();
         project.setId(r.get(OWNED_ENTITY.PROJECT_ID, Long.class));
         dashboard.setProject(project);
@@ -341,6 +343,7 @@ public class ResultFetchers {
       } else {
         widget = r.into(Widget.class);
         widget.setOwner(r.get(OWNED_ENTITY.OWNER));
+        widget.setLocked(r.get(OWNED_ENTITY.LOCKED));
         Project project = new Project();
         project.setId(r.get(OWNED_ENTITY.PROJECT_ID, Long.class));
         widget.setProject(project);

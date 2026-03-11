@@ -19,7 +19,6 @@ import com.epam.ta.reportportal.jooq.tables.JStatistics.JStatisticsPath;
 import com.epam.ta.reportportal.jooq.tables.JStatisticsField.JStatisticsFieldPath;
 import com.epam.ta.reportportal.jooq.tables.JTestItem.JTestItemPath;
 import com.epam.ta.reportportal.jooq.tables.JTestItemResults.JTestItemResultsPath;
-import com.epam.ta.reportportal.jooq.tables.JUsers.JUsersPath;
 import com.epam.ta.reportportal.jooq.tables.records.JTestItemRecord;
 
 import java.time.Instant;
@@ -237,7 +236,7 @@ public class JTestItem extends TableImpl<JTestItemRecord> {
 
     @Override
     public List<Index> getIndexes() {
-        return Arrays.asList(Indexes.IDX_TEST_ITEM_NAME_TRGM, Indexes.ITEM_TEST_CASE_ID_LAUNCH_ID_IDX, Indexes.PATH_GIST_IDX, Indexes.TEST_CASE_HASH_LAUNCH_ID_IDX, Indexes.TEST_ITEM_START_TIME_IDX, Indexes.TEST_ITEM_UNIQUE_ID_LAUNCH_ID_IDX, Indexes.TI_LAUNCH_IDX, Indexes.TI_PARENT_IDX, Indexes.TI_RETRY_OF_IDX);
+        return Arrays.asList(Indexes.IDX_TEST_ITEM_NAME_TRGM, Indexes.ITEM_TEST_CASE_ID_LAUNCH_ID_IDX, Indexes.PATH_GIST_IDX, Indexes.TEST_CASE_HASH_LAUNCH_ID_IDX, Indexes.TEST_ITEM_LAST_MODIFIED_IDX, Indexes.TEST_ITEM_START_TIME_IDX, Indexes.TEST_ITEM_UNIQUE_ID_LAUNCH_ID_IDX, Indexes.TI_LAUNCH_IDX, Indexes.TI_PARENT_IDX, Indexes.TI_RETRY_OF_IDX);
     }
 
     @Override
@@ -257,19 +256,7 @@ public class JTestItem extends TableImpl<JTestItemRecord> {
 
     @Override
     public List<ForeignKey<JTestItemRecord, ?>> getReferences() {
-        return Arrays.asList(Keys.TEST_ITEM__FK_TEST_ITEM_ANALYSIS_OWNER, Keys.TEST_ITEM__TEST_ITEM_LAUNCH_ID_FKEY, Keys.TEST_ITEM__TEST_ITEM_PARENT_ID_FKEY, Keys.TEST_ITEM__TEST_ITEM_RETRY_OF_FKEY);
-    }
-
-    private transient JUsersPath _users;
-
-    /**
-     * Get the implicit join path to the <code>public.users</code> table.
-     */
-    public JUsersPath users() {
-        if (_users == null)
-            _users = new JUsersPath(this, Keys.TEST_ITEM__FK_TEST_ITEM_ANALYSIS_OWNER, null);
-
-        return _users;
+        return Arrays.asList(Keys.TEST_ITEM__TEST_ITEM_LAUNCH_ID_FKEY, Keys.TEST_ITEM__TEST_ITEM_PARENT_ID_FKEY, Keys.TEST_ITEM__TEST_ITEM_RETRY_OF_FKEY);
     }
 
     private transient JLaunchPath _launch;

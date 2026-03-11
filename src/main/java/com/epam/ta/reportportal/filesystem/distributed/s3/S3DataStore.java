@@ -21,14 +21,6 @@ import com.epam.reportportal.rules.exception.ReportPortalException;
 import com.epam.ta.reportportal.entity.enums.FeatureFlag;
 import com.epam.ta.reportportal.filesystem.DataStore;
 import com.epam.ta.reportportal.util.FeatureFlagHandler;
-import org.jclouds.blobstore.BlobStore;
-import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.domain.Location;
-import org.jclouds.domain.LocationBuilder;
-import org.jclouds.domain.LocationScope;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
@@ -37,9 +29,16 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import org.jclouds.blobstore.BlobStore;
+import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.domain.Location;
+import org.jclouds.domain.LocationBuilder;
+import org.jclouds.domain.LocationScope;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Implimitation of basic operations with blob storages.
+ * Implementation of basic operations with blob storages.
  *
  * @author <a href="mailto:ivan_budayeu@epam.com">Ivan Budayeu</a>
  */
@@ -149,10 +148,14 @@ public class S3DataStore implements DataStore {
 
   @Override
   public void deleteAll(List<String> filePaths, String bucketName) {
-    if (!featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)) {
-      blobStore.removeBlobs(bucketPrefix + bucketName + bucketPostfix, filePaths);
-    } else {
-      blobStore.removeBlobs(bucketName, filePaths);
+    try {
+      filePaths.forEach(filePath -> {
+        StoredFile storedFile = getStoredFile(filePath);
+        blobStore.removeBlob(storedFile.getBucket(), storedFile.getFilePath());
+      });
+    } catch (Exception e) {
+      LOGGER.error("Unable to delete files from bucket '{}'", bucketName, e);
+      throw new ReportPortalException(ErrorType.INCORRECT_REQUEST, "Unable to delete files");
     }
   }
 
@@ -184,9 +187,8 @@ public class S3DataStore implements DataStore {
   private Location getLocationFromString(String locationString) {
     Location location = null;
     if (locationString != null) {
-      location =
-          new LocationBuilder().scope(LocationScope.REGION).id(locationString).description("region")
-              .build();
+      location = new LocationBuilder().scope(LocationScope.REGION).id(locationString).description("region")
+          .build();
     }
     return location;
   }
