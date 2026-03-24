@@ -428,7 +428,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
    * @param path Path of {@link TestItem}
    * @return {@link Optional} of {@link TestItem} if it exists, {@link Optional#empty()} if not
    */
-  @Query(value = "SELECT * FROM test_item t WHERE t.path = CAST(:path AS LTREE)", nativeQuery = true)
+  @Query(value = "SELECT * FROM test_item t WHERE t.path::text = :path", nativeQuery = true)
   Optional<TestItem> findByPath(@Param("path") String path);
 
   /**
