@@ -378,7 +378,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
                         .gt(ZERO_QUERY_VALUE))
                     .as(START_TIME_HISTORY),
                 sum(field(name(FLAKY_TABLE_RESULTS, SWITCH_FLAG)).cast(Long.class)).as(FLAKY_COUNT),
-                count(field(name(FLAKY_TABLE_RESULTS, ITEM_ID))).minus(1).as(TOTAL)
+                count(field(name(FLAKY_TABLE_RESULTS, ITEM_ID))).minus(1).as(TOTAL),
+                DSL.max(field(name(FLAKY_TABLE_RESULTS, LAUNCH_ID)).cast(Long.class)).as(LAUNCH_ID)
             )
             .from(dsl.with(LAUNCHES)
                 .as(QueryBuilder.newBuilder(filter, collectJoinFields(filter, Sort.unsorted()))
@@ -389,6 +390,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
                     TEST_ITEM.UNIQUE_ID,
                     TEST_ITEM.NAME,
                     TEST_ITEM.START_TIME,
+                    TEST_ITEM.LAUNCH_ID,
                     TEST_ITEM_RESULTS.STATUS,
                     when(TEST_ITEM_RESULTS.STATUS.notEqual(
                             lag(TEST_ITEM_RESULTS.STATUS).over(orderBy(TEST_ITEM.UNIQUE_ID,
@@ -412,7 +414,7 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
                 .and(TEST_ITEM.RETRY_OF.isNull())
                 .and(TEST_ITEM_RESULTS.STATUS.notEqual(JStatusEnum.SKIPPED))
                 .groupBy(TEST_ITEM.ITEM_ID, TEST_ITEM_RESULTS.STATUS, TEST_ITEM.UNIQUE_ID,
-                    TEST_ITEM.NAME, TEST_ITEM.START_TIME)
+                    TEST_ITEM.NAME, TEST_ITEM.START_TIME, TEST_ITEM.LAUNCH_ID)
                 .orderBy(TEST_ITEM.UNIQUE_ID, TEST_ITEM.START_TIME.desc())
                 .asTable(FLAKY_TABLE_RESULTS))
             .groupBy(field(name(FLAKY_TABLE_RESULTS, TEST_ITEM.UNIQUE_ID.getName())),
