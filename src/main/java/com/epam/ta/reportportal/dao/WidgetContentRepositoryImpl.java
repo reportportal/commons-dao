@@ -378,7 +378,8 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
                         .gt(ZERO_QUERY_VALUE))
                     .as(START_TIME_HISTORY),
                 sum(field(name(FLAKY_TABLE_RESULTS, SWITCH_FLAG)).cast(Long.class)).as(FLAKY_COUNT),
-                count(field(name(FLAKY_TABLE_RESULTS, ITEM_ID))).minus(1).as(TOTAL)
+                count(field(name(FLAKY_TABLE_RESULTS, ITEM_ID))).minus(1).as(TOTAL),
+                DSL.max(TEST_ITEM.LAUNCH_ID).as(TEST_ITEM.LAUNCH_ID.getName())
             )
             .from(dsl.with(LAUNCHES)
                 .as(QueryBuilder.newBuilder(filter, collectJoinFields(filter, Sort.unsorted()))
