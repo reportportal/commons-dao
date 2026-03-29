@@ -17,6 +17,7 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.statistics.StatisticsField;
+import java.util.Optional;
 
 /**
  * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
@@ -24,4 +25,12 @@ import com.epam.ta.reportportal.entity.statistics.StatisticsField;
 public interface StatisticsFieldRepository extends ReportPortalRepository<StatisticsField, Long> {
 
   void deleteByName(String name);
+
+  /**
+   * Finds statistics field by name.
+   *
+   * @param name field name
+   * @return optional statistics field
+   */
+  Optional<StatisticsField> findByName(String name);
 }
