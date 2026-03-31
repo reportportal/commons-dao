@@ -41,6 +41,7 @@ import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.filesystem.reference.FilesystemConstants;
 import org.jclouds.rest.ConfiguresHttpApi;
 import org.jclouds.s3.S3Client;
+import org.jclouds.s3.reference.S3Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -165,22 +166,42 @@ public class DataStoreConfiguration {
   }
 
   /**
-   * Creates BlobStore bean, that works with MinIO.
+   * Creates BlobStore bean for S3-compatible object storage (MinIO, SeaweedFS, etc.).
+   * <p>
+   * Uses the {@code aws-s3} jclouds provider so requests are signed with AWS Signature
+   * Version 4. The legacy generic {@code s3} provider signs with SigV2, which builds the
+   * canonical resource from the URL-encoded path; some backends (notably SeaweedFS) verify
+   * against the decoded path and reject uploads when object keys contain spaces (e.g. PF4J
+   * plugin IDs such as {@code Azure DevOps}).
+   * </p>
+   * <p>
+   * Path-style addressing is enabled to match the default behavior of the generic {@code s3}
+   * API and typical single-endpoint deployments.
+   * </p>
    *
-   * @param accessKey accessKey to use
-   * @param secretKey secretKey to use
-   * @param endpoint  MinIO endpoint
+   * @param accessKey access key
+   * @param secretKey secret key
+   * @param endpoint  storage endpoint URL
+   * @param region    region name passed to SigV4 (e.g. {@code us-east-1} for MinIO)
    * @return {@link BlobStore}
    */
   @Bean
   @ConditionalOnProperty(name = "datastore.type", havingValue = "minio")
   public BlobStore minioBlobStore(@Value("${datastore.accessKey}") String accessKey,
       @Value("${datastore.secretKey}") String secretKey,
-      @Value("${datastore.endpoint}") String endpoint) {
+      @Value("${datastore.endpoint}") String endpoint,
+      @Value("${datastore.region}") String region) {
 
-    BlobStoreContext blobStoreContext = ContextBuilder.newBuilder("s3")
+    Properties overrides = new Properties();
+    overrides.setProperty(S3Constants.PROPERTY_S3_VIRTUAL_HOST_BUCKETS, "false");
+
+    Iterable<Module> modules = ImmutableSet.of(new CustomBucketToRegionModule(region));
+
+    BlobStoreContext blobStoreContext = ContextBuilder.newBuilder("aws-s3")
         .endpoint(endpoint)
         .credentials(accessKey, secretKey)
+        .modules(modules)
+        .overrides(overrides)
         .buildView(BlobStoreContext.class);
 
     return blobStoreContext.getBlobStore();
