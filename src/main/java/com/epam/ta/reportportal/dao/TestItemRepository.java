@@ -532,6 +532,7 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
         ti.item_id as itemId,
         ti.name as name,
         cast (ti.path as varchar) as path,
+        a.id as attachmentId,
         a.file_id as fileId,
         a.file_name as fileName,
         a.content_type as contentType
