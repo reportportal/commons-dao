@@ -36,7 +36,7 @@ dependencyManagement {
 }
 
 dependencies {
-    implementation 'com.github.reportportal:commons:5b2e964'
+    implementation 'com.github.reportportal:commons:d2064cd'
 
     implementation "io.swagger.core.v3:swagger-annotations-jakarta:2.2.27"
     // jooq dependencies
