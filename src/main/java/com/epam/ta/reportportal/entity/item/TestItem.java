@@ -91,7 +91,7 @@ public class TestItem implements Serializable {
   @Column(name = "launch_id", nullable = false)
   private Long launchId;
 
-  @LastModifiedDate
+//  @LastModifiedDate
   @Column(name = "last_modified", nullable = false)
   @Convert(converter = JpaInstantConverter.class)
   private Instant lastModified;
