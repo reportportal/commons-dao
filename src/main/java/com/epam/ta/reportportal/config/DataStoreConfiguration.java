@@ -39,6 +39,7 @@ import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.filesystem.reference.FilesystemConstants;
+import org.jclouds.location.reference.LocationConstants;
 import org.jclouds.rest.ConfiguresHttpApi;
 import org.jclouds.s3.S3Client;
 import org.jclouds.s3.reference.S3Constants;
@@ -168,21 +169,19 @@ public class DataStoreConfiguration {
   /**
    * Creates BlobStore bean for S3-compatible object storage (MinIO, SeaweedFS, etc.).
    * <p>
-   * Uses the {@code aws-s3} jclouds provider so requests are signed with AWS Signature
-   * Version 4. The legacy generic {@code s3} provider signs with SigV2, which builds the
-   * canonical resource from the URL-encoded path; some backends (notably SeaweedFS) verify
-   * against the decoded path and reject uploads when object keys contain spaces (e.g. PF4J
-   * plugin IDs such as {@code Azure DevOps}).
-   * </p>
-   * <p>
-   * Path-style addressing is enabled to match the default behavior of the generic {@code s3}
-   * API and typical single-endpoint deployments.
+   * Uses the generic {@code s3} jclouds provider with a custom {@code endpoint} so all HTTP
+   * traffic stays on that host. Signing uses AWS Signature Version 4 ({@link
+   * S3Constants#PROPERTY_SIGNER_VERSION}), not the default SigV2 for this provider: SigV2
+   * canonicalizes the URL-encoded path, which SeaweedFS rejects for keys containing spaces,
+   * while the {@code aws-s3} provider would ignore the custom endpoint and send requests to
+   * regional {@code *.amazonaws.com} S3 endpoints instead of the configured URL.
    * </p>
    *
    * @param accessKey access key
    * @param secretKey secret key
    * @param endpoint  storage endpoint URL
-   * @param region    region name passed to SigV4 (e.g. {@code us-east-1} for MinIO)
+   * @param region    region for SigV4 credential scope (must match what the backend expects,
+   *                  e.g. {@code us-east-1})
    * @return {@link BlobStore}
    */
   @Bean
@@ -194,13 +193,12 @@ public class DataStoreConfiguration {
 
     Properties overrides = new Properties();
     overrides.setProperty(S3Constants.PROPERTY_S3_VIRTUAL_HOST_BUCKETS, "false");
+    overrides.setProperty(S3Constants.PROPERTY_SIGNER_VERSION, "4");
+    overrides.setProperty(LocationConstants.PROPERTY_REGION, region);
 
-    Iterable<Module> modules = ImmutableSet.of(new CustomBucketToRegionModule(region));
-
-    BlobStoreContext blobStoreContext = ContextBuilder.newBuilder("aws-s3")
+    BlobStoreContext blobStoreContext = ContextBuilder.newBuilder("s3")
         .endpoint(endpoint)
         .credentials(accessKey, secretKey)
-        .modules(modules)
         .overrides(overrides)
         .buildView(BlobStoreContext.class);
 
