@@ -1399,12 +1399,12 @@ class TestItemRepositoryTest extends BaseTest {
 
 
   @Test
-  void testFindTestItemsContainsName() {
+  void testFindTestItemsWithNamePrefix() {
     //given
     Pageable pageable = PageRequest.of(0, 10);
 
     //when
-    Slice<TestItem> result = testItemRepository.findTestItemsContainsName("Ste", 1L, pageable);
+    Slice<TestItem> result = testItemRepository.findTestItemsWithNamePrefix("Ste", 1L, pageable);
 
     //then
     List<String> names = result.getContent().stream().map(TestItem::getName).toList();
@@ -1413,12 +1413,12 @@ class TestItemRepositoryTest extends BaseTest {
   }
 
   @Test
-  void testFindTestItemsContainsNameNotExists() {
+  void testFindTestItemsWithNamePrefixNotExists() {
     //given
     Pageable pageable = PageRequest.of(0, 10);
 
     //when
-    Slice<TestItem> result = testItemRepository.findTestItemsContainsName("Not exists", 1L,
+    Slice<TestItem> result = testItemRepository.findTestItemsWithNamePrefix("Not exists", 1L,
         pageable);
 
     //then
@@ -1426,12 +1426,12 @@ class TestItemRepositoryTest extends BaseTest {
   }
 
   @Test
-  void testFindTestItemsContainsNameAndStatuses() {
+  void testFindTestItemsWithNamePrefixAndStatuses() {
     //given
     Pageable pageable = Pageable.unpaged();
 
     //when
-    Slice<TestItem> result = testItemRepository.findTestItemsContainsNameAndStatuses(
+    Slice<TestItem> result = testItemRepository.findTestItemsWithNamePrefixAndStatuses(
         "Step",
         1L,
         List.of("FAILED"),
@@ -1450,7 +1450,7 @@ class TestItemRepositoryTest extends BaseTest {
     Pageable pageable = Pageable.unpaged();
 
     //when
-    Slice<TestItem> result = testItemRepository.findTestItemsContainsNameAndStatuses(
+    Slice<TestItem> result = testItemRepository.findTestItemsWithNamePrefixAndStatuses(
         "Step", 1L, List.of("FAILED", "IN_PROGRESS"), pageable);
 
     //then
@@ -1463,12 +1463,12 @@ class TestItemRepositoryTest extends BaseTest {
   }
 
   @Test
-  void testFindTestItemsContainsNameAndStatusesNotExists() {
+  void testFindTestItemsWithNamePrefixAndStatusesNotExists() {
     //given
     Pageable pageable = Pageable.unpaged();
 
     //when
-    Slice<TestItem> result = testItemRepository.findTestItemsContainsNameAndStatuses(
+    Slice<TestItem> result = testItemRepository.findTestItemsWithNamePrefixAndStatuses(
         "Step",
         1L,
         List.of("PASSED"),

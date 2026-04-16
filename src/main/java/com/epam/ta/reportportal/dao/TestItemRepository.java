@@ -84,10 +84,10 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
         AND ti.retry_of IS NULL
         AND ti.type = 'STEP'
         AND l.project_id = :projectId
-        AND ti.name ILIKE %:name%
+        AND lower(ti.name) LIKE :name%
       """, nativeQuery = true)
   @QueryHints(@QueryHint(name = "javax.persistence.query.timeout", value = "10000"))
-  Slice<TestItem> findTestItemsContainsName(@Param("name") String nameTerm,
+  Slice<TestItem> findTestItemsWithNamePrefix(@Param("name") String nameTerm,
       @Param("projectId") Long projectId,
       Pageable pageable);
 
@@ -100,11 +100,11 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
         AND ti.retry_of IS NULL
         AND ti.type = 'STEP'
         AND l.project_id = :projectId
-        AND ti.name ILIKE %:name%
+        AND lower(ti.name) LIKE :name%
         AND CAST(tir.status AS VARCHAR) in (:statuses)
       """, nativeQuery = true)
   @QueryHints(@QueryHint(name = "javax.persistence.query.timeout", value = "10000"))
-  Slice<TestItem> findTestItemsContainsNameAndStatuses(@Param("name") String nameTerm,
+  Slice<TestItem> findTestItemsWithNamePrefixAndStatuses(@Param("name") String nameTerm,
       @Param("projectId") Long projectId, @Param("statuses") List<String> statuses,
       Pageable pageable);
 
