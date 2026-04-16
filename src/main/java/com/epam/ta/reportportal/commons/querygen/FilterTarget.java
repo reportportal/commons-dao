@@ -583,7 +583,7 @@ public enum FilterTarget {
           new CriteriaHolderBuilder().newBuilder(CRITERIA_UNIQUE_ID, TEST_ITEM.UNIQUE_ID,
               String.class).get(),
           new CriteriaHolderBuilder().newBuilder(CRITERIA_UUID, TEST_ITEM.UUID, String.class).get(),
-          new CriteriaHolderBuilder().newBuilder(CRITERIA_TEST_CASE_ID, TEST_ITEM.TEST_CASE_ID,
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_TEST_CASE_ID, TEST_ITEM.TEST_CASE_HASH,
               String.class).get(),
           new CriteriaHolderBuilder().newBuilder(CRITERIA_TEST_CASE_HASH, TEST_ITEM.TEST_CASE_HASH,
               Integer.class).get(),
@@ -1347,8 +1347,10 @@ public enum FilterTarget {
       Arrays.asList(
           new CriteriaHolderBuilder().newBuilder(CRITERIA_ID, FILTER.ID, Long.class).get(),
           new CriteriaHolderBuilder().newBuilder(CRITERIA_NAME, FILTER.NAME, String.class).get(),
-          new CriteriaHolderBuilder().newBuilder(CRITERIA_LOCKED, OWNED_ENTITY.LOCKED, Boolean.class)
-              .withAggregateCriteria(DSL.max(DSL.cast(OWNED_ENTITY.LOCKED, Integer.class)).toString())
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_LOCKED, OWNED_ENTITY.LOCKED,
+                  Boolean.class)
+              .withAggregateCriteria(
+                  DSL.max(DSL.cast(OWNED_ENTITY.LOCKED, Integer.class)).toString())
               .get(),
           new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ID, OWNED_ENTITY.PROJECT_ID,
                   Long.class)
