@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 EPAM Systems
+ * Copyright 2026 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,12 @@
  * limitations under the License.
  */
 
-package com.epam.ta.reportportal.commons.querygen.constant;
+package com.epam.ta.reportportal.entity.enums;
 
 /**
- * Search criteria fields for Launch.
- *
  * @author Pavel Bortnik
  */
-public final class LaunchCriteriaConstant {
-
-  public static final String CRITERIA_LAUNCH_UUID = "uuid";
-  public static final String CRITERIA_LAUNCH_MODE = "mode";
-  public static final String CRITERIA_LAUNCH_TYPE = "launchType";
-  public static final String CRITERIA_LAUNCH_STATUS = "status";
-  public static final String CRITERIA_LAUNCH_NUMBER = "number";
-
-  private LaunchCriteriaConstant() {
-    //static only
-  }
-
+public enum LaunchTypeEnum {
+  AUTOMATION,
+  AGENTIC
 }
