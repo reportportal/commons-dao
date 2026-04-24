@@ -88,7 +88,8 @@ project.ext {
             (migrationsUrl + '/migrations/98_add_plugin_type.up.sql')                  : 'V098__add_plugin_type.up.sql',
             (migrationsUrl + '/migrations/106_create_log_type_table.up.sql')           : 'V106__create_log_type_table.sql',
             (migrationsUrl + '/migrations/107_add_analysis_owner.up.sql')              : 'V107__add_analysis_owner.sql',
-            (migrationsUrl + '/migrations/112_lock_dashboard.up.sql')                  : 'V112__lock_dashboard.sql'
+            (migrationsUrl + '/migrations/112_lock_dashboard.up.sql')                  : 'V112__lock_dashboard.sql',
+            (migrationsUrl + '/migrations/119_launch_launch_type.up.sql')              : 'V119__launch_launch_type.sql'
     ]
     excludeTests = [
             'com/epam/ta/reportportal/jooq/**',
