@@ -56,8 +56,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-cache'
     implementation 'com.github.ben-manes.caffeine:caffeine'
 
-    implementation 'io.minio:minio:8.6.0'
-
     api 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
     implementation "org.hibernate.validator:hibernate-validator:${hibernateValidatorVersion}"
 
@@ -73,11 +71,7 @@ dependencies {
     implementation 'org.flywaydb:flyway-core:10.15.2'
     implementation 'org.flywaydb:flyway-database-postgresql:10.20.0'
 
-    api "org.apache.jclouds.api:s3:${jcloudsVersion}"
-    api "org.apache.jclouds.provider:aws-s3:${jcloudsVersion}"
-    api "org.apache.jclouds.api:filesystem:${jcloudsVersion}"
-    implementation 'software.amazon.awssdk:aws-core:2.38.9'
-    implementation 'software.amazon.awssdk:sts:2.38.9'
+    api 'org.apache.opendal:opendal:0.48.3'
     api 'com.google.guava:guava:33.2.1-jre'
 
     // add lombok support

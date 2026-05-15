@@ -21,17 +21,17 @@ import com.epam.reportportal.rules.exception.ReportPortalException;
 import com.epam.ta.reportportal.entity.enums.FeatureFlag;
 import com.epam.ta.reportportal.filesystem.distributed.s3.StoredFile;
 import com.epam.ta.reportportal.util.FeatureFlagHandler;
-import org.jclouds.blobstore.BlobStore;
-import org.jclouds.blobstore.domain.Blob;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
+import org.apache.opendal.OpenDALException;
+import org.apache.opendal.Operator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Dzianis_Shybeka
@@ -39,19 +39,16 @@ import java.util.Objects;
 public class LocalDataStore implements DataStore {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(LocalDataStore.class);
-  private final BlobStore blobStore;
 
+  private final Operator operator;
   private final FeatureFlagHandler featureFlagHandler;
-
   private final String bucketPrefix;
-
   private final String bucketPostfix;
-
   private final String defaultBucketName;
 
-  public LocalDataStore(BlobStore blobStore, FeatureFlagHandler featureFlagHandler,
+  public LocalDataStore(Operator operator, FeatureFlagHandler featureFlagHandler,
       String bucketPrefix, String bucketPostfix, String defaultBucketName) {
-    this.blobStore = blobStore;
+    this.operator = operator;
     this.featureFlagHandler = featureFlagHandler;
     this.bucketPrefix = bucketPrefix;
     this.bucketPostfix = Objects.requireNonNullElse(bucketPostfix, "");
@@ -64,14 +61,9 @@ public class LocalDataStore implements DataStore {
       return "";
     }
     StoredFile storedFile = getStoredFile(filePath);
+    String fullPath = storedFile.getBucket() + "/" + storedFile.getFilePath();
     try {
-      if (!blobStore.containerExists(storedFile.getBucket())) {
-        blobStore.createContainerInLocation(null, storedFile.getBucket());
-      }
-      Blob objectBlob = blobStore.blobBuilder(storedFile.getFilePath()).payload(inputStream)
-          .contentDisposition(storedFile.getFilePath()).contentLength(inputStream.available())
-          .build();
-      blobStore.putBlob(storedFile.getBucket(), objectBlob);
+      operator.write(fullPath, inputStream.readAllBytes());
       return filePath;
     } catch (IOException e) {
       throw new ReportPortalException(ErrorType.INCORRECT_REQUEST, "Unable to save file", e);
@@ -84,15 +76,12 @@ public class LocalDataStore implements DataStore {
       throw new ReportPortalException(ErrorType.UNABLE_TO_LOAD_BINARY_DATA, "Unable to find file");
     }
     StoredFile storedFile = getStoredFile(filePath);
-    Blob fileBlob = blobStore.getBlob(storedFile.getBucket(), storedFile.getFilePath());
-    if (fileBlob != null) {
-      try {
-        return fileBlob.getPayload().openStream();
-      } catch (IOException e) {
-        throw new ReportPortalException(ErrorType.UNABLE_TO_LOAD_BINARY_DATA, e.getMessage(), e);
-      }
+    String fullPath = storedFile.getBucket() + "/" + storedFile.getFilePath();
+    try {
+      return new ByteArrayInputStream(operator.read(fullPath));
+    } catch (OpenDALException e) {
+      throw new ReportPortalException(ErrorType.UNABLE_TO_LOAD_BINARY_DATA, "Unable to find file");
     }
-    throw new ReportPortalException(ErrorType.UNABLE_TO_LOAD_BINARY_DATA, "Unable to find file");
   }
 
   @Override
@@ -101,10 +90,14 @@ public class LocalDataStore implements DataStore {
       return false;
     }
     StoredFile storedFile = getStoredFile(filePath);
-    if (blobStore.containerExists(storedFile.getBucket())) {
-      return blobStore.blobExists(storedFile.getBucket(), storedFile.getFilePath());
-    } else {
-      LOGGER.warn("Container '{}' does not exist", storedFile.getBucket());
+    String fullPath = storedFile.getBucket() + "/" + storedFile.getFilePath();
+    try {
+      operator.stat(fullPath);
+      return true;
+    } catch (OpenDALException e) {
+      if (e.getCode() != OpenDALException.Code.NotFound) {
+        LOGGER.warn("Error checking existence of '{}'", filePath, e);
+      }
       return false;
     }
   }
@@ -115,25 +108,34 @@ public class LocalDataStore implements DataStore {
       return;
     }
     StoredFile storedFile = getStoredFile(filePath);
+    String fullPath = storedFile.getBucket() + "/" + storedFile.getFilePath();
     try {
-      blobStore.removeBlob(storedFile.getBucket(), storedFile.getFilePath());
-    } catch (Exception e) {
+      operator.delete(fullPath);
+    } catch (OpenDALException e) {
       throw new ReportPortalException(ErrorType.INCORRECT_REQUEST, "Unable to delete file", e);
     }
   }
 
   @Override
   public void deleteAll(List<String> filePaths, String bucketName) {
-    if (!featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)) {
-      blobStore.removeBlobs(bucketPrefix + bucketName + bucketPostfix, filePaths);
-    } else {
-      blobStore.removeBlobs(bucketName, filePaths);
-    }
+    String bucket = featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)
+        ? bucketName : bucketPrefix + bucketName + bucketPostfix;
+    filePaths.forEach(fp -> {
+      try {
+        operator.delete(bucket + "/" + fp);
+      } catch (OpenDALException e) {
+        LOGGER.warn("Unable to delete '{}' from '{}'", fp, bucket, e);
+      }
+    });
   }
 
   @Override
   public void deleteContainer(String bucketName) {
-    blobStore.deleteContainer(bucketName);
+    try {
+      operator.removeAll(bucketName + "/");
+    } catch (OpenDALException e) {
+      LOGGER.error("Unable to delete container '{}'", bucketName, e);
+    }
   }
 
   private StoredFile getStoredFile(String filePath) {
@@ -142,13 +144,11 @@ public class LocalDataStore implements DataStore {
     }
     Path targetPath = Paths.get(filePath);
     int nameCount = targetPath.getNameCount();
-    String bucketName;
     if (nameCount > 1) {
-      bucketName = bucketPrefix + retrievePath(targetPath, 0, 1) + bucketPostfix;
+      String bucketName = bucketPrefix + retrievePath(targetPath, 0, 1) + bucketPostfix;
       return new StoredFile(bucketName, retrievePath(targetPath, 1, nameCount));
     } else {
-      bucketName = defaultBucketName;
-      return new StoredFile(bucketName, retrievePath(targetPath, 0, 1));
+      return new StoredFile(defaultBucketName, retrievePath(targetPath, 0, 1));
     }
   }
 
@@ -156,4 +156,3 @@ public class LocalDataStore implements DataStore {
     return String.valueOf(path.subpath(beginIndex, endIndex));
   }
 }
-

@@ -16,20 +16,21 @@
 
 package com.epam.ta.reportportal.filesystem.distributed.s3;
 
-import static org.mockito.Mockito.any;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.epam.ta.reportportal.entity.enums.FeatureFlag;
 import com.epam.ta.reportportal.util.FeatureFlagHandler;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import org.jclouds.blobstore.BlobStore;
-import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.domain.BlobBuilder;
-import org.jclouds.io.Payload;
-import org.junit.jupiter.api.Assertions;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import org.apache.opendal.Operator;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -41,73 +42,82 @@ class S3DataStoreTest {
   private static final String BUCKET_PREFIX = "prj-";
   private static final String BUCKET_POSTFIX = "-postfix";
   private static final String DEFAULT_BUCKET_NAME = "rp-bucket";
-  private static final String REGION = "us-east-1";
-  private static final int ZERO = 0;
+  private static final byte[] CONTENT = "data".getBytes();
 
-  private final BlobStore blobStore = mock(BlobStore.class);
-  private final InputStream inputStream = mock(InputStream.class);
+  private final ConcurrentHashMap<String, Operator> operatorCache = new ConcurrentHashMap<>();
+  private final Function<String, Operator> operatorFactory =
+      bucket -> operatorCache.computeIfAbsent(bucket, b -> Operator.of("memory", Map.of()));
 
   private final FeatureFlagHandler featureFlagHandler = mock(FeatureFlagHandler.class);
 
-  private final S3DataStore s3DataStore =
-      new S3DataStore(blobStore, BUCKET_PREFIX, BUCKET_POSTFIX, DEFAULT_BUCKET_NAME, REGION,
-          featureFlagHandler
-      );
+  private S3DataStore s3DataStore;
+
+  @BeforeEach
+  void setUp() {
+    operatorCache.clear();
+    s3DataStore = new S3DataStore(operatorFactory, BUCKET_PREFIX, BUCKET_POSTFIX,
+        DEFAULT_BUCKET_NAME, featureFlagHandler);
+  }
 
   @Test
   void save() throws Exception {
-
-    BlobBuilder blobBuilderMock = mock(BlobBuilder.class);
-    BlobBuilder.PayloadBlobBuilder payloadBlobBuilderMock =
-        mock(BlobBuilder.PayloadBlobBuilder.class);
-    Blob blobMock = mock(Blob.class);
-
     String filePath = DEFAULT_BUCKET_NAME + "/" + FILE_NAME;
-
-    when(inputStream.available()).thenReturn(ZERO);
-    when(payloadBlobBuilderMock.contentDisposition(FILE_NAME)).thenReturn(payloadBlobBuilderMock);
-    when(payloadBlobBuilderMock.contentLength(ZERO)).thenReturn(payloadBlobBuilderMock);
-    when(payloadBlobBuilderMock.build()).thenReturn(blobMock);
-    when(blobBuilderMock.payload(inputStream)).thenReturn(payloadBlobBuilderMock);
-
-    when(blobStore.containerExists(any(String.class))).thenReturn(true);
-    when(blobStore.blobBuilder(FILE_NAME)).thenReturn(blobBuilderMock);
-
     when(featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)).thenReturn(false);
 
-    s3DataStore.save(filePath, inputStream);
+    s3DataStore.save(filePath, new ByteArrayInputStream(CONTENT));
 
-    verify(blobStore, times(1)).putBlob(
-        BUCKET_PREFIX + DEFAULT_BUCKET_NAME + BUCKET_POSTFIX, blobMock);
+    String expectedBucket = BUCKET_PREFIX + DEFAULT_BUCKET_NAME + BUCKET_POSTFIX;
+    assertArrayEquals(CONTENT, operatorCache.get(expectedBucket).read(FILE_NAME));
   }
 
   @Test
   void load() throws Exception {
-
-    Blob mockBlob = mock(Blob.class);
-    Payload mockPayload = mock(Payload.class);
-
     String filePath = DEFAULT_BUCKET_NAME + "/" + FILE_NAME;
+    when(featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)).thenReturn(false);
+    String bucket = BUCKET_PREFIX + DEFAULT_BUCKET_NAME + BUCKET_POSTFIX;
+    operatorFactory.apply(bucket).write(FILE_NAME, CONTENT);
 
-    when(mockPayload.openStream()).thenReturn(inputStream);
-    when(mockBlob.getPayload()).thenReturn(mockPayload);
-
-    when(blobStore.getBlob(BUCKET_PREFIX + DEFAULT_BUCKET_NAME + BUCKET_POSTFIX,
-        FILE_NAME
-    )).thenReturn(mockBlob);
     InputStream loaded = s3DataStore.load(filePath);
 
-    Assertions.assertEquals(inputStream, loaded);
+    assertArrayEquals(CONTENT, loaded.readAllBytes());
   }
 
   @Test
   void delete() throws Exception {
-
     String filePath = DEFAULT_BUCKET_NAME + "/" + FILE_NAME;
+    when(featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)).thenReturn(false);
+    String bucket = BUCKET_PREFIX + DEFAULT_BUCKET_NAME + BUCKET_POSTFIX;
+    operatorFactory.apply(bucket).write(FILE_NAME, CONTENT);
 
     s3DataStore.delete(filePath);
 
-    verify(blobStore, times(1)).removeBlob(
-        BUCKET_PREFIX + DEFAULT_BUCKET_NAME + BUCKET_POSTFIX, FILE_NAME);
+    assertFalse(s3DataStore.exists(filePath));
+  }
+
+  @Test
+  void exists_whenFilePresent_returnsTrue() throws Exception {
+    String filePath = DEFAULT_BUCKET_NAME + "/" + FILE_NAME;
+    when(featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)).thenReturn(false);
+    String bucket = BUCKET_PREFIX + DEFAULT_BUCKET_NAME + BUCKET_POSTFIX;
+    operatorFactory.apply(bucket).write(FILE_NAME, CONTENT);
+
+    assertTrue(s3DataStore.exists(filePath));
+  }
+
+  @Test
+  void exists_whenFileAbsent_returnsFalse() {
+    String filePath = DEFAULT_BUCKET_NAME + "/" + FILE_NAME;
+    when(featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)).thenReturn(false);
+
+    assertFalse(s3DataStore.exists(filePath));
+  }
+
+  @Test
+  void save_singleBucketMode_usesDefaultBucket() throws Exception {
+    when(featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)).thenReturn(true);
+
+    s3DataStore.save(FILE_NAME, new ByteArrayInputStream(CONTENT));
+
+    assertArrayEquals(CONTENT, operatorCache.get(DEFAULT_BUCKET_NAME).read(FILE_NAME));
   }
 }

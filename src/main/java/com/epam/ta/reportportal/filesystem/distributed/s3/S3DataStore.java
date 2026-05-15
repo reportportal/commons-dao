@@ -21,19 +21,16 @@ import com.epam.reportportal.rules.exception.ReportPortalException;
 import com.epam.ta.reportportal.entity.enums.FeatureFlag;
 import com.epam.ta.reportportal.filesystem.DataStore;
 import com.epam.ta.reportportal.util.FeatureFlagHandler;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-import org.jclouds.blobstore.BlobStore;
-import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.domain.Location;
-import org.jclouds.domain.LocationBuilder;
-import org.jclouds.domain.LocationScope;
+import java.util.function.Function;
+import org.apache.opendal.OpenDALException;
+import org.apache.opendal.Operator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,33 +42,26 @@ import org.slf4j.LoggerFactory;
 public class S3DataStore implements DataStore {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(S3DataStore.class);
-  private static final Lock CREATE_BUCKET_LOCK = new ReentrantLock();
 
-  private final BlobStore blobStore;
+  private final Function<String, Operator> operatorFactory;
   private final String bucketPrefix;
   private final String bucketPostfix;
   private final String defaultBucketName;
-  private final Location location;
-
   private final FeatureFlagHandler featureFlagHandler;
 
   /**
-   * Initialises {@link S3DataStore}.
-   *
-   * @param blobStore          {@link BlobStore}
-   * @param bucketPrefix       Prefix for bucket name
-   * @param bucketPostfix      Postfix for bucket name
-   * @param defaultBucketName  Name of default bucket to use
-   * @param region             Region to use
-   * @param featureFlagHandler {@link FeatureFlagHandler}
+   * @param operatorFactory    returns a per-bucket {@link Operator} (callers should cache)
+   * @param bucketPrefix       prefix applied to bucket names in multi-bucket mode
+   * @param bucketPostfix      postfix applied to bucket names in multi-bucket mode
+   * @param defaultBucketName  bucket used in single-bucket mode
+   * @param featureFlagHandler feature flag access
    */
-  public S3DataStore(BlobStore blobStore, String bucketPrefix, String bucketPostfix,
-      String defaultBucketName, String region, FeatureFlagHandler featureFlagHandler) {
-    this.blobStore = blobStore;
+  public S3DataStore(Function<String, Operator> operatorFactory, String bucketPrefix,
+      String bucketPostfix, String defaultBucketName, FeatureFlagHandler featureFlagHandler) {
+    this.operatorFactory = operatorFactory;
     this.bucketPrefix = bucketPrefix;
     this.bucketPostfix = Objects.requireNonNullElse(bucketPostfix, "");
     this.defaultBucketName = defaultBucketName;
-    this.location = getLocationFromString(region);
     this.featureFlagHandler = featureFlagHandler;
   }
 
@@ -82,21 +72,8 @@ public class S3DataStore implements DataStore {
     }
     StoredFile storedFile = getStoredFile(filePath);
     try {
-      if (!blobStore.containerExists(storedFile.getBucket())) {
-        CREATE_BUCKET_LOCK.lock();
-        try {
-          if (!blobStore.containerExists(storedFile.getBucket())) {
-            blobStore.createContainerInLocation(location, storedFile.getBucket());
-          }
-        } finally {
-          CREATE_BUCKET_LOCK.unlock();
-        }
-      }
-
-      Blob objectBlob = blobStore.blobBuilder(storedFile.getFilePath()).payload(inputStream)
-          .contentDisposition(storedFile.getFilePath()).contentLength(inputStream.available())
-          .build();
-      blobStore.putBlob(storedFile.getBucket(), objectBlob);
+      operatorFactory.apply(storedFile.getBucket())
+          .write(storedFile.getFilePath(), inputStream.readAllBytes());
       return Paths.get(filePath).toString();
     } catch (IOException e) {
       LOGGER.error("Unable to save file '{}'", filePath, e);
@@ -111,16 +88,13 @@ public class S3DataStore implements DataStore {
       throw new ReportPortalException(ErrorType.UNABLE_TO_LOAD_BINARY_DATA, "Unable to find file");
     }
     StoredFile storedFile = getStoredFile(filePath);
-    Blob fileBlob = blobStore.getBlob(storedFile.getBucket(), storedFile.getFilePath());
-    if (fileBlob != null) {
-      try {
-        return fileBlob.getPayload().openStream();
-      } catch (IOException e) {
-        throw new ReportPortalException(ErrorType.UNABLE_TO_LOAD_BINARY_DATA, e.getMessage());
-      }
+    try {
+      byte[] bytes = operatorFactory.apply(storedFile.getBucket()).read(storedFile.getFilePath());
+      return new ByteArrayInputStream(bytes);
+    } catch (OpenDALException e) {
+      LOGGER.error("Unable to find file '{}'", filePath, e);
+      throw new ReportPortalException(ErrorType.UNABLE_TO_LOAD_BINARY_DATA, "Unable to find file");
     }
-    LOGGER.error("Unable to find file '{}'", filePath);
-    throw new ReportPortalException(ErrorType.UNABLE_TO_LOAD_BINARY_DATA, "Unable to find file");
   }
 
   @Override
@@ -129,7 +103,12 @@ public class S3DataStore implements DataStore {
       return false;
     }
     StoredFile storedFile = getStoredFile(filePath);
-    return blobStore.blobExists(storedFile.getBucket(), storedFile.getFilePath());
+    try {
+      operatorFactory.apply(storedFile.getBucket()).stat(storedFile.getFilePath());
+      return true;
+    } catch (OpenDALException e) {
+      return false;
+    }
   }
 
   @Override
@@ -139,8 +118,8 @@ public class S3DataStore implements DataStore {
     }
     StoredFile storedFile = getStoredFile(filePath);
     try {
-      blobStore.removeBlob(storedFile.getBucket(), storedFile.getFilePath());
-    } catch (Exception e) {
+      operatorFactory.apply(storedFile.getBucket()).delete(storedFile.getFilePath());
+    } catch (OpenDALException e) {
       LOGGER.error("Unable to delete file '{}'", filePath, e);
       throw new ReportPortalException(ErrorType.INCORRECT_REQUEST, "Unable to delete file");
     }
@@ -151,9 +130,9 @@ public class S3DataStore implements DataStore {
     try {
       filePaths.forEach(filePath -> {
         StoredFile storedFile = getStoredFile(filePath);
-        blobStore.removeBlob(storedFile.getBucket(), storedFile.getFilePath());
+        operatorFactory.apply(storedFile.getBucket()).delete(storedFile.getFilePath());
       });
-    } catch (Exception e) {
+    } catch (OpenDALException e) {
       LOGGER.error("Unable to delete files from bucket '{}'", bucketName, e);
       throw new ReportPortalException(ErrorType.INCORRECT_REQUEST, "Unable to delete files");
     }
@@ -161,10 +140,12 @@ public class S3DataStore implements DataStore {
 
   @Override
   public void deleteContainer(String bucketName) {
-    if (!featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)) {
-      blobStore.deleteContainer(bucketPrefix + bucketName + bucketPostfix);
-    } else {
-      blobStore.deleteContainer(bucketName);
+    String resolvedBucket = featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)
+        ? bucketName : bucketPrefix + bucketName + bucketPostfix;
+    try {
+      operatorFactory.apply(resolvedBucket).removeAll("");
+    } catch (OpenDALException e) {
+      LOGGER.error("Unable to delete container '{}'", resolvedBucket, e);
     }
   }
 
@@ -174,23 +155,12 @@ public class S3DataStore implements DataStore {
     }
     Path targetPath = Paths.get(filePath);
     int nameCount = targetPath.getNameCount();
-    String bucketName;
     if (nameCount > 1) {
-      bucketName = bucketPrefix + retrievePath(targetPath, 0, 1) + bucketPostfix;
+      String bucketName = bucketPrefix + retrievePath(targetPath, 0, 1) + bucketPostfix;
       return new StoredFile(bucketName, retrievePath(targetPath, 1, nameCount));
     } else {
-      bucketName = defaultBucketName;
-      return new StoredFile(bucketName, retrievePath(targetPath, 0, 1));
+      return new StoredFile(defaultBucketName, retrievePath(targetPath, 0, 1));
     }
-  }
-
-  private Location getLocationFromString(String locationString) {
-    Location location = null;
-    if (locationString != null) {
-      location = new LocationBuilder().scope(LocationScope.REGION).id(locationString).description("region")
-          .build();
-    }
-    return location;
   }
 
   private String retrievePath(Path path, int beginIndex, int endIndex) {
