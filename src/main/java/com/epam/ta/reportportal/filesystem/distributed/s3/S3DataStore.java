@@ -119,7 +119,7 @@ public class S3DataStore implements DataStore {
         throw new ReportPortalException(ErrorType.UNABLE_TO_LOAD_BINARY_DATA, e.getMessage());
       }
     }
-    LOGGER.error("Unable to find file '{}'", filePath);
+    LOGGER.error("Unable to find file '{}' in bucket '{}'", storedFile.getFilePath(), storedFile.getBucket());
     throw new ReportPortalException(ErrorType.UNABLE_TO_LOAD_BINARY_DATA, "Unable to find file");
   }
 
