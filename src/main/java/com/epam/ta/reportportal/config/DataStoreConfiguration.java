@@ -212,13 +212,41 @@ public class DataStoreConfiguration {
    * @param bucketPrefix       Prefix for bucket name
    * @param defaultBucketName  Name of default bucket to use
    * @param region             Region to store
-   * @param featureFlagHandler Instance of {@link FeatureFlagHandler} to check
-   *                           enabled features
+   * @param featureFlagHandler Instance of {@link FeatureFlagHandler} to check enabled features
    * @return {@link DataStore} object
    */
   @Bean
   @ConditionalOnProperty(name = "datastore.type", havingValue = "minio")
   public DataStore minioDataStore(@Autowired BlobStore blobStore,
+      @Value("${datastore.bucketPrefix}") String bucketPrefix,
+      @Value("${datastore.bucketPostfix}") String bucketPostfix,
+      @Value("${datastore.defaultBucketName}") String defaultBucketName,
+      @Value("${datastore.region}") String region, FeatureFlagHandler featureFlagHandler) {
+    return new S3DataStore(
+        blobStore, bucketPrefix, bucketPostfix, defaultBucketName, region, featureFlagHandler);
+  }
+
+  @Bean
+  @ConditionalOnProperty(name = "datastore.type", havingValue = "seaweedfs")
+  public BlobStore seaweedFsBlobStore(@Value("${datastore.accessKey}") String accessKey,
+      @Value("${datastore.secretKey}") String secretKey,
+      @Value("${datastore.endpoint}") String endpoint,
+      @Value("${datastore.region}") String region) {
+
+    Properties props = new Properties();
+    props.setProperty(S3Constants.PROPERTY_S3_VIRTUAL_HOST_BUCKETS, "false");
+    BlobStoreContext blobStoreContext = ContextBuilder.newBuilder("aws-s3")
+        .endpoint(endpoint)
+        .credentials(accessKey, secretKey)
+        .modules(ImmutableSet.of(new CustomBucketToRegionModule(region)))
+        .overrides(props)
+        .buildView(BlobStoreContext.class);
+    return blobStoreContext.getBlobStore();
+  }
+
+  @Bean
+  @ConditionalOnProperty(name = "datastore.type", havingValue = "seaweedfs")
+  public DataStore seaweedFsDataStore(@Autowired BlobStore blobStore,
       @Value("${datastore.bucketPrefix}") String bucketPrefix,
       @Value("${datastore.bucketPostfix}") String bucketPostfix,
       @Value("${datastore.defaultBucketName}") String defaultBucketName,
