@@ -284,7 +284,7 @@ public class DataStoreConfiguration {
       @Value("${datastore.defaultBucketName}") String defaultBucketName,
       @Value("${datastore.region}") String region, FeatureFlagHandler featureFlagHandler) {
     return new S3DataStore(
-        blobStore, bucketPrefix, bucketPostfix, defaultBucketName, region, featureFlagHandler);
+        blobStore, bucketPrefix, bucketPostfix, defaultBucketName, region, featureFlagHandler, true);
   }
 
   /**
