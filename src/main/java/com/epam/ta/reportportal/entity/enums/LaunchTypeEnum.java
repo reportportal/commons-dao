@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 EPAM Systems
+ * Copyright 2026 EPAM Systems
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,12 @@
  * limitations under the License.
  */
 
-package com.epam.ta.reportportal.dao;
-
-import com.epam.ta.reportportal.entity.statistics.StatisticsField;
-import java.util.Optional;
+package com.epam.ta.reportportal.entity.enums;
 
 /**
- * @author <a href="mailto:ihar_kahadouski@epam.com">Ihar Kahadouski</a>
+ * @author Pavel Bortnik
  */
-public interface StatisticsFieldRepository extends ReportPortalRepository<StatisticsField, Long> {
-
-  void deleteByName(String name);
-
-  /**
-   * Finds statistics field by name.
-   *
-   * @param name field name
-   * @return optional statistics field
-   */
-  Optional<StatisticsField> findByName(String name);
+public enum LaunchTypeEnum {
+  AUTOMATION,
+  AGENTIC
 }

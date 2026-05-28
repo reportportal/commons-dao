@@ -25,6 +25,7 @@ public final class LaunchCriteriaConstant {
 
   public static final String CRITERIA_LAUNCH_UUID = "uuid";
   public static final String CRITERIA_LAUNCH_MODE = "mode";
+  public static final String CRITERIA_LAUNCH_TYPE = "launchType";
   public static final String CRITERIA_LAUNCH_STATUS = "status";
   public static final String CRITERIA_LAUNCH_NUMBER = "number";
 

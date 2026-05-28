@@ -9,6 +9,7 @@ import com.epam.ta.reportportal.jooq.Indexes;
 import com.epam.ta.reportportal.jooq.JPublic;
 import com.epam.ta.reportportal.jooq.Keys;
 import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
+import com.epam.ta.reportportal.jooq.enums.JLaunchTypeEnum;
 import com.epam.ta.reportportal.jooq.enums.JRetentionPolicyEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.tables.JItemAttribute.JItemAttributePath;
@@ -149,6 +150,11 @@ public class JLaunch extends TableImpl<JLaunchRecord> {
      * The column <code>public.launch.retention_policy</code>.
      */
     public final TableField<JLaunchRecord, JRetentionPolicyEnum> RETENTION_POLICY = createField(DSL.name("retention_policy"), SQLDataType.VARCHAR.nullable(false).defaultValue(DSL.field(DSL.raw("'REGULAR'::retention_policy_enum"), SQLDataType.VARCHAR)).asEnumDataType(JRetentionPolicyEnum.class), this, "");
+
+    /**
+     * The column <code>public.launch.launch_type</code>.
+     */
+    public final TableField<JLaunchRecord, JLaunchTypeEnum> LAUNCH_TYPE = createField(DSL.name("launch_type"), SQLDataType.VARCHAR.nullable(false).defaultValue(DSL.field(DSL.raw("'AUTOMATION'::launch_type_enum"), SQLDataType.VARCHAR)).asEnumDataType(JLaunchTypeEnum.class), this, "");
 
     private JLaunch(Name alias, Table<JLaunchRecord> aliased) {
         this(alias, aliased, (Field<?>[]) null, null);

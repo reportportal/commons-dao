@@ -57,6 +57,7 @@ import static com.epam.ta.reportportal.commons.querygen.constant.ItemAttributeCo
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.CRITERIA_LAUNCH_MODE;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.CRITERIA_LAUNCH_NUMBER;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.CRITERIA_LAUNCH_STATUS;
+import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.CRITERIA_LAUNCH_TYPE;
 import static com.epam.ta.reportportal.commons.querygen.constant.LaunchCriteriaConstant.CRITERIA_LAUNCH_UUID;
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_ITEM_LAUNCH_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.LogCriteriaConstant.CRITERIA_LOG_BINARY_CONTENT;
@@ -161,6 +162,7 @@ import com.epam.ta.reportportal.entity.user.User;
 import com.epam.ta.reportportal.entity.widget.Widget;
 import com.epam.ta.reportportal.jooq.enums.JIntegrationGroupEnum;
 import com.epam.ta.reportportal.jooq.enums.JLaunchModeEnum;
+import com.epam.ta.reportportal.jooq.enums.JLaunchTypeEnum;
 import com.epam.ta.reportportal.jooq.enums.JStatusEnum;
 import com.epam.ta.reportportal.jooq.enums.JTestItemTypeEnum;
 import com.google.common.collect.Lists;
@@ -439,6 +441,8 @@ public enum FilterTarget {
           Timestamp.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_LAUNCH_MODE, LAUNCH.MODE,
           JLaunchModeEnum.class).get(),
+      new CriteriaHolderBuilder().newBuilder(CRITERIA_LAUNCH_TYPE, LAUNCH.LAUNCH_TYPE,
+          JLaunchTypeEnum.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_LAUNCH_STATUS, LAUNCH.STATUS,
           JStatusEnum.class).get(),
       new CriteriaHolderBuilder().newBuilder(CRITERIA_HAS_RETRIES, LAUNCH.HAS_RETRIES,
@@ -545,6 +549,7 @@ public enum FilterTarget {
           LAUNCH.RERUN,
           LAUNCH.APPROXIMATE_DURATION,
           LAUNCH.RETENTION_POLICY,
+          LAUNCH.LAUNCH_TYPE,
           STATISTICS.S_COUNTER,
           STATISTICS_FIELD.NAME,
           USERS.ID,
@@ -583,7 +588,7 @@ public enum FilterTarget {
           new CriteriaHolderBuilder().newBuilder(CRITERIA_UNIQUE_ID, TEST_ITEM.UNIQUE_ID,
               String.class).get(),
           new CriteriaHolderBuilder().newBuilder(CRITERIA_UUID, TEST_ITEM.UUID, String.class).get(),
-          new CriteriaHolderBuilder().newBuilder(CRITERIA_TEST_CASE_ID, TEST_ITEM.TEST_CASE_ID,
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_TEST_CASE_ID, TEST_ITEM.TEST_CASE_HASH,
               String.class).get(),
           new CriteriaHolderBuilder().newBuilder(CRITERIA_TEST_CASE_HASH, TEST_ITEM.TEST_CASE_HASH,
               Integer.class).get(),
@@ -1347,8 +1352,10 @@ public enum FilterTarget {
       Arrays.asList(
           new CriteriaHolderBuilder().newBuilder(CRITERIA_ID, FILTER.ID, Long.class).get(),
           new CriteriaHolderBuilder().newBuilder(CRITERIA_NAME, FILTER.NAME, String.class).get(),
-          new CriteriaHolderBuilder().newBuilder(CRITERIA_LOCKED, OWNED_ENTITY.LOCKED, Boolean.class)
-              .withAggregateCriteria(DSL.max(DSL.cast(OWNED_ENTITY.LOCKED, Integer.class)).toString())
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_LOCKED, OWNED_ENTITY.LOCKED,
+                  Boolean.class)
+              .withAggregateCriteria(
+                  DSL.max(DSL.cast(OWNED_ENTITY.LOCKED, Integer.class)).toString())
               .get(),
           new CriteriaHolderBuilder().newBuilder(CRITERIA_PROJECT_ID, OWNED_ENTITY.PROJECT_ID,
                   Long.class)

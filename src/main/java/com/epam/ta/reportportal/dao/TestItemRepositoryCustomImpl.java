@@ -881,8 +881,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
   }
 
   /**
-   * {@link Log} entities are searched from the whole tree under {@link TestItem} that matched to the provided
-   * `launchId` and `autoAnalyzed` conditions
+   * {@link Log} entities are searched from the whole tree under {@link TestItem} that matched to
+   * the provided `launchId` and `autoAnalyzed` conditions
    */
   @Override
   public List<Long> selectIdsByAnalyzedWithLevelGteExcludingIssueTypes(boolean autoAnalyzed,
@@ -911,13 +911,18 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
             .andNot(outerItemTable.HAS_CHILDREN)
             .and(issueCondition)
             .and(DSL.exists(DSL.selectOne()
-                .from(nestedItemTable)
-                .join(LOG)
-                .on(nestedItemTable.ITEM_ID.eq(LOG.ITEM_ID))
-                .where(nestedItemTable.LAUNCH_ID.eq(launchId))
-                .andNot(nestedItemTable.HAS_STATS)
-                .and(LOG.LOG_LEVEL.greaterOrEqual(logLevel))
-                .and(DSL.sql(outerItemTable.PATH + " @> " + nestedItemTable.PATH))))
+                    .from(nestedItemTable)
+                    .join(LOG)
+                    .on(nestedItemTable.ITEM_ID.eq(LOG.ITEM_ID))
+                    .where(nestedItemTable.LAUNCH_ID.eq(launchId))
+                    .andNot(nestedItemTable.HAS_STATS)
+                    .and(LOG.LOG_LEVEL.greaterOrEqual(logLevel))
+                    .and(nestedItemTable.PATH.cast(String.class)
+                        .eq(outerItemTable.PATH.cast(String.class))
+                        .or(nestedItemTable.PATH.cast(String.class)
+                            .like(outerItemTable.PATH.cast(String.class).concat(".%"))))
+                )
+            )
             .unionAll(DSL.selectDistinct(TEST_ITEM.ITEM_ID.as(ID))
                 .from(TEST_ITEM)
                 .join(TEST_ITEM_RESULTS)
@@ -1043,7 +1048,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
     return dsl.selectDistinct(TEST_ITEM.ITEM_ID)
         .from(TEST_ITEM)
         .join(child)
-        .on(TEST_ITEM.PATH + " @> " + child.PATH)
+        .on(child.PATH.cast(String.class)
+            .like(TEST_ITEM.PATH.cast(String.class).concat(".%")))
         .and(TEST_ITEM.ITEM_ID.notEqual(child.ITEM_ID))
         .join(LOG)
         .on(child.ITEM_ID.eq(LOG.ITEM_ID))
@@ -1063,7 +1069,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
     return dsl.selectDistinct(LOG.ID)
         .from(TEST_ITEM)
         .join(child)
-        .on(TEST_ITEM.PATH + " @> " + child.PATH)
+        .on(child.PATH.cast(String.class)
+            .like(TEST_ITEM.PATH.cast(String.class).concat(".%")))
         .and(TEST_ITEM.ITEM_ID.notEqual(child.ITEM_ID))
         .join(LOG)
         .on(child.ITEM_ID.eq(LOG.ITEM_ID))
@@ -1081,7 +1088,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
     return dsl.selectDistinct(TEST_ITEM.ITEM_ID)
         .from(TEST_ITEM)
         .join(child)
-        .on(TEST_ITEM.PATH + " @> " + child.PATH)
+        .on(child.PATH.cast(String.class)
+            .like(TEST_ITEM.PATH.cast(String.class).concat(".%")))
         .and(TEST_ITEM.ITEM_ID.notEqual(child.ITEM_ID))
         .join(LOG)
         .on(child.ITEM_ID.eq(LOG.ITEM_ID))
@@ -1151,8 +1159,13 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
                     .join(ATTACHMENT)
                     .on(LOG.ATTACHMENT_ID.eq(ATTACHMENT.ID))
                     .where(nested.HAS_STATS.isFalse()
-                        .and(DSL.sql(fieldName(NESTED, TEST_ITEM.PATH.getName()) + " <@ cast(? AS LTREE)",
-                            TEST_ITEM.PATH))))
+                        .and(fieldName(NESTED, TEST_ITEM.PATH.getName()).cast(String.class)
+                            .eq(TEST_ITEM.PATH.cast(String.class))
+                            .or(fieldName(NESTED, TEST_ITEM.PATH.getName()).cast(String.class)
+                                .like(TEST_ITEM.PATH.cast(String.class).concat(".%")))
+                        )
+                    )
+                )
                 .as(ATTACHMENTS_COUNT)
         )
         .from(TEST_ITEM)

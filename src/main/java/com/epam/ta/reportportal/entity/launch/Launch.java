@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.entity.launch;
 import com.epam.ta.reportportal.dao.converters.JpaInstantConverter;
 import com.epam.ta.reportportal.entity.ItemAttribute;
 import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
+import com.epam.ta.reportportal.entity.enums.LaunchTypeEnum;
 import com.epam.ta.reportportal.entity.enums.RetentionPolicyEnum;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.log.Log;
@@ -44,10 +45,10 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import lombok.Getter;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.JdbcType;
-import org.hibernate.annotations.Type;
 
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -57,6 +58,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
  * @author Pavel Bortnik
  */
 
+@Getter
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "launch", schema = "public", uniqueConstraints = {
@@ -122,6 +124,11 @@ public class Launch implements Serializable {
   @JdbcType(PostgreSQLEnumJdbcType.class)
   private RetentionPolicyEnum retentionPolicy = RetentionPolicyEnum.REGULAR;
 
+  @Column(name = "launch_type", nullable = false)
+  @Enumerated(EnumType.STRING)
+  @JdbcType(PostgreSQLEnumJdbcType.class)
+  private LaunchTypeEnum launchType = LaunchTypeEnum.AUTOMATION;
+
   @OneToMany(mappedBy = "launch", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
   @Fetch(FetchMode.JOIN)
   private Set<ItemAttribute> attributes = Sets.newHashSet();
@@ -144,157 +151,85 @@ public class Launch implements Serializable {
     this.id = id;
   }
 
-  public Set<ItemAttribute> getAttributes() {
-    return attributes;
-  }
-
   public void setAttributes(Set<ItemAttribute> tags) {
     this.attributes.clear();
     this.attributes.addAll(tags);
-  }
-
-  public Long getId() {
-    return id;
   }
 
   public void setId(Long id) {
     this.id = id;
   }
 
-  public String getUuid() {
-    return uuid;
-  }
-
   public void setUuid(String uuid) {
     this.uuid = uuid;
-  }
-
-  public Long getProjectId() {
-    return projectId;
   }
 
   public void setProjectId(Long projectId) {
     this.projectId = projectId;
   }
 
-  public Long getUserId() {
-    return userId;
-  }
-
   public void setUserId(Long userId) {
     this.userId = userId;
-  }
-
-  public String getName() {
-    return name;
   }
 
   public void setName(String name) {
     this.name = name;
   }
 
-  public boolean isRerun() {
-    return rerun;
-  }
-
   public void setRerun(boolean rerun) {
     this.rerun = rerun;
-  }
-
-  public String getDescription() {
-    return description;
   }
 
   public void setDescription(String description) {
     this.description = description;
   }
 
-  public Instant getStartTime() {
-    return startTime;
-  }
-
   public void setStartTime(Instant startTime) {
     this.startTime = startTime;
-  }
-
-  public Set<Statistics> getStatistics() {
-    return statistics;
   }
 
   public void setStatistics(Set<Statistics> statistics) {
     this.statistics = statistics;
   }
 
-  public Instant getEndTime() {
-    return endTime;
-  }
-
   public void setEndTime(Instant endTime) {
     this.endTime = endTime;
-  }
-
-  public Long getNumber() {
-    return number;
   }
 
   public void setNumber(Long number) {
     this.number = number;
   }
 
-  public boolean isHasRetries() {
-    return hasRetries;
-  }
-
   public void setHasRetries(boolean hasRetries) {
     this.hasRetries = hasRetries;
-  }
-
-  public Instant getLastModified() {
-    return lastModified;
   }
 
   public void setLastModified(Instant lastModified) {
     this.lastModified = lastModified;
   }
 
-  public LaunchModeEnum getMode() {
-    return mode;
-  }
-
   public void setMode(LaunchModeEnum mode) {
     this.mode = mode;
-  }
-
-  public StatusEnum getStatus() {
-    return status;
   }
 
   public void setStatus(StatusEnum status) {
     this.status = status;
   }
 
-  public Set<Log> getLogs() {
-    return logs;
-  }
-
   public void setLogs(Set<Log> logs) {
     this.logs = logs;
-  }
-
-  public double getApproximateDuration() {
-    return approximateDuration;
   }
 
   public void setApproximateDuration(double approximateDuration) {
     this.approximateDuration = approximateDuration;
   }
 
-  public RetentionPolicyEnum getRetentionPolicy() {
-    return retentionPolicy;
-  }
-
   public void setRetentionPolicy(RetentionPolicyEnum retentionPolicy) {
     this.retentionPolicy = retentionPolicy;
+  }
+
+  public void setLaunchType(LaunchTypeEnum launchType) {
+    this.launchType = launchType;
   }
 
   @Override
@@ -312,13 +247,13 @@ public class Launch implements Serializable {
         name, launch.name) && Objects.equals(description, launch.description) && Objects.equals(
         startTime, launch.startTime) && Objects.equals(endTime, launch.endTime) && Objects.equals(
         number, launch.number) && mode == launch.mode && status == launch.status
-        && retentionPolicy == launch.retentionPolicy;
+        && retentionPolicy == launch.retentionPolicy && launchType == launch.launchType;
   }
 
   @Override
   public int hashCode() {
     return Objects.hash(uuid, projectId, name, description, startTime, endTime, number, hasRetries,
-        rerun, mode, status, retentionPolicy
+        rerun, mode, status, retentionPolicy, launchType
     );
   }
 
@@ -343,6 +278,7 @@ public class Launch implements Serializable {
     sb.append(", statistics=").append(statistics);
     sb.append(", approximateDuration=").append(approximateDuration);
     sb.append(", retentionPolicy=").append(retentionPolicy);
+    sb.append(", launchType=").append(launchType);
     sb.append('}');
     return sb.toString();
   }
