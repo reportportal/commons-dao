@@ -1,0 +1,1 @@
+CREATE INDEX item_idx ON item_project(item_id);

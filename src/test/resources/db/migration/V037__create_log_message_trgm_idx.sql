@@ -1,0 +1,1 @@
+CREATE INDEX log_message_trgm_idx ON log USING gin (log_message gin_trgm_ops);

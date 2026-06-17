@@ -160,6 +160,10 @@ public class DataStoreConfiguration {
       @Value("${datastore.bucketPrefix}") String bucketPrefix,
       @Value("${datastore.bucketPostfix}") String bucketPostfix,
       @Value("${datastore.defaultBucketName}") String defaultBucketName) {
+    // Local jclouds blob store maps containers to subdirectories; missing rp-bucket breaks plugin loading.
+    if (!blobStore.containerExists(defaultBucketName)) {
+      blobStore.createContainerInLocation(null, defaultBucketName);
+    }
     return new LocalDataStore(
         blobStore, featureFlagHandler, bucketPrefix, bucketPostfix, defaultBucketName);
   }

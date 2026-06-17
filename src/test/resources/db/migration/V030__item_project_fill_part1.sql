@@ -1,0 +1,1 @@
+INSERT INTO item_project(item_id, project_id) SELECT ti.item_id, launch.project_id FROM launch JOIN test_item ti ON launch.id = ti.launch_id;

@@ -106,6 +106,14 @@ public interface LogRepositoryCustom extends FilterableRepository<Log> {
   List<Log> findAllUnderTestItemByLaunchIdAndTestItemIdsWithLimit(Long launchId, List<Long> itemIds,
       int limit);
 
+  /**
+   * @param launchId {@link} ID of the {@link Launch} to search {@link Log} under
+   * @param itemIds  {@link List} of the {@link Log#getTestItem()} IDs
+   * @return {@link List} of ERROR and FATAL {@link Log} under items (no limit), ordered by log time
+   */
+  List<Log> findErrorFatalLogsUnderTestItemByLaunchIdAndTestItemIds(Long launchId,
+      List<Long> itemIds);
+
   List<Long> findIdsByFilter(Queryable filter);
 
   List<Long> findIdsByTestItemId(Long testItemId);

@@ -56,6 +56,7 @@ import com.epam.ta.reportportal.commons.querygen.Queryable;
 import com.epam.ta.reportportal.dao.constant.LogRepositoryConstants;
 import com.epam.ta.reportportal.dao.util.QueryUtils;
 import com.epam.ta.reportportal.dao.util.TimestampUtils;
+import com.epam.ta.reportportal.entity.enums.LogLevel;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.NestedItem;
 import com.epam.ta.reportportal.entity.item.NestedItemPage;
@@ -204,6 +205,16 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
         .fetch()
         .map(r -> LOG_UNDER_MAPPER.apply(r, ATTACHMENT_MAPPER));
 
+  }
+
+  @Override
+  public List<Log> findErrorFatalLogsUnderTestItemByLaunchIdAndTestItemIds(Long launchId,
+      List<Long> itemIds) {
+    return buildLogsUnderItemsQuery(launchId, itemIds, true)
+        .and(LOG.LOG_LEVEL.in(LogLevel.ERROR_INT, LogLevel.FATAL_INT))
+        .orderBy(LOG.LOG_TIME.asc())
+        .fetch()
+        .map(r -> LOG_UNDER_MAPPER.apply(r, ATTACHMENT_MAPPER));
   }
 
   @Override

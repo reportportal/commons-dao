@@ -102,6 +102,7 @@ class LocalDataStoreTest {
     when(mockBlob.getPayload()).thenReturn(mockPayload);
 
     when(featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)).thenReturn(true);
+    when(blobStore.containerExists(DEFAULT_BUCKET_NAME)).thenReturn(true);
     when(blobStore.getBlob(DEFAULT_BUCKET_NAME, FILE_PATH)).thenReturn(mockBlob);
     InputStream loaded = localDataStore.load(FILE_PATH);
 
@@ -152,6 +153,7 @@ class LocalDataStoreTest {
     when(mockBlob.getPayload()).thenReturn(mockPayload);
 
     when(featureFlagHandler.isEnabled(FeatureFlag.SINGLE_BUCKET)).thenReturn(false);
+    when(blobStore.containerExists(BUCKET_PREFIX + MULTI_BUCKET_NAME + BUCKET_POSTFIX)).thenReturn(true);
     when(blobStore.getBlob(BUCKET_PREFIX + MULTI_BUCKET_NAME + BUCKET_POSTFIX,
         FILE_PATH
     )).thenReturn(mockBlob);

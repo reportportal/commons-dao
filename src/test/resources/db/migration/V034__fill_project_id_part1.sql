@@ -1,0 +1,1 @@
+UPDATE log SET project_id = (SELECT project_id FROM item_project WHERE item_project.item_id=log.item_id LIMIT 1);
