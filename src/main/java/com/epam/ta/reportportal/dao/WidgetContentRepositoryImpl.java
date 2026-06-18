@@ -157,6 +157,9 @@ import com.epam.ta.reportportal.entity.widget.content.ChartStatisticsContent;
 import com.epam.ta.reportportal.entity.widget.content.CriteriaHistoryItem;
 import com.epam.ta.reportportal.entity.widget.content.CumulativeTrendChartEntry;
 import com.epam.ta.reportportal.entity.widget.content.FlakyCasesTableContent;
+import com.epam.ta.reportportal.entity.widget.content.TestStabilityFlakinessContent;
+import com.epam.ta.reportportal.dao.util.TestStabilityFlakinessAggregator;
+import com.epam.ta.reportportal.dao.util.TestStabilityFlakinessClassifier;
 import com.epam.ta.reportportal.entity.widget.content.LaunchesDurationContent;
 import com.epam.ta.reportportal.entity.widget.content.LaunchesTableContent;
 import com.epam.ta.reportportal.entity.widget.content.MostTimeConsumingTestCasesContent;
@@ -176,13 +179,18 @@ import com.epam.ta.reportportal.jooq.tables.JItemAttribute;
 import com.epam.ta.reportportal.util.WidgetSortUtils;
 import com.google.common.collect.Lists;
 import jakarta.annotation.Nullable;
+import java.time.Instant;
+import java.util.ArrayList;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -190,6 +198,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.Condition;
+import org.jooq.impl.DSL;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.JoinType;
@@ -208,7 +217,6 @@ import org.jooq.SelectQuery;
 import org.jooq.SelectSeekStepN;
 import org.jooq.SortOrder;
 import org.jooq.Table;
-import org.jooq.impl.DSL;
 import org.jooq.util.postgres.PostgresDSL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -262,6 +270,23 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
    */
   private Condition itemTypeStepCondition(boolean includeMethods) {
     List<JTestItemTypeEnum> itemTypes = Lists.newArrayList(JTestItemTypeEnum.STEP);
+    if (includeMethods) {
+      itemTypes.addAll(HAS_METHOD_OR_CLASS);
+    }
+    return TEST_ITEM.TYPE.in(itemTypes);
+  }
+
+  /**
+   * Leaf types included in stability raw executions. Launch statistics totals usually include leaf
+   * {@code TEST}/{@code SCENARIO} rows as well as {@code STEP}; including them avoids undercounting
+   * vs the Launches page when suites use those types as leaves.
+   */
+  private Condition stabilityLeafItemTypeCondition(boolean includeMethods) {
+    List<JTestItemTypeEnum> itemTypes = Lists.newArrayList(
+        JTestItemTypeEnum.STEP,
+        JTestItemTypeEnum.TEST,
+        JTestItemTypeEnum.SCENARIO
+    );
     if (includeMethods) {
       itemTypes.addAll(HAS_METHOD_OR_CLASS);
     }
@@ -421,6 +446,226 @@ public class WidgetContentRepositoryImpl implements WidgetContentRepository {
             .orderBy(fieldName(FLAKY_COUNT).desc(), fieldName(TOTAL).asc(), fieldName(UNIQUE_ID))
             .limit(FLAKY_CASES_LIMIT)
             .fetch());
+  }
+
+  @Override
+  public List<TestStabilityFlakinessContent> testStabilityFlakinessStatistics(Filter filter,
+      boolean includeMethods, Integer launchLimit) {
+    Sort launchSort = Sort.by(Sort.Direction.DESC, CRITERIA_START_TIME);
+    List<TestStabilityFlakinessAggregator.TestExecutionRow> list =
+        testStabilityRawExecutionRows(filter, launchSort, includeMethods, launchLimit, true);
+    return TestStabilityFlakinessAggregator.aggregateFlakyOnly(list);
+  }
+
+  @Override
+  public List<TestStabilityFlakinessAggregator.TestExecutionRow> testStabilityRawExecutionRows(
+      Filter filter, Sort launchSort, boolean includeMethods, Integer instancesPerLaunchName) {
+    return testStabilityRawExecutionRows(filter, launchSort, includeMethods, instancesPerLaunchName,
+        true);
+  }
+
+  @Override
+  public List<TestStabilityFlakinessAggregator.TestExecutionRow> testStabilityRawExecutionRows(
+      Filter filter, Sort launchSort, boolean includeMethods, Integer instancesPerLaunchName,
+      boolean latestLaunchesOnly) {
+    Sort sortToUse =
+        launchSort != null ? launchSort : Sort.by(Sort.Direction.DESC, CRITERIA_START_TIME);
+    int perName = instancesPerLaunchName != null && instancesPerLaunchName > 0
+        ? instancesPerLaunchName
+        : TestStabilityFlakinessClassifier.DEFAULT_EXECUTIONS_PER_LAUNCH_WINDOW;
+
+    Table<? extends Record> filteredLaunches = latestLaunchesOnly
+        ? QueryUtils.createQueryBuilderWithLatestLaunchesOption(filter, sortToUse, true)
+            .with(sortToUse)
+            .build()
+            .asTable(LAUNCHES)
+        : QueryBuilder.newBuilder(filter, collectJoinFields(filter, sortToUse)).with(sortToUse)
+            .build()
+            .asTable(LAUNCHES);
+
+    Field<Long> filteredLaunchId = fieldName(filteredLaunches.getName(), ID).cast(Long.class);
+
+    Condition launchScopeCondition = DSL.trueCondition();
+    Table<?> launchJoinTable = filteredLaunches;
+    Field<Long> joinLaunchId = filteredLaunchId;
+
+    if (!latestLaunchesOnly) {
+      String scopedLaunchesTable = "stability_scoped_launches";
+      Field<Integer> launchInstanceRank = DSL.rowNumber()
+          .over(DSL.partitionBy(LAUNCH.NAME).orderBy(LAUNCH.START_TIME.desc()))
+          .as("launch_instance_rn");
+
+      launchJoinTable = dsl.select(filteredLaunchId.as(LAUNCH_ID), launchInstanceRank)
+          .from(LAUNCH)
+          .join(filteredLaunches)
+          .on(LAUNCH.ID.eq(filteredLaunchId))
+          .asTable(scopedLaunchesTable);
+
+      joinLaunchId = fieldName(scopedLaunchesTable, LAUNCH_ID).cast(Long.class);
+      Field<Integer> scopedRank =
+          fieldName(scopedLaunchesTable, "launch_instance_rn").cast(Integer.class);
+      launchScopeCondition = scopedRank.le(perName);
+    }
+
+    var rows = dsl.select(LAUNCH.ID, LAUNCH.NAME, LAUNCH.NUMBER, TEST_ITEM.UNIQUE_ID, TEST_ITEM.NAME,
+            TEST_ITEM.ITEM_ID, LAUNCH.START_TIME, TEST_ITEM.START_TIME, TEST_ITEM_RESULTS.STATUS)
+        .from(LAUNCH)
+        .join(launchJoinTable)
+        .on(LAUNCH.ID.eq(joinLaunchId))
+        .join(TEST_ITEM)
+        .on(LAUNCH.ID.eq(TEST_ITEM.LAUNCH_ID))
+        .join(TEST_ITEM_RESULTS)
+        .on(TEST_ITEM.ITEM_ID.eq(TEST_ITEM_RESULTS.RESULT_ID))
+        .where(launchScopeCondition)
+        .and(stabilityLeafItemTypeCondition(includeMethods))
+        .and(TEST_ITEM.HAS_STATS.eq(Boolean.TRUE))
+        .and(TEST_ITEM.HAS_CHILDREN.eq(false))
+        .and(TEST_ITEM.RETRY_OF.isNull())
+        .and(TEST_ITEM_RESULTS.STATUS.in(JStatusEnum.PASSED,
+            JStatusEnum.FAILED,
+            JStatusEnum.SKIPPED
+        ))
+        .orderBy(LAUNCH.START_TIME.desc(), TEST_ITEM.START_TIME.desc())
+        .fetch();
+
+    List<TestStabilityFlakinessAggregator.TestExecutionRow> list = new ArrayList<>(rows.size());
+    for (var r : rows) {
+      Long launchId = r.get(LAUNCH.ID);
+      String launchName = r.get(LAUNCH.NAME);
+      Integer launchNumber = r.get(LAUNCH.NUMBER);
+      String uid = r.get(TEST_ITEM.UNIQUE_ID);
+      String name = r.get(TEST_ITEM.NAME);
+      JStatusEnum st = r.get(TEST_ITEM_RESULTS.STATUS);
+      Instant lStart = r.get(LAUNCH.START_TIME, Instant.class);
+      Instant iStart = r.get(TEST_ITEM.START_TIME, Instant.class);
+      long iid = r.get(TEST_ITEM.ITEM_ID);
+      list.add(new TestStabilityFlakinessAggregator.TestExecutionRow(launchId,
+          uid,
+          name,
+          st,
+          lStart,
+          iStart,
+          iid,
+          launchName,
+          launchNumber
+      ));
+    }
+    return list;
+  }
+
+  @Override
+  public Map<Long, Map<String, String>> testStabilityFetchItemAttributes(Collection<Long> itemIds,
+      Collection<String> attributeKeys) {
+    if (itemIds.isEmpty() || attributeKeys.isEmpty()) {
+      return Map.of();
+    }
+    Map<String, String> canonicalByUpper = attributeKeys.stream()
+        .collect(Collectors.toMap(k -> k.toUpperCase(Locale.ROOT), k -> k, (a, b) -> a));
+    List<String> upperKeys = new ArrayList<>(canonicalByUpper.keySet());
+
+    List<Long> rootItemIds = new ArrayList<>(itemIds);
+    var tiRows = dsl.select(TEST_ITEM.ITEM_ID, TEST_ITEM.LAUNCH_ID, TEST_ITEM.PATH)
+        .from(TEST_ITEM)
+        .where(TEST_ITEM.ITEM_ID.in(rootItemIds))
+        .fetch();
+
+    Map<Long, Long> itemToLaunch = new HashMap<>();
+    Set<Long> expandedItemIds = new HashSet<>(rootItemIds);
+    Map<Long, List<Long>> pathAncestorIds = new HashMap<>();
+
+    for (Record tri : tiRows) {
+      Long iid = tri.get(TEST_ITEM.ITEM_ID);
+      Long lid = tri.get(TEST_ITEM.LAUNCH_ID);
+      if (iid != null) {
+        itemToLaunch.put(iid, lid);
+      }
+      Object pathObj = tri.get(TEST_ITEM.PATH);
+      String pathStr = pathObj != null ? pathObj.toString() : null;
+      List<Long> ancestors = pathSegmentItemIds(pathStr);
+      pathAncestorIds.put(iid, ancestors);
+      expandedItemIds.addAll(ancestors);
+    }
+
+    Set<Long> launchIds = itemToLaunch.values().stream()
+        .filter(Objects::nonNull)
+        .collect(Collectors.toCollection(HashSet::new));
+
+    Map<Long, Map<String, String>> attrsByItemId = new HashMap<>();
+    Map<Long, Map<String, String>> attrsByLaunchId = new HashMap<>();
+
+    Condition attrScope = DSL.falseCondition();
+    boolean scopeHasSources = false;
+    if (!expandedItemIds.isEmpty()) {
+      attrScope = attrScope.or(ITEM_ATTRIBUTE.ITEM_ID.in(expandedItemIds));
+      scopeHasSources = true;
+    }
+    if (!launchIds.isEmpty()) {
+      attrScope = attrScope.or(ITEM_ATTRIBUTE.LAUNCH_ID.in(launchIds));
+      scopeHasSources = true;
+    }
+
+    if (scopeHasSources) {
+      var attrQuery = dsl.select(
+              ITEM_ATTRIBUTE.ITEM_ID,
+              ITEM_ATTRIBUTE.LAUNCH_ID,
+              ITEM_ATTRIBUTE.KEY,
+              ITEM_ATTRIBUTE.VALUE
+          )
+          .from(ITEM_ATTRIBUTE)
+          .where(DSL.upper(ITEM_ATTRIBUTE.KEY).in(upperKeys))
+          .and(ITEM_ATTRIBUTE.SYSTEM.isFalse())
+          .and(attrScope);
+      for (Record ar : attrQuery.fetch()) {
+        Long aid = ar.get(ITEM_ATTRIBUTE.ITEM_ID);
+        Long lid = ar.get(ITEM_ATTRIBUTE.LAUNCH_ID);
+        String dbKey = ar.get(ITEM_ATTRIBUTE.KEY);
+        String val = ar.get(ITEM_ATTRIBUTE.VALUE);
+        String canonical =
+            canonicalByUpper.getOrDefault(dbKey.toUpperCase(Locale.ROOT), dbKey);
+        if (aid != null) {
+          attrsByItemId.computeIfAbsent(aid, ignored -> new HashMap<>()).put(canonical, val);
+        } else if (lid != null) {
+          attrsByLaunchId.computeIfAbsent(lid, ignored -> new HashMap<>()).put(canonical, val);
+        }
+      }
+    }
+
+    Map<Long, Map<String, String>> out = new HashMap<>(rootItemIds.size());
+    for (Long originalItemId : rootItemIds) {
+      Long lc = itemToLaunch.get(originalItemId);
+      Map<String, String> merged = new HashMap<>();
+      if (lc != null) {
+        merged.putAll(attrsByLaunchId.getOrDefault(lc, Map.of()));
+      }
+      for (Long ancestorId : pathAncestorIds.getOrDefault(originalItemId, List.of())) {
+        merged.putAll(attrsByItemId.getOrDefault(ancestorId, Map.of()));
+      }
+      merged.putAll(attrsByItemId.getOrDefault(originalItemId, Map.of()));
+      out.put(originalItemId, merged);
+    }
+    return out;
+  }
+
+  /**
+   * Dot-separated item ids from test_item.path (ltree string form).
+   */
+  private static List<Long> pathSegmentItemIds(String pathStr) {
+    if (pathStr == null || pathStr.isBlank()) {
+      return List.of();
+    }
+    String[] parts = pathStr.trim().replace(" ", "").split("\\.");
+    List<Long> ids = new ArrayList<>();
+    for (String p : parts) {
+      if (p.isEmpty()) {
+        continue;
+      }
+      try {
+        ids.add(Long.parseLong(p));
+      } catch (NumberFormatException ignored) {
+        // ignore non-numeric segments
+      }
+    }
+    return ids;
   }
 
   @Override

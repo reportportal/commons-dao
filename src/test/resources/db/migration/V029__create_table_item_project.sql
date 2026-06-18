@@ -1,0 +1,1 @@
+CREATE TABLE item_project (item_id BIGINT NOT NULL, project_id BIGINT NOT NULL);

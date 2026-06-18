@@ -345,6 +345,25 @@ class LogRepositoryTest extends BaseTest {
   }
 
   @Test
+  void findErrorFatalLogsUnderTestItemByLaunchIdAndTestItemIds() {
+    List<Long> itemIds = Arrays.asList(1L, 2L, 3L);
+    List<Log> logs = logRepository.findErrorFatalLogsUnderTestItemByLaunchIdAndTestItemIds(1L,
+        itemIds);
+
+    assertTrue(logs != null && !logs.isEmpty(), "Logs should be not null or empty");
+    logs.forEach(log -> {
+      assertTrue(log.getLogLevel() >= LogLevel.ERROR.toInt(), "Only ERROR/FATAL logs expected");
+      assertTrue(itemIds.contains(log.getTestItem().getItemId()), "Incorrect item id");
+    });
+    for (int i = 1; i < logs.size(); i++) {
+      assertTrue(
+          !logs.get(i).getLogTime().isBefore(logs.get(i - 1).getLogTime()),
+          "Logs should be ordered by log time ascending"
+      );
+    }
+  }
+
+  @Test
   void findNestedItemsTest() {
 
     Filter filter = Filter.builder()

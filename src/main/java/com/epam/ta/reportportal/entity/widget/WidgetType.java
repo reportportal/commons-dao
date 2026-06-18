@@ -49,7 +49,11 @@ public enum WidgetType {
   TOP_PATTERN_TEMPLATES("topPatternTemplates", true, false),
   COMPONENT_HEALTH_CHECK("componentHealthCheck", true, false),
   COMPONENT_HEALTH_CHECK_TABLE("componentHealthCheckTable", true, false),
-  TEST_CASE_SEARCH("testCaseSearch", false, false);
+  TEST_CASE_SEARCH("testCaseSearch", false, false),
+  /**
+   * CCAAS test stability: flaky tests (score ≥ 0.4) over last N filtered launches.
+   */
+  TEST_STABILITY_FLAKINESS("testStabilityFlakiness", true, false);
 
   private final String type;
 

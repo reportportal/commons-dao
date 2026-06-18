@@ -1,0 +1,1 @@
+ALTER TABLE log ALTER COLUMN project_id SET NOT NULL;

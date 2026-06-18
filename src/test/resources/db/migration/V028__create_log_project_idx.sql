@@ -1,0 +1,1 @@
+CREATE INDEX log_project_idx ON log (project_id);

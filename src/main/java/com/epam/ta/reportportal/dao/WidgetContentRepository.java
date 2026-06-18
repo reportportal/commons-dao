@@ -25,6 +25,7 @@ import com.epam.ta.reportportal.entity.widget.content.ChartStatisticsContent;
 import com.epam.ta.reportportal.entity.widget.content.CriteriaHistoryItem;
 import com.epam.ta.reportportal.entity.widget.content.CumulativeTrendChartEntry;
 import com.epam.ta.reportportal.entity.widget.content.FlakyCasesTableContent;
+import com.epam.ta.reportportal.entity.widget.content.TestStabilityFlakinessContent;
 import com.epam.ta.reportportal.entity.widget.content.LaunchesDurationContent;
 import com.epam.ta.reportportal.entity.widget.content.LaunchesTableContent;
 import com.epam.ta.reportportal.entity.widget.content.MostTimeConsumingTestCasesContent;
@@ -34,10 +35,12 @@ import com.epam.ta.reportportal.entity.widget.content.PassingRateStatisticsResul
 import com.epam.ta.reportportal.entity.widget.content.ProductStatusStatisticsContent;
 import com.epam.ta.reportportal.entity.widget.content.TopPatternTemplatesContent;
 import com.epam.ta.reportportal.entity.widget.content.UniqueBugContent;
+import com.epam.ta.reportportal.dao.util.TestStabilityFlakinessAggregator;
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.ComponentHealthCheckContent;
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableContent;
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableGetParams;
 import com.epam.ta.reportportal.entity.widget.content.healthcheck.HealthCheckTableInitParams;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import jakarta.annotation.Nullable;
@@ -230,6 +233,41 @@ public interface WidgetContentRepository {
    */
   List<FlakyCasesTableContent> flakyCasesStatistics(Filter filter, boolean includeMethods,
       int limit);
+
+  /**
+   * CCAAS test stability (flakiness): mixed outcomes with flakiness score ≥ 0.4 over the last
+   * {@code launchLimit} launches matching the filter (deprecated path).
+   */
+  List<TestStabilityFlakinessContent> testStabilityFlakinessStatistics(Filter filter,
+      boolean includeMethods, Integer launchLimit);
+
+  /**
+   * Raw step executions for stability classification.
+   *
+   * @param instancesPerLaunchName last N launch instances per distinct {@code launch.name} (widget
+   *                               “Last N executions per launch”); when {@code null}, defaults to
+   *                               {@link TestStabilityFlakinessClassifier#DEFAULT_EXECUTIONS_PER_LAUNCH_WINDOW}.
+   *                               Classifier applies the same N as executions per logical launch when
+   *                               scoring; this scope ensures every pipeline name contributes enough
+   *                               history instead of relying on a flat global launch cap.
+   */
+  List<TestStabilityFlakinessAggregator.TestExecutionRow> testStabilityRawExecutionRows(Filter filter,
+      Sort launchSort, boolean includeMethods, Integer instancesPerLaunchName);
+
+  /**
+   * @param latestLaunchesOnly when {@code true}, only the latest {@code launch.id} per
+   *                           {@code launch.name} (Launches page parity); when {@code false}, last
+   *                           {@code instancesPerLaunchName} launch instances per name.
+   */
+  List<TestStabilityFlakinessAggregator.TestExecutionRow> testStabilityRawExecutionRows(Filter filter,
+      Sort launchSort, boolean includeMethods, Integer instancesPerLaunchName,
+      boolean latestLaunchesOnly);
+
+  /**
+   * Latest composite attributes resolved on concrete test-item rows.
+   */
+  Map<Long, Map<String, String>> testStabilityFetchItemAttributes(Collection<Long> itemIds,
+      Collection<String> attributeKeys);
 
   /**
    * Loading the product status statistics grouped by one or more {@link Filter}

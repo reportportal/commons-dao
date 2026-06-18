@@ -84,6 +84,10 @@ public class LocalDataStore implements DataStore {
       throw new ReportPortalException(ErrorType.UNABLE_TO_LOAD_BINARY_DATA, "Unable to find file");
     }
     StoredFile storedFile = getStoredFile(filePath);
+    if (!blobStore.containerExists(storedFile.getBucket())) {
+      LOGGER.warn("Container '{}' does not exist", storedFile.getBucket());
+      throw new ReportPortalException(ErrorType.UNABLE_TO_LOAD_BINARY_DATA, "Unable to find file");
+    }
     Blob fileBlob = blobStore.getBlob(storedFile.getBucket(), storedFile.getFilePath());
     if (fileBlob != null) {
       try {

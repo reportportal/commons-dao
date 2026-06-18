@@ -1,0 +1,1 @@
+ALTER TABLE attachment ALTER COLUMN creation_date SET NOT NULL;

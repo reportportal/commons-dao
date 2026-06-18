@@ -1,0 +1,2 @@
+INSERT INTO item_project(item_id, project_id) SELECT parent.item_id, launch.project_id FROM launch JOIN test_item ti ON launch.id = ti.launch_id
+                                                                                                   JOIN test_item parent ON ti.item_id = parent.parent_id;
