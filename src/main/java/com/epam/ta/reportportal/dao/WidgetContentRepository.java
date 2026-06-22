@@ -63,8 +63,7 @@ public interface WidgetContentRepository {
 
   /**
    * Counts interrupted test items for Overall statistics widget for launches selected by the same
-   * filter/sort/latest/limit logic as
-   * {@link #overallStatisticsContent(Filter, Sort, List, boolean, int)}.
+   * filter/sort/latest/limit logic as {@link #overallStatisticsContent(Filter, Sort, List, boolean, int)}.
    *
    * @param filter {@link Filter}
    * @param sort   {@link Sort}
@@ -75,11 +74,10 @@ public interface WidgetContentRepository {
   long overallStatisticsInterruptedCount(Filter filter, Sort sort, boolean latest, int limit);
 
   /**
-   * Loads top limit history of items sorted in descending order by provided criteria for specified
-   * launch. Criteria could be one of statistics fields. For example if criteria is
-   * 'statistics$execution$failed' and launchName is 'DefaultLaunch' that is specified in the filter
-   * and limit is 20 the result will be top 20 grouped steps by uniqueId of the whole launch history
-   * with 'DefaultLaunch' name sorted by count of steps with existed statistics of
+   * Loads top limit history of items sorted in descending order by provided criteria for specified launch. Criteria
+   * could be one of statistics fields. For example if criteria is 'statistics$execution$failed' and launchName is
+   * 'DefaultLaunch' that is specified in the filter and limit is 20 the result will be top 20 grouped steps by uniqueId
+   * of the whole launch history with 'DefaultLaunch' name sorted by count of steps with existed statistics of
    * 'statistics$execution$failed'
    *
    * @param filter         Launches filter
@@ -247,29 +245,26 @@ public interface WidgetContentRepository {
   /**
    * Loading the product status statistics grouped by one or more {@link Filter}
    *
-   * @param filterSortMapping Map of {@link Filter} as key and {@link Sort} as value to implement
-   *                          multiple filters logic with own sorting
+   * @param filterSortMapping Map of {@link Filter} as key and {@link Sort} as value to implement multiple filters logic
+   *                          with own sorting
    * @param contentFields     Custom fields for select query building
-   * @param customColumns     Map of the custom column name as key and
-   *                          {@link ItemAttribute#getKey()} as value
+   * @param customColumns     Map of the custom column name as key and {@link ItemAttribute#getKey()} as value
    * @param isLatest          Flag for retrieving only latest launches
    * @param limit             Results limit
-   * @return Map grouped by filter name with
-   * {@link com.epam.ta.reportportal.entity.filter.UserFilter#getName()} as key and list of
-   * {@link ProductStatusStatisticsContent} as value
+   * @return Map grouped by filter name with {@link com.epam.ta.reportportal.entity.filter.UserFilter#getName()} as key
+   * and list of {@link ProductStatusStatisticsContent} as value
    */
   Map<String, List<ProductStatusStatisticsContent>> productStatusGroupedByFilterStatistics(
       Map<Filter, Sort> filterSortMapping,
       List<String> contentFields, Map<String, String> customColumns, boolean isLatest, int limit);
 
   /**
-   * Loading the product status statistics grouped by
-   * {@link com.epam.ta.reportportal.entity.launch.Launch} with combined {@link Filter}
+   * Loading the product status statistics grouped by {@link com.epam.ta.reportportal.entity.launch.Launch} with
+   * combined {@link Filter}
    *
    * @param filter        {@link Filter}
    * @param contentFields Custom fields for select query building
-   * @param customColumns Map of the custom column name as key and {@link ItemAttribute#getKey()} as
-   *                      value
+   * @param customColumns Map of the custom column name as key and {@link ItemAttribute#getKey()} as value
    * @param sort          {@link Sort}
    * @param isLatest      Flag for retrieving only latest launches
    * @param limit         Results limit
@@ -290,9 +285,8 @@ public interface WidgetContentRepository {
       int limit);
 
   /**
-   * Load TOP-20 most matched {@link com.epam.ta.reportportal.entity.pattern.PatternTemplate}
-   * entities with matched items count, grouped by {@link ItemAttribute#getValue()} and
-   * {@link PatternTemplate#getName()}
+   * Load TOP-20 most matched {@link com.epam.ta.reportportal.entity.pattern.PatternTemplate} entities with matched
+   * items count, grouped by {@link ItemAttribute#getValue()} and {@link PatternTemplate#getName()}
    *
    * @param filter          {@link Filter}
    * @param sort            {@link Sort}
@@ -308,20 +302,28 @@ public interface WidgetContentRepository {
       boolean isLatest, int launchesLimit, int attributesLimit);
 
   /**
-   * Load component health check data containing items count and passing rate. Multi-level widget
-   * with {@link ItemAttribute#getKey()} on each level. Previous levels are built based on
-   * {@link ItemAttribute#getKey()}-{@link ItemAttribute#getValue()} pairs
+   * Load component health check data containing items count and passing rate. Multi-level widget with
+   * {@link ItemAttribute#getKey()} on each level. Previous levels are built based on
+   * {@link ItemAttribute#getKey()}-{@link ItemAttribute#getValue()} pairs.
+   *
+   * <p>When {@code currentLevelKey} equals
+   * {@link com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants#OWNER_LEVEL_KEY} the query groups by
+   * launch owner login (via {@code COALESCE(users.login, 'deleted_user')}). Drill-down predicates for prior owner
+   * levels are encoded directly in {@code testItemFilter} using the {@code launchOwner} search criterion — no separate
+   * out-of-band parameter is needed.
    *
    * @param launchFilter    {@link Filter} with
-   *                        {@link
-   *                        com.epam.ta.reportportal.commons.querygen.FilterTarget#LAUNCH_TARGET}
+   *                        {@link com.epam.ta.reportportal.commons.querygen.FilterTarget#LAUNCH_TARGET}
    * @param launchSort      {@link Sort} for launches query
    * @param isLatest        Flag for retrieving only latest launches
    * @param launchesLimit   launches limit
    * @param testItemFilter  {@link Filter} with
+   *                        {@link com.epam.ta.reportportal.commons.querygen.FilterTarget#TEST_ITEM_TARGET}; may include
+   *                        a {@code launchOwner} predicate for prior owner-level drill-down
+   * @param currentLevelKey {@link ItemAttribute#getKey()} for the current grouping level, or
    *                        {@link
-   *                        com.epam.ta.reportportal.commons.querygen.FilterTarget#TEST_ITEM_TARGET}
-   * @param currentLevelKey {@link ItemAttribute#getKey()} for query level select
+   *                        com.epam.ta.reportportal.dao.constant.WidgetContentRepositoryConstants#OWNER_LEVEL_KEY}
+   * @param excludeSkipped  when {@code true} exclude items with only skipped executions
    * @return {@link List} of {@link ComponentHealthCheckContent}
    */
   List<ComponentHealthCheckContent> componentHealthCheck(Filter launchFilter, Sort launchSort,
