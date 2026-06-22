@@ -82,6 +82,7 @@ import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteri
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_ISSUE_GROUP_ID;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_ISSUE_TYPE;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_ISSUE_TYPE_ID;
+import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_LAUNCH_OWNER;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_PARAMETER_KEY;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_PARAMETER_VALUE;
 import static com.epam.ta.reportportal.commons.querygen.constant.TestItemCriteriaConstant.CRITERIA_PARENT_ID;
@@ -878,7 +879,12 @@ public enum FilterTarget {
                           TEST_ITEM.ITEM_ID.eq(CLUSTERS_TEST_ITEM.ITEM_ID))
                   )
               ).withAggregateCriteria(DSL.arrayAggDistinct(CLUSTERS_TEST_ITEM.CLUSTER_ID).toString())
-              .get()
+              .get(),
+          new CriteriaHolderBuilder().newBuilder(CRITERIA_LAUNCH_OWNER,
+              USERS.LOGIN,
+              String.class,
+              List.of(JoinEntity.of(USERS, JoinType.LEFT_OUTER_JOIN, LAUNCH.USER_ID.eq(USERS.ID)))
+          ).get()
       )
   ) {
     @Override
