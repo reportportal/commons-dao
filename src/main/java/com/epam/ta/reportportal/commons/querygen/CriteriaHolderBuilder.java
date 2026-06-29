@@ -17,7 +17,10 @@
 package com.epam.ta.reportportal.commons.querygen;
 
 import com.epam.ta.reportportal.commons.querygen.query.JoinEntity;
+import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import org.jooq.Field;
 
@@ -55,6 +58,16 @@ public class CriteriaHolderBuilder implements Supplier<CriteriaHolder> {
 
   public CriteriaHolderBuilder withAggregateCriteria(String aggregateCriteria) {
     this.criteriaHolder.setAggregateCriteria(aggregateCriteria);
+    return this;
+  }
+
+  public CriteriaHolderBuilder withValueConverter(Function<String, Object> valueConverter) {
+    this.criteriaHolder.setValueConverter(valueConverter);
+    return this;
+  }
+
+  public CriteriaHolderBuilder withAllowedConditions(Condition... conditions) {
+    this.criteriaHolder.setAllowedConditions(EnumSet.copyOf(Arrays.asList(conditions)));
     return this;
   }
 

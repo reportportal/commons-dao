@@ -39,10 +39,13 @@ import java.time.Instant;
 import java.time.format.DateTimeParseException;
 import java.util.Collection;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
 import org.apache.commons.lang3.BooleanUtils;
 import org.jooq.Field;
 import org.jooq.impl.DSL;
@@ -70,6 +73,8 @@ public class CriteriaHolder {
   private String aggregateCriteria;
   private Class<?> dataType;
   private List<JoinEntity> joinChain = Lists.newArrayList();
+  private transient Function<String, Object> valueConverter;
+  private Set<Condition> allowedConditions = EnumSet.allOf(Condition.class);
 
   public CriteriaHolder() {
     // added for deserialization from DB
@@ -139,6 +144,24 @@ public class CriteriaHolder {
     return joinChain;
   }
 
+  public void setValueConverter(Function<String, Object> valueConverter) {
+    this.valueConverter = valueConverter;
+  }
+
+  public void setAllowedConditions(Set<Condition> allowedConditions) {
+    this.allowedConditions = Preconditions.checkNotNull(allowedConditions,
+        "Allowed conditions should not be null");
+  }
+
+  public void validateCondition(Condition condition, ErrorType errorType) {
+    BusinessRule.expect(allowedConditions, conditions -> conditions.contains(condition))
+        .verify(errorType,
+            formattedSupplier("Condition '{}' is not allowed for filter '{}'",
+                condition.getMarker(),
+                filterCriteria
+            ));
+  }
+
   public Object castValue(String oneValue) {
     return this.castValue(oneValue, ErrorType.INCORRECT_FILTER_PARAMETERS);
   }
@@ -154,7 +177,9 @@ public class CriteriaHolder {
    */
   public Object castValue(String oneValue, ErrorType errorType) {
     Object castedValue;
-    if (Number.class.isAssignableFrom(getDataType())) {
+    if (valueConverter != null) {
+      castedValue = valueConverter.apply(oneValue);
+    } else if (Number.class.isAssignableFrom(getDataType())) {
       /* Verify correct number */
       castedValue = parseLong(oneValue, errorType);
     } else if (Date.class.isAssignableFrom(getDataType())) {
