@@ -75,7 +75,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
-import org.jooq.CommonTableExpression;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.OrderField;
@@ -107,6 +107,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 
   private static final String PARENT_ITEM_TABLE = "parent";
   private static final String CHILD_ITEM_TABLE = "child";
+  private static final String DISTINCT_DESCENDANTS_TABLE = "distinct_descendants";
 
   private DSLContext dsl;
 
@@ -168,34 +169,40 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
   @Override
   public Map<Long, List<IndexLog>> findAllIndexUnderTestItemByLaunchIdAndTestItemIdsAndLogLevelGte(
       Long launchId, List<Long> itemIds, int logLevel) {
-    Field<Long> dItemId = DSL.field(DSL.name("descendants", "item_id"), Long.class);
-    Field<Long> dRootId = DSL.field(DSL.name("descendants", "root_id"), Long.class);
-    CommonTableExpression<?> descendants = DSL.name("descendants")
-        .fields("item_id", "root_id")
-        .as(
-            dsl.select(TEST_ITEM.ITEM_ID, TEST_ITEM.ITEM_ID)
-                .from(TEST_ITEM)
-                .where(TEST_ITEM.LAUNCH_ID.eq(launchId))
-                .and(TEST_ITEM.ITEM_ID.in(itemIds))
-                .unionAll(
-                    dsl.select(TEST_ITEM.ITEM_ID, dRootId)
-                        .from(TEST_ITEM)
-                        .join(DSL.table(DSL.name("descendants")))
-                        .on(TEST_ITEM.PARENT_ID.eq(dItemId))
-                )
-        );
+    JTestItem parentItemTable = TEST_ITEM.as(PARENT_ITEM_TABLE);
+    JTestItem childItemTable = TEST_ITEM.as(CHILD_ITEM_TABLE);
+
+    Field<Long> ddItemId = DSL.field(DSL.name(DISTINCT_DESCENDANTS_TABLE, "item_id"), Long.class);
+    Field<Long> ddRootId = DSL.field(DSL.name(DISTINCT_DESCENDANTS_TABLE, "root_id"), Long.class);
+    Table<?> distinctDescendants = dsl.selectDistinct(childItemTable.ITEM_ID, parentItemTable.ITEM_ID)
+        .on(childItemTable.ITEM_ID)
+        .from(parentItemTable)
+        .join(childItemTable)
+        .on(isSelfOrDescendant(childItemTable.PATH, parentItemTable.PATH))
+        .where(parentItemTable.LAUNCH_ID.eq(launchId))
+        .and(parentItemTable.ITEM_ID.in(itemIds))
+        .asTable(DISTINCT_DESCENDANTS_TABLE, "item_id", "root_id");
+
     return INDEX_LOG_FETCHER.apply(
-        dsl.withRecursive(descendants)
-            .selectDistinct(LOG.ID, LOG.LOG_LEVEL, LOG.LOG_MESSAGE, LOG.LOG_TIME,
-                dRootId.as(ROOT_ITEM_ID), CLUSTERS.INDEX_ID)
-            .on(LOG.ID)
-            .from(descendants)
+        dsl.select(LOG.ID, LOG.LOG_LEVEL, LOG.LOG_MESSAGE, LOG.LOG_TIME, ddRootId.as(ROOT_ITEM_ID), CLUSTERS.INDEX_ID)
+            .from(distinctDescendants)
             .join(LOG)
-            .on(LOG.ITEM_ID.eq(dItemId)
+            .on(LOG.ITEM_ID.eq(ddItemId)
                 .and(LOG.LOG_LEVEL.greaterOrEqual(logLevel)))
             .leftJoin(CLUSTERS)
             .on(LOG.CLUSTER_ID.eq(CLUSTERS.ID))
             .fetch());
+  }
+
+  /**
+   * Postgres ltree "is a descendant of, or equal to" check, backed by the GIST index on
+   * test_item.path (path_gist_idx) - equivalent to, but far cheaper than, the
+   * {@code childPath.eq(ancestorPath).or(childPath.like(ancestorPath + ".%"))} pattern that
+   * jOOQ would otherwise generate, since that pattern casts the ltree column to text and
+   * therefore can't use the GIST index at all.
+   */
+  private static Condition isSelfOrDescendant(Field<Object> childPath, Field<Object> ancestorPath) {
+    return DSL.condition("{0} <@ {1}", childPath, ancestorPath);
   }
 
   @Override
@@ -273,10 +280,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
         .join(childItemTable)
         .on(LOG.ITEM_ID.eq(childItemTable.ITEM_ID))
         .join(parentItemTable)
-        .on(childItemTable.PATH.cast(String.class).eq(parentItemTable.PATH.cast(String.class))
-            .or(childItemTable.PATH.cast(String.class)
-                .like(parentItemTable.PATH.cast(String.class).concat(".%")))
-        )
+        .on(isSelfOrDescendant(childItemTable.PATH, parentItemTable.PATH))
         .where(childItemTable.LAUNCH_ID.eq(launchId))
         .and(parentItemTable.LAUNCH_ID.eq(launchId))
         .and(parentItemTable.ITEM_ID.in(itemIds))
@@ -546,10 +550,7 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
         .join(childItemTable)
         .on(LOG.ITEM_ID.eq(childItemTable.ITEM_ID))
         .join(parentItemTable)
-        .on(childItemTable.PATH.cast(String.class).eq(parentItemTable.PATH.cast(String.class))
-            .or(childItemTable.PATH.cast(String.class)
-                .like(parentItemTable.PATH.cast(String.class).concat(".%")))
-        );
+        .on(isSelfOrDescendant(childItemTable.PATH, parentItemTable.PATH));
 
     if (includeAttachments) {
       logsSelect = logsSelect.leftJoin(ATTACHMENT).on(LOG.ATTACHMENT_ID.eq(ATTACHMENT.ID));
