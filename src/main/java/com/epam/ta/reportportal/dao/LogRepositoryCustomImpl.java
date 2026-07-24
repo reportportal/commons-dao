@@ -75,6 +75,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
+import lombok.extern.slf4j.Slf4j;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Field;
@@ -101,6 +102,7 @@ import org.springframework.stereotype.Repository;
  * @author Pavel Bortnik
  */
 @Repository
+@Slf4j
 public class LogRepositoryCustomImpl implements LogRepositoryCustom {
 
   public static final String ROOT_ITEM_ID = "root_id";
@@ -169,6 +171,11 @@ public class LogRepositoryCustomImpl implements LogRepositoryCustom {
   @Override
   public Map<Long, List<IndexLog>> findAllIndexUnderTestItemByLaunchIdAndTestItemIdsAndLogLevelGte(
       Long launchId, List<Long> itemIds, int logLevel) {
+
+    log.info("launchId = {}", launchId);
+    log.info("List<Long> itemIds = {}", itemIds);
+    log.info("logLevel = {}", logLevel);
+
     JTestItem parentItemTable = TEST_ITEM.as(PARENT_ITEM_TABLE);
     JTestItem childItemTable = TEST_ITEM.as(CHILD_ITEM_TABLE);
 

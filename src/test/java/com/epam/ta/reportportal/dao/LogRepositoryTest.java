@@ -47,6 +47,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;
 import org.jooq.Operator;
 import org.junit.jupiter.api.Assertions;
@@ -307,6 +308,53 @@ class LogRepositoryTest extends BaseTest {
         assertTrue(logIndex.getLogLevel() >= logLevel, "Unexpected log level");
       });
     });
+  }
+
+  @Sql("/db/fill/item/items-with-nested-steps.sql")
+  @Test
+  void findAllIndexUnderTestItemByLaunchIdAndTestItemIdsAndLogLevelGteDeepNestedItemsTest() {
+    int logLevel = LogLevel.ERROR.toInt();
+
+    Map<Long, List<IndexLog>> logMapping =
+        logRepository.findAllIndexUnderTestItemByLaunchIdAndTestItemIdsAndLogLevelGte(10L,
+            Collections.singletonList(130L), logLevel);
+
+    assertEquals(1, logMapping.size(),
+        "All matching logs should be grouped under the single requested root item");
+    List<IndexLog> logs = logMapping.get(130L);
+    assertNotNull(logs, "Root item 130 should be present in the mapping");
+
+    Set<Long> actualLogIds = logs.stream().map(IndexLog::getLogId).collect(Collectors.toSet());
+    // 133 belongs directly to root item 130; 62 to its child 131; 63 to item 138, nested
+    // four levels below 130 (130 -> 131 -> 132 -> 138) - exercises descendant lookup beyond
+    // a single parent/child hop.
+    assertEquals(Set.of(133L, 62L, 63L), actualLogIds);
+    logs.forEach(log -> assertTrue(log.getLogLevel() >= logLevel, "Unexpected log level"));
+  }
+
+  @Sql("/db/fill/item/items-with-nested-steps.sql")
+  @Test
+  void findAllIndexUnderTestItemByLaunchIdAndTestItemIdsAndLogLevelGteOverlappingRootsTest() {
+    int logLevel = LogLevel.INFO.toInt();
+
+    // Item 132 is itself a descendant of item 130 (path 130.131.132), so their subtrees
+    // overlap: logs under 132's subtree could be attributed to either requested root. Each
+    // log must still come back exactly once overall, not once per matching root.
+    Map<Long, List<IndexLog>> logMapping =
+        logRepository.findAllIndexUnderTestItemByLaunchIdAndTestItemIdsAndLogLevelGte(10L,
+            Arrays.asList(130L, 132L), logLevel);
+
+    List<Long> allLogIds = logMapping.values().stream()
+        .flatMap(List::stream)
+        .map(IndexLog::getLogId)
+        .collect(Collectors.toList());
+
+    Set<Long> expectedLogIds = Set.of(133L, 62L, 42L, 51L, 60L, 49L, 63L);
+    assertEquals(expectedLogIds.size(), allLogIds.size(),
+        "Each log should be returned exactly once, even though its item falls under both requested roots");
+    assertEquals(expectedLogIds, Set.copyOf(allLogIds));
+    logMapping.keySet()
+        .forEach(rootId -> assertTrue(Arrays.asList(130L, 132L).contains(rootId)));
   }
 
   @Test
