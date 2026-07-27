@@ -155,7 +155,7 @@ public class ProjectInfoCteQueryBuilder {
         PROJECT.ORGANIZATION
     ).from(PROJECT).getQuery();
 
-    applyConditions(query, filters, queryable);
+    applyConditions(query, filters, queryable, false);
     return name(CTE_BASE_PROJECTS).as((Select<Record>) query);
   }
 
@@ -212,11 +212,12 @@ public class ProjectInfoCteQueryBuilder {
         .on(bpId.eq(field(name(CTE_LAUNCHES, LAUNCH.PROJECT_ID.getName()), Long.class)))
         .getQuery();
 
-    applyConditions(query, filters, queryable);
+    applyConditions(query, filters, queryable, true);
     return name(CTE_FILTERED).as((Select<Record>) query);
   }
 
-  private void applyConditions(SelectQuery<Record> query, List<FilterCondition> filters, Queryable queryable) {
+  private void applyConditions(SelectQuery<Record> query, List<FilterCondition> filters, Queryable queryable,
+      boolean aggregateContext) {
     if (filters.isEmpty()) {
       return;
     }
@@ -231,7 +232,7 @@ public class ProjectInfoCteQueryBuilder {
       }
 
       var criteriaHolder = criteriaHolderOpt.get();
-      Condition condition = buildConditionForCte(fc, criteriaHolder);
+      Condition condition = buildConditionForCte(fc, criteriaHolder, aggregateContext);
 
       if (condition != null) {
         if (fc.getOperator() == Operator.OR) {
@@ -256,9 +257,9 @@ public class ProjectInfoCteQueryBuilder {
 
 
   private Condition buildConditionForCte(FilterCondition fc,
-      com.epam.ta.reportportal.commons.querygen.CriteriaHolder criteriaHolder) {
+      com.epam.ta.reportportal.commons.querygen.CriteriaHolder criteriaHolder, boolean aggregateContext) {
     String mappedFieldName = mapFilterField(fc.getSearchCriteria());
-    Field<Object> field = field(name(mappedFieldName));
+    Field<Object> field = aggregateContext ? resolveAggregateField(mappedFieldName) : field(name(mappedFieldName));
     String value = fc.getValue();
 
     try {
@@ -305,6 +306,18 @@ public class ProjectInfoCteQueryBuilder {
       log.warn("Invalid conditions", e);
       return null;
     }
+  }
+
+  // Must mirror the SELECT list expression: an unqualified name would otherwise resolve to the raw,
+  // possibly-NULL column of the left-joined aggregation CTE, so "= 0" would never match.
+  private Field<Object> resolveAggregateField(String mappedFieldName) {
+    if (USERS_QUANTITY.equals(mappedFieldName)) {
+      return coalesce(field(name(CTE_PROJECT_USERS, USERS_QUANTITY), Long.class), inline(0L)).coerce(Object.class);
+    }
+    if (LAUNCHES_QUANTITY.equals(mappedFieldName)) {
+      return coalesce(field(name(CTE_LAUNCHES, LAUNCHES_QUANTITY), Long.class), inline(0L)).coerce(Object.class);
+    }
+    return field(name(mappedFieldName));
   }
 
   @Nullable

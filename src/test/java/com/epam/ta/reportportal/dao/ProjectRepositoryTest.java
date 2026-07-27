@@ -43,6 +43,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.util.ReflectionTestUtils;
 
 /**
  * @author Ivan Budaev
@@ -51,6 +52,9 @@ class ProjectRepositoryTest extends BaseTest {
 
   @Autowired
   private ProjectRepository projectRepository;
+
+  @Autowired
+  private ProjectRepositoryCustomImpl projectRepositoryCustomImpl;
 
   @Test
   void findAllIdsAndProjectAttributesTest() {
@@ -148,6 +152,25 @@ class ProjectRepositoryTest extends BaseTest {
             USERS_QUANTITY
         ));
     assertEquals(2, projectInfos.size());
+  }
+
+  @Sql("/db/fill/project/project-without-users-fill.sql")
+  @Test
+  void findProjectInfoByFilterCte() {
+    ReflectionTestUtils.setField(projectRepositoryCustomImpl, "useCteQuery", true);
+    try {
+      final List<ProjectInfo> projectInfos = projectRepository.findProjectInfoByFilter(
+          new Filter(ProjectInfo.class,
+              Condition.EQUALS,
+              false,
+              "0",
+              USERS_QUANTITY
+          ));
+      assertEquals(1, projectInfos.size());
+      assertEquals("no_users_project", projectInfos.get(0).getName());
+    } finally {
+      ReflectionTestUtils.setField(projectRepositoryCustomImpl, "useCteQuery", false);
+    }
   }
 
   @Test
