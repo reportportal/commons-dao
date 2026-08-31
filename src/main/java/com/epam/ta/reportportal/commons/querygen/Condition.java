@@ -153,7 +153,8 @@ public enum Condition {
     @Override
     public org.jooq.Condition toCondition(FilterCondition filter, CriteriaHolder criteriaHolder) {
       validate(criteriaHolder, filter.getValue(), false, INCORRECT_FILTER_PARAMETERS);
-      Field<String> aggregateField = DSL.field(criteriaHolder.getAggregateCriteria()).cast(String.class);
+      Field<String> aggregateField = DSL.field("{0}::text", String.class,
+          DSL.field(criteriaHolder.getAggregateCriteria()));
       return aggregateField.eq(filter.getValue())
           .or(aggregateField.like(filter.getValue() + ".%"));
     }
@@ -290,8 +291,8 @@ public enum Condition {
   },
 
   /**
-   * HAS condition. Accepts filter value as comma-separated list. Returns 'TRUE' of all provided
-   * values exist in collection<br>
+   * HAS condition. Accepts filter value as comma-separated list. Returns 'TRUE' of all provided values exist in
+   * collection<br>
    * <b>Applicable only for collections</b>
    */
   HAS("has") {
@@ -675,8 +676,7 @@ public enum Condition {
       CriteriaHolder criteriaHolder);
 
   /**
-   * Validate condition value. This method should be overridden in all conditions which contains
-   * validations
+   * Validate condition value. This method should be overridden in all conditions which contains validations
    *
    * @param criteriaHolder Criteria description
    * @param value          Value to be casted
