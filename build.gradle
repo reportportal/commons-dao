@@ -34,7 +34,7 @@ ext['logback.version'] = "${logbackVersion}"
 
 dependencyManagement {
     imports {
-        mavenBom(releaseMode ? 'com.epam.reportportal:commons-bom:' + getProperty('bom.version') : 'com.github.reportportal:commons-bom:5.15.2')
+        mavenBom(releaseMode ? 'com.epam.reportportal:commons-bom:' + getProperty('bom.version') : 'com.github.reportportal:commons-bom:5.15.3')
         mavenBom('io.zonky.test.postgres:embedded-postgres-binaries-bom:16.2.0')
         // Later imports win over Boot/commons-bom managed versions.
         mavenBom "com.fasterxml.jackson:jackson-bom:${jacksonVersion}"
