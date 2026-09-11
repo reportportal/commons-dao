@@ -27,11 +27,27 @@ java {
 }
 
 ext['spring-boot.version'] = "${springBootVersion}"
+ext['jackson-bom.version'] = "${jacksonVersion}"
+ext['spring-framework.version'] = "${springFrameworkVersion}"
+ext['spring-security.version'] = "${springSecurityVersion}"
+ext['logback.version'] = "${logbackVersion}"
 
 dependencyManagement {
     imports {
-        mavenBom(releaseMode ? 'com.epam.reportportal:commons-bom:' + getProperty('bom.version') : 'com.github.reportportal:commons-bom:5.15.2')
+        mavenBom(releaseMode ? 'com.epam.reportportal:commons-bom:5.15.2' : 'com.github.reportportal:commons-bom:48f92b6e68')
         mavenBom('io.zonky.test.postgres:embedded-postgres-binaries-bom:16.2.0')
+        // Later imports win over Boot/commons-bom managed versions.
+        mavenBom "com.fasterxml.jackson:jackson-bom:${jacksonVersion}"
+        mavenBom "org.springframework:spring-framework-bom:${springFrameworkVersion}"
+        mavenBom "org.springframework.security:spring-security-bom:${springSecurityVersion}"
+    }
+    dependencies {
+        dependency "org.postgresql:postgresql:${jdbcDriverVersion}"
+        dependency "ch.qos.logback:logback-classic:${logbackVersion}"
+        dependency "ch.qos.logback:logback-core:${logbackVersion}"
+    }
+    generatedPomCustomization {
+        enabled = false
     }
 }
 
@@ -58,7 +74,7 @@ dependencies {
 
     implementation 'io.minio:minio:8.6.0'
 
-    api 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+    api "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonVersion}"
     implementation "org.hibernate.validator:hibernate-validator:${hibernateValidatorVersion}"
 
     api 'org.apache.commons:commons-collections4:4.4'
@@ -78,7 +94,7 @@ dependencies {
     api "org.apache.jclouds.api:filesystem:${jcloudsVersion}"
     implementation 'software.amazon.awssdk:aws-core:2.38.9'
     implementation 'software.amazon.awssdk:sts:2.38.9'
-    api 'com.google.guava:guava:33.2.1-jre'
+    api "com.google.guava:guava:${guavaVersion}"
 
     // add lombok support
     compileOnly "org.projectlombok:lombok:${lombokVersion}"
@@ -88,6 +104,8 @@ dependencies {
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.flywaydb.flyway-test-extensions:flyway-spring6-test:10.0.0'
+    // Boot 3.5 / JUnit 5.12+: align launcher with engine (Gradle otherwise uses a stale bundled one).
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
 }
 
