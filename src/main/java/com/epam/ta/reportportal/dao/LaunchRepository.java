@@ -19,6 +19,7 @@ package com.epam.ta.reportportal.dao;
 import static org.hibernate.jpa.QueryHints.HINT_FETCH_SIZE;
 
 import com.epam.ta.reportportal.entity.enums.LaunchModeEnum;
+import com.epam.ta.reportportal.entity.enums.LaunchTypeEnum;
 import com.epam.ta.reportportal.entity.enums.RetentionPolicyEnum;
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
 import com.epam.ta.reportportal.entity.item.TestItem;
@@ -138,9 +139,9 @@ public interface LaunchRepository extends ReportPortalRepository<Launch, Long>,
   /**
    * @param launchId {@link Launch#getId()}
    * @param statuses {@link TestItemResults#getStatus()}
-   * @return `true` if {@link TestItem#getLaunchId()} equal to provided `launchId`, {@link
-   * TestItem#getParentId()} equal to `NULL` and {@link TestItemResults#getStatus()} is not equal to
-   * provided `status`, otherwise return `false`
+   * @return `true` if {@link TestItem#getLaunchId()} equal to provided `launchId`,
+   * {@link TestItem#getParentId()} equal to `NULL` and {@link TestItemResults#getStatus()} is not
+   * equal to provided `status`, otherwise return `false`
    */
   @Query(value =
       "SELECT exists(SELECT 1 FROM test_item ti JOIN test_item_results tir ON ti.item_id = tir.result_id "
@@ -172,4 +173,33 @@ public interface LaunchRepository extends ReportPortalRepository<Launch, Long>,
 
   Optional<Launch> findLaunchByProjectIdAndNameAndNumberAndIdNotAndModeNot(Long projectId,
       String name, Long number, Long launchId, LaunchModeEnum mode);
+
+
+  /**
+   * Finds launch IDs filtered by status, project, and start-time cutoff, excluding launches of the
+   * specified launch type.
+   *
+   * @param projectId          the project to filter launches by
+   * @param status             the launch status to filter by
+   * @param before             the start-time cutoff; only launches started before this instant are
+   *                           included
+   * @param excludedLaunchType the launch type to exclude from the results
+   * @return matching launch IDs ordered by ID
+   */
+  @Query("""
+      SELECT l.id
+      FROM Launch l
+      WHERE l.status = :status
+        AND l.projectId = :projectId
+        AND l.startTime < :before
+        AND l.launchType <> :excludedLaunchType
+      ORDER BY l.id
+      """)
+  List<Long> findIdsWithStatusAndStartTimeBefore(
+      @Param("projectId") Long projectId,
+      @Param("status") StatusEnum status,
+      @Param("before") Instant before,
+      @Param("excludedLaunchType") LaunchTypeEnum excludedLaunchType
+  );
+
 }
