@@ -881,8 +881,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
   }
 
   /**
-   * {@link Log} entities are searched from the whole tree under {@link TestItem} that matched to
-   * the provided `launchId` and `autoAnalyzed` conditions
+   * {@link Log} entities are searched from the whole tree under {@link TestItem} that matched to the provided
+   * `launchId` and `autoAnalyzed` conditions
    */
   @Override
   public List<Long> selectIdsByAnalyzedWithLevelGteExcludingIssueTypes(boolean autoAnalyzed,
@@ -917,10 +917,10 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
                     .where(nestedItemTable.LAUNCH_ID.eq(launchId))
                     .andNot(nestedItemTable.HAS_STATS)
                     .and(LOG.LOG_LEVEL.greaterOrEqual(logLevel))
-                    .and(nestedItemTable.PATH.cast(String.class)
-                        .eq(outerItemTable.PATH.cast(String.class))
-                        .or(nestedItemTable.PATH.cast(String.class)
-                            .like(outerItemTable.PATH.cast(String.class).concat(".%"))))
+                    .and(field("{0}::text", String.class, fieldName(nestedItemTable.getName(), TEST_ITEM.PATH.getName()))
+                        .eq(field("{0}::text", String.class, fieldName(outerItemTable.getName(), TEST_ITEM.PATH.getName())))
+                        .or(field("{0}::text", String.class, fieldName(nestedItemTable.getName(), TEST_ITEM.PATH.getName()))
+                            .like(field("{0}::text", String.class, fieldName(outerItemTable.getName(), TEST_ITEM.PATH.getName())).concat(".%"))))
                 )
             )
             .unionAll(DSL.selectDistinct(TEST_ITEM.ITEM_ID.as(ID))
@@ -1048,8 +1048,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
     return dsl.selectDistinct(TEST_ITEM.ITEM_ID)
         .from(TEST_ITEM)
         .join(child)
-        .on(child.PATH.cast(String.class)
-            .like(TEST_ITEM.PATH.cast(String.class).concat(".%")))
+        .on(field("{0}::text", String.class, fieldName(child.getName(), TEST_ITEM.PATH.getName()))
+            .like(field("{0}::text", String.class, fieldName(TEST_ITEM.getName(), TEST_ITEM.PATH.getName())).concat(".%")))
         .and(TEST_ITEM.ITEM_ID.notEqual(child.ITEM_ID))
         .join(LOG)
         .on(child.ITEM_ID.eq(LOG.ITEM_ID))
@@ -1069,8 +1069,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
     return dsl.selectDistinct(LOG.ID)
         .from(TEST_ITEM)
         .join(child)
-        .on(child.PATH.cast(String.class)
-            .like(TEST_ITEM.PATH.cast(String.class).concat(".%")))
+        .on(field("{0}::text", String.class, fieldName(child.getName(), TEST_ITEM.PATH.getName()))
+            .like(field("{0}::text", String.class, fieldName(TEST_ITEM.getName(), TEST_ITEM.PATH.getName())).concat(".%")))
         .and(TEST_ITEM.ITEM_ID.notEqual(child.ITEM_ID))
         .join(LOG)
         .on(child.ITEM_ID.eq(LOG.ITEM_ID))
@@ -1088,8 +1088,8 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
     return dsl.selectDistinct(TEST_ITEM.ITEM_ID)
         .from(TEST_ITEM)
         .join(child)
-        .on(child.PATH.cast(String.class)
-            .like(TEST_ITEM.PATH.cast(String.class).concat(".%")))
+        .on(field("{0}::text", String.class, fieldName(child.getName(), TEST_ITEM.PATH.getName()))
+            .like(field("{0}::text", String.class, fieldName(TEST_ITEM.getName(), TEST_ITEM.PATH.getName())).concat(".%")))
         .and(TEST_ITEM.ITEM_ID.notEqual(child.ITEM_ID))
         .join(LOG)
         .on(child.ITEM_ID.eq(LOG.ITEM_ID))
@@ -1159,10 +1159,10 @@ public class TestItemRepositoryCustomImpl implements TestItemRepositoryCustom {
                     .join(ATTACHMENT)
                     .on(LOG.ATTACHMENT_ID.eq(ATTACHMENT.ID))
                     .where(nested.HAS_STATS.isFalse()
-                        .and(fieldName(NESTED, TEST_ITEM.PATH.getName()).cast(String.class)
-                            .eq(TEST_ITEM.PATH.cast(String.class))
-                            .or(fieldName(NESTED, TEST_ITEM.PATH.getName()).cast(String.class)
-                                .like(TEST_ITEM.PATH.cast(String.class).concat(".%")))
+                        .and(field("{0}::text", String.class, fieldName(NESTED, TEST_ITEM.PATH.getName()))
+                            .eq(field("{0}::text", String.class, fieldName(TEST_ITEM.getName(), TEST_ITEM.PATH.getName())))
+                            .or(field("{0}::text", String.class, fieldName(NESTED, TEST_ITEM.PATH.getName()))
+                                .like(field("{0}::text", String.class, fieldName(TEST_ITEM.getName(), TEST_ITEM.PATH.getName())).concat(".%")))
                         )
                     )
                 )
