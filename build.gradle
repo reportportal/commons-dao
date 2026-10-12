@@ -52,7 +52,11 @@ dependencyManagement {
 }
 
 dependencies {
-    implementation "com.github.reportportal:commons:5.15.3"
+    if (releaseMode) {
+        implementation 'com.epam.reportportal:commons:5.15.3'
+    } else {
+        implementation 'com.github.reportportal:commons:5.15.3'
+    }
 
     implementation "io.swagger.core.v3:swagger-annotations-jakarta:2.2.27"
     // jooq dependencies
