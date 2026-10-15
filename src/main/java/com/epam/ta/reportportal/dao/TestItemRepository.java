@@ -17,6 +17,7 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
+import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
 import com.epam.ta.reportportal.entity.item.NestedItemAttachment;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.TestItemResults;
@@ -256,6 +257,27 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
   List<TestItem> findTestItemsByUniqueId(String uniqueId);
 
   List<TestItem> findTestItemsByLaunchId(Long launchId);
+
+  /**
+   * Finds test items of the launch with one of the provided types
+   *
+   * @param launchId {@link TestItem#getLaunchId()}
+   * @param types    {@link Collection} of {@link TestItemTypeEnum}
+   * @return {@link List} of {@link TestItem}
+   */
+  List<TestItem> findTestItemsByLaunchIdAndTypeIn(Long launchId,
+      Collection<TestItemTypeEnum> types);
+
+  /**
+   * Moves all test items of the launch to another launch with a single statement
+   *
+   * @param currentLaunchId {@link TestItem#getLaunchId()} of items to move
+   * @param newLaunchId     id of the launch the items are moved to
+   */
+  @Modifying(clearAutomatically = true, flushAutomatically = true)
+  @Query(value = "UPDATE test_item SET launch_id = :newLaunchId WHERE launch_id = :currentLaunchId", nativeQuery = true)
+  void updateLaunchIdByLaunchId(@Param("currentLaunchId") Long currentLaunchId,
+      @Param("newLaunchId") Long newLaunchId);
 
   Optional<TestItem> findByUuid(String uuid);
 
