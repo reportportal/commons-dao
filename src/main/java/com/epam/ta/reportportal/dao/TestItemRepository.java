@@ -17,7 +17,6 @@
 package com.epam.ta.reportportal.dao;
 
 import com.epam.ta.reportportal.entity.enums.StatusEnum;
-import com.epam.ta.reportportal.entity.enums.TestItemTypeEnum;
 import com.epam.ta.reportportal.entity.item.NestedItemAttachment;
 import com.epam.ta.reportportal.entity.item.TestItem;
 import com.epam.ta.reportportal.entity.item.TestItemResults;
@@ -259,14 +258,49 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
   List<TestItem> findTestItemsByLaunchId(Long launchId);
 
   /**
-   * Finds test items of the launch with one of the provided types
+   * Finds lightweight identity data of all test items of the launch without loading entities
    *
    * @param launchId {@link TestItem#getLaunchId()}
-   * @param types    {@link Collection} of {@link TestItemTypeEnum}
-   * @return {@link List} of {@link TestItem}
+   * @return {@link List} of {@link TestItemIdentity}
    */
-  List<TestItem> findTestItemsByLaunchIdAndTypeIn(Long launchId,
-      Collection<TestItemTypeEnum> types);
+  @Query(value = "SELECT ti.item_id AS \"itemId\", ti.name AS name, CAST(ti.path AS VARCHAR) AS path, "
+      + "ti.unique_id AS \"uniqueId\" FROM test_item ti WHERE ti.launch_id = :launchId", nativeQuery = true)
+  List<TestItemIdentity> findItemIdentitiesByLaunchId(@Param("launchId") Long launchId);
+
+  /**
+   * Finds parameters of all test items of the launch without loading entities
+   *
+   * @param launchId {@link TestItem#getLaunchId()}
+   * @return {@link List} of {@link TestItemParameter}
+   */
+  @Query(value = "SELECT p.item_id AS \"itemId\", p.key AS key, p.value AS value FROM parameter p "
+      + "JOIN test_item ti ON p.item_id = ti.item_id WHERE ti.launch_id = :launchId", nativeQuery = true)
+  List<TestItemParameter> findItemParametersByLaunchId(@Param("launchId") Long launchId);
+
+  /**
+   * Updates unique ids of test items with a single statement. Arrays are matched by index.
+   *
+   * @param itemIds   array of {@link TestItem#getItemId()}
+   * @param uniqueIds array of new {@link TestItem#getUniqueId()}
+   */
+  @Modifying(clearAutomatically = true, flushAutomatically = true)
+  @Query(value = "UPDATE test_item ti SET unique_id = v.unique_id "
+      + "FROM unnest(CAST(:itemIds AS BIGINT[]), CAST(:uniqueIds AS VARCHAR[])) AS v(item_id, unique_id) "
+      + "WHERE ti.item_id = v.item_id", nativeQuery = true)
+  void updateUniqueIds(@Param("itemIds") Long[] itemIds, @Param("uniqueIds") String[] uniqueIds);
+
+  /**
+   * Appends text to the description of the launch test items of the provided types
+   *
+   * @param launchId {@link TestItem#getLaunchId()}
+   * @param types    names of {@link com.epam.ta.reportportal.entity.enums.TestItemTypeEnum}
+   * @param suffix   text to append
+   */
+  @Modifying(clearAutomatically = true, flushAutomatically = true)
+  @Query(value = "UPDATE test_item SET description = CONCAT(description, :suffix) "
+      + "WHERE launch_id = :launchId AND CAST(type AS VARCHAR) IN (:types)", nativeQuery = true)
+  void appendDescriptionByLaunchIdAndTypeIn(@Param("launchId") Long launchId,
+      @Param("types") Collection<String> types, @Param("suffix") String suffix);
 
   /**
    * Moves all test items of the launch to another launch with a single statement
@@ -585,4 +619,30 @@ public interface TestItemRepository extends ReportPortalRepository<TestItem, Lon
       """, nativeQuery = true)
   List<TestItem> findAllByItemIdInAndProjectId(@Param("ids") Collection<Long> ids,
       @Param("projectId") Long projectId);
+
+  /**
+   * Lightweight projection of {@link TestItem} fields used for unique id generation
+   */
+  interface TestItemIdentity {
+
+    Long getItemId();
+
+    String getName();
+
+    String getPath();
+
+    String getUniqueId();
+  }
+
+  /**
+   * Lightweight projection of {@link com.epam.ta.reportportal.entity.item.Parameter} with item id
+   */
+  interface TestItemParameter {
+
+    Long getItemId();
+
+    String getKey();
+
+    String getValue();
+  }
 }
