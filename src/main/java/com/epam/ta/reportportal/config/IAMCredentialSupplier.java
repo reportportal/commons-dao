@@ -16,68 +16,50 @@
 package com.epam.ta.reportportal.config;
 
 import com.google.common.base.Supplier;
-import java.time.Instant;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 import org.jclouds.aws.domain.SessionCredentials;
 import org.jclouds.domain.Credentials;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.auth.credentials.AwsCredentials;
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.AwsSessionCredentials;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 
 /**
+ * Supplies S3 credentials from the AWS default credential chain (environment, web identity,
+ * container credentials, or EC2 instance metadata) for deployments that run with empty
+ * datastore access keys.
+ *
+ * <p>The supplier keeps no state of its own. The AWS SDK caches credentials and refreshes them
+ * shortly before they expire, but only when {@code resolveCredentials()} is called. Caching the
+ * result here as well holds the credential until its own expiry and never calls the SDK in
+ * between, so the SDK never gets the chance to refresh and S3 calls fail with
+ * {@code ExpiredToken} while instance metadata is already serving a valid credential. Resolving
+ * on every call avoids that; the SDK serves the cached value, so no extra requests are made.
+ *
  * @author <a href="mailto:andrei_piankouski@epam.com">Andrei Piankouski</a>
  */
 public class IAMCredentialSupplier implements Supplier<Credentials> {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(IAMCredentialSupplier.class);
-  private volatile SessionCredentials cachedCredentials;
-  private volatile Instant expirationTime;
-  private final Lock lock = new ReentrantLock();
+  private final AwsCredentialsProvider credentialsProvider;
+
+  public IAMCredentialSupplier() {
+    this(DefaultCredentialsProvider.create());
+  }
+
+  IAMCredentialSupplier(AwsCredentialsProvider credentialsProvider) {
+    this.credentialsProvider = credentialsProvider;
+  }
 
   @Override
   public Credentials get() {
-    if (credentialsAreExpired()) {
-      lock.lock();
-      try {
-        if (credentialsAreExpired()) {
-          refreshCredentials();
-        }
-      } finally {
-        lock.unlock();
-      }
-    }
-    return cachedCredentials;
-  }
-
-  private boolean credentialsAreExpired() {
-    return cachedCredentials == null || Instant.now().isAfter(expirationTime);
-  }
-
-  private void refreshCredentials() {
-    LOGGER.debug("Refresh IAM Credentials");
-    AwsSessionCredentials awsCredentials = obtainAwsSessionCredentials();
-
-    if (awsCredentials != null) {
-      cachedCredentials = SessionCredentials.builder()
-          .accessKeyId(awsCredentials.accessKeyId())
-          .secretAccessKey(awsCredentials.secretAccessKey())
-          .sessionToken(awsCredentials.sessionToken())
-          .build();
-
-      expirationTime = awsCredentials.expirationTime().orElseGet(() -> Instant.now().plusSeconds(3600));
-    }
-  }
-
-  private AwsSessionCredentials obtainAwsSessionCredentials() {
-    DefaultCredentialsProvider defaultCredentialsProvider = DefaultCredentialsProvider.create();
-    AwsCredentials awsCredentials = defaultCredentialsProvider.resolveCredentials();
+    AwsCredentials awsCredentials = credentialsProvider.resolveCredentials();
     if (awsCredentials instanceof AwsSessionCredentials sessionCredentials) {
-      return sessionCredentials;
+      return SessionCredentials.builder()
+          .accessKeyId(sessionCredentials.accessKeyId())
+          .secretAccessKey(sessionCredentials.secretAccessKey())
+          .sessionToken(sessionCredentials.sessionToken())
+          .build();
     }
-    return null;
+    return new Credentials(awsCredentials.accessKeyId(), awsCredentials.secretAccessKey());
   }
 
 }
